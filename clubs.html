@@ -207,7 +207,15 @@
   /* ---------- panneau latéral ---------- */
   .panneau{padding:clamp(22px,2.4vw,28px); border:1px solid var(--encre-700);
     border-radius:var(--r-l); background:var(--encre-900)}
-  @media (min-width:941px){ .panneau{position:sticky; top:26px} }
+  /* Le panneau colle au defilement, mais depuis qu'il porte l'apercu il est plus
+     haut que bien des ecrans : sans plafond, son bas devenait inatteignable. */
+  @media (min-width:941px){
+    .panneau{position:sticky; top:26px; max-height:calc(100vh - 52px); overflow:auto;
+      overscroll-behavior:contain; scrollbar-width:thin;
+      scrollbar-color:var(--encre-600) transparent}
+    .panneau::-webkit-scrollbar{width:8px}
+    .panneau::-webkit-scrollbar-thumb{background:var(--encre-600); border-radius:999px}
+  }
   .panneau h2{font-size:clamp(19px,2vw,23px); line-height:1.1; color:var(--craie-100)}
   .avantages{margin-top:20px; display:flex; flex-direction:column; gap:14px}
   .avantages li{display:flex; align-items:flex-start; gap:11px; font-size:14.5px; line-height:1.5;
@@ -225,6 +233,96 @@
   .btn-ligne:hover{border-color:var(--craie-400); color:var(--craie-100); background:transparent}
 
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+
+  /* ---------- aide et blocs incomplets ---------- */
+  .bloc-aide{ margin:0 0 14px; color:var(--craie-400); font-size:13.5px; line-height:1.55; }
+  .champ-aide{ margin:7px 0 0; color:var(--craie-500); font-size:12.5px; }
+  .bloc-manque{ animation:secousse .4s; }
+  .bloc-manque .bloc-titre{ color:var(--rouge-300); }
+  @keyframes secousse{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)}
+                       75%{transform:translateX(5px)} }
+  @media (prefers-reduced-motion: reduce){ .bloc-manque{ animation:none } }
+
+  /* ---------- photos ---------- */
+  .photos{ display:grid; gap:12px; }
+  .photo-ajout{ display:flex; flex-direction:column; align-items:center; justify-content:center;
+                gap:5px; min-height:118px; padding:18px; cursor:pointer; text-align:center;
+                border:1.5px dashed var(--encre-600); border-radius:var(--r-l);
+                background:var(--encre-900); color:var(--craie-200);
+                font-weight:700; font-size:14.5px; transition:border-color .15s, background .15s; }
+  .photo-ajout:hover{ border-color:var(--rouge-300); background:var(--encre-850); }
+  .photo-ajout svg{ color:var(--craie-400); }
+  .photo-ajout small{ font-weight:600; font-size:12px; color:var(--craie-500); }
+  .photo-ajout[hidden]{ display:none; }
+  .photo-liste{ list-style:none; margin:0; padding:0; display:grid; gap:10px;
+                grid-template-columns:repeat(auto-fill, minmax(104px, 1fr)); }
+  .photo-liste li{ position:relative; aspect-ratio:4/3; border-radius:var(--r-m);
+                   overflow:hidden; background:var(--encre-850); }
+  .photo-liste img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-tag{ position:absolute; left:6px; bottom:6px; font-size:10px; font-weight:800;
+              letter-spacing:.05em; text-transform:uppercase; padding:3px 7px;
+              border-radius:999px; background:var(--rouge-600); color:#fff; }
+  .photo-x{ position:absolute; top:5px; right:5px; width:26px; height:26px; border:0;
+            border-radius:50%; background:rgba(10,10,11,.78); color:var(--craie-100);
+            font-size:17px; line-height:1; cursor:pointer; }
+  .photo-x:hover{ background:var(--rouge-600); color:#fff; }
+
+  /* ---------- horaires ---------- */
+  .horaires{ list-style:none; margin:0; padding:0; display:grid; gap:2px; }
+  .jour-ligne{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center;
+               padding:9px 10px; margin-inline:-10px; border-radius:var(--r-m); }
+  .jour-ligne:hover{ background:var(--encre-900); }
+  .jour-bascule{ display:flex; gap:10px; align-items:center; cursor:pointer;
+                 font-weight:700; font-size:14.5px; }
+  .jour-bascule input{ width:18px; height:18px; accent-color:var(--rouge-600); cursor:pointer; }
+  .jour-creneau{ display:flex; gap:8px; align-items:center; color:var(--craie-400); }
+  .jour-creneau input{ font:inherit; font-size:14px; padding:7px 9px; color:var(--craie-100);
+                       background:var(--encre-850); border:1px solid var(--encre-700);
+                       border-radius:var(--r-m); color-scheme:dark; }
+  .jour-ferme{ display:none; color:var(--craie-500); font-size:14px; font-weight:600; }
+  .jour-ligne.ferme .jour-creneau{ display:none; }
+  .jour-ligne.ferme .jour-ferme{ display:inline; }
+  .jour-ligne.ferme .jour-bascule{ color:var(--craie-500); }
+
+  /* ---------- aperçu en direct ---------- */
+  .apercu{ margin-bottom:26px; padding-bottom:26px; border-bottom:1px solid var(--encre-800); }
+  .apercu-titre{ margin:0 0 12px; font-size:13px; font-weight:800; letter-spacing:.06em;
+                 text-transform:uppercase; color:var(--craie-400); }
+  .apercu-cadre{ border:1px solid var(--encre-700); border-radius:var(--r-l);
+                 overflow:hidden; background:var(--encre-900); }
+  .apercu-visuel{ height:124px; background:var(--encre-850); }
+  .apercu-visuel img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .apercu-visuel.vide{ display:grid; place-items:center; color:var(--craie-500);
+                       font-size:12.5px; font-weight:600;
+                       border-bottom:1px solid var(--encre-800); }
+  .apercu-corps{ padding:15px; }
+  .apercu-nom{ display:block; font-size:16px; font-weight:800; line-height:1.25; }
+  .apercu-lieu{ display:block; margin-top:3px; font-size:13px; color:var(--craie-400); }
+  .apercu-chips{ list-style:none; display:flex; flex-wrap:wrap; gap:5px; margin:11px 0 0;
+                 padding:0; }
+  .apercu-chips li{ font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px;
+                    border:1px solid var(--encre-700); color:var(--craie-400); }
+  .apercu-mot{ margin:11px 0 0; font-size:13px; line-height:1.55; color:var(--craie-200);
+               display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+               overflow:hidden; }
+  .apercu-coord{ list-style:none; margin:11px 0 0; padding:0; display:grid; gap:3px;
+                 font-size:12.5px; color:var(--craie-200); }
+  .apercu-jours{ margin:11px 0 0; font-size:12px; color:var(--craie-400); }
+  .apercu .creux{ color:var(--craie-500); font-style:italic; }
+  .apercu-note{ margin:10px 0 0; font-size:12px; color:var(--craie-500); line-height:1.5; }
+
+  .merci-recap{ margin-top:14px; padding-top:14px; border-top:1px solid var(--encre-800);
+                font-size:13.5px; color:var(--craie-400); }
+
+  /* Les deux champs d'heure ne se compriment pas : a l'etroit ils poussaient la
+     ligne, et donc tout le formulaire, au-dela de l'ecran. On passe la plage
+     horaire sous le nom du jour. */
+  @media (max-width: 560px){
+    .jour-ligne{ grid-template-columns:1fr; gap:7px; }
+    .jour-creneau{ padding-left:28px; }
+    .jour-creneau input{ flex:1 1 0; min-width:0; }
+    .jour-ligne.ferme .jour-ferme{ padding-left:28px; }
+  }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -247,8 +345,8 @@
       </svg>
     </a>
     <nav class="site-nav" aria-label="Navigation principale">
-      <a class="nav-link" href="index.html#recherche">Rechercher une salle</a>
-      <a class="nav-link" href="index.html#salles">Nos salles</a>
+      <a class="nav-link" href="recherche.html">Rechercher une salle</a>
+      <a class="nav-link" href="recherche.html">Nos salles</a>
       <a class="nav-link" href="index.html#clubs">Acquisition</a>
       <a class="nav-link" href="index.html#connexion">Connexion</a>
       <a class="btn btn-rouge" href="#formulaire"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
@@ -317,6 +415,41 @@
           </div>
 
           <div class="bloc">
+            <h2 class="bloc-titre">Présentation de votre club</h2>
+            <div class="champs">
+              <div class="champ large">
+                <label for="c-mot">Ce qui fait votre salle</label>
+                <textarea id="c-mot" name="mot" required
+                  placeholder="Depuis quand vous existez, vos coachs, votre ambiance, ce que vit quelqu'un qui pousse la porte pour la première fois."></textarea>
+                <p class="champ-aide"><span id="c-mot-n">0</span> caractères. Visez trois ou
+                  quatre phrases.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Vos photos</h2>
+            <p class="bloc-aide">Les salles avec photos sont nettement plus contactées.
+              Ajoutez-en jusqu'à six, la première sert de visuel principal.</p>
+            <div class="photos">
+              <label class="photo-ajout" for="c-photos">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 8.4h3.2l1.4-2.3h7.6l1.4 2.3h3.2a1.6 1.6 0 0 1 1.6 1.6v7.4a1.6 1.6 0 0 1-1.6 1.6H3.6A1.6 1.6 0 0 1 2 17.4V10a1.6 1.6 0 0 1 1.6-1.6Z"/><circle cx="12" cy="13.4" r="3.4"/></svg>
+                <span>Ajouter des photos</span>
+                <small>JPEG ou PNG</small>
+              </label>
+              <input id="c-photos" name="photos" type="file" accept="image/*" multiple hidden>
+              <ul class="photo-liste" id="photo-liste"></ul>
+            </div>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Horaires d'ouverture</h2>
+            <p class="bloc-aide">Décochez les jours de fermeture. Vous pourrez détailler
+              vos créneaux de cours depuis l'espace club.</p>
+            <ul class="horaires" id="horaires-jours"></ul>
+          </div>
+
+          <div class="bloc">
             <h2 class="bloc-titre">Pour vous contacter</h2>
             <div class="champs">
               <div class="champ">
@@ -335,14 +468,17 @@
                   placeholder="contact@votresalle.fr">
               </div>
               <div class="champ large">
-                <label for="c-web">Site web ou Instagram <span class="opt">(facultatif)</span></label>
+                <label for="c-web">Site web <span class="opt">(facultatif)</span></label>
                 <input id="c-web" name="web" autocomplete="url"
-                  placeholder="instagram.com/votresalle">
+                  placeholder="votresalle.fr">
               </div>
-              <div class="champ large">
-                <label for="c-mot">Un mot sur votre club <span class="opt">(facultatif)</span></label>
-                <textarea id="c-mot" name="mot"
-                  placeholder="Vos créneaux, vos coachs, ce qui fait la différence chez vous."></textarea>
+              <div class="champ">
+                <label for="c-insta">Instagram <span class="opt">(facultatif)</span></label>
+                <input id="c-insta" name="insta" placeholder="votresalle">
+              </div>
+              <div class="champ">
+                <label for="c-fb">Facebook <span class="opt">(facultatif)</span></label>
+                <input id="c-fb" name="fb" placeholder="VotreSalle">
               </div>
             </div>
           </div>
@@ -360,15 +496,32 @@
           <h2 class="display">Demande envoyée</h2>
           <p>Nous vérifions les informations de votre salle, puis votre fiche est publiée dans
             l'annuaire. Vous recevez un e-mail avec vos accès à l'espace club.</p>
+          <p class="merci-recap" id="merci-recap"></p>
         </div>
       </form>
 
       <aside class="panneau">
+        <section class="apercu" id="apercu">
+          <h2 class="apercu-titre">Votre fiche, en direct</h2>
+          <div class="apercu-cadre">
+            <div class="apercu-visuel" id="ap-visuel"></div>
+            <div class="apercu-corps">
+              <b class="apercu-nom" id="ap-nom">Le nom de votre salle</b>
+              <span class="apercu-lieu" id="ap-lieu">Votre ville</span>
+              <ul class="apercu-chips" id="ap-chips"></ul>
+              <p class="apercu-mot" id="ap-mot">Votre présentation apparaîtra ici.</p>
+              <ul class="apercu-coord" id="ap-coord"></ul>
+              <p class="apercu-jours" id="ap-jours"></p>
+            </div>
+          </div>
+          <p class="apercu-note">C'est ce que verra un pratiquant qui tombe sur votre salle.</p>
+        </section>
+
         <h2 class="display">Ce que vous obtenez</h2>
         <ul class="avantages">
           <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Une fiche complète : adresse, horaires, disciplines, présentation, contacts, site et réseaux.</li>
           <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Votre salle visible dans les recherches par ville et par discipline.</li>
-          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Les demandes de séance d'essai envoyées directement par les pratiquants.</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Vos coordonnées en clair : les pratiquants vous appellent ou vous écrivent.</li>
           <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>La modification de votre fiche à tout moment depuis l'espace club.</li>
         </ul>
         <div class="pro-note">
@@ -456,19 +609,151 @@
 <script>
   var DISC = ['MMA','Boxe anglaise','Kickboxing','Muay Thaï','Jiu-jitsu brésilien','Grappling',
               'Karaté','Judo','Lutte','Self-défense'];
-  var boite = document.getElementById('choix-disc');
-  boite.innerHTML = DISC.map(function (d, i) {
-    return '<label><input type="checkbox" name="disciplines" value="' + d + '"><span>' + d + '</span></label>';
+  var JOURS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  var form = document.getElementById('form-club');
+
+  function ech(t){
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function val(id){ return (document.getElementById(id).value || '').trim(); }
+
+  /* ---------- disciplines ---------- */
+  document.getElementById('choix-disc').innerHTML = DISC.map(function (d){
+    return '<label><input type="checkbox" name="disciplines" value="' + d + '"><span>' +
+           d + '</span></label>';
   }).join('');
 
-  var form = document.getElementById('form-club');
-  form.addEventListener('submit', function (e) {
+  /* ---------- horaires : ouvert du lundi au samedi par defaut ---------- */
+  document.getElementById('horaires-jours').innerHTML = JOURS.map(function (j, n){
+    var ouvert = n < 6;
+    return '<li class="jour-ligne' + (ouvert ? '' : ' ferme') + '">' +
+      '<label class="jour-bascule"><input type="checkbox" data-jour="' + n + '"' +
+        (ouvert ? ' checked' : '') + '><span>' + j + '</span></label>' +
+      '<span class="jour-creneau">' +
+        '<input type="time" value="09:00" aria-label="Ouverture le ' + j + '">' +
+        '<span aria-hidden="true">–</span>' +
+        '<input type="time" value="21:00" aria-label="Fermeture le ' + j + '">' +
+      '</span>' +
+      '<span class="jour-ferme">Fermé</span></li>';
+  }).join('');
+
+  document.getElementById('horaires-jours').addEventListener('change', function (e){
+    if (!e.target.matches('[data-jour]')) return;
+    e.target.closest('.jour-ligne').classList.toggle('ferme', !e.target.checked);
+    apercu();
+  });
+
+  /* ---------- photos ---------- */
+  /* Les fichiers restent dans le navigateur : on en fait une URL locale pour
+     l'apercu, rien n'est televerse tant qu'il n'y a pas de serveur. */
+  var photos = [];
+  var MAX = 6;
+  var champPhotos = document.getElementById('c-photos');
+  var listePhotos = document.getElementById('photo-liste');
+
+  function dessinePhotos(){
+    listePhotos.innerHTML = photos.map(function (p, i){
+      return '<li><img src="' + p.url + '" alt="' + ech(p.nom) + '">' +
+             (i === 0 ? '<span class="photo-tag">Principale</span>' : '') +
+             '<button type="button" class="photo-x" data-i="' + i +
+             '" aria-label="Retirer ' + ech(p.nom) + '">&times;</button></li>';
+    }).join('');
+    document.querySelector('.photo-ajout').hidden = photos.length >= MAX;
+    apercu();
+  }
+  champPhotos.addEventListener('change', function (){
+    Array.prototype.forEach.call(champPhotos.files, function (f){
+      if (photos.length >= MAX || !/^image\//.test(f.type)) return;
+      photos.push({ nom: f.name, url: URL.createObjectURL(f) });
+    });
+    champPhotos.value = '';          /* pour pouvoir reprendre le meme fichier */
+    dessinePhotos();
+  });
+  listePhotos.addEventListener('click', function (e){
+    var b = e.target.closest('.photo-x');
+    if (!b) return;
+    URL.revokeObjectURL(photos[+b.dataset.i].url);
+    photos.splice(+b.dataset.i, 1);
+    dessinePhotos();
+  });
+
+  /* ---------- apercu en direct ---------- */
+  function choisies(){
+    return Array.prototype.map.call(
+      form.querySelectorAll('[name="disciplines"]:checked'), function (c){ return c.value; });
+  }
+  function joursOuverts(){
+    return Array.prototype.filter.call(
+      document.querySelectorAll('[data-jour]'), function (c){ return c.checked; })
+      .map(function (c){ return JOURS[+c.dataset.jour]; });
+  }
+
+  function apercu(){
+    var nom = val('c-nom'), ville = val('c-ville'), mot = val('c-mot');
+    var disc = choisies(), jours = joursOuverts();
+
+    document.getElementById('ap-nom').textContent = nom || 'Le nom de votre salle';
+    document.getElementById('ap-lieu').textContent =
+      [val('c-adresse'), [val('c-cp'), ville].filter(Boolean).join(' ')]
+        .filter(Boolean).join(', ') || 'Votre adresse';
+
+    var vis = document.getElementById('ap-visuel');
+    if (photos.length){
+      vis.innerHTML = '<img src="' + photos[0].url + '" alt="">';
+      vis.classList.remove('vide');
+    } else {
+      vis.innerHTML = '<span>Aucune photo</span>';
+      vis.classList.add('vide');
+    }
+
+    document.getElementById('ap-chips').innerHTML =
+      disc.slice(0, 4).map(function (d){ return '<li>' + ech(d) + '</li>'; }).join('') ||
+      '<li class="creux">Vos disciplines</li>';
+
+    document.getElementById('ap-mot').textContent =
+      mot || 'Votre présentation apparaîtra ici.';
+    document.getElementById('ap-mot').classList.toggle('creux', !mot);
+
+    var coord = [];
+    if (val('c-tel'))   coord.push(val('c-tel'));
+    if (val('c-mail'))  coord.push(val('c-mail'));
+    if (val('c-web'))   coord.push(val('c-web'));
+    if (val('c-insta')) coord.push('@' + val('c-insta'));
+    document.getElementById('ap-coord').innerHTML =
+      coord.map(function (c){ return '<li>' + ech(c) + '</li>'; }).join('') ||
+      '<li class="creux">Vos coordonnées</li>';
+
+    document.getElementById('ap-jours').textContent =
+      jours.length === 7 ? 'Ouvert tous les jours'
+      : jours.length ? 'Ouvert ' + jours.length + ' jours sur 7'
+      : 'Aucun jour d’ouverture';
+
+    document.getElementById('c-mot-n').textContent = mot.length;
+  }
+
+  form.addEventListener('input', apercu);
+  form.addEventListener('change', apercu);
+  apercu();
+
+  /* ---------- envoi ---------- */
+  form.addEventListener('submit', function (e){
     e.preventDefault();
     var manque = null;
-    Array.prototype.forEach.call(form.querySelectorAll('[required]'), function (ch) {
+    Array.prototype.forEach.call(form.querySelectorAll('[required]'), function (ch){
       if (!ch.value.trim() && !manque) manque = ch;
     });
-    if (manque) { manque.focus(); return; }
+    if (!manque && !choisies().length) manque = form.querySelector('[name="disciplines"]');
+    if (manque){
+      manque.focus();
+      manque.closest('.bloc').classList.add('bloc-manque');
+      setTimeout(function (){
+        manque.closest('.bloc').classList.remove('bloc-manque'); }, 1600);
+      return;
+    }
+    document.getElementById('merci-recap').textContent =
+      val('c-nom') + ' · ' + choisies().length + ' discipline' +
+      (choisies().length > 1 ? 's' : '') + ' · ' + photos.length + ' photo' +
+      (photos.length > 1 ? 's' : '') + ' · ' + joursOuverts().length + ' jours d’ouverture';
     form.classList.add('envoye');
     document.getElementById('merci').classList.add('on');
     form.scrollIntoView({ block: 'center', behavior: 'smooth' });

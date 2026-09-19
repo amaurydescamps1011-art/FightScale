@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Cherchez une salle de sports de combat par ville et par discipline, sur la carte.">
+<meta name="description" content="La fiche d'une salle de sports de combat : disciplines, planning des cours, adresse, horaires et coordonnées.">
 <meta name="theme-color" content="#0A0A0B">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FightScale">
-<meta property="og:title" content="Salles de sports de combat — FightScale">
-<meta property="og:description" content="Cherchez une salle de sports de combat par ville et par discipline, sur la carte.">
+<meta property="og:title" content="Salle de sports de combat — FightScale">
+<meta property="og:description" content="La fiche d'une salle de sports de combat : disciplines, planning des cours, adresse, horaires et coordonnées.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
@@ -19,7 +19,7 @@
   img{max-width:100%}
   [hidden]{display:none !important}
 </style>
-<title>Salles de sports de combat — FightScale</title>
+<title>Salle de sports de combat — FightScale</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
 <style>
@@ -113,209 +113,184 @@
   }
   @media (max-width:430px){ .footer-haut{grid-template-columns:1fr} }
 
+  /* ---------- fiche salle ---------- */
+  body{ background:var(--encre-950); color:var(--craie-100);
+        font-family:Manrope, system-ui, sans-serif; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding-inline:var(--gutter); }
+  .skip{ position:absolute; left:-9999px; }
+  .skip:focus{ left:12px; top:12px; z-index:60; background:var(--craie-100);
+               color:var(--encre-950); padding:10px 16px; border-radius:var(--r-m); }
 
-  /* ---------- barre applicative ---------- */
-  .barre-appli{position:sticky; top:env(safe-area-inset-top,0px); z-index:40;
-    border-bottom:1px solid var(--encre-800); background:rgba(10,10,11,.92);
-    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px)}
-  .barre-in{display:flex; align-items:center; gap:clamp(14px,2vw,28px); padding-block:14px}
-  .barre-in .brand{flex-shrink:0}
-  .champ-ville{position:relative; flex:1 1 auto; min-width:0; max-width:520px;
-    display:flex; align-items:center; gap:8px; padding:6px 6px 6px 16px;
-    border:1px solid var(--encre-700); border-radius:999px; background:var(--encre-900);
-    transition:border-color .16s ease, box-shadow .16s ease}
-  .champ-ville:focus-within{border-color:rgba(250,1,23,.55);
-    box-shadow:0 0 0 4px rgba(250,1,23,.10)}
-  .champ-ville > svg{flex-shrink:0; color:var(--rouge-300)}
-  .champ-ville input{flex:1 1 auto; min-width:0; border:0; background:transparent; outline:none;
-    padding:8px 0; font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:700;
-    color:var(--craie-100)}
-  .champ-ville input::placeholder{color:var(--craie-500); font-weight:600}
-  .champ-ville .btn{flex:0 0 auto; min-height:40px; padding:10px 20px; border-radius:999px;
-    font-size:14px}
-  .barre-nav{margin-left:auto; display:flex; align-items:center; gap:22px}
-  .barre-nav a:not(.btn){font-size:14.5px; font-weight:700; color:var(--craie-200);
-    text-decoration:none; white-space:nowrap}
-  .barre-nav a:not(.btn):hover{color:var(--craie-100)}
-  @media (max-width:1100px){ .barre-nav .nav-link{display:none} }
-  @media (max-width:720px){
-    .barre-in{flex-wrap:wrap; gap:12px}
-    .champ-ville{order:3; flex:1 1 100%; max-width:none}
-    .barre-nav{margin-left:auto}
+  /* sur l'accueil l'en-tete flotte au-dessus du heros ; ici il n'y a pas de heros,
+     il doit donc reprendre sa place dans le flux */
+  .site-header{ position:relative; inset:auto; background:var(--encre-950);
+                border-bottom:1px solid var(--encre-800); }
+
+  .fil{ border-bottom:1px solid var(--encre-800); }
+  .fil-in{ display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+           padding-block:14px; font-size:13px; color:var(--craie-400); }
+  .fil a{ color:var(--craie-200); text-decoration:none; }
+  .fil a:hover{ color:var(--craie-100); text-decoration:underline; }
+  .fil [aria-current]{ color:var(--craie-100); font-weight:700; }
+
+  /* ---------- visuels ---------- */
+  .visuels{ padding-top:24px; }
+  .galerie{ display:grid; gap:10px; border-radius:var(--r-l); overflow:hidden;
+            grid-template-columns:2fr 1fr 1fr; grid-template-rows:repeat(2, 132px); }
+  .galerie .vis{ position:relative; overflow:hidden; background:var(--encre-900); }
+  .galerie .vis:first-child{ grid-row:span 2; }
+  .galerie svg, .galerie img{ display:block; width:100%; height:100%; object-fit:cover; }
+  .vis-marque{ position:absolute; left:12px; bottom:10px; font-size:11px; letter-spacing:.06em;
+               text-transform:uppercase; color:var(--craie-400);
+               background:rgba(10,10,11,.66); padding:4px 8px; border-radius:999px;
+               backdrop-filter:blur(3px); }
+
+  /* ---------- tête ---------- */
+  .tete-in{ display:flex; gap:28px; align-items:flex-end; justify-content:space-between;
+            flex-wrap:wrap; padding-block:26px 22px; }
+  .tete-texte{ min-width:0; }
+  .tete h1{ margin:0 0 10px; font-family:Anton, Impact, sans-serif; font-weight:400;
+            letter-spacing:.01em; line-height:1.02; text-transform:uppercase;
+            font-size:clamp(30px, 4.6vw, 52px); }
+  .tete-meta{ margin:0; color:var(--craie-200); font-size:15px;
+              display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .tete-meta .sep{ color:var(--encre-600); }
+  .tete-meta .note{ display:inline-flex; gap:5px; align-items:center;
+                    color:var(--craie-100); font-weight:700; }
+  .tete-meta .note svg{ color:var(--or, #E8A33D); }
+  .tete-meta .note small{ color:var(--craie-400); font-weight:600; }
+  .ouvert, .ferme{ display:inline-flex; gap:6px; align-items:center; font-weight:700;
+                   font-size:13px; }
+  .ouvert{ color:var(--vert); } .ferme{ color:var(--craie-400); }
+  .ouvert::before, .ferme::before{ content:""; width:7px; height:7px; border-radius:50%;
+                                   background:currentColor; }
+
+  .chips{ list-style:none; display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 0; padding:0; }
+  .chips li{ font-size:13px; font-weight:700; padding:6px 12px; border-radius:999px;
+             background:var(--encre-850); border:1px solid var(--encre-700);
+             color:var(--craie-200); }
+
+  .tete-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  .btn{ display:inline-flex; gap:8px; align-items:center; justify-content:center;
+        min-height:48px; padding:0 20px; border-radius:var(--r-m); font:inherit;
+        font-weight:800; font-size:15px; text-decoration:none; cursor:pointer;
+        border:1px solid transparent; transition:background .15s, border-color .15s; }
+  .btn-rouge{ background:var(--rouge-600); color:#fff; }
+  .btn-rouge:hover{ background:var(--rouge-700); }
+  .btn-ligne{ background:transparent; color:var(--craie-100); border-color:var(--encre-600); }
+  .btn-ligne:hover{ background:var(--encre-850); border-color:var(--craie-400); }
+  .btn svg{ flex:none; }
+
+  /* ---------- corps ---------- */
+  .corps{ display:grid; gap:24px; grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);
+          align-items:start; padding-block:10px 40px; }
+  .col-principale{ display:grid; gap:18px; min-width:0; }
+  .col-cote{ min-width:0; }
+  .cote-collant{ display:grid; gap:18px; position:sticky; top:18px; }
+
+  .pan{ background:var(--encre-900); border:1px solid var(--encre-800);
+        border-radius:var(--r-l); padding:22px; }
+  .pan-titre{ margin:0 0 4px; font-family:Anton, Impact, sans-serif; font-weight:400;
+              text-transform:uppercase; letter-spacing:.02em; font-size:22px; }
+  .pan-sous{ margin:0 0 14px; color:var(--craie-400); font-size:13.5px; }
+  .cote-titre{ margin:0 0 12px; font-size:15px; font-weight:800; letter-spacing:.01em; }
+
+  .prose{ margin-top:14px; }
+  .prose p{ margin:0 0 12px; color:var(--craie-200); line-height:1.62; font-size:15.5px; }
+  .prose p:last-child{ margin-bottom:0; }
+
+  .faits{ display:grid; grid-template-columns:repeat(auto-fit, minmax(128px, 1fr));
+          gap:14px; margin:20px 0 0; padding-top:18px; border-top:1px solid var(--encre-800); }
+  .faits div{ min-width:0; }
+  .faits dt{ font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+             color:var(--craie-400); margin-bottom:4px; }
+  .faits dd{ margin:0; font-size:17px; font-weight:800; }
+
+  .grille-disc{ list-style:none; margin:14px 0 0; padding:0; display:grid; gap:10px;
+                grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); }
+  .grille-disc li{ display:flex; gap:10px; align-items:center; padding:13px 15px;
+                   background:var(--encre-850); border:1px solid var(--encre-800);
+                   border-radius:var(--r-m); font-weight:700; font-size:14.5px; }
+  .grille-disc svg{ color:var(--rouge-300); flex:none; }
+
+  .semaine{ list-style:none; margin:0; padding:0; }
+  .semaine > li{ display:grid; grid-template-columns:112px 1fr; gap:16px;
+                 padding:13px 0; border-top:1px solid var(--encre-800); }
+  .semaine > li:first-child{ border-top:0; }
+  .semaine .jour{ font-weight:800; font-size:14.5px; }
+  .semaine .aujourdhui .jour{ color:var(--rouge-300); }
+  /* sur une colonne étroite, « · aujourd’hui » se coupait en laissant le point
+     pendre en bout de ligne : on le passe sous le nom du jour */
+  .semaine .aujourdhui .jour::after{ content:"aujourd’hui"; display:block; font-weight:600;
+                                     font-size:12px; color:var(--craie-400); }
+  .cours{ display:grid; gap:7px; min-width:0; }
+  .cours .c{ display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; font-size:14.5px; }
+  .cours .h{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--craie-100);
+             white-space:nowrap; }
+  .cours .q{ color:var(--craie-200); }
+  .cours .n{ font-size:12px; color:var(--craie-400); }
+  .repos{ color:var(--craie-400); font-size:14.5px; }
+
+  /* ---------- colonne de droite ---------- */
+  .pan-carte{ padding:0; overflow:hidden; }
+  .mini-carte{ position:relative; height:210px; background:#0A1017; }
+  .mini-carte canvas{ display:block; width:100%; height:100%; }
+  .mini-vide{ position:absolute; inset:0; display:grid; place-items:center;
+              margin:0; color:var(--craie-400); font-size:13px; }
+  .cote-adresse{ padding:18px; border-top:1px solid var(--encre-800); }
+  .cote-adresse p{ margin:0 0 14px; color:var(--craie-200); line-height:1.55; font-size:15px; }
+  .cote-adresse .btn{ width:100%; }
+
+  .coord{ list-style:none; margin:0; padding:0; display:grid; gap:2px; }
+  .coord a{ display:flex; gap:11px; align-items:center; padding:11px 10px; margin-inline:-10px;
+            border-radius:var(--r-m); color:var(--craie-100); text-decoration:none;
+            font-size:14.5px; font-weight:600; }
+  .coord a:hover{ background:var(--encre-850); }
+  .coord svg{ color:var(--craie-400); flex:none; }
+  .coord a:hover svg{ color:var(--rouge-300); }
+  .coord .quoi{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cote-note{ margin:14px 0 0; padding-top:14px; border-top:1px solid var(--encre-800);
+              color:var(--craie-400); font-size:13px; line-height:1.5; }
+
+  .pan-club p{ margin:0 0 14px; color:var(--craie-200); font-size:14.5px; line-height:1.55; }
+  .pan-club .btn{ width:100%; }
+
+  /* ---------- autres salles ---------- */
+  .autour{ border-top:1px solid var(--encre-800); padding-block:34px 44px; }
+  .autour-liste{ list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px;
+                 grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); }
+  .autour-liste a{ display:flex; gap:13px; align-items:center; padding:14px;
+                   background:var(--encre-900); border:1px solid var(--encre-800);
+                   border-radius:var(--r-l); text-decoration:none; color:inherit;
+                   transition:border-color .15s, background .15s; }
+  .autour-liste a:hover{ border-color:var(--encre-600); background:var(--encre-850); }
+  .autour-liste .sig{ flex:none; width:46px; height:46px; border-radius:var(--r-m);
+                      display:grid; place-items:center; font-family:Anton, Impact, sans-serif;
+                      font-size:15px; letter-spacing:.02em; background:var(--encre-800);
+                      color:var(--craie-200); }
+  .autour-liste .t{ min-width:0; }
+  .autour-liste .t b{ display:block; font-size:15px; overflow:hidden;
+                      text-overflow:ellipsis; white-space:nowrap; }
+  .autour-liste .t span{ font-size:13px; color:var(--craie-400); }
+
+  .introuvable-in{ padding-block:90px 110px; text-align:center; }
+  .introuvable h1{ font-family:Anton, Impact, sans-serif; font-weight:400;
+                   text-transform:uppercase; font-size:clamp(28px,5vw,44px); margin:0 0 12px; }
+  .introuvable p{ color:var(--craie-200); margin:0 0 24px; }
+
+  @media (max-width: 900px){
+    .corps{ grid-template-columns:1fr; }
+    .cote-collant{ position:static; }
+    .galerie{ grid-template-columns:1fr 1fr; grid-template-rows:180px 96px; }
+    .galerie .vis:first-child{ grid-row:auto; grid-column:span 2; }
+    .galerie .vis:nth-child(n+4){ display:none; }
+    .tete-in{ align-items:flex-start; }
+    /* « Appeler la salle » se coupait en deux lignes dans une demi-largeur :
+       sur mobile chaque action prend sa propre ligne */
+    .tete-actions{ width:100%; }
+    .tete-actions .btn{ flex:1 1 100%; }
+    .semaine > li{ grid-template-columns:1fr; gap:6px; }
   }
-
-  /* ---------- barre de filtres ---------- */
-  .filtres-bloc{border-bottom:1px solid var(--encre-800); background:var(--encre-950)}
-  .compte{padding-top:22px; font-size:clamp(17px,2vw,21px); font-weight:800; letter-spacing:-.01em;
-    color:var(--craie-100)}
-  .compte b{color:var(--rouge-300)}
-  .rangee-filtres{display:flex; flex-wrap:wrap; gap:10px; padding-block:16px 18px;
-    margin-inline:0; padding-inline:0}
-  @media (max-width:900px){
-  .rangee-filtres{flex-wrap:nowrap; overflow-x:auto;
-    scrollbar-width:none; -ms-overflow-style:none;
-    margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter)}
-  .rangee-filtres::-webkit-scrollbar{display:none} }
-  .puce{flex:0 0 auto; display:inline-flex; align-items:center; gap:8px; min-height:40px;
-    padding:9px 16px; border:1px solid var(--encre-700); border-radius:999px;
-    background:var(--encre-900); font-family:Manrope,system-ui,sans-serif;
-    font-size:13.5px; font-weight:700; color:var(--craie-200); white-space:nowrap;
-    text-decoration:none; cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .puce:hover{border-color:rgba(250,1,23,.5); color:var(--craie-100)}
-  .puce[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--craie-100);
-    background:rgba(224,0,22,.16); box-shadow:0 0 22px -6px rgba(250,1,23,.75)}
-  .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--encre-800)}
-
-  /* ---------- deux colonnes ---------- */
-  .split{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);
-    gap:0; align-items:start}
-  .colonne-liste{padding:clamp(20px,2.4vw,28px) clamp(16px,2.4vw,28px)
-    clamp(40px,5vw,64px) var(--gutter)}
-  .colonne-carte{position:sticky; top:calc(74px + env(safe-area-inset-top,0px));
-    height:calc(100svh - 74px - env(safe-area-inset-top,0px));
-    padding:clamp(20px,2.4vw,28px) var(--gutter) clamp(20px,2.4vw,28px) clamp(16px,2.4vw,28px)}
-
-  /* ---------- liste de résultats ---------- */
-  .liste{display:flex; flex-direction:column; gap:14px}
-  .res{position:relative; display:grid; grid-template-columns:132px minmax(0,1fr); gap:0;
-    border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900);
-    overflow:hidden; transition:border-color .16s ease, box-shadow .16s ease}
-  .res:hover, .res.actif{border-color:rgba(250,1,23,.55);
-    box-shadow:0 0 0 1px rgba(250,1,23,.25), 0 24px 50px -34px rgba(0,0,0,.95)}
-  .res-vignette{position:relative; display:grid; place-items:center;
-    border-right:1px solid var(--encre-800);
-    background:
-      radial-gradient(120% 90% at 50% 118%, rgba(224,0,22,.30) 0%, rgba(224,0,22,0) 62%),
-      linear-gradient(145deg,#26262C 0%,#151518 55%,#0D0D0F 100%)}
-  .res-vignette::after{content:""; position:absolute; inset:0;
-    background:repeating-linear-gradient(115deg, rgba(245,243,239,.026) 0 1px, transparent 1px 13px)}
-  .res-num{position:absolute; top:9px; left:9px; z-index:2; display:grid; place-items:center;
-    width:24px; height:24px; border-radius:50%; background:var(--rouge-600); color:#fff;
-    font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
-    box-shadow:0 0 18px -2px rgba(250,1,23,.9)}
-  .res-init{position:relative; z-index:1; font-family:Anton,"Arial Narrow",sans-serif;
-    font-size:34px; line-height:1; letter-spacing:.04em; color:rgba(245,243,239,.13);
-    text-shadow:0 0 26px rgba(250,1,23,.28)}
-  .res-corps{display:flex; flex-direction:column; gap:9px; padding:15px 16px}
-  .res-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
-  .res-nom{font-size:16px; font-weight:800; line-height:1.25; letter-spacing:-.01em;
-    color:var(--craie-100)}
-  .res-nom a{color:inherit; text-decoration:none}
-  .res-nom a::after{content:""; position:absolute; inset:0}
-  .res-chips{display:flex; flex-wrap:wrap; gap:6px}
-  .note{display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
-    font-size:13px; font-weight:800; color:var(--craie-100); font-variant-numeric:tabular-nums}
-  .note svg{color:var(--craie-100)}
-  .note small{font-size:11.5px; font-weight:600; color:var(--craie-500)}
-  .mini-chip{padding:4px 9px; border:1px solid var(--encre-700); border-radius:999px;
-    font-size:11px; font-weight:700; color:var(--craie-400)}
-  .res-meta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px;
-    font-size:12.5px; color:var(--craie-400)}
-  .res-meta svg{flex-shrink:0; color:var(--craie-500)}
-  .res-meta .paire{display:inline-flex; align-items:center; gap:6px}
-  .res-ouvert{color:var(--vert); font-weight:700}
-  .res-ouvert::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--vert);
-    box-shadow:0 0 8px 1px rgba(63,191,135,.7)}
-  .res-etiq{position:absolute; top:9px; right:9px; z-index:2; padding:4px 9px; border-radius:999px;
-    font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
-    background:rgba(224,0,22,.9); color:#fff}
-  @media (max-width:520px){
-    .res{grid-template-columns:96px minmax(0,1fr)}
-    .res-init{font-size:24px}
-    .res-corps{padding:13px 13px}
-    .res-nom{font-size:15px}
-  }
-
-  /* rien trouvé */
-  .vide{padding:clamp(34px,5vw,56px) clamp(22px,3vw,36px); text-align:center;
-    border:1px dashed var(--encre-700); border-radius:var(--r-l); background:var(--encre-900)}
-  .vide h2{font-size:clamp(20px,2.4vw,26px); line-height:1.1; color:var(--craie-100)}
-  .vide p{margin-top:12px; margin-inline:auto; max-width:44ch; font-size:14.5px; line-height:1.6;
-    color:var(--craie-400)}
-  .vide-villes{margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:9px}
-
-  /* ---------- carte ---------- */
-  .carte-boite{position:relative; height:100%; min-height:380px; overflow:hidden;
-    border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900)}
-  #plan{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
-  #plan.tire{cursor:grabbing}
-  .carte-haut{position:absolute; z-index:2; top:12px; left:12px; right:12px;
-    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-    pointer-events:none}
-  .carte-etiq{padding:7px 13px; border-radius:999px; border:1px solid var(--encre-700);
-    background:rgba(10,10,11,.82); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-    font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
-    color:var(--craie-200)}
-  .carte-nord{display:grid; place-items:center; width:34px; height:34px; border-radius:50%;
-    border:1px solid var(--encre-700); background:rgba(10,10,11,.82);
-    font-size:11px; font-weight:800; color:var(--craie-400)}
-  .carte-bas{position:absolute; z-index:2; left:12px; bottom:12px; right:12px;
-    display:flex; align-items:center; gap:12px; pointer-events:none}
-  .echelle{display:inline-flex; align-items:center; gap:8px; padding:5px 10px; border-radius:6px;
-    background:rgba(10,10,11,.7); font-size:11px; font-weight:700; color:var(--craie-400);
-    font-variant-numeric:tabular-nums}
-  .echelle i{display:block; height:7px; width:60px; border:1px solid var(--craie-500);
-    border-top:0}
-  .carte-zoom{position:absolute; z-index:3; right:12px; bottom:12px;
-    display:flex; flex-direction:column; align-items:flex-end; gap:6px}
-  .carte-zoom button{display:grid; place-items:center; width:34px; height:34px; padding:0;
-    border:1px solid var(--encre-700); border-radius:8px; background:rgba(10,10,11,.88);
-    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-    font-family:Manrope,system-ui,sans-serif; font-size:17px; font-weight:800;
-    color:var(--craie-200); cursor:pointer;
-    transition:border-color .15s ease, color .15s ease}
-  .carte-zoom button:hover{border-color:rgba(250,1,23,.55); color:var(--craie-100)}
-  .carte-zoom .z-large{width:auto; height:32px; padding:0 13px; font-size:12px; font-weight:800}
-
-  /* ---------- bascule mobile ---------- */
-  .bascule{display:none}
-  @media (max-width:980px){
-    .split{grid-template-columns:1fr}
-    .colonne-liste{padding-inline:var(--gutter); padding-bottom:96px}
-    .colonne-carte{position:static; height:auto; padding:0 var(--gutter) 96px}
-    .carte-boite{height:min(62svh,520px)}
-    body.vue-carte .colonne-liste{display:none}
-    body:not(.vue-carte) .colonne-carte{display:none}
-    .bascule{display:flex; position:fixed; z-index:50; left:50%; translate:-50% 0;
-      bottom:calc(18px + env(safe-area-inset-bottom,0px));
-      padding:5px; gap:4px; border-radius:999px; border:1px solid var(--encre-700);
-      background:rgba(10,10,11,.92); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
-      box-shadow:0 20px 44px -20px rgba(0,0,0,.95)}
-    .bascule button{display:inline-flex; align-items:center; gap:8px; min-height:42px;
-      padding:10px 20px; border:0; border-radius:999px; background:transparent;
-      font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
-      color:var(--craie-400); cursor:pointer; transition:color .15s ease, background-color .15s ease}
-    .bascule button[aria-pressed="true"]{background:var(--rouge-600); color:#fff}
-    /* on remonte les commandes du plan pour qu'elles ne passent pas sous la bascule */
-    .carte-zoom{bottom:58px}
-    .carte-bas{bottom:62px}
-  }
-
-  @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
-
-  /* repère « Voir la fiche » : la carte entière est déjà le lien, c'est donc un
-     simple indice visuel et non un second lien à tabuler */
-  .res-fiche{ display:inline-flex; gap:6px; align-items:center; margin-top:10px;
-              font-size:13.5px; font-weight:800; color:var(--rouge-300); }
-  .res:hover .res-fiche{ text-decoration:underline; }
-  .res-fiche svg{ transition:transform .15s; }
-  .res:hover .res-fiche svg{ transform:translateX(3px); }
-
-  /* la barre collante ne doit pas recouvrir la carte qu'on vient de sélectionner
-     depuis la carte : on réserve sa hauteur au défilement */
-  .res{ scroll-margin-top:112px; }
-  /* ---------- suggestions de villes ---------- */
-  .sug{position:absolute; z-index:60; top:calc(100% + 10px); left:0; right:0;
-    min-width:236px; margin:0; padding:6px; list-style:none; border-radius:14px;
-    background:#101013; border:1px solid rgba(245,243,239,.14);
-    box-shadow:0 34px 76px -28px rgba(0,0,0,.96), inset 0 1px 0 rgba(255,255,255,.05);
-    max-height:min(320px,52vh); overflow:auto; overscroll-behavior:contain}
-  .sug li{display:flex; align-items:center; gap:11px; min-height:44px; padding:10px 13px;
-    border-radius:10px; cursor:pointer; font-size:14.5px; font-weight:700;
-    color:var(--craie-200); transition:background-color .12s ease, color .12s ease}
-  .sug li svg{flex-shrink:0; color:var(--craie-500)}
-  .sug li:hover,.sug li[aria-selected="true"]{background:rgba(245,243,239,.07); color:var(--craie-100)}
-  .sug li:hover svg,.sug li[aria-selected="true"] svg{color:var(--rouge-300)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -324,74 +299,134 @@
 <path id="fs-mot-fight" fill-rule="evenodd" d="M15.28 372.2L-0.5 447C-0.25 447.21 0.75 448.05 1 448.26L20.73 448.02L26.64 420.92L72.59 420.7L75.54 408C75.45 407.17 75.09 403.87 75 403.04L30.51 402.81L32.92 390.93L87.99 390.69L91.45 377C91.38 376.2 91.08 372.99 91 372.18L15.28 372.2ZM103.07 372.09L87.85 442L87.49 448.33L106 448.32C106.46 448.1 108.29 447.22 108.74 447L124.57 372.32L103.07 372.09ZM156.31 372.24L146.14 375.4L138.34 380.61L129.98 393.1L123.58 424.9L124.82 433.81L127.95 440.37L133.84 445.63L143.37 448.38L199.46 448.37L204.57 446.06L207.31 438L213.49 407.56L213.45 402.81L169.57 403.08L165.81 419.53L189.76 419.81L187.73 429.3L151.65 429.29L146.26 425.3L146.76 416L150.6 398.53L155.63 392.43L162.7 390.88L213 390.56C213.54 390.13 215.71 388.43 216.25 388L219.57 372.13L156.31 372.24ZM233.24 372.17L217.08 448.28L238.69 448.31L245.18 418.8L284.69 418.83L279 447.09C279.33 447.29 280.67 448.12 281 448.33L300.39 448.12L316.33 372.24L294.87 372.25L288.63 400.17L254 400.22C253.2 400.02 249.98 399.2 249.18 399L254.69 372.34L233.24 372.17ZM326.57 372.15L324.03 377.09L321.51 390.73L350 390.7C350.26 390.92 351.29 391.78 351.55 392L339.78 447C340.15 447.23 341.63 448.14 342 448.36L360 448.06C360.33 447.53 361.67 445.42 362 444.89L373.4 391.07L403.62 390.65L407.76 372.2L326.57 372.15Z"/>
 <path id="fs-mot-scale" fill-rule="evenodd" d="M446.1 371.81L431.93 377.91L425.48 386.15L421.83 400.65L424.05 409.8L432.59 417.57L479 418.43C479.37 418.69 480.86 419.74 481.23 420L481.7 424.79L478.83 429.38L422.14 429.49L418.02 433.89L415.33 447.85L479.91 447.83L488.91 445.13L497.69 436.94L503.21 424.18L503.35 415.45L500.72 408.76L490.68 401.2L447.45 401.08L444 397.27C444 396.73 443.31 395 443.97 394C444.64 393 447.33 391.73 448 391.28L501.5 391C501.75 390.9 502.75 390.51 503 390.41L505.28 381L505.51 371.86L446.1 371.81ZM542.96 371.82L527.63 377.6L518.59 388.4L513.68 400L509.92 420L509.63 430.68L511.84 437.08L516.16 443.17L524.04 447.8L586.72 447.78L589.93 429.47L536.02 429.34L531.43 423.66L535.83 399.63L542.26 391.4L598.21 391.06L601.45 375.18L601.41 371.86L542.96 371.82ZM648.23 371.88L641.9 378L593.37 446C593.47 446.27 593.89 447.36 594 447.63L616.16 447.63L622.54 437.37L624.22 436.17L654.29 392.73L663.12 419.24L640.67 419.6L635.09 429L628.34 435.69L667 435.91C667.4 436.26 668.99 437.65 669.39 438L672.19 447.82L695.35 447.61L670.61 374C670.01 373.64 667.6 372.21 667 371.85L648.23 371.88ZM719.94 371.82L715.78 375.93L715.22 385C714.98 385.17 714.02 385.83 713.78 386L701.71 447.78L773.11 447.84L777.44 429.51L726.86 429.37L737.62 374C737.52 373.66 737.1 372.32 737 371.98L719.94 371.82ZM801 371.96C800.48 372.3 798.38 373.66 797.85 374L795.79 380L782.32 447.82L856.84 447.8L859.39 437L859.58 429.42L810 429.4C809.63 429.34 808.12 429.57 807.79 429C807.47 428.43 807.99 426.5 808.03 426L810 417.86L856.25 417.68L859.42 401.57L813.64 401.49L814 395.27C814.33 394.59 815.67 391.89 816 391.21L867.37 391.06L871.74 371.88L801 371.96Z"/>
 </defs></svg>
+<a class="skip" href="#contenu">Aller au contenu</a>
 
-<a class="skip" href="#resultats">Aller aux résultats</a>
-
-<header class="barre-appli">
-  <div class="wrap barre-in">
+<header class="site-header">
+  <div class="wrap header-in">
     <a class="brand" href="index.html" aria-label="FightScale, accueil">
-      <svg viewBox="200 0 452 300" width="42" height="28" role="img" aria-label="FightScale">
+      <svg viewBox="200 0 452 300" width="48" height="32" role="img" aria-label="FightScale">
         <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
       </svg>
-      <svg class="brand-mot" viewBox="0 372 872 77" width="132" height="11.7" aria-hidden="true">
+      <svg class="brand-mot" viewBox="0 372 872 77" width="150" height="13.3" aria-hidden="true">
         <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
       </svg>
     </a>
-
-    <form class="champ-ville" id="form-ville" role="search">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
-      <label class="skip" for="q-ville">Ville</label>
-      <input id="q-ville" name="ville" autocomplete="address-level2" placeholder="Paris, Lyon, Marseille…">
-      <button class="btn btn-rouge" type="submit">Rechercher</button>
-    </form>
-
-    <nav class="barre-nav" aria-label="Navigation principale">
-      <a class="nav-link" href="index.html#disciplines">Disciplines</a>
-      <a class="nav-link" href="index.html#villes">Villes</a>
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a class="nav-link" href="recherche.html">Rechercher une salle</a>
+      <a class="nav-link" href="recherche.html">Nos salles</a>
+      <a class="nav-link" href="index.html#clubs">Acquisition</a>
+      <a class="nav-link" href="index.html#connexion">Connexion</a>
       <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>
   </div>
 </header>
 
 <main id="contenu">
+  <div class="fiche" id="fiche" hidden>
 
-  <div class="filtres-bloc">
-    <div class="wrap">
-      <h1 class="compte" id="compte">Chargement des salles…</h1>
-      <div class="rangee-filtres" id="filtres" role="group" aria-label="Filtrer les résultats"></div>
-    </div>
-  </div>
+    <nav class="fil" aria-label="Fil d'Ariane">
+      <div class="wrap fil-in">
+        <a href="index.html">Accueil</a>
+        <span aria-hidden="true">/</span>
+        <a href="recherche.html" id="fil-ville">Salles</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" id="fil-nom"></span>
+      </div>
+    </nav>
 
-  <div class="split">
-    <section class="colonne-liste" id="resultats" aria-label="Salles trouvées">
-      <div class="liste" id="liste"></div>
+    <section class="visuels">
+      <div class="wrap">
+        <div class="galerie" id="galerie"></div>
+      </div>
     </section>
 
-    <aside class="colonne-carte" aria-label="Carte des salles">
-      <div class="carte-boite">
-        <canvas id="plan" aria-label="Plan de proximité des salles autour du centre-ville"></canvas>
-        <div class="carte-haut">
-          <span class="carte-etiq" id="carte-ville">Marseille</span>
-          <span class="carte-nord" aria-hidden="true">N</span>
+    <section class="tete">
+      <div class="wrap tete-in">
+        <div class="tete-texte">
+          <h1 class="display" id="s-nom"></h1>
+          <p class="tete-meta" id="s-meta"></p>
+          <ul class="chips" id="s-disc"></ul>
         </div>
-        <div class="carte-zoom">
-          <button type="button" id="z-plus" aria-label="Zoomer">+</button>
-          <button type="button" id="z-moins" aria-label="Dézoomer">&minus;</button>
-          <button type="button" id="z-france" class="z-large">Toute la France</button>
-        </div>
-        <div class="carte-bas">
-          <span class="echelle"><i id="echelle-barre"></i><span id="echelle-txt">1 km</span></span>
-        </div>
+        <div class="tete-actions" id="s-actions"></div>
       </div>
-    </aside>
+    </section>
+
+    <div class="wrap corps">
+
+      <div class="col-principale">
+
+        <section class="pan" id="presentation">
+          <h2 class="pan-titre">La salle</h2>
+          <div class="prose" id="s-presentation"></div>
+          <dl class="faits" id="s-faits"></dl>
+        </section>
+
+        <section class="pan" id="disciplines">
+          <h2 class="pan-titre">Disciplines enseignées</h2>
+          <ul class="grille-disc" id="s-grille-disc"></ul>
+        </section>
+
+        <section class="pan" id="horaires">
+          <h2 class="pan-titre">Planning de la semaine</h2>
+          <p class="pan-sous" id="s-amplitude"></p>
+          <ol class="semaine" id="s-semaine"></ol>
+        </section>
+
+      </div>
+
+      <aside class="col-cote">
+        <div class="cote-collant">
+
+          <section class="pan pan-carte">
+            <div class="mini-carte">
+              <canvas id="mini" aria-label="Plan du quartier de la salle"></canvas>
+              <noscript><p class="mini-vide">Le plan a besoin de JavaScript.</p></noscript>
+            </div>
+            <div class="cote-adresse">
+              <h2 class="cote-titre">Adresse</h2>
+              <p id="s-adresse"></p>
+              <a class="btn btn-ligne" id="s-itineraire" target="_blank" rel="noopener">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.4 8.6-2 4.8-4.8 2 2-4.8Z"/></svg>Ouvrir l'itinéraire
+              </a>
+            </div>
+          </section>
+
+          <section class="pan">
+            <h2 class="cote-titre">Contacter la salle</h2>
+            <ul class="coord" id="s-coord"></ul>
+            <p class="cote-note">Dites que vous venez de FightScale, la salle saura d'où
+              vous arrivez.</p>
+          </section>
+
+          <section class="pan pan-club">
+            <h2 class="cote-titre">Vous gérez cette salle&nbsp;?</h2>
+            <p>Cette fiche est gratuite. Réclamez-la pour corriger les informations,
+              ajouter vos photos et tenir votre planning à jour.</p>
+            <a class="btn btn-rouge" href="clubs.html">Réclamer ma fiche</a>
+          </section>
+
+        </div>
+      </aside>
+
+    </div>
+
+    <section class="section autour">
+      <div class="wrap">
+        <h2 class="pan-titre" id="autour-titre">Autres salles</h2>
+        <ul class="autour-liste" id="s-autour"></ul>
+      </div>
+    </section>
+
   </div>
 
+  <div class="introuvable" id="introuvable" hidden>
+    <div class="wrap introuvable-in">
+      <h1 class="display">Cette salle n'existe pas</h1>
+      <p>Le lien est peut-être incomplet, ou la fiche a été retirée de l'annuaire.</p>
+      <a class="btn btn-rouge" href="recherche.html">Voir toutes les salles</a>
+    </div>
+  </div>
 </main>
-
-<div class="bascule" role="group" aria-label="Affichage">
-  <button type="button" id="b-liste" aria-pressed="true">Liste</button>
-  <button type="button" id="b-carte" aria-pressed="false">Carte</button>
-</div>
 
 <footer class="site-footer">
   <div class="wrap footer-haut">
@@ -549,741 +584,274 @@ SALLES.forEach(function (s){ PAR_SLUG[s[11].slug] = s; });
 function salleParSlug(sl){ return PAR_SLUG[sl] || null; }
 function lienFiche(s){ return 'salle.html?s=' + encodeURIComponent(s[11].slug); }
 
-var VILLES_FR = [["Agen",44.2004,0.6333],["Aix-en-Provence",43.52,5.45],["Ajaccio",41.9271,8.7283],["Albi",43.9396,2.1512],["Alençon",48.428,0.0896],["Amiens",49.9004,2.3],["Angers",47.48,-0.53],["Angoulême",45.6432,0.1487],["Annecy",45.9,6.1167],["Antibes",43.5801,7.0997],["Argenteuil",48.9482,2.2413],["Arles",43.7097,4.6374],["Arras",50.2833,2.7833],["Asnières-sur-Seine",48.9173,2.2873],["Aubagne",43.2907,5.5648],["Aulnay-sous-Bois",48.9432,2.4969],["Aurillac",44.9146,2.4406],["Auxerre",47.8004,3.5666],["Avignon",43.9451,4.8374],["Bar-le-Duc",48.7696,5.1748],["Bastia",42.7032,9.45],["Bayeux",49.278,-0.7051],["Bayonne",43.4856,-1.4679],["Beauvais",49.4317,2.0892],["Belfort",47.6432,6.8565],["Berck",50.4145,1.5823],["Bergerac",44.8501,0.4858],["Besançon",47.23,6.03],["Biarritz",43.4733,-1.5616],["Blois",47.5949,1.3194],["Bordeaux",44.852,-0.597],["Boulogne-Billancourt",48.8404,2.2401],["Boulogne-sur-Mer",50.7298,1.6075],["Bourg-en-Bresse",46.202,5.2395],["Bourges",47.0837,2.4],["Brest",48.3904,-4.495],["Brive-la-Gaillarde",45.1581,1.5193],["Béthune",50.5297,2.6423],["Béziers",43.3505,3.21],["Caen",49.1838,-0.35],["Cahors",44.4434,1.4361],["Calais",50.9504,1.8333],["Cambrai",50.1807,3.2458],["Cannes",43.5563,7.0042],["Carcassonne",43.2139,2.3409],["Chalon-sur-Saône",46.7883,4.8529],["Chambéry",45.585,5.904],["Charleville-Mézières",49.7688,4.7251],["Chartres",48.4489,1.5079],["Chaumont",48.1092,5.1337],["Cherbourg-en-Cotentin",49.6408,-1.6103],["Cholet",47.0547,-0.8714],["Châteauroux",46.808,1.7067],["Châtellerault",46.8086,0.5416],["Clermont-Ferrand",45.78,3.08],["Colmar",48.0791,7.3536],["Colombes",48.9237,2.2473],["Compiègne",49.4069,2.8241],["Concarneau",47.8966,-3.9083],["Courbevoie",48.897,2.2511],["Créteil",48.7814,2.4525],["Dieppe",49.9337,1.0833],["Dijon",47.3304,5.03],["Dole",47.0898,5.4955],["Douai",50.375,3.0767],["Dunkerque",51.0311,2.3488],["Fontainebleau",48.4172,2.7072],["Forbach",49.1924,6.8836],["Fréjus",43.4442,6.7406],["Granville",48.8338,-1.5595],["Grenoble",45.1804,5.72],["Haguenau",48.8143,7.8321],["Hyères",43.1213,6.1525],["Istres",43.5487,4.963],["La Roche-sur-Yon",46.6675,-1.4288],["La Rochelle",46.1667,-1.15],["Laon",49.5707,3.6267],["Laval",48.0727,-0.77],["Le Havre",49.505,0.105],["Le Mans",48.0044,0.2026],["Le Puy-en-Velay",45.0347,3.903],["Le Touquet-Paris-Plage",50.5098,1.5895],["Lens",50.4375,2.8195],["Lille",50.6519,3.0781],["Limoges",45.83,1.25],["Lisieux",49.148,0.2377],["Lorient",47.7504,-3.3666],["Lyon",45.772,4.8281],["Mantes-la-Jolie",48.9984,1.6912],["Marseille",43.2919,5.3731],["Martigues",43.375,5.0555],["Meaux",48.9564,2.9032],["Melun",48.5333,2.6666],["Metz",49.1203,6.18],["Mont-de-Marsan",43.8984,-0.4888],["Montargis",47.998,2.7353],["Montauban",44.0193,1.3588],["Montbéliard",47.5122,6.7985],["Montluçon",46.3468,2.595],["Montpellier",43.6104,3.87],["Montreuil",46.3961,-0.8434],["Morlaix",48.5996,-3.8198],["Moulins",48.009,-1.3632],["Mulhouse",47.7504,7.35],["Mâcon",46.3035,4.8241],["Mérignac",44.8309,-0.6786],["Nancy",48.6837,6.2],["Nanterre",48.8974,2.2024],["Nantes",47.2104,-1.59],["Narbonne",43.1777,3.0116],["Nevers",46.9837,3.1667],["Nice",43.717,7.2631],["Niort",46.3257,-0.4449],["Nîmes",43.8304,4.35],["Orléans",47.9004,1.9],["Paris",48.8581,2.353],["Pau",43.3231,-0.3406],["Perpignan",42.7,2.9],["Poitiers",46.582,0.3615],["Pontoise",49.0534,2.0947],["Périgueux",45.192,0.7183],["Quimper",47.9911,-4.087],["Reims",49.2504,4.03],["Rennes",48.1,-1.67],["Roanne",46.0333,4.0667],["Rodez",44.3592,2.5696],["Romans-sur-Isère",45.0525,5.0631],["Roubaix",50.6914,3.1822],["Rouen",49.4304,1.08],["Royan",45.6372,-1.0264],["Rueil-Malmaison",48.8725,2.1795],["Saint-Brieuc",48.51,-2.7625],["Saint-Denis",48.9288,2.3577],["Saint-Louis",47.602,7.5381],["Saint-Lô",49.1095,-1.078],["Saint-Malo",48.6498,-1.9868],["Saint-Nazaire",47.2767,-2.2321],["Saint-Quentin",49.8493,3.2814],["Saint-Étienne",45.4304,4.38],["Saintes",45.7451,-0.6307],["Salon-de-Provence",43.6476,5.1053],["Saumur",47.2687,-0.0693],["Sedan",49.6982,4.9406],["Sens",48.1945,3.2972],["Soissons",49.3775,3.3227],["Strasbourg",48.58,7.75],["Sète",43.4104,3.6999],["Sélestat",48.2758,7.4641],["Tarbes",43.2333,0.0833],["Thionville",49.3517,6.1596],["Toulon",43.1342,5.9188],["Toulouse",43.6219,1.448],["Tourcoing",50.7219,3.1532],["Tours",47.3804,0.6999],["Troyes",48.3404,4.0834],["Valence",44.9285,4.9127],["Valenciennes",50.3541,3.5117],["Vannes",47.6567,-2.7441],["Verdun",49.158,5.3883],["Versailles",48.8005,2.1333],["Vesoul",47.6233,6.1545],["Vichy",46.1171,3.4167],["Vierzon",47.2349,2.058],["Villeurbanne",45.7717,4.8813],["Vitrolles",43.4575,5.2595],["Vitry-sur-Seine",48.7899,2.3984],["Épinal",48.1746,6.4661],["Évreux",49.0222,1.1563],["Évry",48.6282,2.4451]];
-/* ---------- suggestions de villes ----------
-   Le champ « Où » propose les grandes villes dès la première lettre, comme sur
-   les plateformes de réservation : flèches, Entrée, Échap, clic. La liste et
-   ses coordonnées viennent du découpage communal réel (voir _villes.js). */
-(function (racine){
+/* Vignette de carte de la fiche salle.
 
-  function aplati(s){
-    return (s || '').toLowerCase().normalize ?
-      (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '') :
-      (s || '').toLowerCase().replace(/[^a-z]/g, '');
+   Volontairement séparée du rendu de la page de résultats : ici la carte est
+   figée, cadrée serré sur une seule adresse, sans filtres, sans moteur
+   d'étiquettes et sans interaction. Les deux pages partagent ce qui compte
+   vraiment, le décodage et la projection, via _geobase.js. */
+
+var MC_COUCHES = ['fr', 'terre', 'lac', 'riv', 'urb', 'com', 'iris', 'r1', 'r2', 'r3'];
+
+function miniCarte(cv, lat, lon, largeurKm){
+  var BB = {}, ctx = cv.getContext('2d');
+  var W = 0, H = 0, DPR = 1, k = 0;
+
+  prepCouches(MC_COUCHES, BB);
+
+  function sx(l){ return W / 2 + (l - lon) * k; }
+  function sy(a){ return H / 2 - (merc(a) - merc(lat)) * k; }
+
+  function cadre(){
+    return [lon - (W / 2) / k, invMerc(merc(lat) - (H / 2) / k),
+            lon + (W / 2) / k, invMerc(merc(lat) + (H / 2) / k)];
+  }
+  function visible(bb, c){
+    return !(bb[2] < c[0] || bb[0] > c[2] || bb[3] < c[1] || bb[1] > c[3]);
+  }
+  function chemin(cle, c){
+    var tab = GEO[cle], bbs = BB[cle];
+    ctx.beginPath();
+    for (var i = 0; i < tab.length; i++){
+      if (!visible(bbs[i], c)) continue;
+      var a = tab[i];
+      ctx.moveTo(sx(a[0]), sy(a[1]));
+      for (var j = 2; j < a.length; j += 2) ctx.lineTo(sx(a[j]), sy(a[j + 1]));
+    }
+  }
+  function remplis(cle, c, couleur){
+    chemin(cle, c); ctx.fillStyle = couleur; ctx.fill();
+  }
+  function trace(cle, c, couleur, ep){
+    chemin(cle, c); ctx.strokeStyle = couleur; ctx.lineWidth = ep; ctx.stroke();
   }
 
-  var PIN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-    'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    '<path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>';
+  function dessine(){
+    var c = cadre();
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-  racine.villeParNom = function (saisie){
-    var c = aplati(saisie);
-    if (!c) return null;
-    for (var i = 0; i < VILLES_FR.length; i++)
-      if (aplati(VILLES_FR[i][0]) === c) return VILLES_FR[i];
-    for (var j = 0; j < VILLES_FR.length; j++)
-      if (aplati(VILLES_FR[j][0]).indexOf(c) === 0) return VILLES_FR[j];
-    return null;
-  };
+    ctx.fillStyle = '#0A1017'; ctx.fillRect(0, 0, W, H);          /* la mer */
+    remplis('terre', c, '#141418');                                /* les voisins */
+    remplis('fr', c, '#1B1B21');
+    remplis('urb', c, '#26262C');                                  /* le tissu urbain */
+    trace('iris', c, 'rgba(245,243,239,.055)', 1);                 /* les quartiers */
+    trace('com', c, 'rgba(245,243,239,.085)', 1);                  /* les communes */
+    remplis('lac', c, '#0E1A26');
+    trace('riv', c, 'rgba(90,134,182,.34)', 1.1);
 
-  racine.villeLaPlusProche = function (lat, lon, maxKm){
-    var choix = null, mini = 1e9;
-    for (var i = 0; i < VILLES_FR.length; i++){
-      var v = VILLES_FR[i];
-      var dy = (v[1] - lat) * 111.32;
-      var dx = (v[2] - lon) * 111.32 * Math.cos((v[1] + lat) / 2 * Math.PI / 180);
-      var d = Math.sqrt(dx * dx + dy * dy);
-      if (d < mini){ mini = d; choix = v; }
-    }
-    return (maxKm && mini > maxKm) ? null : choix;
-  };
+    /* les routes en deux passes, gaine puis cœur, comme sur la page de résultats :
+       [couche, épaisseur de la gaine, épaisseur du cœur, couleur du cœur] */
+    var ROUTES = [['r3', 3.4, 1.5, 'rgba(198,192,184,.20)'],
+                  ['r2', 4.6, 2.3, 'rgba(214,208,198,.30)'],
+                  ['r1', 6.0, 3.2, 'rgba(224,196,150,.46)']];
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ROUTES.forEach(function (r){ trace(r[0], c, '#0F0F13', r[1]); });
+    ROUTES.forEach(function (r){ trace(r[0], c, r[3], r[2]); });
 
-  /* champ : l'input ; surChoix(ville) : ce qu'on fait quand une ville est retenue */
-  racine.suggestions = function (champ, surChoix){
-    var boite = document.createElement('ul');
-    boite.className = 'sug';
-    boite.setAttribute('role', 'listbox');
-    boite.hidden = true;
-    champ.parentNode.appendChild(boite);
-    champ.setAttribute('role', 'combobox');
-    champ.setAttribute('aria-autocomplete', 'list');
-    champ.setAttribute('aria-expanded', 'false');
-    champ.setAttribute('autocomplete', 'off');
-    var lot = [], sel = -1;
+    epingle(sx(lon), sy(lat));
+  }
 
-    function ferme(){
-      boite.hidden = true; sel = -1;
-      champ.setAttribute('aria-expanded', 'false');
-    }
-    function marque(i){
-      sel = i;
-      Array.prototype.forEach.call(boite.children, function (li, n){
-        li.setAttribute('aria-selected', String(n === i));
-        if (n === i) li.scrollIntoView({ block: 'nearest' });
-      });
-    }
-    function cherche(){
-      var q = aplati(champ.value);
-      if (!q){ lot = []; ferme(); return; }
-      var debut = [], dedans = [];
-      for (var i = 0; i < VILLES_FR.length; i++){
-        var p = aplati(VILLES_FR[i][0]).indexOf(q);
-        if (p === 0) debut.push(VILLES_FR[i]);
-        else if (p > 0) dedans.push(VILLES_FR[i]);
-      }
-      lot = debut.concat(dedans).slice(0, 7);
-      if (!lot.length){ ferme(); return; }
-      boite.innerHTML = lot.map(function (v, i){
-        return '<li role="option" aria-selected="false" data-i="' + i + '">' +
-               PIN + '<span>' + v[0] + '</span></li>';
-      }).join('');
-      boite.hidden = false;
-      champ.setAttribute('aria-expanded', 'true');
-      marque(0);
-    }
-    function retient(i){
-      if (i < 0 || i >= lot.length) return false;
-      champ.value = lot[i][0];
-      ferme();
-      surChoix(lot[i]);
-      return true;
-    }
+  /* l'épingle de la salle, dessinée à la main pour rester nette en haute densité */
+  function epingle(x, y){
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
+    ctx.beginPath();
+    ctx.arc(x, y - 13, 9.5, Math.PI * 0.82, Math.PI * 0.18);
+    ctx.lineTo(x, y + 3);
+    ctx.closePath();
+    ctx.fillStyle = '#FA0117'; ctx.fill();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(x, y - 13, 3.4, 0, Math.PI * 2);
+    ctx.fillStyle = '#0A0A0B'; ctx.fill();
+  }
 
-    champ.addEventListener('input', cherche);
-    champ.addEventListener('focus', function (){ if (champ.value) cherche(); });
-    champ.addEventListener('blur', function (){ setTimeout(ferme, 120); });
-    champ.addEventListener('keydown', function (e){
-      if (boite.hidden){
-        if (e.key === 'ArrowDown'){ e.preventDefault(); cherche(); }
-        return;
-      }
-      if (e.key === 'ArrowDown'){ e.preventDefault(); marque((sel + 1) % lot.length); }
-      else if (e.key === 'ArrowUp'){ e.preventDefault(); marque((sel - 1 + lot.length) % lot.length); }
-      else if (e.key === 'Escape'){ e.preventDefault(); ferme(); }
-      else if (e.key === 'Enter'){ if (retient(sel)) e.preventDefault(); }
-      else if (e.key === 'Tab'){ retient(sel); }
-    });
-    boite.addEventListener('pointerdown', function (e){
-      var li = e.target.closest('li');
-      if (!li) return;
-      e.preventDefault();
-      retient(+li.dataset.i);
-    });
-  };
-})(window);
-/* Page de résultats : liste des salles + plan de proximité dessiné en canvas.
-   Aucun fond de carte externe n'est chargeable ici, donc le plan est construit
-   à partir des vraies coordonnées : distances et directions sont exactes. */
+  function mesure(){
+    var r = cv.getBoundingClientRect();
+    W = Math.round(r.width); H = Math.round(r.height);
+    if (!W || !H) return false;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * DPR; cv.height = H * DPR;
+    /* largeurKm au centre de la vignette : k est en pixels par degré de longitude */
+    k = W / (largeurKm / (111.32 * Math.cos(lat * Math.PI / 180)));
+    return true;
+  }
 
-var DISCIPLINES = ['MMA','Boxe anglaise','Kickboxing','Muay Thaï','Jiu-jitsu brésilien',
-                   'Grappling','Karaté','Judo'];
+  function rendu(){ if (mesure()) dessine(); }
 
-/* nom, initiales, ville, lat, lon, disciplines, note, avis, pro, horaires, ouvert aujourd'hui */
+  rendu();
+  var minuteur = null;
+  window.addEventListener('resize', function (){
+    clearTimeout(minuteur); minuteur = setTimeout(rendu, 180);
+  });
+  return { rendu: rendu };
+}
+/* Fiche salle — profil gratuit.
+   Ce que porte la fiche gratuite : adresse et localisation, horaires, disciplines,
+   présentation, coordonnées, site et réseaux. Pas de réservation : le créneau
+   confirmé appartient au palier payant, qui reste à construire. */
 
-var ICONES = {
+var I = {
+  etoile:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>',
   epingle:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>',
-  fleche:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13m-5.5-6 6 6-6 6"/></svg>',
-  etoile:'<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>'
+  tel:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.3 3.5h3l1.5 3.8-2 1.3a12 12 0 0 0 5.6 5.6l1.3-2 3.8 1.5v3a1.8 1.8 0 0 1-2 1.8A16.2 16.2 0 0 1 4.5 5.5a1.8 1.8 0 0 1 1.8-2Z"/></svg>',
+  mail:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="5" width="18.4" height="14" rx="2.4"/><path d="m3.4 6.8 8.6 6 8.6-6"/></svg>',
+  web:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.2 12h17.6M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>',
+  insta:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  fb:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.6 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.6-1.5h1.5V4.3A21 21 0 0 0 15.4 4c-2.3 0-3.8 1.4-3.8 3.9v2.5H9v3h2.6V21"/></svg>',
+  gant:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10.5V6.8A2.8 2.8 0 0 1 9.8 4h3.6A4.6 4.6 0 0 1 18 8.6v2.9a4 4 0 0 1-1.3 3l-.7.6v2.1a1.8 1.8 0 0 1-1.8 1.8H9.8A1.8 1.8 0 0 1 8 17.2v-1.4l-1-.7a3 3 0 0 1 0-4.6Z"/><path d="M8 15.8h8"/></svg>'
 };
 
-/* ---------- état ---------- */
-var etat = { ville:'Marseille', centre:[43.2965, 5.3698], discipline:'', ouvert:false,
-             pro:false, actif:-1, survolAutre:-1, resultats:[], autres:[] };
-
-function viseVille(v){ etat.ville = v[0]; etat.centre = [v[1], v[2]]; }
-function formateKm(km){
-  return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1).replace('.', ',') + ' km';
+function param(n){
+  var m = new RegExp('[?&]' + n + '=([^&]*)').exec(window.location.search);
+  return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
 }
 
-/* ---------- lecture de l'URL ---------- */
-(function lisUrl(){
-  var p = new URLSearchParams(location.search);
-  var v = villeParNom(p.get('ville') || '');
-  if (v) viseVille(v);
-  var d = p.get('discipline') || '';
-  if (DISCIPLINES.indexOf(d) >= 0) etat.discipline = d;
+function echappe(t){
+  return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;');
+}
+
+/* Le visuel d'une salle sans photo. Plutôt qu'une fausse photo ou un cadre vide,
+   un aplat de marque construit sur le sigle : c'est assumé, et une vraie photo
+   viendra simplement le remplacer. */
+function visuel(s, n, gros){
+  var d = s[11], sigle = s[1];
+  var teintes = [['#1A1A20', '#2A1116'], ['#161A20', '#1F2A33'], ['#1D1A17', '#2E2119']];
+  var t = teintes[n % teintes.length];
+  var id = 'vg-' + d.slug + '-' + n;
+  var ang = [18, -12, 34][n % 3];
+  return '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" ' +
+           'aria-label="Visuel de ' + echappe(s[0]) + '">' +
+           '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1">' +
+             '<stop offset="0" stop-color="' + t[0] + '"/>' +
+             '<stop offset="1" stop-color="' + t[1] + '"/></linearGradient></defs>' +
+           '<rect width="400" height="300" fill="url(#' + id + ')"/>' +
+           '<g transform="rotate(' + ang + ' 200 150)" opacity=".5">' +
+             '<path d="M-60 214 H460" stroke="#FA0117" stroke-width="3" opacity=".7"/>' +
+             '<path d="M-60 236 H460" stroke="#FA0117" stroke-width="1.4" opacity=".35"/>' +
+           '</g>' +
+           (gros
+             ? '<text x="200" y="176" text-anchor="middle" font-family="Anton, Impact, sans-serif" ' +
+                 'font-size="104" fill="#F5F3EF" opacity=".13">' + echappe(sigle) + '</text>'
+             : '<text x="200" y="168" text-anchor="middle" font-family="Anton, Impact, sans-serif" ' +
+                 'font-size="42" fill="#F5F3EF" opacity=".14" letter-spacing="2">' +
+                 echappe((s[5][n - 1] || s[2]).toUpperCase()) + '</text>') +
+         '</svg>';
+}
+
+function lien(href, icone, texte, dehors){
+  return '<li><a href="' + href + '"' + (dehors ? ' target="_blank" rel="noopener"' : '') +
+         '>' + icone + '<span class="quoi">' + echappe(texte) + '</span></a></li>';
+}
+
+function rendFiche(s){
+  var d = s[11];
+  document.getElementById('fiche').hidden = false;
+  document.title = s[0] + ' — ' + s[2] + ' | FightScale';
+
+  var filVille = document.getElementById('fil-ville');
+  filVille.textContent = 'Salles à ' + s[2];
+  filVille.href = 'recherche.html?ville=' + encodeURIComponent(s[2]);
+  document.getElementById('fil-nom').textContent = s[0];
+
+  /* visuels : un grand sur deux rangées puis quatre petits, la grille tombe juste */
+  document.getElementById('galerie').innerHTML =
+    [0, 1, 2, 3, 4].map(function (n){
+      return '<div class="vis">' + visuel(s, n, n === 0) +
+             (n === 0 ? '<span class="vis-marque">Photos à venir</span>' : '') + '</div>';
+    }).join('');
+
+  document.getElementById('s-nom').textContent = s[0];
+  document.getElementById('s-meta').innerHTML =
+    '<span class="note">' + I.etoile + s[6] + ' <small>(' + s[7] + ' avis)</small></span>' +
+    '<span class="sep" aria-hidden="true">·</span>' +
+    '<span>' + I.epingle + ' ' + echappe(d.adresse + ', ' + d.cp + ' ' + s[2]) + '</span>' +
+    '<span class="sep" aria-hidden="true">·</span>' +
+    '<span class="' + (s[10] ? 'ouvert' : 'ferme') + '">' +
+      (s[10] ? 'Ouvert aujourd’hui' : 'Fermé aujourd’hui') + '</span>';
+
+  document.getElementById('s-disc').innerHTML =
+    s[5].map(function (x){ return '<li>' + echappe(x) + '</li>'; }).join('');
+
+  /* la fiche gratuite met en avant le contact direct : c'est là que naît le lead */
+  var actions = ['<a class="btn btn-rouge" href="tel:' + d.tel.replace(/\s/g, '') + '">' +
+                   I.tel + 'Appeler la salle</a>',
+                 '<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
+                   I.mail + 'Écrire un e-mail</a>'];
+  document.getElementById('s-actions').innerHTML = actions.join('');
+
+  document.getElementById('s-presentation').innerHTML =
+    d.presentation.map(function (p){ return '<p>' + echappe(p) + '</p>'; }).join('');
+
+  document.getElementById('s-faits').innerHTML =
+    [['Ouverte depuis', d.depuis],
+     ['Adhérents', 'environ ' + d.adherents],
+     ['Disciplines', s[5].length],
+     ['Amplitude', s[9]]]
+    .map(function (f){ return '<div><dt>' + f[0] + '</dt><dd>' + echappe(f[1]) + '</dd></div>'; })
+    .join('');
+
+  document.getElementById('s-grille-disc').innerHTML =
+    s[5].map(function (x){ return '<li>' + I.gant + echappe(x) + '</li>'; }).join('');
+
+  /* getDay() : 0 = dimanche, or notre semaine commence le lundi */
+  var jourJs = new Date().getDay();
+  var aujourdhui = (jourJs + 6) % 7;
+  document.getElementById('s-amplitude').textContent = 'La salle est ouverte ' + s[9] + '.';
+  document.getElementById('s-semaine').innerHTML = d.planning.map(function (j, n){
+    var corps = j.cours.length
+      ? '<div class="cours">' + j.cours.map(function (c){
+          return '<div class="c"><span class="h">' + c.de + ' – ' + c.a + '</span>' +
+                 '<span class="q">' + echappe(c.quoi) + '</span>' +
+                 '<span class="n">' + echappe(c.niveau) + '</span></div>';
+        }).join('') + '</div>'
+      : '<p class="repos">Fermé</p>';
+    return '<li' + (n === aujourdhui ? ' class="aujourdhui"' : '') +
+           '><span class="jour">' + j.jour + '</span>' + corps + '</li>';
+  }).join('');
+
+  document.getElementById('s-adresse').innerHTML =
+    echappe(d.adresse) + '<br>' + echappe(d.cp + ' ' + s[2]);
+  document.getElementById('s-itineraire').href =
+    'https://www.openstreetmap.org/directions?to=' + s[3] + '%2C' + s[4];
+
+  var coord = [lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel),
+               lien('mailto:' + d.mail, I.mail, d.mail)];
+  if (d.site)  coord.push(lien('https://' + d.site, I.web, d.site, true));
+  if (d.insta) coord.push(lien('https://instagram.com/' + d.insta, I.insta, '@' + d.insta, true));
+  if (d.fb)    coord.push(lien('https://facebook.com/' + d.fb, I.fb, d.fb, true));
+  document.getElementById('s-coord').innerHTML = coord.join('');
+
+  /* Les salles voisines, par distance réelle plutôt que par nom de ville. Au-delà
+     de 60 km on ne parle plus de voisinage : le titre change plutôt que d'annoncer
+     « autour de Paris » une salle qui est à 400 km. */
+  var classees = SALLES.filter(function (o){ return o !== s; })
+    .map(function (o){ return [o, distanceKm(s[3], s[4], o[3], o[4])]; })
+    .sort(function (a, b){ return a[1] - b[1]; });
+  var voisines = classees.filter(function (p){ return p[1] <= 60; });
+  var proches = (voisines.length >= 2 ? voisines : classees).slice(0, 4);
+  document.getElementById('autour-titre').textContent =
+    voisines.length >= 2 ? 'Autres salles autour de ' + s[2] : 'D’autres salles en France';
+  document.getElementById('s-autour').innerHTML = proches.map(function (p){
+    var o = p[0], km = p[1];
+    return '<li><a href="' + lienFiche(o) + '"><span class="sig">' + echappe(o[1]) + '</span>' +
+           '<span class="t"><b>' + echappe(o[0]) + '</b><span>' +
+           (km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1).replace('.', ',') + ' km') +
+           ' · ' + echappe(o[5][0]) + '</span></span></a></li>';
+  }).join('');
+
+  var cv = document.getElementById('mini');
+  if (cv && window.GEO) miniCarte(cv, s[3], s[4], 15);
+}
+
+(function demarre(){
+  var s = salleParSlug(param('s'));
+  if (s) rendFiche(s);
+  else {
+    document.getElementById('introuvable').hidden = false;
+    document.title = 'Salle introuvable — FightScale';
+  }
 })();
-
-/* ---------- filtres ---------- */
-function construisFiltres(){
-  var boite = document.getElementById('filtres');
-  var html = '<button type="button" class="puce" data-disc="" aria-pressed="' +
-             (etat.discipline === '') + '">Toutes les disciplines</button>';
-  html += DISCIPLINES.map(function (d){
-    return '<button type="button" class="puce" data-disc="' + d + '" aria-pressed="' +
-           (etat.discipline === d) + '">' + d + '</button>';
-  }).join('');
-  html += '<button type="button" class="puce" data-bool="ouvert" aria-pressed="' + etat.ouvert +
-          '">Ouvert aujourd\'hui</button>';
-  html += '<button type="button" class="puce" data-bool="pro" aria-pressed="' + etat.pro +
-          '">Réservation en ligne</button>';
-  boite.innerHTML = html;
-
-  boite.addEventListener('click', function (e){
-    var b = e.target.closest('.puce'); if (!b) return;
-    if (b.dataset.bool) etat[b.dataset.bool] = !etat[b.dataset.bool];
-    else etat.discipline = b.dataset.disc;
-    majFiltres(); rendu();
-  });
-}
-function majFiltres(){
-  document.querySelectorAll('#filtres .puce').forEach(function (b){
-    if (b.dataset.bool) b.setAttribute('aria-pressed', String(etat[b.dataset.bool]));
-    else b.setAttribute('aria-pressed', String(etat.discipline === b.dataset.disc));
-  });
-}
-
-/* ---------- résultats ---------- */
-/* le cadre qui décide des résultats : ce que la carte montre. Tant qu'elle n'est
-   pas mesurée (vue liste sur mobile), on prend un carré autour du point cherché. */
-function zoneVue(){
-  if (W > 2 && H > 2) return [lonDe(0), latDe(H), lonDe(W), latDe(0)];
-  var dlat = 12 / 111.32;
-  var dlon = 12 / (111.32 * Math.cos(etat.centre[0] * Math.PI / 180));
-  return [etat.centre[1] - dlon, etat.centre[0] - dlat,
-          etat.centre[1] + dlon, etat.centre[0] + dlat];
-}
-
-function calcule(){
-  var z = zoneVue();
-  var clat = (z[1] + z[3]) / 2, clon = (z[0] + z[2]) / 2;
-  var res = [], autres = [];
-  SALLES.forEach(function (s){
-    if (s[4] < z[0] || s[4] > z[2] || s[3] < z[1] || s[3] > z[3]) return;
-    var o = {
-      nom:s[0], init:s[1], ville:s[2], lat:s[3], lon:s[4], disc:s[5], note:s[6],
-      avis:s[7], pro:s[8], horaires:s[9], ouvert:s[10], fiche:lienFiche(s),
-      km:distanceKm(clat, clon, s[3], s[4])
-    };
-    var garde = (!etat.discipline || s[5].indexOf(etat.discipline) >= 0) &&
-                (!etat.ouvert || s[10]) && (!etat.pro || s[8]);
-    (garde ? res : autres).push(o);
-  });
-  res.sort(function (a, b){ return a.km - b.km; });
-  etat.resultats = res;
-  etat.autres = autres;
-  etat.centre = [clat, clon];
-  /* on nomme la zone d'après la grande ville la plus proche du centre de la carte,
-     mais seulement si on est assez près : « à Montluçon » n'a aucun sens sur la
-     France entière */
-  var largeurKm = (z[2] - z[0]) * 111.32 * Math.cos(clat * Math.PI / 180);
-  var v = largeurKm <= 80 ? villeLaPlusProche(clat, clon, Math.min(30, largeurKm * .45)) : null;
-  etat.ville = v ? v[0] : '';
-}
-
-function rendu(){
-  calcule();
-  etat.actif = -1;
-  var n = etat.resultats.length;
-  /* on garde la casse d'origine : « en MMA » et « en Muay Thaï » ne se minusculent pas */
-  var suffixe = etat.discipline ? ' en ' + etat.discipline : '';
-  var lieu = etat.ville ? ' à ' + etat.ville : ' dans cette zone';
-  document.getElementById('compte').innerHTML = n
-    ? '<b>' + n + '</b> salle' + (n > 1 ? 's' : '') + suffixe + lieu
-    : 'Aucune salle' + suffixe + lieu;
-  var etiq = document.getElementById('carte-ville');
-  etiq.textContent = etat.ville; etiq.hidden = !etat.ville;
-  /* le champ suit la carte, sauf pendant qu'on y tape */
-  var champ = document.getElementById('q-ville');
-  var sug = champ.parentNode.querySelector('.sug');
-  if (!sug || sug.hidden) champ.value = etat.ville;
-  document.title = (etat.ville ? 'Salles de sports de combat à ' + etat.ville
-                               : 'Salles de sports de combat') + ' — FightScale';
-
-  var liste = document.getElementById('liste');
-  if (!n){
-    var ailleurs = [], vu = {};
-    SALLES.forEach(function (s){
-      if (s[2] === etat.ville || vu[s[2]]) return;
-      vu[s[2]] = 1; ailleurs.push(s[2]);
-    });
-    liste.innerHTML =
-      '<div class="vide"><h2 class="display">Pas encore de salle ici</h2>' +
-      '<p>Aucune salle ne correspond dans cette zone. Déplacez la carte, dézoomez, ' +
-      'ou enlevez un filtre.</p>' +
-      '<div class="vide-villes">' + ailleurs.slice(0, 6).map(function (v){
-        return '<a class="puce" href="recherche.html?ville=' + encodeURIComponent(v) + '">' + v + '</a>';
-      }).join('') + '</div></div>';
-    return;
-  }
-
-  liste.innerHTML = etat.resultats.map(function (r, i){
-    return '' +
-    '<article class="res" data-i="' + i + '">' +
-      '<div class="res-vignette">' +
-        '<span class="res-num">' + (i + 1) + '</span>' +
-        '<span class="res-init" aria-hidden="true">' + r.init + '</span>' +
-      '</div>' +
-      '<div class="res-corps">' +
-        '<div class="res-tete">' +
-          '<h2 class="res-nom"><a href="' + r.fiche + '">' + r.nom + '</a></h2>' +
-          '<span class="note">' + ICONES.etoile + r.note + ' <small>(' + r.avis + ')</small></span>' +
-        '</div>' +
-        '<div class="res-chips">' + r.disc.map(function (d){
-          return '<span class="mini-chip">' + d + '</span>'; }).join('') + '</div>' +
-        '<div class="res-meta">' +
-          '<span class="paire">' + ICONES.epingle + formateKm(r.km) +
-            (etat.ville ? ' du centre' : ' d\'ici') + '</span>' +
-          (r.ouvert
-            ? '<span class="paire res-ouvert">Ouvert · ' + r.horaires + '</span>'
-            : '<span class="paire">Fermé aujourd\'hui</span>') +
-        '</div>' +
-        '<span class="res-fiche">Voir la fiche' + ICONES.fleche + '</span>' +
-      '</div>' +
-    '</article>';
-  }).join('');
-
-  Array.prototype.forEach.call(liste.querySelectorAll('.res'), function (el){
-    var i = +el.dataset.i;
-    el.addEventListener('mouseenter', function (){ selectionne(i, false); });
-    el.addEventListener('mouseleave', function (){ selectionne(-1, false); });
-    el.addEventListener('focusin',    function (){ selectionne(i, false); });
-  });
-  liste.scrollTop = 0;
-  document.getElementById('resultats').scrollTop = 0;
-  fondSale = true;      /* les noms du fond se replacent autour des nouvelles épingles */
-}
-
-/* après un déplacement ou un zoom, la liste se recalcule sur ce qu'on voit */
-var minuteurZone = null;
-function zoneAChange(){
-  clearTimeout(minuteurZone);
-  minuteurZone = setTimeout(rendu, 260);
-}
-
-function selectionne(i, defile){
-  if (etat.actif === i) return;
-  etat.actif = i;
-  Array.prototype.forEach.call(document.querySelectorAll('.res'), function (el){
-    el.classList.toggle('actif', +el.dataset.i === i);
-  });
-  if (defile && i >= 0){
-    var cible = document.querySelector('.res[data-i="' + i + '"]');
-    if (cible) cible.scrollIntoView({ block:'nearest', behavior:'smooth' });
-  }
-}
-
-/* ---------- plan ----------
-   Aucune tuile ne peut être chargée (le CSP des Artifacts bloque les images
-   externes), donc la carte est dessinée au trait à partir de vraies données
-   géographiques embarquées dans geo.js : littoral et départements, lacs,
-   fleuves, autoroutes et routes, villes. Projection Mercator, zoom et
-   déplacement à la souris. Le fond est rendu dans un canvas hors écran et
-   seules les épingles sont redessinées à chaque image. */
-
-var cv = document.getElementById('plan'), cx = cv.getContext('2d');
-var fond = document.createElement('canvas'), fx = fond.getContext('2d');
-var W = 0, H = 0, DPR = 1, pastille = [], pastilleAutre = [], BB = {}, fondSale = true;
-var CALME = matchMedia('(prefers-reduced-motion: reduce)').matches;
-var COUCHES = ['fr', 'terre', 'riv', 'lac', 'urb', 'com', 'iris', 'r1', 'r2', 'r3'];
-var vue = { lon: 5.3698, lat: 43.2965, k: 600 };
-
-function prepGeo(){ prepCouches(COUCHES, BB); }
-
-function sx(lon){ return W / 2 + (lon - vue.lon) * vue.k; }
-function sy(lat){ return H / 2 - (merc(lat) - merc(vue.lat)) * vue.k; }
-function lonDe(x){ return vue.lon + (x - W / 2) / vue.k; }
-function latDe(y){ return invMerc(merc(vue.lat) - (y - H / 2) / vue.k); }
-
-function cadre(){
-  return [lonDe(-40), latDe(H + 40), lonDe(W + 40), latDe(-40)];
-}
-function kmParPixel(){ return 111.32 * Math.cos(vue.lat * Math.PI / 180) / vue.k; }
-function kMini(){ return W / 13; }                       /* la France entière tient à l'écran */
-function kMaxi(){ return W / 0.03; }
-
-function mesure(){
-  var r = cv.getBoundingClientRect();
-  if (r.width < 2 || r.height < 2){ W = 0; H = 0; return; }
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = Math.round(r.width); H = Math.round(r.height);
-  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-  cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  fond.width = cv.width; fond.height = cv.height;
-  fx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  fondSale = true;
-}
-
-/* cadrage par défaut : la ville et ses environs, jamais plus serré que 14 km de large */
-function cadreSurVille(){
-  vue.lat = etat.centre[0]; vue.lon = etat.centre[1];
-  var maxKm = 6;
-  SALLES.forEach(function (s){
-    if (etat.ville && s[2] !== etat.ville) return;      /* la ville cherchée, pas ses voisines */
-    var k = distanceKm(etat.centre[0], etat.centre[1], s[3], s[4]);
-    if (k <= 25 && k > maxKm) maxKm = k;
-  });
-  var largeurKm = Math.min(Math.max(maxKm * 3.2, 22), 150);
-  vue.k = W ? W / (largeurKm / (111.32 * Math.cos(vue.lat * Math.PI / 180))) : 600;
-  vue.k = Math.max(kMini(), Math.min(kMaxi(), vue.k));
-  fondSale = true;
-}
-
-function traceFx(a){
-  fx.beginPath();
-  fx.moveTo(sx(a[0]), sy(a[1]));
-  for (var i = 2; i < a.length; i += 2) fx.lineTo(sx(a[i]), sy(a[i + 1]));
-}
-function visible(bb, c){
-  return !(bb[2] < c[0] || bb[0] > c[2] || bb[3] < c[1] || bb[1] > c[3]);
-}
-function couche(cle, c, action){
-  var tab = GEO[cle], bbs = BB[cle];
-  for (var i = 0; i < tab.length; i++){
-    if (!visible(bbs[i], c)) continue;
-    traceFx(tab[i]);
-    action();
-  }
-}
-/* un seul chemin pour toute une couche : bien plus rapide pour les traits */
-function chemin(cle, c){
-  var tab = GEO[cle], bbs = BB[cle];
-  fx.beginPath();
-  for (var i = 0; i < tab.length; i++){
-    if (!visible(bbs[i], c)) continue;
-    var a = tab[i];
-    fx.moveTo(sx(a[0]), sy(a[1]));
-    for (var j = 2; j < a.length; j += 2) fx.lineTo(sx(a[j]), sy(a[j + 1]));
-  }
-}
-
-/* étiquettes : on place du plus important au moins important et on refuse
-   tout ce qui chevauche ce qui est déjà posé, comme un vrai moteur de carte */
-var poses = [];
-function libre(x, y, w, h){
-  for (var i = 0; i < poses.length; i++){
-    var p = poses[i];
-    if (x < p[2] && x + w > p[0] && y < p[3] && y + h > p[1]) return false;
-  }
-  return true;
-}
-function pose(x, y, w, h){ poses.push([x, y, x + w, y + h]); }
-function clefNom(s){
-  return s.normalize ? s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z]/g, '')
-                     : s.toUpperCase();
-}
-
-function etiquette(txt, x, y, taille, gras, couleur, dy){
-  fx.font = gras + ' ' + taille + 'px Manrope, system-ui, sans-serif';
-  var w = fx.measureText(txt).width, h = taille + 3;
-  var bx = x - w / 2 - 2, by = y + dy - h, bw = w + 4, bh = h + 3;
-  if (bx < 4 || by < 4 || bx + bw > W - 4 || by + bh > H - 4) return false;   /* jamais coupé au bord */
-  if (!libre(bx, by, bw, bh)) return false;
-  pose(bx, by, bw, bh);
-  fx.lineWidth = 3.4; fx.strokeStyle = 'rgba(8,9,12,.92)'; fx.lineJoin = 'round';
-  fx.strokeText(txt, x, y + dy);
-  fx.fillStyle = couleur; fx.fillText(txt, x, y + dy);
-  return true;
-}
-
-function dessineFond(){
-  var c = cadre(), z = vue.k / kMini();
-  poses = [];
-
-  fx.fillStyle = '#0A1017'; fx.fillRect(0, 0, W, H);        /* mer */
-
-  /* halo côtier : un trait large sous la terre, qui déborde dans l'eau */
-  fx.lineJoin = 'round'; fx.lineCap = 'round';
-  fx.strokeStyle = 'rgba(86,126,175,.14)'; fx.lineWidth = z > 6 ? 8 : 4;
-  chemin('fr', c); fx.stroke();
-  chemin('terre', c); fx.stroke();
-
-  fx.fillStyle = '#141418';                                  /* pays voisins */
-  couche('terre', c, function (){ fx.fill(); });
-
-  fx.fillStyle = '#1B1B21';                                  /* France */
-  couche('fr', c, function (){ fx.fill(); });
-
-  fx.fillStyle = '#26262C';                                  /* tache urbanisée */
-  couche('urb', c, function (){ fx.fill(); });
-  if (z > 3){                                                /* sa lisière, pour qu'on la lise */
-    fx.strokeStyle = 'rgba(245,243,239,.05)'; fx.lineWidth = 1;
-    chemin('urb', c); fx.stroke();
-  }
-
-  if (z > 18){                        /* maille des quartiers : la texture d'une ville */
-    fx.strokeStyle = 'rgba(245,243,239,' + (z > 45 ? '.062' : '.042') + ')'; fx.lineWidth = 1;
-    chemin('iris', c); fx.stroke();
-  }
-
-  if (z > 11){                                               /* maille communale */
-    fx.strokeStyle = 'rgba(245,243,239,.085)'; fx.lineWidth = 1;
-    chemin('com', c); fx.stroke();
-  }
-
-  fx.fillStyle = '#0E1A26';                                  /* lacs */
-  couche('lac', c, function (){ fx.fill(); });
-
-  fx.strokeStyle = 'rgba(90,134,182,.34)';                   /* fleuves */
-  fx.lineWidth = z > 6 ? 1.6 : 0.9;
-  chemin('riv', c); fx.stroke();
-
-  fx.strokeStyle = 'rgba(245,243,239,.115)';                 /* littoral et départements */
-  fx.lineWidth = z > 6 ? 1.1 : 0.8;
-  chemin('fr', c); fx.stroke();
-
-  /* routes : un liseré sombre puis le cœur clair, comme sur un vrai plan */
-  var R = [];
-  if (z > 7)   R.push(['r3', 'rgba(232,228,220,.16)', z > 20 ? 2.2 : 1.4]);
-  if (z > 1.5) R.push(['r2', 'rgba(236,232,224,.26)', z > 20 ? 3 : z > 6 ? 2 : 1.2]);
-  R.push(['r1', 'rgba(224,196,150,.46)', z > 20 ? 4 : z > 6 ? 2.8 : 1.6]);
-  R.forEach(function (r){
-    chemin(r[0], c);
-    fx.strokeStyle = 'rgba(9,10,13,.8)'; fx.lineWidth = r[2] + 2.2; fx.stroke();
-  });
-  R.forEach(function (r){
-    chemin(r[0], c);
-    fx.strokeStyle = r[1]; fx.lineWidth = r[2]; fx.stroke();
-  });
-
-  /* on interdit aux noms les zones déjà occupées : épingles et commandes */
-  pose(0, 0, 200, 54); pose(W - 84, 0, 84, 54);
-  pose(W - 152, H - 132, 152, 132); pose(0, H - 52, 214, 52);
-  etat.resultats.forEach(function (r){
-    pose(sx(r.lon) - 14, sy(r.lat) - 15, 28, 38);
-  });
-
-  /* noms : les villes d'abord, puis les communes si on est assez zoomé */
-  fx.textAlign = 'center'; fx.textBaseline = 'alphabetic';
-  var rangMax = z < 2 ? 6 : z < 5 ? 7 : z < 12 ? 8 : z < 25 ? 9 : 10, vus = {};
-  var quota = z < 2 ? 26 : z < 5 ? 38 : 200, posesVilles = 0;
-  GEO.villes.forEach(function (v){
-    if (v[2] > rangMax || posesVilles >= quota) return;
-    if (v[0] < c[0] || v[0] > c[2] || v[1] < c[1] || v[1] > c[3]) return;
-    var x = sx(v[0]), y = sy(v[1]), gros = v[2] <= 3;
-    vus[clefNom(v[3])] = 1;
-    var t = gros ? 12.5 : 11, col = gros ? 'rgba(245,243,239,.88)' : 'rgba(226,222,215,.76)';
-    /* au-dessus du point, sinon en dessous : c'est ce que fait un vrai moteur de carte */
-    if (etiquette(v[3], x, y, t, '700', col, -8) || etiquette(v[3], x, y, t, '700', col, 14)){
-      posesVilles++;
-      fx.beginPath(); fx.arc(x, y, gros ? 2.8 : 2.2, 0, 6.2832);
-      fx.fillStyle = 'rgba(245,243,239,.5)'; fx.fill();
-    }
-  });
-  if (z > 22){
-    var n = 0;
-    for (var i = 0; i < GEO.comn.length && n < 70; i++){
-      var m = GEO.comn[i];
-      if (m[0] < c[0] || m[0] > c[2] || m[1] < c[1] || m[1] > c[3]) continue;
-      if (vus[clefNom(m[3])]) continue;
-      var mx = sx(m[0]), my = sy(m[1]);
-      if (etiquette(m[3], mx, my, 10.5, '600', 'rgba(205,200,192,.62)', 0) ||
-          etiquette(m[3], mx, my, 10.5, '600', 'rgba(205,200,192,.62)', 15)) n++;
-    }
-  }
-
-  majEchelle();
-  fondSale = false;
-}
-
-function majEchelle(){
-  var kmPx = kmParPixel(), cible = 74;
-  var pas = [.05,.1,.2,.5,1,2,5,10,20,50,100,200,500], choisi = pas[pas.length - 1];
-  for (var i = 0; i < pas.length; i++){ if (pas[i] / kmPx >= 40){ choisi = pas[i]; break; } }
-  var px = Math.min(120, Math.max(30, choisi / kmPx));
-  document.getElementById('echelle-barre').style.width = Math.round(px) + 'px';
-  document.getElementById('echelle-txt').textContent =
-    choisi < 1 ? Math.round(choisi * 1000) + ' m' : String(choisi).replace('.', ',') + ' km';
-}
-
-function dessine(t){
-  if (W < 2 || H < 2){ mesure(); if (W < 2 || H < 2) return; }
-  if (fondSale) dessineFond();
-  cx.clearRect(0, 0, W, H);
-  cx.drawImage(fond, 0, 0, W, H);
-
-  var resp = CALME ? 0 : Math.sin(t / 1500) * .5 + .5;
-
-  /* les salles écartées par un filtre restent visibles, en gris */
-  pastilleAutre = etat.autres.map(function (r){ return { x: sx(r.lon), y: sy(r.lat) }; });
-  pastilleAutre.forEach(function (p, i){
-    if (p.x < -20 || p.y < -20 || p.x > W + 20 || p.y > H + 20) return;
-    cx.beginPath(); cx.arc(p.x, p.y, i === etat.survolAutre ? 6 : 4.5, 0, 6.2832);
-    cx.fillStyle = i === etat.survolAutre ? 'rgba(214,210,203,.9)' : 'rgba(154,148,140,.7)';
-    cx.fill();
-    cx.strokeStyle = 'rgba(10,10,11,.85)'; cx.lineWidth = 1.5; cx.stroke();
-  });
-
-  pastille = etat.resultats.map(function (r){ return { x: sx(r.lon), y: sy(r.lat) }; });
-  var serre = vue.k / kMini() < 2.5;
-  var ordre = etat.resultats.map(function (_, i){ return i; }).reverse();
-  if (etat.actif >= 0){
-    ordre = ordre.filter(function (i){ return i !== etat.actif; });
-    ordre.push(etat.actif);
-  }
-  ordre.forEach(function (i){
-    var p = pastille[i], vif = (i === etat.actif);
-    if (serre && !vif){
-      cx.beginPath(); cx.arc(p.x, p.y, 5, 0, 6.2832);
-      cx.fillStyle = '#E00016'; cx.fill();
-      cx.strokeStyle = 'rgba(255,255,255,.4)'; cx.lineWidth = 1; cx.stroke();
-      return;
-    }
-    var R = vif ? 16 : 12;
-
-    var halo = cx.createRadialGradient(p.x, p.y, 0, p.x, p.y, R * 3);
-    halo.addColorStop(0, 'rgba(250,1,23,' + ((vif ? .55 : .20) + resp * .08).toFixed(3) + ')');
-    halo.addColorStop(1, 'rgba(250,1,23,0)');
-    cx.fillStyle = halo;
-    cx.beginPath(); cx.arc(p.x, p.y, R * 3, 0, 6.2832); cx.fill();
-
-    cx.beginPath();
-    cx.moveTo(p.x - 4.5, p.y + R - 3);
-    cx.lineTo(p.x + 4.5, p.y + R - 3);
-    cx.lineTo(p.x, p.y + R + 7);
-    cx.closePath();
-    cx.fillStyle = vif ? '#FA0117' : '#E00016'; cx.fill();
-
-    cx.beginPath(); cx.arc(p.x, p.y, R, 0, 6.2832);
-    cx.fillStyle = vif ? '#FA0117' : '#E00016'; cx.fill();
-    cx.strokeStyle = 'rgba(255,255,255,' + (vif ? .6 : .3) + ')';
-    cx.lineWidth = 1.4; cx.stroke();
-
-    cx.fillStyle = '#fff'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-    cx.font = '800 ' + (vif ? 12.5 : 11) + 'px Manrope, system-ui, sans-serif';
-    cx.fillText(String(i + 1), p.x, p.y + .5);
-    cx.textBaseline = 'alphabetic';
-  });
-
-  if (etat.actif >= 0 && pastille[etat.actif])
-    boiteNom(pastille[etat.actif], etat.resultats[etat.actif].nom, 16, true);
-  else if (etat.survolAutre >= 0 && pastilleAutre[etat.survolAutre])
-    boiteNom(pastilleAutre[etat.survolAutre], etat.autres[etat.survolAutre].nom, 6, false);
-}
-
-/* la pastille de nom qui suit le point survolé */
-function boiteNom(p, nom, rayon, vif){
-  cx.font = '800 12.5px Manrope, system-ui, sans-serif';
-  var bw = cx.measureText(nom).width + 22, bh = 30;
-  var bx = Math.min(Math.max(p.x - bw / 2, 8), W - bw - 8);
-  var by = p.y - rayon - bh - 10;
-  if (by < 8) by = p.y + rayon + 8;
-  cx.fillStyle = 'rgba(10,10,11,.95)';
-  cx.strokeStyle = vif ? 'rgba(250,1,23,.6)' : 'rgba(245,243,239,.25)'; cx.lineWidth = 1;
-  if (cx.roundRect){ cx.beginPath(); cx.roundRect(bx, by, bw, bh, 8); cx.fill(); cx.stroke(); }
-  else { cx.fillRect(bx, by, bw, bh); cx.strokeRect(bx, by, bw, bh); }
-  cx.fillStyle = vif ? '#F5F3EF' : 'rgba(214,210,203,.9)';
-  cx.textAlign = 'center'; cx.textBaseline = 'middle';
-  cx.fillText(nom, bx + bw / 2, by + bh / 2);
-  cx.textBaseline = 'alphabetic';
-}
-
-function boucle(t){ dessine(t); requestAnimationFrame(boucle); }
-
-/* ---------- zoom et déplacement ---------- */
-function zoomVers(facteur, ax, ay){
-  if (ax === undefined){ ax = W / 2; ay = H / 2; }
-  var lon = lonDe(ax), lat = latDe(ay);
-  var k2 = Math.max(kMini(), Math.min(kMaxi(), vue.k * facteur));
-  if (k2 === vue.k) return;
-  vue.k = k2;
-  /* on garde le point sous le curseur à sa place */
-  vue.lon += lon - lonDe(ax);
-  vue.lat = invMerc(merc(vue.lat) + merc(lat) - merc(latDe(ay)));
-  fondSale = true;
-}
-
-var tire = null;
-cv.addEventListener('pointerdown', function (e){
-  tire = { x: e.clientX, y: e.clientY, lon: vue.lon, lat: vue.lat, bouge: false };
-  cv.setPointerCapture(e.pointerId); cv.classList.add('tire');
-});
-cv.addEventListener('pointermove', function (e){
-  var r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
-  if (tire){
-    var dx = e.clientX - tire.x, dy = e.clientY - tire.y;
-    if (Math.abs(dx) + Math.abs(dy) > 3) tire.bouge = true;
-    vue.lon = tire.lon - dx / vue.k;
-    vue.lat = invMerc(merc(tire.lat) + dy / vue.k);
-    fondSale = true;
-    return;
-  }
-  /* Quand plusieurs épingles se chevauchent — les salles parisiennes à l'échelle
-     de la France tiennent dans quelques pixels — on retient la plus proche du
-     curseur, et non la première venue : sinon le point désigné n'est pas celui
-     qu'on vise. Le vrai remède reste de regrouper les épingles proches. */
-  function laPlusProche(tab, rayon){
-    var meilleur = -1, best = rayon;
-    for (var i = 0; i < tab.length; i++){
-      var d = Math.hypot(tab[i].x - mx, tab[i].y - my);
-      if (d < best){ best = d; meilleur = i; }
-    }
-    return meilleur;
-  }
-  var trouve = laPlusProche(pastille, 19);
-  var gris = trouve < 0 ? laPlusProche(pastilleAutre, 12) : -1;
-  etat.survolAutre = gris;
-  cv.style.cursor = trouve >= 0 ? 'pointer' : (gris >= 0 ? 'help' : '');
-  selectionne(trouve, false);
-});
-function relache(e){
-  if (tire && tire.bouge) zoneAChange();
-  if (tire && !tire.bouge && etat.actif >= 0){
-    document.body.classList.remove('vue-carte'); majBascule();
-    var cible = document.querySelector('.res[data-i="' + etat.actif + '"]');
-    if (cible) cible.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  }
-  tire = null; cv.classList.remove('tire');
-}
-cv.addEventListener('pointerup', relache);
-cv.addEventListener('pointercancel', function (){ tire = null; cv.classList.remove('tire'); });
-cv.addEventListener('mouseleave', function (){ if (!tire) selectionne(-1, false); });
-cv.addEventListener('wheel', function (e){
-  e.preventDefault();
-  var r = cv.getBoundingClientRect();
-  zoomVers(Math.pow(0.9988, e.deltaY), e.clientX - r.left, e.clientY - r.top);
-  zoneAChange();
-}, { passive: false });
-
-document.getElementById('z-plus').addEventListener('click', function (){ zoomVers(1.6); zoneAChange(); });
-document.getElementById('z-moins').addEventListener('click', function (){ zoomVers(1 / 1.6); zoneAChange(); });
-document.getElementById('z-france').addEventListener('click', function (){
-  vue.lon = 2.4; vue.lat = 46.7; vue.k = kMini(); fondSale = true; zoneAChange();
-});
-
-/* ---------- recherche de ville ---------- */
-function vaVers(v){
-  viseVille(v);
-  cadreSurVille();
-  rendu();
-  var u = new URL(location.href);
-  u.searchParams.set('ville', v[0]);
-  if (etat.discipline) u.searchParams.set('discipline', etat.discipline);
-  else u.searchParams.delete('discipline');
-  history.replaceState(null, '', u);
-}
-suggestions(document.getElementById('q-ville'), vaVers);
-document.getElementById('form-ville').addEventListener('submit', function (e){
-  e.preventDefault();
-  var champ = document.getElementById('q-ville');
-  var v = villeParNom(champ.value);
-  if (v) vaVers(v);
-  else { champ.value = etat.ville; champ.select(); }   /* ville inconnue : on ne bouge pas */
-});
-
-/* ---------- bascule liste / carte sur mobile ---------- */
-function majBascule(){
-  var carte = document.body.classList.contains('vue-carte');
-  document.getElementById('b-liste').setAttribute('aria-pressed', String(!carte));
-  document.getElementById('b-carte').setAttribute('aria-pressed', String(carte));
-  if (carte) mesure();
-}
-document.getElementById('b-liste').addEventListener('click', function (){
-  document.body.classList.remove('vue-carte'); majBascule();
-});
-document.getElementById('b-carte').addEventListener('click', function (){
-  document.body.classList.add('vue-carte');
-  majBascule();
-  if (W && !vueCadree){ cadreSurVille(); rendu(); vueCadree = true; }
-  dessine(0);
-});
-var vueCadree = false;
-
-/* ---------- démarrage ---------- */
-prepGeo();
-construisFiltres();
-mesure();
-if (W) cadreSurVille();
-rendu();
-function reMesure(){
-  var avant = W;
-  mesure();
-  if (W && !avant){ cadreSurVille(); rendu(); }
-  if (CALME) dessine(0);
-}
-if (window.ResizeObserver) new ResizeObserver(reMesure).observe(cv);
-else window.addEventListener('resize', reMesure);
-if (CALME) dessine(0); else requestAnimationFrame(boucle);
 
 </script>
 
