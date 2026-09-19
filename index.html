@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="L'annuaire des salles de sports de combat en France : MMA, boxe anglaise, kickboxing, Muay Thaï, jiu-jitsu brésilien, grappling, karaté et judo.">
+<meta name="theme-color" content="#0A0A0B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FightScale">
+<meta property="og:title" content="FightScale — trouvez la salle de sports de combat près de chez vous">
+<meta property="og:description" content="L'annuaire des salles de sports de combat en France : MMA, boxe anglaise, kickboxing, Muay Thaï, jiu-jitsu brésilien, grappling, karaté et judo.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+  :root{color-scheme:dark; padding-top:env(safe-area-inset-top,0px);
+        padding-bottom:env(safe-area-inset-bottom,0px)}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{margin:0; background:#0A0A0B}
+  img{max-width:100%}
+  [hidden]{display:none !important}
+</style>
+<title>FightScale — trouvez la salle de sports de combat près de chez vous</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+  :root{
+    --encre-950:#0A0A0B; --encre-900:#121214; --encre-850:#18181B; --encre-800:#1F1F23;
+    --encre-700:#2A2A2F; --encre-600:#3A3A41;
+    --craie-100:#F5F3EF; --craie-200:#D6D2CB; --craie-400:#9A948C; --craie-500:#6F6B66;
+    --rouge-300:#FF5E68; --rouge-500:#FA0117; --rouge-600:#E00016; --rouge-700:#B80012;
+    --vert:#3FBF87;
+    --max:1240px;
+    --gutter:clamp(20px, 4.5vw, 52px);
+    --r-m:8px; --r-l:12px;
+    color-scheme:dark;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    margin:0; background:var(--encre-950); color:var(--craie-100);
+    font-family:Manrope,"Segoe UI",system-ui,sans-serif; font-weight:500;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+  h1,h2{margin:0}
+  p{margin:0}
+  ul{margin:0; padding:0; list-style:none}
+  a{color:var(--rouge-300)}
+  :focus-visible{outline:2px solid var(--rouge-300); outline-offset:3px; border-radius:6px}
+
+  .wrap{width:100%; max-width:var(--max); margin-inline:auto; padding-inline:var(--gutter)}
+  .display{font-family:Anton,"Haettenschweiler","Arial Narrow",sans-serif; font-weight:400;
+    text-transform:uppercase}
+
+  .skip{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
+  .skip:focus{position:fixed; width:auto; height:auto; overflow:visible; clip-path:none;
+    left:8px; top:8px; z-index:99; background:var(--rouge-600); color:#fff;
+    padding:12px 16px; border-radius:var(--r-m); text-decoration:none}
+
+  /* ---------- en-tête ---------- */
+  .site-header{position:absolute; inset:env(safe-area-inset-top,0px) 0 auto 0; z-index:30}
+  .header-in{display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding-block:22px}
+  .brand{display:inline-flex; align-items:center; gap:13px; flex-shrink:0}
+  .site-nav{display:flex; align-items:center; gap:30px}
+  .site-nav a{font-size:14.5px; font-weight:700; color:var(--craie-200); text-decoration:none;
+    white-space:nowrap; transition:color .15s ease}
+  .site-nav a:hover{color:var(--craie-100)}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:9px;
+    min-height:44px; padding:11px 22px; border:0; border-radius:var(--r-m);
+    font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
+    text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
+  .btn-rouge{background:var(--rouge-600); color:#fff;
+    box-shadow:0 10px 30px -12px rgba(224,0,22,.9)}
+  .btn-rouge:hover{background:var(--rouge-700); color:#fff;
+    box-shadow:0 14px 34px -12px rgba(224,0,22,1)}
+  .site-nav .btn-rouge{color:#fff}
+  @media (max-width:1040px){ .site-nav .nav-link{display:none} }
+  .l-court{display:none}
+  @media (max-width:620px){
+    .l-long{display:none}
+    .l-court{display:inline}
+    .brand-mot{display:none}
+  }
+
+  /* ---------- héros ---------- */
+  .hero{position:relative; isolation:isolate; overflow:hidden; background:var(--encre-950);
+    display:flex; align-items:center; justify-content:center;
+    min-height:min(920px, 100svh)}
+  #carte{position:absolute; inset:0; width:100%; height:100%; z-index:-3;
+    -webkit-mask-image:radial-gradient(118% 92% at 50% 52%, #000 38%, rgba(0,0,0,.35) 74%, transparent 100%);
+    mask-image:radial-gradient(118% 92% at 50% 52%, #000 38%, rgba(0,0,0,.35) 74%, transparent 100%)}
+  .lueur{position:absolute; z-index:-2; left:50%; top:46%; translate:-50% -50%;
+    width:min(1180px, 130%); aspect-ratio:2/1; pointer-events:none;
+    background:radial-gradient(50% 50% at 50% 50%,
+      rgba(250,1,23,.26) 0%, rgba(250,1,23,.10) 38%, rgba(250,1,23,0) 72%)}
+  .vignette{position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(10,10,11,.90) 0%, rgba(10,10,11,.10) 22%, rgba(10,10,11,0) 55%, rgba(10,10,11,.55) 86%, rgba(10,10,11,.96) 100%)}
+
+  .hero-in{position:relative; z-index:1; width:100%;
+    padding-block:clamp(126px,15vw,164px) clamp(52px,7vw,84px);
+    display:flex; flex-direction:column; align-items:center; text-align:center}
+
+  .eyebrow{display:inline-flex; align-items:center; gap:10px;
+    font-size:11.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--craie-400)}
+  .eyebrow::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--rouge-500); box-shadow:0 0 12px 2px rgba(250,1,23,.8)}
+
+  .hero h1{margin-top:26px; font-size:clamp(32px,5.6vw,76px); line-height:.96;
+    letter-spacing:.014em; color:var(--craie-100); text-shadow:0 0 46px rgba(10,10,11,.8)}
+  .hero h1 span{display:block}
+  .hero h1 .rouge{color:var(--rouge-500);
+    text-shadow:0 0 30px rgba(250,1,23,.5), 0 0 84px rgba(250,1,23,.28)}
+
+  .hero-sous{margin-top:22px; max-width:50ch; font-size:clamp(15px,1.35vw,17.5px);
+    line-height:1.62; color:var(--craie-200); text-shadow:0 1px 18px rgba(10,10,11,.9)}
+
+  /* ---------- barre de recherche ---------- */
+  .recherche{position:relative; z-index:20;
+    margin-top:clamp(30px,3.6vw,42px); width:100%; max-width:760px;
+    display:flex; align-items:stretch; gap:8px; padding:8px;
+    background:rgba(18,18,21,.72); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
+    border:1px solid rgba(245,243,239,.13); border-radius:16px;
+    box-shadow:0 34px 80px -34px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.055);
+    transition:border-color .18s ease, box-shadow .18s ease}
+  .recherche:focus-within{border-color:rgba(250,1,23,.5);
+    box-shadow:0 34px 80px -34px rgba(0,0,0,.95), 0 0 0 4px rgba(250,1,23,.10),
+      inset 0 1px 0 rgba(255,255,255,.055)}
+  .seg{position:relative; flex:1 1 0; min-width:0; display:flex; align-items:center; gap:12px;
+    padding:9px 16px; border-radius:11px; text-align:left; transition:background-color .15s ease}
+  .seg:hover{background:rgba(245,243,239,.035)}
+  .seg > svg{flex-shrink:0; color:var(--rouge-300); opacity:.9}
+  .seg-corps{min-width:0; flex:1 1 auto; display:flex; flex-direction:column; gap:2px}
+  .seg-titre{font-size:10.5px; font-weight:800; letter-spacing:.15em;
+    text-transform:uppercase; color:var(--craie-500)}
+  .seg input{
+    width:100%; min-width:0; border:0; background:transparent; outline:none; padding:0;
+    font-family:Manrope,system-ui,sans-serif; font-size:15.5px; font-weight:700;
+    color:var(--craie-100); line-height:1.35}
+  .seg input::placeholder{color:var(--craie-500); font-weight:600}
+  .sep{width:1px; align-self:center; height:38px; background:rgba(245,243,239,.12); flex:0 0 1px}
+  .recherche > .btn{flex:0 0 auto; min-height:56px; padding:15px 28px; font-size:15px;
+    border-radius:11px}
+
+  /* menu déroulant des disciplines */
+  .dd-btn{display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%;
+    padding:0; border:0; background:transparent; cursor:pointer; text-align:left;
+    font-family:Manrope,system-ui,sans-serif; font-size:15.5px; font-weight:700;
+    color:var(--craie-100); line-height:1.35}
+  .dd-chev{flex-shrink:0; color:var(--craie-400); transition:transform .18s ease, color .15s ease}
+  .dd-btn[aria-expanded="true"] .dd-chev{transform:rotate(180deg); color:var(--rouge-300)}
+  .dd-panneau{position:absolute; z-index:40; top:calc(100% + 12px); left:0; right:0;
+    min-width:262px; padding:7px; border-radius:14px;
+    background:#101013; border:1px solid rgba(245,243,239,.14);
+    box-shadow:0 36px 80px -30px rgba(0,0,0,.96), inset 0 1px 0 rgba(255,255,255,.05);
+    max-height:min(340px, 52vh); overflow:auto; overscroll-behavior:contain}
+  .dd-panneau li{display:flex; align-items:center; gap:12px; min-height:46px;
+    padding:11px 14px; border-radius:10px; cursor:pointer;
+    font-size:14.5px; font-weight:700; color:var(--craie-200);
+    transition:background-color .12s ease, color .12s ease}
+  .dd-panneau li:hover,.dd-panneau li.survol{background:rgba(245,243,239,.07); color:var(--craie-100)}
+  .dd-panneau li[aria-selected="true"]{color:var(--rouge-300)}
+  .dd-coche{margin-left:auto; flex-shrink:0; opacity:0; color:var(--rouge-300)}
+  .dd-panneau li[aria-selected="true"] .dd-coche{opacity:1}
+  .dd-pastille{width:7px; height:7px; border-radius:50%; flex-shrink:0;
+    background:var(--encre-600)}
+  .dd-panneau li[aria-selected="true"] .dd-pastille{background:var(--rouge-500);
+    box-shadow:0 0 10px 1px rgba(250,1,23,.75)}
+
+  @media (max-width:720px){
+    .recherche{flex-direction:column; border-radius:14px}
+    .sep{width:auto; height:1px; align-self:stretch}
+    .recherche > .btn{width:100%}
+  }
+  .rch-statut{margin-top:14px; font-size:13px; color:var(--craie-400)}
+
+  /* ---------- disciplines ---------- */
+  .disciplines{margin-top:clamp(26px,3vw,34px); display:flex; flex-wrap:wrap;
+    justify-content:center; gap:10px}
+  .disciplines button{display:inline-flex; align-items:center; min-height:40px; padding:9px 17px;
+    border:1px solid var(--encre-700); border-radius:999px;
+    background:rgba(245,243,239,.025); cursor:pointer;
+    font-family:Manrope,system-ui,sans-serif;
+    font-size:13.5px; font-weight:700; color:var(--craie-200);
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .disciplines button:hover{border-color:rgba(250,1,23,.55); color:var(--craie-100);
+    background:rgba(250,1,23,.09)}
+  .disciplines button[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--craie-100);
+    background:rgba(224,0,22,.16); box-shadow:0 0 22px -6px rgba(250,1,23,.75)}
+
+  /* ---------- chiffres ---------- */
+  .chiffres{margin-top:clamp(40px,5.4vw,64px); width:100%; max-width:740px;
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(12px,2.4vw,28px)}
+  .chiffres li{position:relative; padding-inline:6px}
+  .chiffres li + li::before{content:""; position:absolute; left:calc(-1 * clamp(6px,1.2vw,14px));
+    top:4px; bottom:4px; width:1px; background:var(--encre-800)}
+  .chiffre-nb{font-size:clamp(24px,3.8vw,46px); line-height:1; white-space:nowrap;
+    color:var(--rouge-500); letter-spacing:.012em; font-variant-numeric:tabular-nums;
+    text-shadow:0 0 26px rgba(250,1,23,.55), 0 0 70px rgba(250,1,23,.28)}
+  .chiffre-lb{margin-top:9px; font-size:clamp(11.5px,1.1vw,13px); font-weight:700;
+    letter-spacing:.03em; color:var(--craie-400)}
+
+  /* ---------- pied de page ---------- */
+  .site-footer{border-top:1px solid var(--encre-800); background:var(--encre-950)}
+  .footer-haut{padding-block:clamp(44px,5vw,64px);
+    display:grid; gap:clamp(30px,4vw,44px);
+    grid-template-columns:minmax(240px,1.35fr) repeat(3,minmax(140px,1fr))}
+  .footer-marque p{margin-top:18px; max-width:34ch; font-size:14px; line-height:1.62;
+    color:var(--craie-400)}
+  .reseaux{margin-top:22px; display:flex; gap:10px}
+  .reseaux a{display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px; border:1px solid var(--encre-700);
+    color:var(--craie-200); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .reseaux a:hover{border-color:rgba(250,1,23,.55); color:var(--rouge-300);
+    background:rgba(250,1,23,.08)}
+  .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--craie-500)}
+  .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
+  .footer-col a{font-size:14.5px; font-weight:600; color:var(--craie-200); text-decoration:none;
+    transition:color .15s ease}
+  .footer-col a:hover{color:var(--rouge-300)}
+  .footer-bas{border-top:1px solid var(--encre-800); padding-block:22px;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 26px}
+  .footer-bas p{font-size:13px; color:var(--craie-500)}
+  .footer-legal{display:flex; flex-wrap:wrap; gap:10px 22px}
+  .footer-legal a{font-size:13px; font-weight:600; color:var(--craie-500); text-decoration:none}
+  .footer-legal a:hover{color:var(--craie-200)}
+  @media (max-width:860px){
+    .footer-haut{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .footer-marque{grid-column:1 / -1}
+  }
+  @media (max-width:430px){ .footer-haut{grid-template-columns:1fr} }
+
+  /* ---------- sections ---------- */
+  section[id]{scroll-margin-top:24px}
+  .section{padding-block:clamp(52px,6.4vw,88px)}
+  .section-tete{display:flex; align-items:flex-end; justify-content:space-between;
+    gap:20px 30px; flex-wrap:wrap}
+  .section-titre{margin-top:12px; font-size:clamp(26px,3.4vw,40px); line-height:1;
+    letter-spacing:.012em; color:var(--craie-100)}
+  .lien-suite{display:inline-flex; align-items:center; gap:7px; padding-bottom:4px;
+    font-size:14.5px; font-weight:700; color:var(--rouge-300); text-decoration:none;
+    white-space:nowrap; transition:color .15s ease}
+  .lien-suite:hover{color:var(--rouge-500)}
+
+  /* ---------- cartes salle ---------- */
+  .salles{margin-top:clamp(26px,3vw,36px); display:grid; gap:20px;
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,264px),1fr))}
+  .salle{display:flex; flex-direction:column; overflow:hidden;
+    border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900);
+    transition:border-color .16s ease, transform .16s ease, box-shadow .16s ease}
+  .salle:hover{border-color:rgba(250,1,23,.45); transform:translateY(-3px);
+    box-shadow:0 26px 50px -30px rgba(0,0,0,.95)}
+  .salle-photo{position:relative; aspect-ratio:16/10; display:grid; place-items:center;
+    background:
+      radial-gradient(120% 90% at 50% 118%, rgba(224,0,22,.30) 0%, rgba(224,0,22,0) 62%),
+      linear-gradient(145deg,#26262C 0%,#151518 55%,#0D0D0F 100%);
+    border-bottom:1px solid var(--encre-800); overflow:hidden}
+  .salle-photo::after{content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(245,243,239,.026) 0 1px, transparent 1px 13px)}
+  .salle-initiales{position:relative; z-index:1;
+    font-family:Anton,"Arial Narrow",sans-serif; font-size:54px; line-height:1;
+    letter-spacing:.04em; color:rgba(245,243,239,.12);
+    text-shadow:0 0 34px rgba(250,1,23,.28)}
+  .salle-fav{position:absolute; top:9px; right:9px; width:34px; height:34px; border:0;
+    border-radius:999px; background:rgba(10,10,11,.55); color:var(--craie-200);
+    display:grid; place-items:center; cursor:pointer;
+    transition:color .15s ease, background-color .15s ease}
+  .salle-fav:hover{color:var(--rouge-300); background:rgba(10,10,11,.8)}
+  .salle-fav[aria-pressed="true"]{color:var(--rouge-500)}
+  .salle-fav[aria-pressed="true"] svg{fill:currentColor}
+  .salle-corps{flex:1 1 auto; display:flex; flex-direction:column; gap:11px; padding:17px 17px 18px}
+  .salle-ouvert{margin-bottom:4px}
+  .salle-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+  .salle-nom{font-size:16.5px; font-weight:800; line-height:1.24; letter-spacing:-.01em;
+    min-height:2.48em; color:var(--craie-100)}
+  .note{display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
+    font-size:13.5px; font-weight:800; color:var(--craie-100); font-variant-numeric:tabular-nums}
+  .note svg{color:var(--craie-100)}
+  .note small{font-size:12px; font-weight:600; color:var(--craie-500)}
+  .salle-chips{display:flex; flex-wrap:wrap; gap:6px}
+  .mini-chip{padding:5px 10px; border:1px solid var(--encre-700); border-radius:999px;
+    font-size:11.5px; font-weight:700; color:var(--craie-400)}
+  .salle-meta{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--craie-400)}
+  .salle-meta svg{flex-shrink:0; color:var(--craie-500)}
+  .salle-ouvert{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700;
+    color:var(--vert)}
+  .salle-ouvert::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--vert); box-shadow:0 0 8px 1px rgba(63,191,135,.7)}
+  .salle .btn{margin-top:auto; width:100%; min-height:44px; font-size:14px}
+
+  /* sur mobile la rangee de salles devient un carrousel, comme sur les plateformes */
+  @media (max-width:640px){
+    .salles{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory;
+      scroll-padding-inline:var(--gutter); scrollbar-width:none; -ms-overflow-style:none;
+      margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter);
+      padding-block:2px 10px}
+    .salles::-webkit-scrollbar{display:none}
+    .salle{flex:0 0 clamp(228px,80%,320px); scroll-snap-align:start}
+    .salle-photo{aspect-ratio:16/9}
+  }
+
+  /* ---------- parcourir ---------- */
+  .bloc-parcourir{background:var(--encre-900); border-block:1px solid var(--encre-800)}
+  .grille-disc{margin-top:clamp(24px,2.8vw,32px); display:grid; gap:12px;
+    grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:1000px){ .grille-disc{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  @media (max-width:720px){ .grille-disc{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  .tuile{display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:18px 18px; border:1px solid var(--encre-700); border-radius:var(--r-m);
+    background:var(--encre-950); text-decoration:none;
+    transition:border-color .16s ease, background-color .16s ease}
+  .tuile:hover{border-color:rgba(250,1,23,.5); background:rgba(224,0,22,.08)}
+  .tuile-nom{font-size:17px; line-height:1.1; color:var(--craie-100); transition:color .16s ease}
+  .tuile:hover .tuile-nom{color:var(--rouge-300)}
+  .tuile svg{flex-shrink:0; color:var(--craie-500); transition:color .16s ease, transform .16s ease}
+  .tuile:hover svg{color:var(--rouge-300); transform:translateX(3px)}
+
+  .villes{margin-top:clamp(24px,2.8vw,32px); display:flex; flex-wrap:wrap; gap:10px}
+  .villes a{display:inline-flex; align-items:center; min-height:42px; padding:10px 18px;
+    border:1px solid var(--encre-800); border-radius:999px; background:var(--encre-900);
+    font-size:14.5px; font-weight:700; color:var(--craie-200); text-decoration:none;
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .villes a:hover{border-color:rgba(250,1,23,.5); color:var(--craie-100);
+    background:rgba(224,0,22,.09)}
+  /* sur mobile on n'affiche que les premieres villes, le reste est derriere le lien */
+  @media (max-width:640px){ .villes a:nth-child(n+16){display:none} }
+
+  /* ---------- bande club ---------- */
+  .bande-club{border-top:1px solid var(--encre-800); background:var(--encre-950)}
+  .bande-in{padding-block:clamp(34px,4vw,54px); display:flex; flex-wrap:wrap;
+    align-items:center; justify-content:space-between; gap:22px 40px}
+  .bande-texte h2{font-size:clamp(22px,2.6vw,30px); line-height:1.05; color:var(--craie-100)}
+  .bande-texte p{margin-top:10px; max-width:56ch; font-size:15px; line-height:1.6;
+    color:var(--craie-400)}
+  .bande-actions{display:flex; flex-wrap:wrap; gap:12px}
+  .btn-ligne{background:transparent; color:var(--craie-100); border:1px solid var(--encre-600);
+    box-shadow:none}
+  .btn-ligne:hover{border-color:var(--craie-400); color:var(--craie-100); background:transparent}
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+  /* ---------- suggestions de villes ---------- */
+  .sug{position:absolute; z-index:60; top:calc(100% + 10px); left:0; right:0;
+    min-width:236px; margin:0; padding:6px; list-style:none; border-radius:14px;
+    background:#101013; border:1px solid rgba(245,243,239,.14);
+    box-shadow:0 34px 76px -28px rgba(0,0,0,.96), inset 0 1px 0 rgba(255,255,255,.05);
+    max-height:min(320px,52vh); overflow:auto; overscroll-behavior:contain}
+  .sug li{display:flex; align-items:center; gap:11px; min-height:44px; padding:10px 13px;
+    border-radius:10px; cursor:pointer; font-size:14.5px; font-weight:700;
+    color:var(--craie-200); transition:background-color .12s ease, color .12s ease}
+  .sug li svg{flex-shrink:0; color:var(--craie-500)}
+  .sug li:hover,.sug li[aria-selected="true"]{background:rgba(245,243,239,.07); color:var(--craie-100)}
+  .sug li:hover svg,.sug li[aria-selected="true"] svg{color:var(--rouge-300)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<path id="fs-mono-f" fill-rule="evenodd" d="M297.91 9.48L292.8 16.22L201.31 294.45L201.06 298.42L297.59 218.95L317.07 155.67L362 155.51L405.5 113C405.42 112.42 405.08 110.08 405 109.5L331.39 109.49L344.8 62.69L495.57 62.41L552.73 9.53L297.91 9.48Z"/>
+<path id="fs-mono-s" fill-rule="evenodd" d="M649 -0.02L560.42 40.44L579.8 46C579.73 46.5 579.47 48.5 579.41 49L512.33 109.58L456.53 109.7L385.36 186.83L387.67 195.99L395.59 207.49L419.41 220.65L543.82 221.56L551.14 226.29L552.19 235.51L549.63 244.39L543.15 251.2L535.87 253.59L350.18 253.62L292.16 297.77L543.26 297.75L566.77 291.35L585.14 279.41L601.02 259.61L607.74 238.79L607.78 213.75L597.67 194.54L581.91 183.3L560.48 177.57L452 177.31C451.33 176.92 448.64 175.38 447.97 175L446.32 169.13L448.08 160.64L457.88 153.52L525.78 153.46L614.83 67.44L628.83 83.21L651.1 5L651.55 0C651.12 -0 649.42 -0.02 649 -0.02Z"/>
+<path id="fs-mot-fight" fill-rule="evenodd" d="M15.28 372.2L-0.5 447C-0.25 447.21 0.75 448.05 1 448.26L20.73 448.02L26.64 420.92L72.59 420.7L75.54 408C75.45 407.17 75.09 403.87 75 403.04L30.51 402.81L32.92 390.93L87.99 390.69L91.45 377C91.38 376.2 91.08 372.99 91 372.18L15.28 372.2ZM103.07 372.09L87.85 442L87.49 448.33L106 448.32C106.46 448.1 108.29 447.22 108.74 447L124.57 372.32L103.07 372.09ZM156.31 372.24L146.14 375.4L138.34 380.61L129.98 393.1L123.58 424.9L124.82 433.81L127.95 440.37L133.84 445.63L143.37 448.38L199.46 448.37L204.57 446.06L207.31 438L213.49 407.56L213.45 402.81L169.57 403.08L165.81 419.53L189.76 419.81L187.73 429.3L151.65 429.29L146.26 425.3L146.76 416L150.6 398.53L155.63 392.43L162.7 390.88L213 390.56C213.54 390.13 215.71 388.43 216.25 388L219.57 372.13L156.31 372.24ZM233.24 372.17L217.08 448.28L238.69 448.31L245.18 418.8L284.69 418.83L279 447.09C279.33 447.29 280.67 448.12 281 448.33L300.39 448.12L316.33 372.24L294.87 372.25L288.63 400.17L254 400.22C253.2 400.02 249.98 399.2 249.18 399L254.69 372.34L233.24 372.17ZM326.57 372.15L324.03 377.09L321.51 390.73L350 390.7C350.26 390.92 351.29 391.78 351.55 392L339.78 447C340.15 447.23 341.63 448.14 342 448.36L360 448.06C360.33 447.53 361.67 445.42 362 444.89L373.4 391.07L403.62 390.65L407.76 372.2L326.57 372.15Z"/>
+<path id="fs-mot-scale" fill-rule="evenodd" d="M446.1 371.81L431.93 377.91L425.48 386.15L421.83 400.65L424.05 409.8L432.59 417.57L479 418.43C479.37 418.69 480.86 419.74 481.23 420L481.7 424.79L478.83 429.38L422.14 429.49L418.02 433.89L415.33 447.85L479.91 447.83L488.91 445.13L497.69 436.94L503.21 424.18L503.35 415.45L500.72 408.76L490.68 401.2L447.45 401.08L444 397.27C444 396.73 443.31 395 443.97 394C444.64 393 447.33 391.73 448 391.28L501.5 391C501.75 390.9 502.75 390.51 503 390.41L505.28 381L505.51 371.86L446.1 371.81ZM542.96 371.82L527.63 377.6L518.59 388.4L513.68 400L509.92 420L509.63 430.68L511.84 437.08L516.16 443.17L524.04 447.8L586.72 447.78L589.93 429.47L536.02 429.34L531.43 423.66L535.83 399.63L542.26 391.4L598.21 391.06L601.45 375.18L601.41 371.86L542.96 371.82ZM648.23 371.88L641.9 378L593.37 446C593.47 446.27 593.89 447.36 594 447.63L616.16 447.63L622.54 437.37L624.22 436.17L654.29 392.73L663.12 419.24L640.67 419.6L635.09 429L628.34 435.69L667 435.91C667.4 436.26 668.99 437.65 669.39 438L672.19 447.82L695.35 447.61L670.61 374C670.01 373.64 667.6 372.21 667 371.85L648.23 371.88ZM719.94 371.82L715.78 375.93L715.22 385C714.98 385.17 714.02 385.83 713.78 386L701.71 447.78L773.11 447.84L777.44 429.51L726.86 429.37L737.62 374C737.52 373.66 737.1 372.32 737 371.98L719.94 371.82ZM801 371.96C800.48 372.3 798.38 373.66 797.85 374L795.79 380L782.32 447.82L856.84 447.8L859.39 437L859.58 429.42L810 429.4C809.63 429.34 808.12 429.57 807.79 429C807.47 428.43 807.99 426.5 808.03 426L810 417.86L856.25 417.68L859.42 401.57L813.64 401.49L814 395.27C814.33 394.59 815.67 391.89 816 391.21L867.37 391.06L871.74 371.88L801 371.96Z"/>
+</defs></svg>
+
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="site-header">
+  <div class="wrap header-in">
+    <a class="brand" href="#top" aria-label="FightScale, accueil">
+      <svg viewBox="200 0 452 300" width="48" height="32" role="img" aria-label="FightScale">
+        <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+      </svg>
+      <svg class="brand-mot" viewBox="0 372 872 77" width="150" height="13.3" aria-hidden="true">
+        <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+      </svg>
+    </a>
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a class="nav-link" href="recherche.html">Rechercher une salle</a>
+      <a class="nav-link" href="recherche.html">Nos salles</a>
+      <a class="nav-link" href="#clubs">Acquisition</a>
+      <a class="nav-link" href="#connexion">Connexion</a>
+      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+  <section class="hero" id="top">
+    <canvas id="carte" aria-hidden="true"></canvas>
+    <div class="lueur" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <div class="wrap hero-in">
+      <p class="eyebrow">L'annuaire des sports de combat</p>
+
+      <h1 class="display">
+        <span>Trouvez la salle</span>
+        <span>de sports de combat</span>
+        <span class="rouge">près de chez vous</span>
+      </h1>
+
+      <p class="hero-sous">Réservez vos séances, découvrez les disciplines et rejoignez une
+        communauté de passionnés.</p>
+
+      <form class="recherche" id="recherche" role="search">
+        <div class="seg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="seg-corps">
+            <span class="seg-titre">Où</span>
+            <label class="skip" for="ville">Ville ou code postal</label>
+            <input id="ville" name="ville" type="text" placeholder="Paris, Lyon, Marseille…" autocomplete="address-level2">
+          </span>
+        </div>
+
+        <span class="sep" aria-hidden="true"></span>
+
+        <div class="seg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h3l2.5-6 4 13 2.5-7h4"/></svg>
+          <span class="seg-corps">
+            <span class="seg-titre" id="dd-titre">Discipline</span>
+            <button type="button" class="dd-btn" id="dd-btn" aria-haspopup="listbox"
+              aria-expanded="false" aria-labelledby="dd-titre dd-btn">
+              <span id="dd-valeur">Toutes les disciplines</span>
+              <svg class="dd-chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </span>
+          <ul class="dd-panneau" id="dd-panneau" role="listbox" aria-labelledby="dd-titre" tabindex="-1" hidden></ul>
+          <input type="hidden" name="discipline" id="discipline" value="Toutes les disciplines">
+        </div>
+
+        <button class="btn btn-rouge" type="submit">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+          Rechercher
+        </button>
+      </form>
+      <p class="rch-statut" id="statut" hidden role="status"></p>
+
+      <div class="disciplines" id="pastilles" role="group" aria-label="Filtrer par discipline"></div>
+
+      <ul class="chiffres">
+        <li>
+          <p class="chiffre-nb display">100+</p>
+          <p class="chiffre-lb">salles référencées</p>
+        </li>
+        <li>
+          <p class="chiffre-nb display">5&nbsp;000+</p>
+          <p class="chiffre-lb">pratiquants</p>
+        </li>
+        <li>
+          <p class="chiffre-nb display">8</p>
+          <p class="chiffre-lb">disciplines majeures</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SALLES -->
+  <section class="section" id="salles">
+    <div class="wrap">
+      <div class="section-tete">
+        <div>
+          <p class="eyebrow">Séances d'essai ouvertes</p>
+          <h2 class="section-titre display">Les salles à découvrir</h2>
+        </div>
+        <a class="lien-suite" href="recherche.html">Voir toutes les salles
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="salles" id="liste-salles"></div>
+    </div>
+  </section>
+
+  <!-- PARCOURIR -->
+  <section class="bloc-parcourir">
+    <div class="wrap section" id="disciplines">
+      <div class="section-tete">
+        <div>
+          <p class="eyebrow">Par discipline</p>
+          <h2 class="section-titre display">Qu'est-ce que vous voulez pratiquer</h2>
+        </div>
+      </div>
+      <div class="grille-disc" id="grille-disc"></div>
+    </div>
+
+    <div class="wrap section" id="villes" style="padding-top:0">
+      <div class="section-tete">
+        <div>
+          <p class="eyebrow">Par ville</p>
+          <h2 class="section-titre display">Où voulez-vous vous entraîner</h2>
+        </div>
+        <a class="lien-suite" href="recherche.html">Toutes les villes
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="villes">
+        <a href="recherche.html?ville=Paris">Paris</a>
+        <a href="recherche.html?ville=Lyon">Lyon</a>
+        <a href="recherche.html?ville=Marseille">Marseille</a>
+        <a href="recherche.html?ville=Toulouse">Toulouse</a>
+        <a href="recherche.html?ville=Bordeaux">Bordeaux</a>
+        <a href="recherche.html?ville=Lille">Lille</a>
+        <a href="recherche.html?ville=Nantes">Nantes</a>
+        <a href="recherche.html?ville=Nice">Nice</a>
+        <a href="recherche.html?ville=Strasbourg">Strasbourg</a>
+        <a href="recherche.html?ville=Montpellier">Montpellier</a>
+        <a href="recherche.html?ville=Rennes">Rennes</a>
+        <a href="recherche.html?ville=Toulon">Toulon</a>
+        <a href="recherche.html?ville=Grenoble">Grenoble</a>
+        <a href="recherche.html?ville=Saint-%C3%89tienne">Saint-Étienne</a>
+        <a href="recherche.html?ville=Dijon">Dijon</a>
+        <a href="recherche.html?ville=Angers">Angers</a>
+        <a href="recherche.html?ville=Nîmes">Nîmes</a>
+        <a href="recherche.html?ville=Clermont-Ferrand">Clermont-Ferrand</a>
+        <a href="recherche.html?ville=Le%20Havre">Le Havre</a>
+        <a href="recherche.html?ville=Reims">Reims</a>
+        <a href="recherche.html?ville=Aix-en-Provence">Aix-en-Provence</a>
+        <a href="recherche.html?ville=Brest">Brest</a>
+        <a href="recherche.html?ville=Tours">Tours</a>
+        <a href="recherche.html?ville=Metz">Metz</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANDE CLUB -->
+  <section class="bande-club" id="clubs">
+    <div class="wrap bande-in">
+      <div class="bande-texte">
+        <h2 class="display">Vous dirigez une salle ?</h2>
+        <p>Référencez-la gratuitement et recevez des demandes de séances d'essai.
+          Passez en Pro à 27&nbsp;€ par mois quand vous voulez gérer vos créneaux et suivre vos leads.</p>
+      </div>
+      <div class="bande-actions">
+        <a class="btn btn-rouge" href="clubs.html">Référencer ma salle</a>
+        <a class="btn btn-ligne" href="#pro">Découvrir FightScale Pro</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-haut">
+    <div class="footer-marque">
+      <a class="brand" href="#top" aria-label="FightScale, accueil">
+        <svg viewBox="200 0 452 300" width="45" height="30" role="img" aria-label="FightScale">
+          <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+        </svg>
+        <svg viewBox="0 372 872 77" width="141" height="12.5" aria-hidden="true">
+          <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+        </svg>
+      </a>
+      <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
+        les clubs qui veulent remplir leurs séances d'essai.</p>
+      <div class="reseaux">
+        <a href="#instagram" aria-label="FightScale sur Instagram">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#tiktok" aria-label="FightScale sur TikTok">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.2 4v10.4a3.6 3.6 0 1 1-3.6-3.6"/><path d="M14.2 4.4c.5 2.4 2.2 4 4.6 4.2"/></svg>
+        </a>
+        <a href="#facebook" aria-label="FightScale sur Facebook">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.8 21v-7.4h2.6l.4-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.5V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H9.2v3h2.6V21"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <nav class="footer-col" aria-labelledby="f-prat">
+      <h2 id="f-prat">Pratiquants</h2>
+      <ul>
+        <li><a href="#recherche">Rechercher une salle</a></li>
+        <li><a href="#disciplines">Toutes les disciplines</a></li>
+        <li><a href="#villes">Salles par ville</a></li>
+        <li><a href="#seance-essai">Réserver une séance d'essai</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-clubs">
+      <h2 id="f-clubs">Clubs</h2>
+      <ul>
+        <li><a href="clubs.html">Référencer ma salle</a></li>
+        <li><a href="#pro">FightScale Pro</a></li>
+        <li><a href="#acquisition">Acquisition de leads</a></li>
+        <li><a href="#connexion">Espace club</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-fs">
+      <h2 id="f-fs">FightScale</h2>
+      <ul>
+        <li><a href="#a-propos">À propos</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#aide">Aide</a></li>
+        <li><a href="#presse">Presse</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="wrap footer-bas">
+    <p>© 2026 FightScale. Tous droits réservés.</p>
+    <nav class="footer-legal" aria-label="Informations légales">
+      <a href="#mentions">Mentions légales</a>
+      <a href="#cgu">CGU</a>
+      <a href="#cgv">CGV</a>
+      <a href="#confidentialite">Confidentialité</a>
+      <a href="#cookies">Cookies</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="carte.js"></script>
+<script>
+var VILLES_FR = [["Agen",44.2004,0.6333],["Aix-en-Provence",43.52,5.45],["Ajaccio",41.9271,8.7283],["Albi",43.9396,2.1512],["Alençon",48.428,0.0896],["Amiens",49.9004,2.3],["Angers",47.48,-0.53],["Angoulême",45.6432,0.1487],["Annecy",45.9,6.1167],["Antibes",43.5801,7.0997],["Argenteuil",48.9482,2.2413],["Arles",43.7097,4.6374],["Arras",50.2833,2.7833],["Asnières-sur-Seine",48.9173,2.2873],["Aubagne",43.2907,5.5648],["Aulnay-sous-Bois",48.9432,2.4969],["Aurillac",44.9146,2.4406],["Auxerre",47.8004,3.5666],["Avignon",43.9451,4.8374],["Bar-le-Duc",48.7696,5.1748],["Bastia",42.7032,9.45],["Bayeux",49.278,-0.7051],["Bayonne",43.4856,-1.4679],["Beauvais",49.4317,2.0892],["Belfort",47.6432,6.8565],["Berck",50.4145,1.5823],["Bergerac",44.8501,0.4858],["Besançon",47.23,6.03],["Biarritz",43.4733,-1.5616],["Blois",47.5949,1.3194],["Bordeaux",44.852,-0.597],["Boulogne-Billancourt",48.8404,2.2401],["Boulogne-sur-Mer",50.7298,1.6075],["Bourg-en-Bresse",46.202,5.2395],["Bourges",47.0837,2.4],["Brest",48.3904,-4.495],["Brive-la-Gaillarde",45.1581,1.5193],["Béthune",50.5297,2.6423],["Béziers",43.3505,3.21],["Caen",49.1838,-0.35],["Cahors",44.4434,1.4361],["Calais",50.9504,1.8333],["Cambrai",50.1807,3.2458],["Cannes",43.5563,7.0042],["Carcassonne",43.2139,2.3409],["Chalon-sur-Saône",46.7883,4.8529],["Chambéry",45.585,5.904],["Charleville-Mézières",49.7688,4.7251],["Chartres",48.4489,1.5079],["Chaumont",48.1092,5.1337],["Cherbourg-en-Cotentin",49.6408,-1.6103],["Cholet",47.0547,-0.8714],["Châteauroux",46.808,1.7067],["Châtellerault",46.8086,0.5416],["Clermont-Ferrand",45.78,3.08],["Colmar",48.0791,7.3536],["Colombes",48.9237,2.2473],["Compiègne",49.4069,2.8241],["Concarneau",47.8966,-3.9083],["Courbevoie",48.897,2.2511],["Créteil",48.7814,2.4525],["Dieppe",49.9337,1.0833],["Dijon",47.3304,5.03],["Dole",47.0898,5.4955],["Douai",50.375,3.0767],["Dunkerque",51.0311,2.3488],["Fontainebleau",48.4172,2.7072],["Forbach",49.1924,6.8836],["Fréjus",43.4442,6.7406],["Granville",48.8338,-1.5595],["Grenoble",45.1804,5.72],["Haguenau",48.8143,7.8321],["Hyères",43.1213,6.1525],["Istres",43.5487,4.963],["La Roche-sur-Yon",46.6675,-1.4288],["La Rochelle",46.1667,-1.15],["Laon",49.5707,3.6267],["Laval",48.0727,-0.77],["Le Havre",49.505,0.105],["Le Mans",48.0044,0.2026],["Le Puy-en-Velay",45.0347,3.903],["Le Touquet-Paris-Plage",50.5098,1.5895],["Lens",50.4375,2.8195],["Lille",50.6519,3.0781],["Limoges",45.83,1.25],["Lisieux",49.148,0.2377],["Lorient",47.7504,-3.3666],["Lyon",45.772,4.8281],["Mantes-la-Jolie",48.9984,1.6912],["Marseille",43.2919,5.3731],["Martigues",43.375,5.0555],["Meaux",48.9564,2.9032],["Melun",48.5333,2.6666],["Metz",49.1203,6.18],["Mont-de-Marsan",43.8984,-0.4888],["Montargis",47.998,2.7353],["Montauban",44.0193,1.3588],["Montbéliard",47.5122,6.7985],["Montluçon",46.3468,2.595],["Montpellier",43.6104,3.87],["Montreuil",46.3961,-0.8434],["Morlaix",48.5996,-3.8198],["Moulins",48.009,-1.3632],["Mulhouse",47.7504,7.35],["Mâcon",46.3035,4.8241],["Mérignac",44.8309,-0.6786],["Nancy",48.6837,6.2],["Nanterre",48.8974,2.2024],["Nantes",47.2104,-1.59],["Narbonne",43.1777,3.0116],["Nevers",46.9837,3.1667],["Nice",43.717,7.2631],["Niort",46.3257,-0.4449],["Nîmes",43.8304,4.35],["Orléans",47.9004,1.9],["Paris",48.8581,2.353],["Pau",43.3231,-0.3406],["Perpignan",42.7,2.9],["Poitiers",46.582,0.3615],["Pontoise",49.0534,2.0947],["Périgueux",45.192,0.7183],["Quimper",47.9911,-4.087],["Reims",49.2504,4.03],["Rennes",48.1,-1.67],["Roanne",46.0333,4.0667],["Rodez",44.3592,2.5696],["Romans-sur-Isère",45.0525,5.0631],["Roubaix",50.6914,3.1822],["Rouen",49.4304,1.08],["Royan",45.6372,-1.0264],["Rueil-Malmaison",48.8725,2.1795],["Saint-Brieuc",48.51,-2.7625],["Saint-Denis",48.9288,2.3577],["Saint-Louis",47.602,7.5381],["Saint-Lô",49.1095,-1.078],["Saint-Malo",48.6498,-1.9868],["Saint-Nazaire",47.2767,-2.2321],["Saint-Quentin",49.8493,3.2814],["Saint-Étienne",45.4304,4.38],["Saintes",45.7451,-0.6307],["Salon-de-Provence",43.6476,5.1053],["Saumur",47.2687,-0.0693],["Sedan",49.6982,4.9406],["Sens",48.1945,3.2972],["Soissons",49.3775,3.3227],["Strasbourg",48.58,7.75],["Sète",43.4104,3.6999],["Sélestat",48.2758,7.4641],["Tarbes",43.2333,0.0833],["Thionville",49.3517,6.1596],["Toulon",43.1342,5.9188],["Toulouse",43.6219,1.448],["Tourcoing",50.7219,3.1532],["Tours",47.3804,0.6999],["Troyes",48.3404,4.0834],["Valence",44.9285,4.9127],["Valenciennes",50.3541,3.5117],["Vannes",47.6567,-2.7441],["Verdun",49.158,5.3883],["Versailles",48.8005,2.1333],["Vesoul",47.6233,6.1545],["Vichy",46.1171,3.4167],["Vierzon",47.2349,2.058],["Villeurbanne",45.7717,4.8813],["Vitrolles",43.4575,5.2595],["Vitry-sur-Seine",48.7899,2.3984],["Épinal",48.1746,6.4661],["Évreux",49.0222,1.1563],["Évry",48.6282,2.4451]];
+/* ---------- suggestions de villes ----------
+   Le champ « Où » propose les grandes villes dès la première lettre, comme sur
+   les plateformes de réservation : flèches, Entrée, Échap, clic. La liste et
+   ses coordonnées viennent du découpage communal réel (voir _villes.js). */
+(function (racine){
+
+  function aplati(s){
+    return (s || '').toLowerCase().normalize ?
+      (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '') :
+      (s || '').toLowerCase().replace(/[^a-z]/g, '');
+  }
+
+  var PIN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>';
+
+  racine.villeParNom = function (saisie){
+    var c = aplati(saisie);
+    if (!c) return null;
+    for (var i = 0; i < VILLES_FR.length; i++)
+      if (aplati(VILLES_FR[i][0]) === c) return VILLES_FR[i];
+    for (var j = 0; j < VILLES_FR.length; j++)
+      if (aplati(VILLES_FR[j][0]).indexOf(c) === 0) return VILLES_FR[j];
+    return null;
+  };
+
+  racine.villeLaPlusProche = function (lat, lon, maxKm){
+    var choix = null, mini = 1e9;
+    for (var i = 0; i < VILLES_FR.length; i++){
+      var v = VILLES_FR[i];
+      var dy = (v[1] - lat) * 111.32;
+      var dx = (v[2] - lon) * 111.32 * Math.cos((v[1] + lat) / 2 * Math.PI / 180);
+      var d = Math.sqrt(dx * dx + dy * dy);
+      if (d < mini){ mini = d; choix = v; }
+    }
+    return (maxKm && mini > maxKm) ? null : choix;
+  };
+
+  /* champ : l'input ; surChoix(ville) : ce qu'on fait quand une ville est retenue */
+  racine.suggestions = function (champ, surChoix){
+    var boite = document.createElement('ul');
+    boite.className = 'sug';
+    boite.setAttribute('role', 'listbox');
+    boite.hidden = true;
+    champ.parentNode.appendChild(boite);
+    champ.setAttribute('role', 'combobox');
+    champ.setAttribute('aria-autocomplete', 'list');
+    champ.setAttribute('aria-expanded', 'false');
+    champ.setAttribute('autocomplete', 'off');
+    var lot = [], sel = -1;
+
+    function ferme(){
+      boite.hidden = true; sel = -1;
+      champ.setAttribute('aria-expanded', 'false');
+    }
+    function marque(i){
+      sel = i;
+      Array.prototype.forEach.call(boite.children, function (li, n){
+        li.setAttribute('aria-selected', String(n === i));
+        if (n === i) li.scrollIntoView({ block: 'nearest' });
+      });
+    }
+    function cherche(){
+      var q = aplati(champ.value);
+      if (!q){ lot = []; ferme(); return; }
+      var debut = [], dedans = [];
+      for (var i = 0; i < VILLES_FR.length; i++){
+        var p = aplati(VILLES_FR[i][0]).indexOf(q);
+        if (p === 0) debut.push(VILLES_FR[i]);
+        else if (p > 0) dedans.push(VILLES_FR[i]);
+      }
+      lot = debut.concat(dedans).slice(0, 7);
+      if (!lot.length){ ferme(); return; }
+      boite.innerHTML = lot.map(function (v, i){
+        return '<li role="option" aria-selected="false" data-i="' + i + '">' +
+               PIN + '<span>' + v[0] + '</span></li>';
+      }).join('');
+      boite.hidden = false;
+      champ.setAttribute('aria-expanded', 'true');
+      marque(0);
+    }
+    function retient(i){
+      if (i < 0 || i >= lot.length) return false;
+      champ.value = lot[i][0];
+      ferme();
+      surChoix(lot[i]);
+      return true;
+    }
+
+    champ.addEventListener('input', cherche);
+    champ.addEventListener('focus', function (){ if (champ.value) cherche(); });
+    champ.addEventListener('blur', function (){ setTimeout(ferme, 120); });
+    champ.addEventListener('keydown', function (e){
+      if (boite.hidden){
+        if (e.key === 'ArrowDown'){ e.preventDefault(); cherche(); }
+        return;
+      }
+      if (e.key === 'ArrowDown'){ e.preventDefault(); marque((sel + 1) % lot.length); }
+      else if (e.key === 'ArrowUp'){ e.preventDefault(); marque((sel - 1 + lot.length) % lot.length); }
+      else if (e.key === 'Escape'){ e.preventDefault(); ferme(); }
+      else if (e.key === 'Enter'){ if (retient(sel)) e.preventDefault(); }
+      else if (e.key === 'Tab'){ retient(sel); }
+    });
+    boite.addEventListener('pointerdown', function (e){
+      var li = e.target.closest('li');
+      if (!li) return;
+      e.preventDefault();
+      retient(+li.dataset.i);
+    });
+  };
+})(window);
+</script>
+<script>
+  (function () {
+    var DISCIPLINES = ['Toutes les disciplines', 'MMA', 'Boxe anglaise', 'Kickboxing',
+      'Muay Thaï', 'Jiu-jitsu brésilien', 'Grappling', 'Karaté', 'Judo'];
+
+    var btn = document.getElementById('dd-btn');
+    var panneau = document.getElementById('dd-panneau');
+    var valeur = document.getElementById('dd-valeur');
+    var champ = document.getElementById('discipline');
+    var pastilles = document.getElementById('pastilles');
+    var statut = document.getElementById('statut');
+    var items = [], survol = 0;
+
+    var COCHE = '<svg class="dd-coche" width="15" height="15" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" ' +
+      'aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+    DISCIPLINES.forEach(function (nom, i) {
+      var li = document.createElement('li');
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      li.id = 'dd-opt-' + i;
+      li.innerHTML = '<span class="dd-pastille" aria-hidden="true"></span><span>' + nom + '</span>' + COCHE;
+      li.addEventListener('click', function () { choisir(i, true); });
+      li.addEventListener('mousemove', function () { marquer(i); });
+      panneau.appendChild(li);
+      items.push(li);
+
+      if (i > 0) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = nom;
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', function () {
+          choisir(champ.value === nom ? 0 : i, false);
+        });
+        pastilles.appendChild(b);
+      }
+    });
+
+    function marquer(i) {
+      survol = i;
+      items.forEach(function (li, n) { li.classList.toggle('survol', n === i); });
+    }
+
+    function choisir(i, refermer) {
+      var nom = DISCIPLINES[i];
+      champ.value = nom;
+      valeur.textContent = nom;
+      items.forEach(function (li, n) { li.setAttribute('aria-selected', n === i ? 'true' : 'false'); });
+      Array.prototype.forEach.call(pastilles.children, function (b) {
+        b.setAttribute('aria-pressed', b.textContent === nom ? 'true' : 'false');
+      });
+      marquer(i);
+      if (refermer) { fermer(); btn.focus(); }
+    }
+
+    function ouvrir() {
+      panneau.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      marquer(Math.max(0, DISCIPLINES.indexOf(champ.value)));
+      items[survol].scrollIntoView({ block: 'nearest' });
+      document.addEventListener('click', dehors, true);
+    }
+    function fermer() {
+      panneau.hidden = true;
+      btn.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', dehors, true);
+    }
+    function dehors(e) {
+      if (!panneau.contains(e.target) && !btn.contains(e.target)) fermer();
+    }
+
+    btn.addEventListener('click', function () {
+      if (panneau.hidden) ouvrir(); else fermer();
+    });
+    btn.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+        if (panneau.hidden) { e.preventDefault(); ouvrir(); }
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (panneau.hidden) return;
+      if (e.key === 'Escape') { e.preventDefault(); fermer(); btn.focus(); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); marquer((survol + 1) % items.length); items[survol].scrollIntoView({ block: 'nearest' }); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); marquer((survol - 1 + items.length) % items.length); items[survol].scrollIntoView({ block: 'nearest' }); }
+      else if (e.key === 'Home') { e.preventDefault(); marquer(0); }
+      else if (e.key === 'End') { e.preventDefault(); marquer(items.length - 1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choisir(survol, true); }
+    });
+
+
+  /* ---- salles mises en avant (données d'exemple) ---- */
+  var SALLES = [
+    ['Fight Club Marseille','FCM','Marseille',['MMA','Boxe','Grappling'],'4,8',124,true,'08h00 – 22h00'],
+    ['Marseille Combat Academy','MCA','Marseille',['Boxe','Kickboxing','Muay Thaï'],'4,7',98,false,'09h00 – 21h00'],
+    ['JJB Marseille','JJB','Marseille',['Jiu-jitsu brésilien','Grappling'],'4,8',76,true,'10h00 – 20h00'],
+    ['The Jungle MMA','TJM','Marseille',['MMA','Muay Thaï','Kickboxing'],'4,9',112,true,'08h00 – 22h00'],
+    ['MMA Factory','MF','Aix-en-Provence',['MMA','Grappling'],'4,7',64,false,'09h00 – 21h30'],
+    ['Nice Fight Academy','NFA','Nice',['Boxe','MMA','Muay Thaï'],'4,6',57,true,'08h30 – 21h00'],
+    ['Bordeaux Combat','BC','Bordeaux',['MMA','Jiu-jitsu brésilien'],'4,8',89,true,'09h00 – 22h00'],
+    ['Toulouse Fight Club','TFC','Toulouse',['Boxe','Kickboxing'],'4,7',71,false,'10h00 – 21h00']
+  ];
+
+  var ETOILE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+    '<path d="m12 2 3 6.5 7 .9-5 4.8 1.3 7L12 17.8 5.7 21.2 7 14.2 2 9.4l7-.9L12 2z"/></svg>';
+  var PIN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  var COEUR = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/></svg>';
+
+  var liste = document.getElementById('liste-salles');
+  if (liste) {
+    SALLES.forEach(function (s) {
+      var art = document.createElement('article');
+      art.className = 'salle';
+      art.innerHTML =
+        '<div class="salle-photo">' +
+          '<span class="salle-initiales" aria-hidden="true">' + s[1] + '</span>' +
+              '<button class="salle-fav" type="button" aria-pressed="false" ' +
+            'aria-label="Ajouter ' + s[0] + ' à mes favoris">' + COEUR + '</button>' +
+        '</div>' +
+        '<div class="salle-corps">' +
+          '<div class="salle-tete">' +
+            '<span class="salle-nom">' + s[0] + '</span>' +
+            '<span class="note">' + ETOILE + s[4] + ' <small>(' + s[5] + ')</small></span>' +
+          '</div>' +
+          '<div class="salle-chips">' +
+            s[3].map(function (d) { return '<span class="mini-chip">' + d + '</span>'; }).join('') +
+          '</div>' +
+          '<p class="salle-meta">' + PIN + s[2] + '</p>' +
+          '<p class="salle-ouvert">Ouvert aujourd’hui · ' + s[7] + '</p>' +
+          '<a class="btn btn-rouge" href="#recherche">Voir la salle</a>' +
+        '</div>';
+      art.querySelector('.salle-fav').addEventListener('click', function () {
+        var on = this.getAttribute('aria-pressed') === 'true';
+        this.setAttribute('aria-pressed', on ? 'false' : 'true');
+      });
+      liste.appendChild(art);
+    });
+  }
+
+  /* ---- parcourir par discipline ---- */
+  var grille = document.getElementById('grille-disc');
+  if (grille) {
+    var FLECHE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+    DISCIPLINES.slice(1).forEach(function (nom) {
+      var a = document.createElement('a');
+      a.className = 'tuile';
+      a.href = 'recherche.html?discipline=' + encodeURIComponent(nom);
+      a.innerHTML = '<span class="tuile-nom display">' + nom + '</span>' + FLECHE;
+      grille.appendChild(a);
+    });
+  }
+
+    /* suggestions de villes sous le champ « Où » */
+    suggestions(document.getElementById('ville'), function () {});
+
+    document.getElementById('recherche').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var connue = villeParNom(document.getElementById('ville').value);
+      var v = connue ? connue[0] : (document.getElementById('ville').value.trim() || 'Marseille');
+      var d = champ.value && champ.value !== DISCIPLINES[0] ? champ.value : '';
+      location.href = 'recherche.html?ville=' + encodeURIComponent(v) +
+        (d ? '&discipline=' + encodeURIComponent(d) : '');
+    });
+  })();
+</script>
+
+</body>
+</html>
