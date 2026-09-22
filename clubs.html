@@ -127,6 +127,18 @@
   }
   @media (max-width:430px){ .footer-haut{grid-template-columns:1fr} }
 
+  .footer-reseau{padding-top:clamp(28px,3vw,38px); display:grid; gap:clamp(22px,2.6vw,32px);
+    grid-template-columns:1.6fr 1fr}
+  .footer-reseau h2{font-size:11.5px; font-weight:800; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--texte-4)}
+  /* Pas de separateur entre les liens : quand la liste passe a la ligne, la puce
+     se retrouve en tete de ligne. L'espacement suffit a les separer. */
+  .f-liens{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px 20px}
+  .f-liens a{display:inline-block; font-size:13.5px; line-height:1.5; font-weight:600;
+    color:var(--texte-3); text-decoration:none}
+  .f-liens a:hover{color:var(--rouge-700); text-decoration:underline}
+  @media (max-width:820px){ .footer-reseau{grid-template-columns:1fr} }
+
 
   /* ---------- héros club ---------- */
   .hero-club{position:relative; isolation:isolate; overflow:hidden; background:var(--fond);
@@ -601,6 +613,17 @@
         <li><a href="index.html#presse">Presse</a></li>
       </ul>
     </nav>
+  </div>
+
+  <div class="wrap footer-reseau">
+    <section aria-labelledby="f-villes">
+      <h2 id="f-villes">Salles de sports de combat par ville</h2>
+      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
+    </section>
+    <section aria-labelledby="f-disc">
+      <h2 id="f-disc">Salles par discipline</h2>
+      <ul class="f-liens"><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li></ul>
+    </section>
   </div>
 
   <div class="wrap footer-bas">
