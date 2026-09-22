@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Cherchez une salle de sports de combat par ville et par discipline, sur la carte.">
-<meta name="theme-color" content="#0A0A0B">
+<meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FightScale">
 <meta property="og:title" content="Salles de sports de combat — FightScale">
@@ -12,10 +12,10 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
-  :root{color-scheme:dark; padding-top:env(safe-area-inset-top,0px);
+  :root{color-scheme:light; padding-top:env(safe-area-inset-top,0px);
         padding-bottom:env(safe-area-inset-bottom,0px)}
   html{scroll-padding-top:env(safe-area-inset-top,0px)}
-  body{margin:0; background:#0A0A0B}
+  body{margin:0; background:#F7F6F3}
   img{max-width:100%}
   [hidden]{display:none !important}
 </style>
@@ -24,19 +24,27 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
 <style>
   :root{
-    --encre-950:#0A0A0B; --encre-900:#121214; --encre-850:#18181B; --encre-800:#1F1F23;
-    --encre-700:#2A2A2F; --encre-600:#3A3A41;
-    --craie-100:#F5F3EF; --craie-200:#D6D2CB; --craie-400:#9A948C; --craie-500:#6F6B66;
-    --rouge-300:#FF5E68; --rouge-500:#FA0117; --rouge-600:#E00016; --rouge-700:#B80012;
-    --vert:#3FBF87;
+    /* Palette claire. Le fond sombre convertissait mal : on passe sur du papier,
+       et le rouge de la marque devient l'accent au lieu d'etre une lueur.
+       Les noms disent le role, plus la couleur, pour qu'un futur changement de
+       teinte ne rende pas les variables mensongeres. */
+    --fond:#F7F6F3; --surface:#FFFFFF; --surface-2:#FCFBF9; --bord:#E8E5DF;
+    --bord-2:#DCD8D1; --bord-3:#C2BDB4;
+    --texte:#16160F; --texte-2:#3D3B34; --texte-3:#6B675E; --texte-4:#7E7A70;
+    --rouge-lien:#C10D1B; --rouge-500:#FA0117; --rouge-600:#E00016; --rouge-700:#B80012;
+    --vert:#0E7A50;
+    /* ombres : douces et chaudes, jamais du noir pur sur du papier */
+    --ombre-1:0 1px 2px rgba(22,22,15,.05), 0 1px 1px rgba(22,22,15,.04);
+    --ombre-2:0 2px 4px rgba(22,22,15,.05), 0 8px 24px -12px rgba(22,22,15,.16);
+    --ombre-3:0 4px 10px rgba(22,22,15,.07), 0 24px 48px -20px rgba(22,22,15,.22);
     --max:1240px;
     --gutter:clamp(20px, 4.5vw, 52px);
     --r-m:8px; --r-l:12px;
-    color-scheme:dark;
+    color-scheme:light;
   }
   *,*::before,*::after{box-sizing:border-box}
   body{
-    margin:0; background:var(--encre-950); color:var(--craie-100);
+    margin:0; background:var(--fond); color:var(--texte);
     font-family:Manrope,"Segoe UI",system-ui,sans-serif; font-weight:500;
     font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
   }
@@ -44,8 +52,8 @@
   h1,h2{margin:0}
   p{margin:0}
   ul{margin:0; padding:0; list-style:none}
-  a{color:var(--rouge-300)}
-  :focus-visible{outline:2px solid var(--rouge-300); outline-offset:3px; border-radius:6px}
+  a{color:var(--rouge-lien)}
+  :focus-visible{outline:2px solid var(--rouge-lien); outline-offset:3px; border-radius:6px}
 
   .wrap{width:100%; max-width:var(--max); margin-inline:auto; padding-inline:var(--gutter)}
   .display{font-family:Anton,"Haettenschweiler","Arial Narrow",sans-serif; font-weight:400;
@@ -62,17 +70,17 @@
     padding-block:22px}
   .brand{display:inline-flex; align-items:center; gap:13px; flex-shrink:0}
   .site-nav{display:flex; align-items:center; gap:30px}
-  .site-nav a{font-size:14.5px; font-weight:700; color:var(--craie-200); text-decoration:none;
+  .site-nav a{font-size:14.5px; font-weight:700; color:var(--texte-2); text-decoration:none;
     white-space:nowrap; transition:color .15s ease}
-  .site-nav a:hover{color:var(--craie-100)}
+  .site-nav a:hover{color:var(--texte)}
   .btn{display:inline-flex; align-items:center; justify-content:center; gap:9px;
     min-height:44px; padding:11px 22px; border:0; border-radius:var(--r-m);
     font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
     text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
   .btn-rouge{background:var(--rouge-600); color:#fff;
-    box-shadow:0 10px 30px -12px rgba(224,0,22,.9)}
+    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(224,0,22,.5)}
   .btn-rouge:hover{background:var(--rouge-700); color:#fff;
-    box-shadow:0 14px 34px -12px rgba(224,0,22,1)}
+    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(224,0,22,.6)}
   .site-nav .btn-rouge{color:#fff}
   @media (max-width:1040px){ .site-nav .nav-link{display:none} }
   .l-court{display:none}
@@ -83,30 +91,30 @@
   }
 
   /* ---------- pied de page ---------- */
-  .site-footer{border-top:1px solid var(--encre-800); background:var(--encre-950)}
+  .site-footer{border-top:1px solid var(--bord); background:var(--fond)}
   .footer-haut{padding-block:clamp(44px,5vw,64px);
     display:grid; gap:clamp(30px,4vw,44px);
     grid-template-columns:minmax(240px,1.35fr) repeat(3,minmax(140px,1fr))}
   .footer-marque p{margin-top:18px; max-width:34ch; font-size:14px; line-height:1.62;
-    color:var(--craie-400)}
+    color:var(--texte-3)}
   .reseaux{margin-top:22px; display:flex; gap:10px}
   .reseaux a{display:inline-flex; align-items:center; justify-content:center;
-    width:40px; height:40px; border-radius:10px; border:1px solid var(--encre-700);
-    color:var(--craie-200); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .reseaux a:hover{border-color:rgba(250,1,23,.55); color:var(--rouge-300);
-    background:rgba(250,1,23,.08)}
+    width:40px; height:40px; border-radius:10px; border:1px solid var(--bord-2);
+    color:var(--texte-2); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .reseaux a:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600);
+    background:rgba(224,0,22,.05)}
   .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
-    color:var(--craie-500)}
+    color:var(--texte-4)}
   .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
-  .footer-col a{font-size:14.5px; font-weight:600; color:var(--craie-200); text-decoration:none;
+  .footer-col a{font-size:14.5px; font-weight:600; color:var(--texte-2); text-decoration:none;
     transition:color .15s ease}
-  .footer-col a:hover{color:var(--rouge-300)}
-  .footer-bas{border-top:1px solid var(--encre-800); padding-block:22px;
+  .footer-col a:hover{color:var(--rouge-lien)}
+  .footer-bas{border-top:1px solid var(--bord); padding-block:22px;
     display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 26px}
-  .footer-bas p{font-size:13px; color:var(--craie-500)}
+  .footer-bas p{font-size:13px; color:var(--texte-4)}
   .footer-legal{display:flex; flex-wrap:wrap; gap:10px 22px}
-  .footer-legal a{font-size:13px; font-weight:600; color:var(--craie-500); text-decoration:none}
-  .footer-legal a:hover{color:var(--craie-200)}
+  .footer-legal a{font-size:13px; font-weight:600; color:var(--texte-4); text-decoration:none}
+  .footer-legal a:hover{color:var(--texte-2)}
   @media (max-width:860px){
     .footer-haut{grid-template-columns:repeat(2,minmax(0,1fr))}
     .footer-marque{grid-column:1 / -1}
@@ -116,27 +124,27 @@
 
   /* ---------- barre applicative ---------- */
   .barre-appli{position:sticky; top:env(safe-area-inset-top,0px); z-index:40;
-    border-bottom:1px solid var(--encre-800); background:rgba(10,10,11,.92);
+    border-bottom:1px solid var(--bord); background:rgba(255,255,255,.92);
     -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px)}
   .barre-in{display:flex; align-items:center; gap:clamp(14px,2vw,28px); padding-block:14px}
   .barre-in .brand{flex-shrink:0}
   .champ-ville{position:relative; flex:1 1 auto; min-width:0; max-width:520px;
     display:flex; align-items:center; gap:8px; padding:6px 6px 6px 16px;
-    border:1px solid var(--encre-700); border-radius:999px; background:var(--encre-900);
+    border:1px solid var(--bord-2); border-radius:999px; background:var(--surface);
     transition:border-color .16s ease, box-shadow .16s ease}
   .champ-ville:focus-within{border-color:rgba(250,1,23,.55);
     box-shadow:0 0 0 4px rgba(250,1,23,.10)}
-  .champ-ville > svg{flex-shrink:0; color:var(--rouge-300)}
+  .champ-ville > svg{flex-shrink:0; color:var(--rouge-lien)}
   .champ-ville input{flex:1 1 auto; min-width:0; border:0; background:transparent; outline:none;
     padding:8px 0; font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:700;
-    color:var(--craie-100)}
-  .champ-ville input::placeholder{color:var(--craie-500); font-weight:600}
+    color:var(--texte)}
+  .champ-ville input::placeholder{color:var(--texte-4); font-weight:600}
   .champ-ville .btn{flex:0 0 auto; min-height:40px; padding:10px 20px; border-radius:999px;
     font-size:14px}
   .barre-nav{margin-left:auto; display:flex; align-items:center; gap:22px}
-  .barre-nav a:not(.btn){font-size:14.5px; font-weight:700; color:var(--craie-200);
+  .barre-nav a:not(.btn){font-size:14.5px; font-weight:700; color:var(--texte-2);
     text-decoration:none; white-space:nowrap}
-  .barre-nav a:not(.btn):hover{color:var(--craie-100)}
+  .barre-nav a:not(.btn):hover{color:var(--texte)}
   @media (max-width:1100px){ .barre-nav .nav-link{display:none} }
   @media (max-width:720px){
     .barre-in{flex-wrap:wrap; gap:12px}
@@ -145,10 +153,10 @@
   }
 
   /* ---------- barre de filtres ---------- */
-  .filtres-bloc{border-bottom:1px solid var(--encre-800); background:var(--encre-950)}
+  .filtres-bloc{border-bottom:1px solid var(--bord); background:var(--fond)}
   .compte{padding-top:22px; font-size:clamp(17px,2vw,21px); font-weight:800; letter-spacing:-.01em;
-    color:var(--craie-100)}
-  .compte b{color:var(--rouge-300)}
+    color:var(--texte)}
+  .compte b{color:var(--rouge-lien)}
   .rangee-filtres{display:flex; flex-wrap:wrap; gap:10px; padding-block:16px 18px;
     margin-inline:0; padding-inline:0}
   @media (max-width:900px){
@@ -157,14 +165,14 @@
     margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter)}
   .rangee-filtres::-webkit-scrollbar{display:none} }
   .puce{flex:0 0 auto; display:inline-flex; align-items:center; gap:8px; min-height:40px;
-    padding:9px 16px; border:1px solid var(--encre-700); border-radius:999px;
-    background:var(--encre-900); font-family:Manrope,system-ui,sans-serif;
-    font-size:13.5px; font-weight:700; color:var(--craie-200); white-space:nowrap;
+    padding:9px 16px; border:1px solid var(--bord-2); border-radius:999px;
+    background:var(--surface); font-family:Manrope,system-ui,sans-serif;
+    font-size:13.5px; font-weight:700; color:var(--texte-2); white-space:nowrap;
     text-decoration:none; cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .puce:hover{border-color:rgba(250,1,23,.5); color:var(--craie-100)}
-  .puce[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--craie-100);
-    background:rgba(224,0,22,.16); box-shadow:0 0 22px -6px rgba(250,1,23,.75)}
-  .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--encre-800)}
+  .puce:hover{border-color:rgba(224,0,22,.45); color:var(--texte)}
+  .puce[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--texte);
+    background:rgba(224,0,22,.08); color:var(--rouge-700)}
+  .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--bord)}
 
   /* ---------- une seule colonne ----------
      Modele annuaire : la liste occupe la page, la carte se deplie au-dessus.
@@ -174,60 +182,59 @@
 
   /* ---------- fil d'Ariane ---------- */
   .fil{display:flex; flex-wrap:wrap; align-items:center; gap:7px; padding-top:18px;
-    font-size:12.5px; font-weight:700; color:var(--craie-500)}
-  .fil a{color:var(--craie-400); text-decoration:none}
-  .fil a:hover{color:var(--rouge-300)}
-  .fil i{font-style:normal; color:var(--encre-600)}
-  .fil [aria-current]{color:var(--craie-200)}
+    font-size:12.5px; font-weight:700; color:var(--texte-4)}
+  .fil a{color:var(--texte-3); text-decoration:none}
+  .fil a:hover{color:var(--rouge-lien)}
+  .fil i{font-style:normal; color:var(--bord-3)}
+  .fil [aria-current]{color:var(--texte-2)}
 
   /* ---------- liste de résultats ---------- */
   .liste{display:flex; flex-direction:column; gap:14px}
   .res-corps{gap:9px}
   .res{position:relative; display:grid; grid-template-columns:186px minmax(0,1fr); gap:0;
-    border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900);
+    border:1px solid var(--bord-2); border-radius:var(--r-l); background:var(--surface);
     overflow:hidden; transition:border-color .16s ease, box-shadow .16s ease}
-  .res:hover, .res.actif{border-color:rgba(250,1,23,.55);
-    box-shadow:0 0 0 1px rgba(250,1,23,.25), 0 24px 50px -34px rgba(0,0,0,.95)}
+  .res:hover, .res.actif{border-color:rgba(224,0,22,.45);
+    box-shadow:0 0 0 1px rgba(224,0,22,.18), var(--ombre-2)}
   .res-vignette{position:relative; display:grid; place-items:center;
-    border-right:1px solid var(--encre-800);
+    border-right:1px solid var(--bord);
     background:
-      radial-gradient(120% 90% at 50% 118%, rgba(224,0,22,.30) 0%, rgba(224,0,22,0) 62%),
-      linear-gradient(145deg,#26262C 0%,#151518 55%,#0D0D0F 100%)}
+      radial-gradient(120% 90% at 50% 118%, rgba(224,0,22,.13) 0%, rgba(224,0,22,0) 62%),
+      linear-gradient(145deg,#F2F0EB 0%,#E7E4DD 55%,#DCD8D0 100%)}
   .res-vignette::after{content:""; position:absolute; inset:0;
-    background:repeating-linear-gradient(115deg, rgba(245,243,239,.026) 0 1px, transparent 1px 13px)}
+    background:repeating-linear-gradient(115deg, rgba(22,22,15,.035) 0 1px, transparent 1px 13px)}
   .res-num{position:absolute; top:9px; left:9px; z-index:2; display:grid; place-items:center;
     width:24px; height:24px; border-radius:50%; background:var(--rouge-600); color:#fff;
     font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
-    box-shadow:0 0 18px -2px rgba(250,1,23,.9)}
+    box-shadow:0 2px 6px -1px rgba(224,0,22,.5)}
   .res-init{position:relative; z-index:1; font-family:Anton,"Arial Narrow",sans-serif;
-    font-size:42px; line-height:1; letter-spacing:.04em; color:rgba(245,243,239,.13);
-    text-shadow:0 0 26px rgba(250,1,23,.28)}
+    font-size:42px; line-height:1; letter-spacing:.04em; color:rgba(22,22,15,.17)}
   .res-corps{display:flex; flex-direction:column; gap:9px; padding:15px 16px}
   .res-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
   .res-nom{font-size:16px; font-weight:800; line-height:1.25; letter-spacing:-.01em;
-    color:var(--craie-100)}
+    color:var(--texte)}
   .res-nom a{color:inherit; text-decoration:none}
   .res-chips{display:flex; flex-wrap:wrap; gap:6px}
   .note{display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
-    font-size:13px; font-weight:800; color:var(--craie-100); font-variant-numeric:tabular-nums}
-  .note svg{color:var(--craie-100)}
-  .note small{font-size:11.5px; font-weight:600; color:var(--craie-500)}
-  .mini-chip{padding:4px 9px; border:1px solid var(--encre-700); border-radius:999px;
-    font-size:11px; font-weight:700; color:var(--craie-400)}
+    font-size:13px; font-weight:800; color:var(--texte); font-variant-numeric:tabular-nums}
+  .note svg{color:var(--texte)}
+  .note small{font-size:11.5px; font-weight:600; color:var(--texte-4)}
+  .mini-chip{padding:4px 9px; border:1px solid var(--bord-2); border-radius:999px;
+    font-size:11px; font-weight:700; color:var(--texte-3)}
   .res-meta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px;
-    font-size:12.5px; color:var(--craie-400)}
-  .res-meta svg{flex-shrink:0; color:var(--craie-500)}
+    font-size:12.5px; color:var(--texte-3)}
+  .res-meta svg{flex-shrink:0; color:var(--texte-4)}
   .res-meta .paire{display:inline-flex; align-items:center; gap:6px}
   .res-ouvert{color:var(--vert); font-weight:700}
   .res-ouvert::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--vert);
-    box-shadow:0 0 8px 1px rgba(63,191,135,.7)}
+}
   .res-adresse{display:flex; align-items:flex-start; gap:7px;
-    font-size:13px; line-height:1.5; color:var(--craie-400)}
-  .res-adresse svg{flex-shrink:0; margin-top:2px; color:var(--craie-500)}
-  .res-km{color:var(--craie-500); white-space:nowrap}
-  .res-mot{max-width:74ch; font-size:13.5px; line-height:1.6; color:var(--craie-200)}
+    font-size:13px; line-height:1.5; color:var(--texte-3)}
+  .res-adresse svg{flex-shrink:0; margin-top:2px; color:var(--texte-4)}
+  .res-km{color:var(--texte-4); white-space:nowrap}
+  .res-mot{max-width:74ch; font-size:13.5px; line-height:1.6; color:var(--texte-2)}
   .res-bas{margin-top:2px; display:flex; flex-wrap:wrap; align-items:center;
-    justify-content:space-between; gap:10px 16px; font-size:12.5px; color:var(--craie-400)}
+    justify-content:space-between; gap:10px 16px; font-size:12.5px; color:var(--texte-3)}
   .res-bas .paire{display:inline-flex; align-items:center; gap:6px}
   .res-essai{min-height:40px; padding:10px 18px; font-size:13.5px; border-radius:999px}
 
@@ -244,87 +251,88 @@
   }
   @media (max-width:440px){
     .res{grid-template-columns:1fr}
-    .res-vignette{aspect-ratio:16/7; border-right:0; border-bottom:1px solid var(--encre-800)}
+    .res-vignette{aspect-ratio:16/7; border-right:0; border-bottom:1px solid var(--bord)}
   }
 
   /* rien trouvé */
   .vide{padding:clamp(34px,5vw,56px) clamp(22px,3vw,36px); text-align:center;
-    border:1px dashed var(--encre-700); border-radius:var(--r-l); background:var(--encre-900)}
-  .vide h2{font-size:clamp(20px,2.4vw,26px); line-height:1.1; color:var(--craie-100)}
+    border:1px dashed var(--bord-2); border-radius:var(--r-l); background:var(--surface)}
+  .vide h2{font-size:clamp(20px,2.4vw,26px); line-height:1.1; color:var(--texte)}
   .vide p{margin-top:12px; margin-inline:auto; max-width:44ch; font-size:14.5px; line-height:1.6;
-    color:var(--craie-400)}
+    color:var(--texte-3)}
   .vide-villes{margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:9px}
 
   /* ---------- le bouton qui deplie la carte ---------- */
   .btn-carte{display:inline-flex; align-items:center; gap:9px; min-height:42px;
-    margin-bottom:18px; padding:10px 18px; border:1px solid var(--encre-700);
-    border-radius:999px; background:var(--encre-900);
+    margin-bottom:18px; padding:10px 18px; border:1px solid var(--bord-2);
+    border-radius:999px; background:var(--surface);
     font-family:Manrope,system-ui,sans-serif; font-size:13.5px; font-weight:800;
-    color:var(--craie-100); cursor:pointer;
+    color:var(--texte); cursor:pointer;
     transition:border-color .15s ease, background-color .15s ease}
-  .btn-carte:hover{border-color:rgba(250,1,23,.55); background:rgba(224,0,22,.10)}
-  .btn-carte svg{color:var(--rouge-300)}
-  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(224,0,22,.16)}
+  .btn-carte:hover{border-color:rgba(224,0,22,.45); background:rgba(224,0,22,.05)}
+  .btn-carte svg{color:var(--rouge-lien)}
+  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(224,0,22,.08);
+    color:var(--rouge-700)}
 
   /* ---------- carte ---------- */
-  .carte-zone{padding-block:clamp(18px,2.4vw,26px); background:var(--encre-950);
-    border-bottom:1px solid var(--encre-800)}
+  .carte-zone{padding-block:clamp(18px,2.4vw,26px); background:var(--fond);
+    border-bottom:1px solid var(--bord)}
   .carte-boite{position:relative; height:min(66svh,560px); overflow:hidden;
-    border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900)}
+    border:1px solid var(--bord-2); border-radius:var(--r-l); background:var(--surface)}
   #plan{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
   #plan.tire{cursor:grabbing}
   .carte-haut{position:absolute; z-index:2; top:12px; left:12px; right:12px;
     display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
     pointer-events:none}
-  .carte-etiq{padding:7px 13px; border-radius:999px; border:1px solid var(--encre-700);
-    background:rgba(10,10,11,.82); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  .carte-etiq{padding:7px 13px; border-radius:999px; border:1px solid var(--bord-2);
+    background:rgba(255,255,255,.9); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
     font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
-    color:var(--craie-200)}
+    color:var(--texte-2)}
   .carte-nord{display:grid; place-items:center; width:34px; height:34px; border-radius:50%;
-    border:1px solid var(--encre-700); background:rgba(10,10,11,.82);
-    font-size:11px; font-weight:800; color:var(--craie-400)}
+    border:1px solid var(--bord-2); background:rgba(255,255,255,.9);
+    font-size:11px; font-weight:800; color:var(--texte-3)}
   .carte-bas{position:absolute; z-index:2; left:12px; bottom:12px; right:12px;
     display:flex; align-items:center; gap:12px; pointer-events:none}
   .echelle{display:inline-flex; align-items:center; gap:8px; padding:5px 10px; border-radius:6px;
-    background:rgba(10,10,11,.7); font-size:11px; font-weight:700; color:var(--craie-400);
+    background:rgba(255,255,255,.85); font-size:11px; font-weight:700; color:var(--texte-3);
     font-variant-numeric:tabular-nums}
-  .echelle i{display:block; height:7px; width:60px; border:1px solid var(--craie-500);
+  .echelle i{display:block; height:7px; width:60px; border:1px solid var(--texte-4);
     border-top:0}
   .carte-zoom{position:absolute; z-index:3; right:12px; bottom:12px;
     display:flex; flex-direction:column; align-items:flex-end; gap:6px}
   .carte-zoom button{display:grid; place-items:center; width:34px; height:34px; padding:0;
-    border:1px solid var(--encre-700); border-radius:8px; background:rgba(10,10,11,.88);
+    border:1px solid var(--bord-2); border-radius:8px; background:rgba(255,255,255,.94);
     -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
     font-family:Manrope,system-ui,sans-serif; font-size:17px; font-weight:800;
-    color:var(--craie-200); cursor:pointer;
+    color:var(--texte-2); cursor:pointer;
     transition:border-color .15s ease, color .15s ease}
-  .carte-zoom button:hover{border-color:rgba(250,1,23,.55); color:var(--craie-100)}
+  .carte-zoom button:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600)}
   .carte-zoom .z-large{width:auto; height:32px; padding:0 13px; font-size:12px; font-weight:800}
 
   /* ---------- pagination ---------- */
   .pagination{margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:8px}
   .pg{display:grid; place-items:center; min-width:42px; min-height:42px; padding:0 12px;
-    border:1px solid var(--encre-700); border-radius:10px; background:var(--encre-900);
+    border:1px solid var(--bord-2); border-radius:10px; background:var(--surface);
     font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
-    color:var(--craie-200); cursor:pointer; font-variant-numeric:tabular-nums;
+    color:var(--texte-2); cursor:pointer; font-variant-numeric:tabular-nums;
     transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .pg:hover:not(:disabled){border-color:rgba(250,1,23,.55); color:var(--craie-100)}
-  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(224,0,22,.18);
-    color:var(--craie-100)}
+  .pg:hover:not(:disabled){border-color:rgba(224,0,22,.45); color:var(--texte)}
+  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(224,0,22,.08);
+    color:var(--rouge-700)}
   .pg:disabled{opacity:.35; cursor:default}
   .pg-fl{font-size:18px; line-height:1}
 
   /* ---------- le texte de fond, sous la liste ----------
      Il est sous les salles, jamais avant : on montre le stock d'abord. */
-  .fond-seo{border-top:1px solid var(--encre-800); background:var(--encre-900);
+  .fond-seo{border-top:1px solid var(--bord); background:var(--surface);
     padding-block:clamp(38px,5vw,60px)}
-  .seo-titre{font-size:clamp(21px,2.6vw,30px); line-height:1.05; color:var(--craie-100)}
+  .seo-titre{font-size:clamp(21px,2.6vw,30px); line-height:1.05; color:var(--texte)}
   .seo-texte{margin-top:16px; max-width:76ch; font-size:14.5px; line-height:1.7;
-    color:var(--craie-400)}
-  .seo-texte b{color:var(--craie-100); font-weight:800}
-  .seo-texte a{color:var(--rouge-300)}
+    color:var(--texte-3)}
+  .seo-texte b{color:var(--texte); font-weight:800}
+  .seo-texte a{color:var(--rouge-lien)}
   .seo-sous{margin-top:34px; font-size:11.5px; font-weight:800; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--craie-500)}
+    text-transform:uppercase; color:var(--texte-4)}
   .seo-liens{margin-top:14px; display:flex; flex-wrap:wrap; gap:9px}
 
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
@@ -335,15 +343,15 @@
   /* ---------- suggestions de villes ---------- */
   .sug{position:absolute; z-index:60; top:calc(100% + 10px); left:0; right:0;
     min-width:236px; margin:0; padding:6px; list-style:none; border-radius:14px;
-    background:#101013; border:1px solid rgba(245,243,239,.14);
-    box-shadow:0 34px 76px -28px rgba(0,0,0,.96), inset 0 1px 0 rgba(255,255,255,.05);
+    background:var(--surface); border:1px solid var(--bord-2);
+    box-shadow:var(--ombre-3);
     max-height:min(320px,52vh); overflow:auto; overscroll-behavior:contain}
   .sug li{display:flex; align-items:center; gap:11px; min-height:44px; padding:10px 13px;
     border-radius:10px; cursor:pointer; font-size:14.5px; font-weight:700;
-    color:var(--craie-200); transition:background-color .12s ease, color .12s ease}
-  .sug li svg{flex-shrink:0; color:var(--craie-500)}
-  .sug li:hover,.sug li[aria-selected="true"]{background:rgba(245,243,239,.07); color:var(--craie-100)}
-  .sug li:hover svg,.sug li[aria-selected="true"] svg{color:var(--rouge-300)}
+    color:var(--texte-2); transition:background-color .12s ease, color .12s ease}
+  .sug li svg{flex-shrink:0; color:var(--texte-4)}
+  .sug li:hover,.sug li[aria-selected="true"]{background:rgba(22,22,15,.05); color:var(--texte)}
+  .sug li:hover svg,.sug li[aria-selected="true"] svg{color:var(--rouge-lien)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -359,10 +367,10 @@
   <div class="wrap barre-in">
     <a class="brand" href="index.html" aria-label="FightScale, accueil">
       <svg viewBox="200 0 452 300" width="42" height="28" role="img" aria-label="FightScale">
-        <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+        <use href="#fs-mono-f" fill="#16160F"/><use href="#fs-mono-s" fill="#FA0117"/>
       </svg>
       <svg class="brand-mot" viewBox="0 372 872 77" width="132" height="11.7" aria-hidden="true">
-        <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+        <use href="#fs-mot-fight" fill="#16160F"/><use href="#fs-mot-scale" fill="#FA0117"/>
       </svg>
     </a>
 
@@ -441,10 +449,10 @@
     <div class="footer-marque">
       <a class="brand" href="index.html" aria-label="FightScale, accueil">
         <svg viewBox="200 0 452 300" width="45" height="30" role="img" aria-label="FightScale">
-          <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+          <use href="#fs-mono-f" fill="#16160F"/><use href="#fs-mono-s" fill="#FA0117"/>
         </svg>
         <svg viewBox="0 372 872 77" width="141" height="12.5" aria-hidden="true">
-          <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+          <use href="#fs-mot-fight" fill="#16160F"/><use href="#fs-mot-scale" fill="#FA0117"/>
         </svg>
       </a>
       <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
@@ -1166,7 +1174,7 @@ function etiquette(txt, x, y, taille, gras, couleur, dy){
   if (bx < 4 || by < 4 || bx + bw > W - 4 || by + bh > H - 4) return false;   /* jamais coupé au bord */
   if (!libre(bx, by, bw, bh)) return false;
   pose(bx, by, bw, bh);
-  fx.lineWidth = 3.4; fx.strokeStyle = 'rgba(8,9,12,.92)'; fx.lineJoin = 'round';
+  fx.lineWidth = 3.4; fx.strokeStyle = 'rgba(255,255,255,.95)'; fx.lineJoin = 'round';
   fx.strokeText(txt, x, y + dy);
   fx.fillStyle = couleur; fx.fillText(txt, x, y + dy);
   return true;
@@ -1176,56 +1184,58 @@ function dessineFond(){
   var c = cadre(), z = vue.k / kMini();
   poses = [];
 
-  fx.fillStyle = '#0A1017'; fx.fillRect(0, 0, W, H);        /* mer */
+  /* Plan clair, dans l'esprit des fonds de carte du web : eau bleu pale, terre
+     ivoire, routes claires cernees d'un liseré gris, autoroutes ambrees. */
+  fx.fillStyle = '#D6E6F2'; fx.fillRect(0, 0, W, H);        /* mer */
 
   /* halo côtier : un trait large sous la terre, qui déborde dans l'eau */
   fx.lineJoin = 'round'; fx.lineCap = 'round';
-  fx.strokeStyle = 'rgba(86,126,175,.14)'; fx.lineWidth = z > 6 ? 8 : 4;
+  fx.strokeStyle = 'rgba(120,164,204,.30)'; fx.lineWidth = z > 6 ? 8 : 4;
   chemin('fr', c); fx.stroke();
   chemin('terre', c); fx.stroke();
 
-  fx.fillStyle = '#141418';                                  /* pays voisins */
+  fx.fillStyle = '#EDEAE3';                                  /* pays voisins */
   couche('terre', c, function (){ fx.fill(); });
 
-  fx.fillStyle = '#1B1B21';                                  /* France */
+  fx.fillStyle = '#F7F5F0';                                  /* France */
   couche('fr', c, function (){ fx.fill(); });
 
-  fx.fillStyle = '#26262C';                                  /* tache urbanisée */
+  fx.fillStyle = '#EAE6DD';                                  /* tache urbanisée */
   couche('urb', c, function (){ fx.fill(); });
   if (z > 3){                                                /* sa lisière, pour qu'on la lise */
-    fx.strokeStyle = 'rgba(245,243,239,.05)'; fx.lineWidth = 1;
+    fx.strokeStyle = 'rgba(22,22,15,.07)'; fx.lineWidth = 1;
     chemin('urb', c); fx.stroke();
   }
 
   if (z > 18){                        /* maille des quartiers : la texture d'une ville */
-    fx.strokeStyle = 'rgba(245,243,239,' + (z > 45 ? '.062' : '.042') + ')'; fx.lineWidth = 1;
+    fx.strokeStyle = 'rgba(22,22,15,' + (z > 45 ? '.085' : '.06') + ')'; fx.lineWidth = 1;
     chemin('iris', c); fx.stroke();
   }
 
   if (z > 11){                                               /* maille communale */
-    fx.strokeStyle = 'rgba(245,243,239,.085)'; fx.lineWidth = 1;
+    fx.strokeStyle = 'rgba(22,22,15,.12)'; fx.lineWidth = 1;
     chemin('com', c); fx.stroke();
   }
 
-  fx.fillStyle = '#0E1A26';                                  /* lacs */
+  fx.fillStyle = '#CCE0EF';                                  /* lacs */
   couche('lac', c, function (){ fx.fill(); });
 
-  fx.strokeStyle = 'rgba(90,134,182,.34)';                   /* fleuves */
+  fx.strokeStyle = 'rgba(96,146,196,.55)';                   /* fleuves */
   fx.lineWidth = z > 6 ? 1.6 : 0.9;
   chemin('riv', c); fx.stroke();
 
-  fx.strokeStyle = 'rgba(245,243,239,.115)';                 /* littoral et départements */
+  fx.strokeStyle = 'rgba(22,22,15,.20)';                     /* littoral et départements */
   fx.lineWidth = z > 6 ? 1.1 : 0.8;
   chemin('fr', c); fx.stroke();
 
-  /* routes : un liseré sombre puis le cœur clair, comme sur un vrai plan */
+  /* routes : un liseré gris puis le cœur clair, comme sur un vrai plan */
   var R = [];
-  if (z > 7)   R.push(['r3', 'rgba(232,228,220,.16)', z > 20 ? 2.2 : 1.4]);
-  if (z > 1.5) R.push(['r2', 'rgba(236,232,224,.26)', z > 20 ? 3 : z > 6 ? 2 : 1.2]);
-  R.push(['r1', 'rgba(224,196,150,.46)', z > 20 ? 4 : z > 6 ? 2.8 : 1.6]);
+  if (z > 7)   R.push(['r3', '#FFFFFF', z > 20 ? 2.2 : 1.4, 'rgba(22,22,15,.13)']);
+  if (z > 1.5) R.push(['r2', '#FFFFFF', z > 20 ? 3 : z > 6 ? 2 : 1.2, 'rgba(22,22,15,.16)']);
+  R.push(['r1', '#F6CB7E', z > 20 ? 4 : z > 6 ? 2.8 : 1.6, 'rgba(184,138,44,.55)']);
   R.forEach(function (r){
     chemin(r[0], c);
-    fx.strokeStyle = 'rgba(9,10,13,.8)'; fx.lineWidth = r[2] + 2.2; fx.stroke();
+    fx.strokeStyle = r[3]; fx.lineWidth = r[2] + 2.2; fx.stroke();
   });
   R.forEach(function (r){
     chemin(r[0], c);
@@ -1248,12 +1258,12 @@ function dessineFond(){
     if (v[0] < c[0] || v[0] > c[2] || v[1] < c[1] || v[1] > c[3]) return;
     var x = sx(v[0]), y = sy(v[1]), gros = v[2] <= 3;
     vus[clefNom(v[3])] = 1;
-    var t = gros ? 12.5 : 11, col = gros ? 'rgba(245,243,239,.88)' : 'rgba(226,222,215,.76)';
+    var t = gros ? 12.5 : 11, col = gros ? 'rgba(22,22,15,.86)' : 'rgba(61,59,52,.78)';
     /* au-dessus du point, sinon en dessous : c'est ce que fait un vrai moteur de carte */
     if (etiquette(v[3], x, y, t, '700', col, -8) || etiquette(v[3], x, y, t, '700', col, 14)){
       posesVilles++;
       fx.beginPath(); fx.arc(x, y, gros ? 2.8 : 2.2, 0, 6.2832);
-      fx.fillStyle = 'rgba(245,243,239,.5)'; fx.fill();
+      fx.fillStyle = 'rgba(22,22,15,.42)'; fx.fill();
     }
   });
   if (z > 22){
@@ -1263,8 +1273,8 @@ function dessineFond(){
       if (m[0] < c[0] || m[0] > c[2] || m[1] < c[1] || m[1] > c[3]) continue;
       if (vus[clefNom(m[3])]) continue;
       var mx = sx(m[0]), my = sy(m[1]);
-      if (etiquette(m[3], mx, my, 10.5, '600', 'rgba(205,200,192,.62)', 0) ||
-          etiquette(m[3], mx, my, 10.5, '600', 'rgba(205,200,192,.62)', 15)) n++;
+      if (etiquette(m[3], mx, my, 10.5, '600', 'rgba(80,77,69,.66)', 0) ||
+          etiquette(m[3], mx, my, 10.5, '600', 'rgba(80,77,69,.66)', 15)) n++;
     }
   }
 
@@ -1295,9 +1305,9 @@ function dessine(t){
   pastilleAutre.forEach(function (p, i){
     if (p.x < -20 || p.y < -20 || p.x > W + 20 || p.y > H + 20) return;
     cx.beginPath(); cx.arc(p.x, p.y, i === etat.survolAutre ? 6 : 4.5, 0, 6.2832);
-    cx.fillStyle = i === etat.survolAutre ? 'rgba(214,210,203,.9)' : 'rgba(154,148,140,.7)';
+    cx.fillStyle = i === etat.survolAutre ? 'rgba(61,59,52,.92)' : 'rgba(110,105,95,.75)';
     cx.fill();
-    cx.strokeStyle = 'rgba(10,10,11,.85)'; cx.lineWidth = 1.5; cx.stroke();
+    cx.strokeStyle = 'rgba(255,255,255,.95)'; cx.lineWidth = 1.5; cx.stroke();
   });
 
   pastille = etat.resultats.map(function (r){ return { x: sx(r.lon), y: sy(r.lat) }; });
@@ -1312,13 +1322,13 @@ function dessine(t){
     if (serre && !vif){
       cx.beginPath(); cx.arc(p.x, p.y, 5, 0, 6.2832);
       cx.fillStyle = '#E00016'; cx.fill();
-      cx.strokeStyle = 'rgba(255,255,255,.4)'; cx.lineWidth = 1; cx.stroke();
+      cx.strokeStyle = 'rgba(255,255,255,.95)'; cx.lineWidth = 1.2; cx.stroke();
       return;
     }
     var R = vif ? 16 : 12;
 
     var halo = cx.createRadialGradient(p.x, p.y, 0, p.x, p.y, R * 3);
-    halo.addColorStop(0, 'rgba(250,1,23,' + ((vif ? .55 : .20) + resp * .08).toFixed(3) + ')');
+    halo.addColorStop(0, 'rgba(250,1,23,' + ((vif ? .28 : .11) + resp * .05).toFixed(3) + ')');
     halo.addColorStop(1, 'rgba(250,1,23,0)');
     cx.fillStyle = halo;
     cx.beginPath(); cx.arc(p.x, p.y, R * 3, 0, 6.2832); cx.fill();
@@ -1332,8 +1342,8 @@ function dessine(t){
 
     cx.beginPath(); cx.arc(p.x, p.y, R, 0, 6.2832);
     cx.fillStyle = vif ? '#FA0117' : '#E00016'; cx.fill();
-    cx.strokeStyle = 'rgba(255,255,255,' + (vif ? .6 : .3) + ')';
-    cx.lineWidth = 1.4; cx.stroke();
+    cx.strokeStyle = 'rgba(255,255,255,' + (vif ? 1 : .9) + ')';
+    cx.lineWidth = 1.6; cx.stroke();
 
     cx.fillStyle = '#fff'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
     cx.font = '800 ' + (vif ? 12.5 : 11) + 'px Manrope, system-ui, sans-serif';
@@ -1354,11 +1364,11 @@ function boiteNom(p, nom, rayon, vif){
   var bx = Math.min(Math.max(p.x - bw / 2, 8), W - bw - 8);
   var by = p.y - rayon - bh - 10;
   if (by < 8) by = p.y + rayon + 8;
-  cx.fillStyle = 'rgba(10,10,11,.95)';
-  cx.strokeStyle = vif ? 'rgba(250,1,23,.6)' : 'rgba(245,243,239,.25)'; cx.lineWidth = 1;
+  cx.fillStyle = 'rgba(255,255,255,.97)';
+  cx.strokeStyle = vif ? 'rgba(224,0,22,.6)' : 'rgba(22,22,15,.20)'; cx.lineWidth = 1;
   if (cx.roundRect){ cx.beginPath(); cx.roundRect(bx, by, bw, bh, 8); cx.fill(); cx.stroke(); }
   else { cx.fillRect(bx, by, bw, bh); cx.strokeRect(bx, by, bw, bh); }
-  cx.fillStyle = vif ? '#F5F3EF' : 'rgba(214,210,203,.9)';
+  cx.fillStyle = vif ? '#16160F' : 'rgba(61,59,52,.92)';
   cx.textAlign = 'center'; cx.textBaseline = 'middle';
   cx.fillText(nom, bx + bw / 2, by + bh / 2);
   cx.textBaseline = 'alphabetic';

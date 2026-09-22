@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="La fiche d'une salle de sports de combat : disciplines, planning des cours, adresse, horaires et coordonnées.">
-<meta name="theme-color" content="#0A0A0B">
+<meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FightScale">
 <meta property="og:title" content="Salle de sports de combat — FightScale">
@@ -12,10 +12,10 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
-  :root{color-scheme:dark; padding-top:env(safe-area-inset-top,0px);
+  :root{color-scheme:light; padding-top:env(safe-area-inset-top,0px);
         padding-bottom:env(safe-area-inset-bottom,0px)}
   html{scroll-padding-top:env(safe-area-inset-top,0px)}
-  body{margin:0; background:#0A0A0B}
+  body{margin:0; background:#F7F6F3}
   img{max-width:100%}
   [hidden]{display:none !important}
 </style>
@@ -24,19 +24,27 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
 <style>
   :root{
-    --encre-950:#0A0A0B; --encre-900:#121214; --encre-850:#18181B; --encre-800:#1F1F23;
-    --encre-700:#2A2A2F; --encre-600:#3A3A41;
-    --craie-100:#F5F3EF; --craie-200:#D6D2CB; --craie-400:#9A948C; --craie-500:#6F6B66;
-    --rouge-300:#FF5E68; --rouge-500:#FA0117; --rouge-600:#E00016; --rouge-700:#B80012;
-    --vert:#3FBF87;
+    /* Palette claire. Le fond sombre convertissait mal : on passe sur du papier,
+       et le rouge de la marque devient l'accent au lieu d'etre une lueur.
+       Les noms disent le role, plus la couleur, pour qu'un futur changement de
+       teinte ne rende pas les variables mensongeres. */
+    --fond:#F7F6F3; --surface:#FFFFFF; --surface-2:#FCFBF9; --bord:#E8E5DF;
+    --bord-2:#DCD8D1; --bord-3:#C2BDB4;
+    --texte:#16160F; --texte-2:#3D3B34; --texte-3:#6B675E; --texte-4:#7E7A70;
+    --rouge-lien:#C10D1B; --rouge-500:#FA0117; --rouge-600:#E00016; --rouge-700:#B80012;
+    --vert:#0E7A50;
+    /* ombres : douces et chaudes, jamais du noir pur sur du papier */
+    --ombre-1:0 1px 2px rgba(22,22,15,.05), 0 1px 1px rgba(22,22,15,.04);
+    --ombre-2:0 2px 4px rgba(22,22,15,.05), 0 8px 24px -12px rgba(22,22,15,.16);
+    --ombre-3:0 4px 10px rgba(22,22,15,.07), 0 24px 48px -20px rgba(22,22,15,.22);
     --max:1240px;
     --gutter:clamp(20px, 4.5vw, 52px);
     --r-m:8px; --r-l:12px;
-    color-scheme:dark;
+    color-scheme:light;
   }
   *,*::before,*::after{box-sizing:border-box}
   body{
-    margin:0; background:var(--encre-950); color:var(--craie-100);
+    margin:0; background:var(--fond); color:var(--texte);
     font-family:Manrope,"Segoe UI",system-ui,sans-serif; font-weight:500;
     font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
   }
@@ -44,8 +52,8 @@
   h1,h2{margin:0}
   p{margin:0}
   ul{margin:0; padding:0; list-style:none}
-  a{color:var(--rouge-300)}
-  :focus-visible{outline:2px solid var(--rouge-300); outline-offset:3px; border-radius:6px}
+  a{color:var(--rouge-lien)}
+  :focus-visible{outline:2px solid var(--rouge-lien); outline-offset:3px; border-radius:6px}
 
   .wrap{width:100%; max-width:var(--max); margin-inline:auto; padding-inline:var(--gutter)}
   .display{font-family:Anton,"Haettenschweiler","Arial Narrow",sans-serif; font-weight:400;
@@ -62,17 +70,17 @@
     padding-block:22px}
   .brand{display:inline-flex; align-items:center; gap:13px; flex-shrink:0}
   .site-nav{display:flex; align-items:center; gap:30px}
-  .site-nav a{font-size:14.5px; font-weight:700; color:var(--craie-200); text-decoration:none;
+  .site-nav a{font-size:14.5px; font-weight:700; color:var(--texte-2); text-decoration:none;
     white-space:nowrap; transition:color .15s ease}
-  .site-nav a:hover{color:var(--craie-100)}
+  .site-nav a:hover{color:var(--texte)}
   .btn{display:inline-flex; align-items:center; justify-content:center; gap:9px;
     min-height:44px; padding:11px 22px; border:0; border-radius:var(--r-m);
     font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
     text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
   .btn-rouge{background:var(--rouge-600); color:#fff;
-    box-shadow:0 10px 30px -12px rgba(224,0,22,.9)}
+    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(224,0,22,.5)}
   .btn-rouge:hover{background:var(--rouge-700); color:#fff;
-    box-shadow:0 14px 34px -12px rgba(224,0,22,1)}
+    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(224,0,22,.6)}
   .site-nav .btn-rouge{color:#fff}
   @media (max-width:1040px){ .site-nav .nav-link{display:none} }
   .l-court{display:none}
@@ -83,30 +91,30 @@
   }
 
   /* ---------- pied de page ---------- */
-  .site-footer{border-top:1px solid var(--encre-800); background:var(--encre-950)}
+  .site-footer{border-top:1px solid var(--bord); background:var(--fond)}
   .footer-haut{padding-block:clamp(44px,5vw,64px);
     display:grid; gap:clamp(30px,4vw,44px);
     grid-template-columns:minmax(240px,1.35fr) repeat(3,minmax(140px,1fr))}
   .footer-marque p{margin-top:18px; max-width:34ch; font-size:14px; line-height:1.62;
-    color:var(--craie-400)}
+    color:var(--texte-3)}
   .reseaux{margin-top:22px; display:flex; gap:10px}
   .reseaux a{display:inline-flex; align-items:center; justify-content:center;
-    width:40px; height:40px; border-radius:10px; border:1px solid var(--encre-700);
-    color:var(--craie-200); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .reseaux a:hover{border-color:rgba(250,1,23,.55); color:var(--rouge-300);
-    background:rgba(250,1,23,.08)}
+    width:40px; height:40px; border-radius:10px; border:1px solid var(--bord-2);
+    color:var(--texte-2); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .reseaux a:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600);
+    background:rgba(224,0,22,.05)}
   .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
-    color:var(--craie-500)}
+    color:var(--texte-4)}
   .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
-  .footer-col a{font-size:14.5px; font-weight:600; color:var(--craie-200); text-decoration:none;
+  .footer-col a{font-size:14.5px; font-weight:600; color:var(--texte-2); text-decoration:none;
     transition:color .15s ease}
-  .footer-col a:hover{color:var(--rouge-300)}
-  .footer-bas{border-top:1px solid var(--encre-800); padding-block:22px;
+  .footer-col a:hover{color:var(--rouge-lien)}
+  .footer-bas{border-top:1px solid var(--bord); padding-block:22px;
     display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 26px}
-  .footer-bas p{font-size:13px; color:var(--craie-500)}
+  .footer-bas p{font-size:13px; color:var(--texte-4)}
   .footer-legal{display:flex; flex-wrap:wrap; gap:10px 22px}
-  .footer-legal a{font-size:13px; font-weight:600; color:var(--craie-500); text-decoration:none}
-  .footer-legal a:hover{color:var(--craie-200)}
+  .footer-legal a{font-size:13px; font-weight:600; color:var(--texte-4); text-decoration:none}
+  .footer-legal a:hover{color:var(--texte-2)}
   @media (max-width:860px){
     .footer-haut{grid-template-columns:repeat(2,minmax(0,1fr))}
     .footer-marque{grid-column:1 / -1}
@@ -114,35 +122,36 @@
   @media (max-width:430px){ .footer-haut{grid-template-columns:1fr} }
 
   /* ---------- fiche salle ---------- */
-  body{ background:var(--encre-950); color:var(--craie-100);
+  body{ background:var(--fond); color:var(--texte);
         font-family:Manrope, system-ui, sans-serif; }
   .wrap{ max-width:var(--max); margin:0 auto; padding-inline:var(--gutter); }
   .skip{ position:absolute; left:-9999px; }
-  .skip:focus{ left:12px; top:12px; z-index:60; background:var(--craie-100);
-               color:var(--encre-950); padding:10px 16px; border-radius:var(--r-m); }
+  .skip:focus{ left:12px; top:12px; z-index:60; background:var(--texte);
+               color:var(--fond); padding:10px 16px; border-radius:var(--r-m); }
 
   /* sur l'accueil l'en-tete flotte au-dessus du heros ; ici il n'y a pas de heros,
      il doit donc reprendre sa place dans le flux */
-  .site-header{ position:relative; inset:auto; background:var(--encre-950);
-                border-bottom:1px solid var(--encre-800); }
+  .site-header{ position:relative; inset:auto; background:var(--fond);
+                border-bottom:1px solid var(--bord); }
 
-  .fil{ border-bottom:1px solid var(--encre-800); }
+  .fil{ border-bottom:1px solid var(--bord); }
   .fil-in{ display:flex; gap:8px; align-items:center; flex-wrap:wrap;
-           padding-block:14px; font-size:13px; color:var(--craie-400); }
-  .fil a{ color:var(--craie-200); text-decoration:none; }
-  .fil a:hover{ color:var(--craie-100); text-decoration:underline; }
-  .fil [aria-current]{ color:var(--craie-100); font-weight:700; }
+           padding-block:14px; font-size:13px; color:var(--texte-3); }
+  .fil a{ color:var(--texte-2); text-decoration:none; }
+  .fil a:hover{ color:var(--texte); text-decoration:underline; }
+  .fil [aria-current]{ color:var(--texte); font-weight:700; }
 
   /* ---------- visuels ---------- */
   .visuels{ padding-top:24px; }
   .galerie{ display:grid; gap:10px; border-radius:var(--r-l); overflow:hidden;
             grid-template-columns:2fr 1fr 1fr; grid-template-rows:repeat(2, 132px); }
-  .galerie .vis{ position:relative; overflow:hidden; background:var(--encre-900); }
+  .galerie .vis{ position:relative; overflow:hidden; background:var(--surface); }
   .galerie .vis:first-child{ grid-row:span 2; }
   .galerie svg, .galerie img{ display:block; width:100%; height:100%; object-fit:cover; }
   .vis-marque{ position:absolute; left:12px; bottom:10px; font-size:11px; letter-spacing:.06em;
-               text-transform:uppercase; color:var(--craie-400);
-               background:rgba(10,10,11,.66); padding:4px 8px; border-radius:999px;
+               text-transform:uppercase; color:var(--texte-3);
+               background:rgba(255,255,255,.9); border:1px solid var(--bord-2);
+               padding:4px 8px; border-radius:999px;
                backdrop-filter:blur(3px); }
 
   /* ---------- tête ---------- */
@@ -152,23 +161,23 @@
   .tete h1{ margin:0 0 10px; font-family:Anton, Impact, sans-serif; font-weight:400;
             letter-spacing:.01em; line-height:1.02; text-transform:uppercase;
             font-size:clamp(30px, 4.6vw, 52px); }
-  .tete-meta{ margin:0; color:var(--craie-200); font-size:15px;
+  .tete-meta{ margin:0; color:var(--texte-2); font-size:15px;
               display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .tete-meta .sep{ color:var(--encre-600); }
+  .tete-meta .sep{ color:var(--bord-3); }
   .tete-meta .note{ display:inline-flex; gap:5px; align-items:center;
-                    color:var(--craie-100); font-weight:700; }
+                    color:var(--texte); font-weight:700; }
   .tete-meta .note svg{ color:var(--or, #E8A33D); }
-  .tete-meta .note small{ color:var(--craie-400); font-weight:600; }
+  .tete-meta .note small{ color:var(--texte-3); font-weight:600; }
   .ouvert, .ferme{ display:inline-flex; gap:6px; align-items:center; font-weight:700;
                    font-size:13px; }
-  .ouvert{ color:var(--vert); } .ferme{ color:var(--craie-400); }
+  .ouvert{ color:var(--vert); } .ferme{ color:var(--texte-3); }
   .ouvert::before, .ferme::before{ content:""; width:7px; height:7px; border-radius:50%;
                                    background:currentColor; }
 
   .chips{ list-style:none; display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 0; padding:0; }
   .chips li{ font-size:13px; font-weight:700; padding:6px 12px; border-radius:999px;
-             background:var(--encre-850); border:1px solid var(--encre-700);
-             color:var(--craie-200); }
+             background:var(--surface-2); border:1px solid var(--bord-2);
+             color:var(--texte-2); }
 
   .tete-actions{ display:flex; gap:10px; flex-wrap:wrap; }
   .btn{ display:inline-flex; gap:8px; align-items:center; justify-content:center;
@@ -177,8 +186,8 @@
         border:1px solid transparent; transition:background .15s, border-color .15s; }
   .btn-rouge{ background:var(--rouge-600); color:#fff; }
   .btn-rouge:hover{ background:var(--rouge-700); }
-  .btn-ligne{ background:transparent; color:var(--craie-100); border-color:var(--encre-600); }
-  .btn-ligne:hover{ background:var(--encre-850); border-color:var(--craie-400); }
+  .btn-ligne{ background:transparent; color:var(--texte); border-color:var(--bord-3); }
+  .btn-ligne:hover{ background:var(--surface-2); border-color:var(--texte-3); }
   .btn svg{ flex:none; }
 
   /* ---------- corps ---------- */
@@ -188,95 +197,95 @@
   .col-cote{ min-width:0; }
   .cote-collant{ display:grid; gap:18px; position:sticky; top:18px; }
 
-  .pan{ background:var(--encre-900); border:1px solid var(--encre-800);
+  .pan{ background:var(--surface); border:1px solid var(--bord);
         border-radius:var(--r-l); padding:22px; }
   .pan-titre{ margin:0 0 4px; font-family:Anton, Impact, sans-serif; font-weight:400;
               text-transform:uppercase; letter-spacing:.02em; font-size:22px; }
-  .pan-sous{ margin:0 0 14px; color:var(--craie-400); font-size:13.5px; }
+  .pan-sous{ margin:0 0 14px; color:var(--texte-3); font-size:13.5px; }
   .cote-titre{ margin:0 0 12px; font-size:15px; font-weight:800; letter-spacing:.01em; }
 
   .prose{ margin-top:14px; }
-  .prose p{ margin:0 0 12px; color:var(--craie-200); line-height:1.62; font-size:15.5px; }
+  .prose p{ margin:0 0 12px; color:var(--texte-2); line-height:1.62; font-size:15.5px; }
   .prose p:last-child{ margin-bottom:0; }
 
   .faits{ display:grid; grid-template-columns:repeat(auto-fit, minmax(128px, 1fr));
-          gap:14px; margin:20px 0 0; padding-top:18px; border-top:1px solid var(--encre-800); }
+          gap:14px; margin:20px 0 0; padding-top:18px; border-top:1px solid var(--bord); }
   .faits div{ min-width:0; }
   .faits dt{ font-size:12px; letter-spacing:.06em; text-transform:uppercase;
-             color:var(--craie-400); margin-bottom:4px; }
+             color:var(--texte-3); margin-bottom:4px; }
   .faits dd{ margin:0; font-size:17px; font-weight:800; }
 
   .grille-disc{ list-style:none; margin:14px 0 0; padding:0; display:grid; gap:10px;
                 grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); }
   .grille-disc li{ display:flex; gap:10px; align-items:center; padding:13px 15px;
-                   background:var(--encre-850); border:1px solid var(--encre-800);
+                   background:var(--surface-2); border:1px solid var(--bord);
                    border-radius:var(--r-m); font-weight:700; font-size:14.5px; }
-  .grille-disc svg{ color:var(--rouge-300); flex:none; }
+  .grille-disc svg{ color:var(--rouge-lien); flex:none; }
 
   .semaine{ list-style:none; margin:0; padding:0; }
   .semaine > li{ display:grid; grid-template-columns:112px 1fr; gap:16px;
-                 padding:13px 0; border-top:1px solid var(--encre-800); }
+                 padding:13px 0; border-top:1px solid var(--bord); }
   .semaine > li:first-child{ border-top:0; }
   .semaine .jour{ font-weight:800; font-size:14.5px; }
-  .semaine .aujourdhui .jour{ color:var(--rouge-300); }
+  .semaine .aujourdhui .jour{ color:var(--rouge-lien); }
   /* sur une colonne étroite, « · aujourd’hui » se coupait en laissant le point
      pendre en bout de ligne : on le passe sous le nom du jour */
   .semaine .aujourdhui .jour::after{ content:"aujourd’hui"; display:block; font-weight:600;
-                                     font-size:12px; color:var(--craie-400); }
+                                     font-size:12px; color:var(--texte-3); }
   .cours{ display:grid; gap:7px; min-width:0; }
   .cours .c{ display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; font-size:14.5px; }
-  .cours .h{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--craie-100);
+  .cours .h{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--texte);
              white-space:nowrap; }
-  .cours .q{ color:var(--craie-200); }
-  .cours .n{ font-size:12px; color:var(--craie-400); }
-  .repos{ color:var(--craie-400); font-size:14.5px; }
+  .cours .q{ color:var(--texte-2); }
+  .cours .n{ font-size:12px; color:var(--texte-3); }
+  .repos{ color:var(--texte-3); font-size:14.5px; }
 
   /* ---------- colonne de droite ---------- */
   .pan-carte{ padding:0; overflow:hidden; }
-  .mini-carte{ position:relative; height:210px; background:#0A1017; }
+  .mini-carte{ position:relative; height:210px; background:#E9EEF3; }
   .mini-carte canvas{ display:block; width:100%; height:100%; }
   .mini-vide{ position:absolute; inset:0; display:grid; place-items:center;
-              margin:0; color:var(--craie-400); font-size:13px; }
-  .cote-adresse{ padding:18px; border-top:1px solid var(--encre-800); }
-  .cote-adresse p{ margin:0 0 14px; color:var(--craie-200); line-height:1.55; font-size:15px; }
+              margin:0; color:var(--texte-3); font-size:13px; }
+  .cote-adresse{ padding:18px; border-top:1px solid var(--bord); }
+  .cote-adresse p{ margin:0 0 14px; color:var(--texte-2); line-height:1.55; font-size:15px; }
   .cote-adresse .btn{ width:100%; }
 
   .coord{ list-style:none; margin:0; padding:0; display:grid; gap:2px; }
   .coord a{ display:flex; gap:11px; align-items:center; padding:11px 10px; margin-inline:-10px;
-            border-radius:var(--r-m); color:var(--craie-100); text-decoration:none;
+            border-radius:var(--r-m); color:var(--texte); text-decoration:none;
             font-size:14.5px; font-weight:600; }
-  .coord a:hover{ background:var(--encre-850); }
-  .coord svg{ color:var(--craie-400); flex:none; }
-  .coord a:hover svg{ color:var(--rouge-300); }
+  .coord a:hover{ background:var(--surface-2); }
+  .coord svg{ color:var(--texte-3); flex:none; }
+  .coord a:hover svg{ color:var(--rouge-lien); }
   .coord .quoi{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .cote-note{ margin:14px 0 0; padding-top:14px; border-top:1px solid var(--encre-800);
-              color:var(--craie-400); font-size:13px; line-height:1.5; }
+  .cote-note{ margin:14px 0 0; padding-top:14px; border-top:1px solid var(--bord);
+              color:var(--texte-3); font-size:13px; line-height:1.5; }
 
-  .pan-club p{ margin:0 0 14px; color:var(--craie-200); font-size:14.5px; line-height:1.55; }
+  .pan-club p{ margin:0 0 14px; color:var(--texte-2); font-size:14.5px; line-height:1.55; }
   .pan-club .btn{ width:100%; }
 
   /* ---------- autres salles ---------- */
-  .autour{ border-top:1px solid var(--encre-800); padding-block:34px 44px; }
+  .autour{ border-top:1px solid var(--bord); padding-block:34px 44px; }
   .autour-liste{ list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px;
                  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); }
   .autour-liste a{ display:flex; gap:13px; align-items:center; padding:14px;
-                   background:var(--encre-900); border:1px solid var(--encre-800);
+                   background:var(--surface); border:1px solid var(--bord);
                    border-radius:var(--r-l); text-decoration:none; color:inherit;
                    transition:border-color .15s, background .15s; }
-  .autour-liste a:hover{ border-color:var(--encre-600); background:var(--encre-850); }
+  .autour-liste a:hover{ border-color:var(--bord-3); background:var(--surface-2); }
   .autour-liste .sig{ flex:none; width:46px; height:46px; border-radius:var(--r-m);
                       display:grid; place-items:center; font-family:Anton, Impact, sans-serif;
-                      font-size:15px; letter-spacing:.02em; background:var(--encre-800);
-                      color:var(--craie-200); }
+                      font-size:15px; letter-spacing:.02em; background:var(--bord);
+                      color:var(--texte-2); }
   .autour-liste .t{ min-width:0; }
   .autour-liste .t b{ display:block; font-size:15px; overflow:hidden;
                       text-overflow:ellipsis; white-space:nowrap; }
-  .autour-liste .t span{ font-size:13px; color:var(--craie-400); }
+  .autour-liste .t span{ font-size:13px; color:var(--texte-3); }
 
   .introuvable-in{ padding-block:90px 110px; text-align:center; }
   .introuvable h1{ font-family:Anton, Impact, sans-serif; font-weight:400;
                    text-transform:uppercase; font-size:clamp(28px,5vw,44px); margin:0 0 12px; }
-  .introuvable p{ color:var(--craie-200); margin:0 0 24px; }
+  .introuvable p{ color:var(--texte-2); margin:0 0 24px; }
 
   @media (max-width: 900px){
     .corps{ grid-template-columns:1fr; }
@@ -305,10 +314,10 @@
   <div class="wrap header-in">
     <a class="brand" href="index.html" aria-label="FightScale, accueil">
       <svg viewBox="200 0 452 300" width="48" height="32" role="img" aria-label="FightScale">
-        <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+        <use href="#fs-mono-f" fill="#16160F"/><use href="#fs-mono-s" fill="#FA0117"/>
       </svg>
       <svg class="brand-mot" viewBox="0 372 872 77" width="150" height="13.3" aria-hidden="true">
-        <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+        <use href="#fs-mot-fight" fill="#16160F"/><use href="#fs-mot-scale" fill="#FA0117"/>
       </svg>
     </a>
     <nav class="site-nav" aria-label="Navigation principale">
@@ -434,10 +443,10 @@
     <div class="footer-marque">
       <a class="brand" href="index.html" aria-label="FightScale, accueil">
         <svg viewBox="200 0 452 300" width="45" height="30" role="img" aria-label="FightScale">
-          <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+          <use href="#fs-mono-f" fill="#16160F"/><use href="#fs-mono-s" fill="#FA0117"/>
         </svg>
         <svg viewBox="0 372 872 77" width="141" height="12.5" aria-hidden="true">
-          <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+          <use href="#fs-mot-fight" fill="#16160F"/><use href="#fs-mot-scale" fill="#FA0117"/>
         </svg>
       </a>
       <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
@@ -650,22 +659,22 @@ function miniCarte(cv, lat, lon, largeurKm){
     var c = cadre();
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-    ctx.fillStyle = '#0A1017'; ctx.fillRect(0, 0, W, H);          /* la mer */
-    remplis('terre', c, '#141418');                                /* les voisins */
-    remplis('fr', c, '#1B1B21');
-    remplis('urb', c, '#26262C');                                  /* le tissu urbain */
-    trace('iris', c, 'rgba(245,243,239,.055)', 1);                 /* les quartiers */
-    trace('com', c, 'rgba(245,243,239,.085)', 1);                  /* les communes */
-    remplis('lac', c, '#0E1A26');
-    trace('riv', c, 'rgba(90,134,182,.34)', 1.1);
+    ctx.fillStyle = '#D6E6F2'; ctx.fillRect(0, 0, W, H);          /* la mer */
+    remplis('terre', c, '#EDEAE3');                                /* les voisins */
+    remplis('fr', c, '#F7F5F0');
+    remplis('urb', c, '#EAE6DD');                                  /* le tissu urbain */
+    trace('iris', c, 'rgba(22,22,15,.07)', 1);                     /* les quartiers */
+    trace('com', c, 'rgba(22,22,15,.12)', 1);                      /* les communes */
+    remplis('lac', c, '#CCE0EF');
+    trace('riv', c, 'rgba(96,146,196,.55)', 1.1);
 
     /* les routes en deux passes, gaine puis cœur, comme sur la page de résultats :
-       [couche, épaisseur de la gaine, épaisseur du cœur, couleur du cœur] */
-    var ROUTES = [['r3', 3.4, 1.5, 'rgba(198,192,184,.20)'],
-                  ['r2', 4.6, 2.3, 'rgba(214,208,198,.30)'],
-                  ['r1', 6.0, 3.2, 'rgba(224,196,150,.46)']];
+       [couche, épaisseur de la gaine, épaisseur du cœur, couleur du cœur, couleur de la gaine] */
+    var ROUTES = [['r3', 3.4, 1.5, '#FFFFFF', 'rgba(22,22,15,.13)'],
+                  ['r2', 4.6, 2.3, '#FFFFFF', 'rgba(22,22,15,.16)'],
+                  ['r1', 6.0, 3.2, '#F6CB7E', 'rgba(184,138,44,.55)']];
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ROUTES.forEach(function (r){ trace(r[0], c, '#0F0F13', r[1]); });
+    ROUTES.forEach(function (r){ trace(r[0], c, r[4], r[1]); });
     ROUTES.forEach(function (r){ trace(r[0], c, r[3], r[2]); });
 
     epingle(sx(lon), sy(lat));
@@ -674,7 +683,7 @@ function miniCarte(cv, lat, lon, largeurKm){
   /* l'épingle de la salle, dessinée à la main pour rester nette en haute densité */
   function epingle(x, y){
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
+    ctx.shadowColor = 'rgba(22,22,15,.35)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
     ctx.beginPath();
     ctx.arc(x, y - 13, 9.5, Math.PI * 0.82, Math.PI * 0.18);
     ctx.lineTo(x, y + 3);
@@ -682,7 +691,7 @@ function miniCarte(cv, lat, lon, largeurKm){
     ctx.fillStyle = '#FA0117'; ctx.fill();
     ctx.restore();
     ctx.beginPath(); ctx.arc(x, y - 13, 3.4, 0, Math.PI * 2);
-    ctx.fillStyle = '#0A0A0B'; ctx.fill();
+    ctx.fillStyle = '#FFFFFF'; ctx.fill();
   }
 
   function mesure(){
@@ -736,7 +745,7 @@ function echappe(t){
    viendra simplement le remplacer. */
 function visuel(s, n, gros){
   var d = s[11], sigle = s[1];
-  var teintes = [['#1A1A20', '#2A1116'], ['#161A20', '#1F2A33'], ['#1D1A17', '#2E2119']];
+  var teintes = [['#EFEDE7', '#E0DCD3'], ['#EDEBE6', '#DCDDD8'], ['#F1EDE6', '#E4DCD0']];
   var t = teintes[n % teintes.length];
   var id = 'vg-' + d.slug + '-' + n;
   var ang = [18, -12, 34][n % 3];
@@ -747,14 +756,14 @@ function visuel(s, n, gros){
              '<stop offset="1" stop-color="' + t[1] + '"/></linearGradient></defs>' +
            '<rect width="400" height="300" fill="url(#' + id + ')"/>' +
            '<g transform="rotate(' + ang + ' 200 150)" opacity=".5">' +
-             '<path d="M-60 214 H460" stroke="#FA0117" stroke-width="3" opacity=".7"/>' +
-             '<path d="M-60 236 H460" stroke="#FA0117" stroke-width="1.4" opacity=".35"/>' +
+             '<path d="M-60 214 H460" stroke="#FA0117" stroke-width="3" opacity=".55"/>' +
+             '<path d="M-60 236 H460" stroke="#FA0117" stroke-width="1.4" opacity=".3"/>' +
            '</g>' +
            (gros
              ? '<text x="200" y="176" text-anchor="middle" font-family="Anton, Impact, sans-serif" ' +
-                 'font-size="104" fill="#F5F3EF" opacity=".13">' + echappe(sigle) + '</text>'
+                 'font-size="104" fill="#16160F" opacity=".11">' + echappe(sigle) + '</text>'
              : '<text x="200" y="168" text-anchor="middle" font-family="Anton, Impact, sans-serif" ' +
-                 'font-size="42" fill="#F5F3EF" opacity=".14" letter-spacing="2">' +
+                 'font-size="42" fill="#16160F" opacity=".13" letter-spacing="2">' +
                  echappe((s[5][n - 1] || s[2]).toUpperCase()) + '</text>') +
          '</svg>';
 }

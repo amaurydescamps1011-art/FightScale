@@ -133,7 +133,8 @@
       var a = (0.26 + 0.42 * prof) * av * (fige ? 1 : 0.42 + 0.95 * o + 0.1 * scint);
       ctx.beginPath();
       ctx.arc(p.x, p.y, r, 0, 6.2832);
-      ctx.fillStyle = 'rgba(214,210,203,' + Math.max(0, a).toFixed(3) + ')';
+      /* sur fond clair les points doivent etre plus sombres que le papier */
+      ctx.fillStyle = 'rgba(86,82,74,' + Math.max(0, a * 0.9).toFixed(3) + ')';
       ctx.fill();
     }
 
@@ -150,13 +151,13 @@
       var rr = (1.15 + 0.6 * c.w) * Math.min(1.25, Math.max(0.7, c.k)) * (0.5 + 0.5 * av2);
       var halo = rr * (5.5 + 1.6 * puls);
       var g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, halo);
-      g.addColorStop(0, 'rgba(250,1,23,' + ((0.38 + 0.16 * puls) * av2).toFixed(3) + ')');
-      g.addColorStop(0.42, 'rgba(250,1,23,' + (0.11 * av2).toFixed(3) + ')');
-      g.addColorStop(1, 'rgba(250,1,23,0)');
+      g.addColorStop(0, 'rgba(224,0,22,' + ((0.20 + 0.09 * puls) * av2).toFixed(3) + ')');
+      g.addColorStop(0.42, 'rgba(224,0,22,' + (0.06 * av2).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(224,0,22,0)');
       ctx.beginPath(); ctx.arc(c.x, c.y, halo, 0, 6.2832);
       ctx.fillStyle = g; ctx.fill();
       ctx.beginPath(); ctx.arc(c.x, c.y, rr, 0, 6.2832);
-      ctx.fillStyle = 'rgba(255,138,146,' + ((0.82 + 0.18 * puls) * av2).toFixed(3) + ')';
+      ctx.fillStyle = 'rgba(224,0,22,' + ((0.82 + 0.18 * puls) * av2).toFixed(3) + ')';
       ctx.fill();
     }
   }
