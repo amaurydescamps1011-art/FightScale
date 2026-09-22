@@ -78,9 +78,9 @@
     font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
     text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
   .btn-rouge{background:var(--rouge-600); color:#fff;
-    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(224,0,22,.5)}
+    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(220,18,41,.5)}
   .btn-rouge:hover{background:var(--rouge-700); color:#fff;
-    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(224,0,22,.6)}
+    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(220,18,41,.6)}
   .site-nav .btn-rouge{color:#fff}
   /* Les menus deroulants du bandeau, comme chez masalledesport : deux colonnes
      titrees qui s'ouvrent au survol. Tout en CSS, sans une ligne de script : la
@@ -141,8 +141,8 @@
   .reseaux a{display:inline-flex; align-items:center; justify-content:center;
     width:40px; height:40px; border-radius:10px; border:1px solid var(--bord-2);
     color:var(--texte-2); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .reseaux a:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600);
-    background:rgba(224,0,22,.05)}
+  .reseaux a:hover{border-color:rgba(220,18,41,.45); color:var(--rouge-600);
+    background:rgba(220,18,41,.05)}
   .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
     color:var(--texte-4)}
   .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
@@ -184,8 +184,8 @@
     display:flex; align-items:center; gap:8px; padding:6px 6px 6px 16px;
     border:1px solid var(--bord-2); border-radius:999px; background:var(--surface);
     transition:border-color .16s ease, box-shadow .16s ease}
-  .champ-ville:focus-within{border-color:rgba(250,1,23,.55);
-    box-shadow:0 0 0 4px rgba(250,1,23,.10)}
+  .champ-ville:focus-within{border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
   .champ-ville > svg{flex-shrink:0; color:var(--rouge-lien)}
   .champ-ville input{flex:1 1 auto; min-width:0; border:0; background:transparent; outline:none;
     padding:8px 0; font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:700;
@@ -224,9 +224,9 @@
     background:var(--surface); font-family:Manrope,system-ui,sans-serif;
     font-size:13.5px; font-weight:700; color:var(--texte-2); white-space:nowrap;
     text-decoration:none; cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .puce:hover{border-color:rgba(224,0,22,.45); color:var(--texte)}
+  .puce:hover{border-color:rgba(220,18,41,.45); color:var(--texte)}
   .puce[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--texte);
-    background:rgba(224,0,22,.08); color:var(--rouge-700)}
+    background:rgba(220,18,41,.08); color:var(--rouge-700)}
   .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--bord)}
 
   /* ---------- une seule colonne ----------
@@ -249,19 +249,19 @@
   .res{position:relative; display:grid; grid-template-columns:186px minmax(0,1fr); gap:0;
     border:1px solid var(--bord-2); border-radius:var(--r-l); background:var(--surface);
     overflow:hidden; transition:border-color .16s ease, box-shadow .16s ease}
-  .res:hover, .res.actif{border-color:rgba(224,0,22,.45);
-    box-shadow:0 0 0 1px rgba(224,0,22,.18), var(--ombre-2)}
+  .res:hover, .res.actif{border-color:rgba(220,18,41,.45);
+    box-shadow:0 0 0 1px rgba(220,18,41,.18), var(--ombre-2)}
   .res-vignette{position:relative; display:grid; place-items:center;
     border-right:1px solid var(--bord);
     background:
-      radial-gradient(120% 90% at 50% 118%, rgba(224,0,22,.13) 0%, rgba(224,0,22,0) 62%),
+      radial-gradient(120% 90% at 50% 118%, rgba(220,18,41,.13) 0%, rgba(220,18,41,0) 62%),
       linear-gradient(145deg,#F2F0EB 0%,#E7E4DD 55%,#DCD8D0 100%)}
   .res-vignette::after{content:""; position:absolute; inset:0;
     background:repeating-linear-gradient(115deg, rgba(22,22,15,.035) 0 1px, transparent 1px 13px)}
   .res-num{position:absolute; top:9px; left:9px; z-index:2; display:grid; place-items:center;
     width:24px; height:24px; border-radius:50%; background:var(--rouge-600); color:#fff;
     font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
-    box-shadow:0 2px 6px -1px rgba(224,0,22,.5)}
+    box-shadow:0 2px 6px -1px rgba(220,18,41,.5)}
   .res-init{position:relative; z-index:1; font-family:Anton,"Arial Narrow",sans-serif;
     font-size:42px; line-height:1; letter-spacing:.04em; color:rgba(22,22,15,.17)}
   .res-corps{display:flex; flex-direction:column; gap:9px; padding:15px 16px}
@@ -295,7 +295,7 @@
 
   .res-etiq{position:absolute; top:9px; right:9px; z-index:2; padding:4px 9px; border-radius:999px;
     font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
-    background:rgba(224,0,22,.9); color:#fff}
+    background:rgba(220,18,41,.9); color:#fff}
   @media (max-width:760px){
     .res{grid-template-columns:104px minmax(0,1fr)}
     .res-init{font-size:26px}
@@ -324,9 +324,9 @@
     font-family:Manrope,system-ui,sans-serif; font-size:13.5px; font-weight:800;
     color:var(--texte); cursor:pointer;
     transition:border-color .15s ease, background-color .15s ease}
-  .btn-carte:hover{border-color:rgba(224,0,22,.45); background:rgba(224,0,22,.05)}
+  .btn-carte:hover{border-color:rgba(220,18,41,.45); background:rgba(220,18,41,.05)}
   .btn-carte svg{color:var(--rouge-lien)}
-  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(224,0,22,.08);
+  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(220,18,41,.08);
     color:var(--rouge-700)}
 
   /* ---------- carte ---------- */
@@ -361,7 +361,7 @@
     font-family:Manrope,system-ui,sans-serif; font-size:17px; font-weight:800;
     color:var(--texte-2); cursor:pointer;
     transition:border-color .15s ease, color .15s ease}
-  .carte-zoom button:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600)}
+  .carte-zoom button:hover{border-color:rgba(220,18,41,.45); color:var(--rouge-600)}
   .carte-zoom .z-large{width:auto; height:32px; padding:0 13px; font-size:12px; font-weight:800}
 
   /* ---------- pagination ---------- */
@@ -371,8 +371,8 @@
     font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
     color:var(--texte-2); cursor:pointer; font-variant-numeric:tabular-nums;
     transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .pg:hover:not(:disabled){border-color:rgba(224,0,22,.45); color:var(--texte)}
-  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(224,0,22,.08);
+  .pg:hover:not(:disabled){border-color:rgba(220,18,41,.45); color:var(--texte)}
+  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(220,18,41,.08);
     color:var(--rouge-700)}
   .pg:disabled{opacity:.35; cursor:default}
   .pg-fl{font-size:18px; line-height:1}
@@ -421,11 +421,11 @@
 <header class="barre-appli">
   <div class="wrap barre-in">
     <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
-      <svg viewBox="200 0 452 300" width="42" height="28" role="img" aria-label="Mon Club Combat">
-        <use href="#fs-mono-f" fill="#16160F"/><use href="#fs-mono-s" fill="#FA0117"/>
+      <svg viewBox="212 589 389 369" width="34" height="32" role="img" aria-label="Mon Club Combat">
+        <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
       </svg>
-      <svg class="brand-mot" viewBox="0 372 872 77" width="132" height="11.7" aria-hidden="true">
-        <use href="#fs-mot-fight" fill="#16160F"/><use href="#fs-mot-scale" fill="#FA0117"/>
+      <svg class="brand-mot" viewBox="657 722 1883 107" width="172" height="9.8" aria-hidden="true">
+        <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
       </svg>
     </a>
 
@@ -453,7 +453,7 @@
       <div class="nav-item">
         <a class="nav-link" href="index.html#villes" aria-haspopup="true">Villes <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         <div class="nav-menu nav-menu-1" aria-label="Villes">
-          <div class="nav-col"><ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul></div>
+          <div class="nav-col"><ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul></div>
         </div>
       </div>
       <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
@@ -576,7 +576,7 @@
   <div class="wrap footer-reseau">
     <section aria-labelledby="f-villes">
       <h2 id="f-villes">Salles de sports de combat par ville</h2>
-      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
+      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Sports de combat à Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Sports de combat à Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a></li><li><a href="sports-de-combat-lille.html">Sports de combat à Lille</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Sports de combat à Nantes</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-rennes.html">Sports de combat à Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Sports de combat à Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
     </section>
     <section aria-labelledby="f-disc">
       <h2 id="f-disc">Salles par discipline</h2>
@@ -652,8 +652,10 @@ function distanceKm(lat1, lon1, lat2, lon2){
   var dx = (lon2 - lon1) * 111.32 * Math.cos((lat1 + lat2) * Math.PI / 360);
   return Math.sqrt(dx * dx + dy * dy);
 }
-/* Jeu de salles de la maquette — donnees fictives, generees par gen_salles.py. */
-var SALLES = [
+/* Annuaire vide : aucune salle n'est referencee sans l'accord du club.
+   SALLES_DEMO ne sert qu'a la fiche d'exemple. Genere par gen_salles.py. */
+var SALLES = [];
+var SALLES_DEMO = [
   ["Fight Club Marseille", "FCM", "Marseille", 43.286, 5.38, ["MMA", "Boxe anglaise", "Grappling"], "4,8", 124, true, "08h00 – 22h00", true, {"slug": "fight-club-marseille", "adresse": "14 rue Jean-Mermoz", "cp": "13008", "tel": "04 10 20 30 40", "mail": "contact@fight-club-marseille.fr", "site": "fightclubmarseille.fr", "insta": "fightclub.marseille", "fb": "FightClubMarseille", "depuis": 2012, "adherents": 310, "presentation": ["Fight Club Marseille accueille les pratiquants de Marseille depuis 2012. La salle compte aujourd’hui environ 310 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le MMA, et la salle enseigne aussi la boxe anglaise et le grappling. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Cage MMA", "cage"], ["Ring de boxe", "ring"], ["Tatami", "tatami"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Léa", "note": 5, "date": "mars 2025", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}, {"nom": "Antoine", "note": 5, "date": "avril 2026", "texte": "J'ai commencé le MMA ici sans aucun niveau. On m'a pris en main dès le premier cours, personne ne m'a fait sentir que j'étais débutant."}, {"nom": "Inès", "note": 4, "date": "novembre 2025", "texte": "Bonne ambiance, salle propre, horaires qui tiennent. Le créneau du midi me sauve les semaines chargées."}]}],
   ["Marseille Combat Academy", "MCA", "Marseille", 43.305, 5.376, ["Boxe anglaise", "Kickboxing", "Muay Thaï"], "4,7", 98, false, "09h00 – 21h00", true, {"slug": "marseille-combat-academy", "adresse": "62 boulevard National", "cp": "13003", "tel": "04 11 23 37 51", "mail": "contact@marseille-combat-academy.fr", "site": "", "insta": "marseillecombatacademy", "fb": "", "depuis": 2016, "adherents": 180, "presentation": ["Marseille Combat Academy accueille les pratiquants de Marseille depuis 2016. La salle compte aujourd’hui environ 180 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est la boxe anglaise, et la salle enseigne aussi le kickboxing et le Muay Thaï. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "19h00", "a": "20h30", "quoi": "Kickboxing", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Ring de boxe", "ring"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Nicolas", "note": 5, "date": "juin 2025", "texte": "Séance d'essai gratuite et sans pression commerciale derrière. J'ai signé la semaine suivante, deux ans après j'y suis toujours."}, {"nom": "Léa", "note": 5, "date": "juillet 2026", "texte": "Les cours sont vraiment séparés par niveau, ce qui change tout. On travaille la technique avant de sparrer, et le coach corrige un par un."}, {"nom": "Antoine", "note": 4, "date": "février 2026", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}]}],
   ["JJB Marseille", "JJB", "Marseille", 43.2915, 5.3595, ["Jiu-jitsu brésilien", "Grappling"], "4,8", 76, true, "10h00 – 20h00", true, {"slug": "jjb-marseille", "adresse": "9 rue de Rome", "cp": "13006", "tel": "04 12 26 44 62", "mail": "contact@jjb-marseille.fr", "site": "jjb-marseille.fr", "insta": "jjbmarseille", "fb": "", "depuis": 2009, "adherents": 145, "presentation": ["JJB Marseille accueille les pratiquants de Marseille depuis 2009. La salle compte aujourd’hui environ 145 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le jiu-jitsu brésilien, et la salle enseigne aussi le grappling. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Tatami", "tatami"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Karim", "note": 5, "date": "juin 2026", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}, {"nom": "Lina", "note": 5, "date": "janvier 2026", "texte": "J'ai commencé le jiu-jitsu brésilien ici sans aucun niveau. On m'a pris en main dès le premier cours, personne ne m'a fait sentir que j'étais débutant."}, {"nom": "Romain", "note": 4, "date": "août 2025", "texte": "Bonne ambiance, salle propre, horaires qui tiennent. Le créneau du midi me sauve les semaines chargées."}]}],
@@ -679,6 +681,24 @@ var SALLES = [
 var NOM_DISC = { "MMA": "MMA", "Boxe anglaise": "boxe anglaise", "Kickboxing": "kickboxing", "Muay Thaï": "Muay Thaï", "Jiu-jitsu brésilien": "jiu-jitsu brésilien", "Grappling": "grappling", "Karaté": "karaté", "Judo": "judo", "Lutte": "lutte", "Self-défense": "self-défense" };
 function nomDiscipline(d){ return NOM_DISC[d] || d; }
 
+/* La fiche d'exemple, montree depuis « Referencer ma salle » (salle.html?demo=1).
+   Elle n'est dans aucun index : ni la recherche ni l'annuaire ne la voient. */
+var SALLE_DEMO = (function (){
+  var s = SALLES_DEMO[0].slice();
+  s[0] = 'Club Exemple';
+  s[1] = 'EX';
+  s[11] = JSON.parse(JSON.stringify(s[11]));
+  s[11].slug = 'exemple';
+  s[11].presentation = [
+    'Cette fiche est un exemple : ce club n\'existe pas. Elle montre ce qu\'un club '
+    + 'obtient gratuitement sur Mon Club Combat, avec ses vraies informations a la place '
+    + 'de celles-ci.',
+    'Les disciplines, le planning de la semaine, les horaires, l\'adresse et les moyens '
+    + 'de contact sont remplis par le club lui-meme, et modifiables a tout moment.'
+  ];
+  return s;
+})();
+
 /* index par identifiant d'URL, pour que recherche.html et index.html puissent
    pointer vers salle.html?s=<slug> */
 var PAR_SLUG = {};
@@ -695,12 +715,10 @@ function ardoise(t){
 function pageDiscipline(d){ return ardoise(d) + '.html'; }
 function pageVille(v){ return 'sports-de-combat-' + ardoise(v) + '.html'; }
 
-/* les villes ou il y a au moins une salle, donc celles qui ont une page */
-var VILLES_AVEC_SALLE = (function (){
-  var vu = {}, out = [];
-  SALLES.forEach(function (s){ if (!vu[s[2]]){ vu[s[2]] = 1; out.push(s[2]); } });
-  return out;
-})();
+/* Les villes qui ont leur page d'annuaire. Elles l'ont toutes, salle ou pas :
+   une ville sans salle affiche son etat vide et propose au gerant de referencer
+   la sienne. La liste est celle de build_annuaire.VILLES, ecrite au build. */
+var VILLES_AVEC_SALLE = ["Aix-en-Provence", "Angers", "Bordeaux", "Dijon", "Grenoble", "Lille", "Lyon", "Marseille", "Montpellier", "Nantes", "Nice", "Paris", "Rennes", "Strasbourg", "Toulon", "Toulouse"];
 
 var VILLES_FR = [["Agen",44.2004,0.6333],["Aix-en-Provence",43.52,5.45],["Ajaccio",41.9271,8.7283],["Albi",43.9396,2.1512],["Alençon",48.428,0.0896],["Amiens",49.9004,2.3],["Angers",47.48,-0.53],["Angoulême",45.6432,0.1487],["Annecy",45.9,6.1167],["Antibes",43.5801,7.0997],["Argenteuil",48.9482,2.2413],["Arles",43.7097,4.6374],["Arras",50.2833,2.7833],["Asnières-sur-Seine",48.9173,2.2873],["Aubagne",43.2907,5.5648],["Aulnay-sous-Bois",48.9432,2.4969],["Aurillac",44.9146,2.4406],["Auxerre",47.8004,3.5666],["Avignon",43.9451,4.8374],["Bar-le-Duc",48.7696,5.1748],["Bastia",42.7032,9.45],["Bayeux",49.278,-0.7051],["Bayonne",43.4856,-1.4679],["Beauvais",49.4317,2.0892],["Belfort",47.6432,6.8565],["Berck",50.4145,1.5823],["Bergerac",44.8501,0.4858],["Besançon",47.23,6.03],["Biarritz",43.4733,-1.5616],["Blois",47.5949,1.3194],["Bordeaux",44.852,-0.597],["Boulogne-Billancourt",48.8404,2.2401],["Boulogne-sur-Mer",50.7298,1.6075],["Bourg-en-Bresse",46.202,5.2395],["Bourges",47.0837,2.4],["Brest",48.3904,-4.495],["Brive-la-Gaillarde",45.1581,1.5193],["Béthune",50.5297,2.6423],["Béziers",43.3505,3.21],["Caen",49.1838,-0.35],["Cahors",44.4434,1.4361],["Calais",50.9504,1.8333],["Cambrai",50.1807,3.2458],["Cannes",43.5563,7.0042],["Carcassonne",43.2139,2.3409],["Chalon-sur-Saône",46.7883,4.8529],["Chambéry",45.585,5.904],["Charleville-Mézières",49.7688,4.7251],["Chartres",48.4489,1.5079],["Chaumont",48.1092,5.1337],["Cherbourg-en-Cotentin",49.6408,-1.6103],["Cholet",47.0547,-0.8714],["Châteauroux",46.808,1.7067],["Châtellerault",46.8086,0.5416],["Clermont-Ferrand",45.78,3.08],["Colmar",48.0791,7.3536],["Colombes",48.9237,2.2473],["Compiègne",49.4069,2.8241],["Concarneau",47.8966,-3.9083],["Courbevoie",48.897,2.2511],["Créteil",48.7814,2.4525],["Dieppe",49.9337,1.0833],["Dijon",47.3304,5.03],["Dole",47.0898,5.4955],["Douai",50.375,3.0767],["Dunkerque",51.0311,2.3488],["Fontainebleau",48.4172,2.7072],["Forbach",49.1924,6.8836],["Fréjus",43.4442,6.7406],["Granville",48.8338,-1.5595],["Grenoble",45.1804,5.72],["Haguenau",48.8143,7.8321],["Hyères",43.1213,6.1525],["Istres",43.5487,4.963],["La Roche-sur-Yon",46.6675,-1.4288],["La Rochelle",46.1667,-1.15],["Laon",49.5707,3.6267],["Laval",48.0727,-0.77],["Le Havre",49.505,0.105],["Le Mans",48.0044,0.2026],["Le Puy-en-Velay",45.0347,3.903],["Le Touquet-Paris-Plage",50.5098,1.5895],["Lens",50.4375,2.8195],["Lille",50.6519,3.0781],["Limoges",45.83,1.25],["Lisieux",49.148,0.2377],["Lorient",47.7504,-3.3666],["Lyon",45.772,4.8281],["Mantes-la-Jolie",48.9984,1.6912],["Marseille",43.2919,5.3731],["Martigues",43.375,5.0555],["Meaux",48.9564,2.9032],["Melun",48.5333,2.6666],["Metz",49.1203,6.18],["Mont-de-Marsan",43.8984,-0.4888],["Montargis",47.998,2.7353],["Montauban",44.0193,1.3588],["Montbéliard",47.5122,6.7985],["Montluçon",46.3468,2.595],["Montpellier",43.6104,3.87],["Montreuil",46.3961,-0.8434],["Morlaix",48.5996,-3.8198],["Moulins",48.009,-1.3632],["Mulhouse",47.7504,7.35],["Mâcon",46.3035,4.8241],["Mérignac",44.8309,-0.6786],["Nancy",48.6837,6.2],["Nanterre",48.8974,2.2024],["Nantes",47.2104,-1.59],["Narbonne",43.1777,3.0116],["Nevers",46.9837,3.1667],["Nice",43.717,7.2631],["Niort",46.3257,-0.4449],["Nîmes",43.8304,4.35],["Orléans",47.9004,1.9],["Paris",48.8581,2.353],["Pau",43.3231,-0.3406],["Perpignan",42.7,2.9],["Poitiers",46.582,0.3615],["Pontoise",49.0534,2.0947],["Périgueux",45.192,0.7183],["Quimper",47.9911,-4.087],["Reims",49.2504,4.03],["Rennes",48.1,-1.67],["Roanne",46.0333,4.0667],["Rodez",44.3592,2.5696],["Romans-sur-Isère",45.0525,5.0631],["Roubaix",50.6914,3.1822],["Rouen",49.4304,1.08],["Royan",45.6372,-1.0264],["Rueil-Malmaison",48.8725,2.1795],["Saint-Brieuc",48.51,-2.7625],["Saint-Denis",48.9288,2.3577],["Saint-Louis",47.602,7.5381],["Saint-Lô",49.1095,-1.078],["Saint-Malo",48.6498,-1.9868],["Saint-Nazaire",47.2767,-2.2321],["Saint-Quentin",49.8493,3.2814],["Saint-Étienne",45.4304,4.38],["Saintes",45.7451,-0.6307],["Salon-de-Provence",43.6476,5.1053],["Saumur",47.2687,-0.0693],["Sedan",49.6982,4.9406],["Sens",48.1945,3.2972],["Soissons",49.3775,3.3227],["Strasbourg",48.58,7.75],["Sète",43.4104,3.6999],["Sélestat",48.2758,7.4641],["Tarbes",43.2333,0.0833],["Thionville",49.3517,6.1596],["Toulon",43.1342,5.9188],["Toulouse",43.6219,1.448],["Tourcoing",50.7219,3.1532],["Tours",47.3804,0.6999],["Troyes",48.3404,4.0834],["Valence",44.9285,4.9127],["Valenciennes",50.3541,3.5117],["Vannes",47.6567,-2.7441],["Verdun",49.158,5.3883],["Versailles",48.8005,2.1333],["Vesoul",47.6233,6.1545],["Vichy",46.1171,3.4167],["Vierzon",47.2349,2.058],["Villeurbanne",45.7717,4.8813],["Vitrolles",43.4575,5.2595],["Vitry-sur-Seine",48.7899,2.3984],["Épinal",48.1746,6.4661],["Évreux",49.0222,1.1563],["Évry",48.6282,2.4451]];
 /* ---------- suggestions de villes ----------
@@ -1089,19 +1107,34 @@ function rendListe(){
       vu[s[2]] = 1; ailleurs.push(s[2]);
     });
     var nu = sansFiltre();
+    /* Trois cas, et pas un seul message fourre-tout : l'annuaire entier est
+       vide, la ville est vide, ou ce sont les filtres qui ne rendent rien.
+       Tant que l'annuaire est vide, proposer « essayez une autre ville » serait
+       un mensonge : il n'y en a aucune qui marche. */
+    var toutVide = !SALLES.length;
+    var ou = etat.ville ? 'à ' + etat.ville : 'ici';
     liste.innerHTML =
-      '<div class="vide"><h2 class="display">Pas encore de salle ici</h2>' +
-      '<p>' + (nu
-        ? 'Aucune salle n’est encore référencée dans cette ville. Vous dirigez un club&nbsp;? ' +
-          'Référencez-le gratuitement, il apparaîtra ici.'
+      '<div class="vide">' +
+      '<h2 class="display">' + (toutVide || nu ? 'Pas encore de salle ' + ou
+                                               : 'Aucun résultat') + '</h2>' +
+      '<p>' + (toutVide
+        ? 'Aucune salle n’est encore référencée sur Mon Club Combat : nous ouvrons ' +
+          'l’annuaire aux clubs en ce moment. Vous dirigez une salle&nbsp;? ' +
+          'Soyez le premier de votre ville, c’est gratuit.'
+        : nu
+        ? 'Aucune salle n’est encore référencée ' + ou + '. Vous dirigez un club&nbsp;? ' +
+          'Soyez le premier, c’est gratuit et votre fiche apparaît ici.'
         : 'Aucune salle ne correspond à cette recherche. Enlevez un filtre, ou essayez ' +
           'une autre ville.') + '</p>' +
-      (nu ? '<a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a>' : '') +
-      '<p class="vide-sous">' + (nu ? 'En attendant, ces villes ont des salles&nbsp;:'
-                                    : 'Essayez plutôt&nbsp;:') + '</p>' +
-      '<div class="vide-villes">' + ailleurs.slice(0, 6).map(function (v){
-        return '<a class="puce" href="' + pageVille(v) + '">' + v + '</a>';
-      }).join('') + '</div></div>';
+      (toutVide || nu
+        ? '<a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a>' : '') +
+      (toutVide ? '' :
+        '<p class="vide-sous">' + (nu ? 'En attendant, ces villes ont des salles&nbsp;:'
+                                      : 'Essayez plutôt&nbsp;:') + '</p>' +
+        '<div class="vide-villes">' + ailleurs.slice(0, 6).map(function (v){
+          return '<a class="puce" href="' + pageVille(v) + '">' + v + '</a>';
+        }).join('') + '</div>') +
+      '</div>';
     document.getElementById('pagination').innerHTML = '';
     return;
   }
@@ -1419,15 +1452,15 @@ function dessine(t){
     var p = pastille[i], vif = (i === etat.actif);
     if (serre && !vif){
       cx.beginPath(); cx.arc(p.x, p.y, 5, 0, 6.2832);
-      cx.fillStyle = '#E00016'; cx.fill();
+      cx.fillStyle = '#DC1229'; cx.fill();
       cx.strokeStyle = 'rgba(255,255,255,.95)'; cx.lineWidth = 1.2; cx.stroke();
       return;
     }
     var R = vif ? 16 : 12;
 
     var halo = cx.createRadialGradient(p.x, p.y, 0, p.x, p.y, R * 3);
-    halo.addColorStop(0, 'rgba(250,1,23,' + ((vif ? .28 : .11) + resp * .05).toFixed(3) + ')');
-    halo.addColorStop(1, 'rgba(250,1,23,0)');
+    halo.addColorStop(0, 'rgba(236,22,46,' + ((vif ? .28 : .11) + resp * .05).toFixed(3) + ')');
+    halo.addColorStop(1, 'rgba(236,22,46,0)');
     cx.fillStyle = halo;
     cx.beginPath(); cx.arc(p.x, p.y, R * 3, 0, 6.2832); cx.fill();
 
@@ -1436,10 +1469,10 @@ function dessine(t){
     cx.lineTo(p.x + 4.5, p.y + R - 3);
     cx.lineTo(p.x, p.y + R + 7);
     cx.closePath();
-    cx.fillStyle = vif ? '#FA0117' : '#E00016'; cx.fill();
+    cx.fillStyle = vif ? '#EC162E' : '#DC1229'; cx.fill();
 
     cx.beginPath(); cx.arc(p.x, p.y, R, 0, 6.2832);
-    cx.fillStyle = vif ? '#FA0117' : '#E00016'; cx.fill();
+    cx.fillStyle = vif ? '#EC162E' : '#DC1229'; cx.fill();
     cx.strokeStyle = 'rgba(255,255,255,' + (vif ? 1 : .9) + ')';
     cx.lineWidth = 1.6; cx.stroke();
 
@@ -1463,7 +1496,7 @@ function boiteNom(p, nom, rayon, vif){
   var by = p.y - rayon - bh - 10;
   if (by < 8) by = p.y + rayon + 8;
   cx.fillStyle = 'rgba(255,255,255,.97)';
-  cx.strokeStyle = vif ? 'rgba(224,0,22,.6)' : 'rgba(22,22,15,.20)'; cx.lineWidth = 1;
+  cx.strokeStyle = vif ? 'rgba(220,18,41,.6)' : 'rgba(22,22,15,.20)'; cx.lineWidth = 1;
   if (cx.roundRect){ cx.beginPath(); cx.roundRect(bx, by, bw, bh, 8); cx.fill(); cx.stroke(); }
   else { cx.fillRect(bx, by, bw, bh); cx.strokeRect(bx, by, bw, bh); }
   cx.fillStyle = vif ? '#16160F' : 'rgba(61,59,52,.92)';

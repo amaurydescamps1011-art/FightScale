@@ -78,9 +78,9 @@
     font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
     text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
   .btn-rouge{background:var(--rouge-600); color:#fff;
-    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(224,0,22,.5)}
+    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(220,18,41,.5)}
   .btn-rouge:hover{background:var(--rouge-700); color:#fff;
-    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(224,0,22,.6)}
+    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(220,18,41,.6)}
   .site-nav .btn-rouge{color:#fff}
   /* Les menus deroulants du bandeau, comme chez masalledesport : deux colonnes
      titrees qui s'ouvrent au survol. Tout en CSS, sans une ligne de script : la
@@ -141,8 +141,8 @@
   .reseaux a{display:inline-flex; align-items:center; justify-content:center;
     width:40px; height:40px; border-radius:10px; border:1px solid var(--bord-2);
     color:var(--texte-2); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .reseaux a:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600);
-    background:rgba(224,0,22,.05)}
+  .reseaux a:hover{border-color:rgba(220,18,41,.45); color:var(--rouge-600);
+    background:rgba(220,18,41,.05)}
   .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
     color:var(--texte-4)}
   .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
@@ -382,6 +382,14 @@
 .avis-date{margin-left:auto; font-size:13px; color:var(--texte-4)}
 .avis-texte{margin-top:9px; font-size:14.5px; line-height:1.7; color:var(--texte-2)}
 @media (max-width:520px){ .avis-date{margin-left:0; width:100%} }
+
+  /* Bandeau de la fiche d'exemple. Il doit se lire avant le nom du club, donc
+     il est plein rouge : c'est le seul aplat de marque de la page. */
+  .bandeau-demo{margin:0; padding:11px var(--gutter); background:var(--rouge-600);
+    color:#FFFFFF; font-size:13.5px; font-weight:600; line-height:1.5;
+    text-align:center}
+  .bandeau-demo b{font-weight:800}
+  .bandeau-demo a{color:#FFFFFF; text-underline-offset:3px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -408,7 +416,7 @@
         <div class="nav-menu" aria-label="Clubs">
           <div class="nav-col">
             <p class="nav-col-t">Par ville</p>
-            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
+            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
           </div>
           <div class="nav-col">
             <p class="nav-col-t">Parcourir</p>
@@ -455,6 +463,14 @@
 
 <main id="contenu">
   <div class="fiche" id="fiche" hidden>
+
+    <!-- Visible seulement sur salle.html?demo=1, la fiche montree aux gerants
+         depuis « Referencer ma salle ». Aucun visiteur ne tombe dessus par
+         l'annuaire : elle n'y est pas. -->
+    <p class="bandeau-demo" id="bandeau-demo" hidden>
+      <b>Exemple</b> — ce club n'existe pas. Voici la fiche que votre salle
+      obtient gratuitement. <a href="clubs.html">Référencer la mienne</a>
+    </p>
 
     <nav class="fil" aria-label="Fil d'Ariane">
       <div class="wrap fil-in">
@@ -555,7 +571,7 @@
 
     </div>
 
-    <section class="section autour">
+    <section class="section autour" id="autour" hidden>
       <div class="wrap">
         <h2 class="pan-titre" id="autour-titre">Autres salles</h2>
         <ul class="autour-liste" id="s-autour"></ul>
@@ -633,7 +649,7 @@
   <div class="wrap footer-reseau">
     <section aria-labelledby="f-villes">
       <h2 id="f-villes">Salles de sports de combat par ville</h2>
-      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
+      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Sports de combat à Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Sports de combat à Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a></li><li><a href="sports-de-combat-lille.html">Sports de combat à Lille</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Sports de combat à Nantes</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-rennes.html">Sports de combat à Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Sports de combat à Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
     </section>
     <section aria-labelledby="f-disc">
       <h2 id="f-disc">Salles par discipline</h2>
@@ -709,8 +725,10 @@ function distanceKm(lat1, lon1, lat2, lon2){
   var dx = (lon2 - lon1) * 111.32 * Math.cos((lat1 + lat2) * Math.PI / 360);
   return Math.sqrt(dx * dx + dy * dy);
 }
-/* Jeu de salles de la maquette — donnees fictives, generees par gen_salles.py. */
-var SALLES = [
+/* Annuaire vide : aucune salle n'est referencee sans l'accord du club.
+   SALLES_DEMO ne sert qu'a la fiche d'exemple. Genere par gen_salles.py. */
+var SALLES = [];
+var SALLES_DEMO = [
   ["Fight Club Marseille", "FCM", "Marseille", 43.286, 5.38, ["MMA", "Boxe anglaise", "Grappling"], "4,8", 124, true, "08h00 – 22h00", true, {"slug": "fight-club-marseille", "adresse": "14 rue Jean-Mermoz", "cp": "13008", "tel": "04 10 20 30 40", "mail": "contact@fight-club-marseille.fr", "site": "fightclubmarseille.fr", "insta": "fightclub.marseille", "fb": "FightClubMarseille", "depuis": 2012, "adherents": 310, "presentation": ["Fight Club Marseille accueille les pratiquants de Marseille depuis 2012. La salle compte aujourd’hui environ 310 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le MMA, et la salle enseigne aussi la boxe anglaise et le grappling. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Cage MMA", "cage"], ["Ring de boxe", "ring"], ["Tatami", "tatami"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Léa", "note": 5, "date": "mars 2025", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}, {"nom": "Antoine", "note": 5, "date": "avril 2026", "texte": "J'ai commencé le MMA ici sans aucun niveau. On m'a pris en main dès le premier cours, personne ne m'a fait sentir que j'étais débutant."}, {"nom": "Inès", "note": 4, "date": "novembre 2025", "texte": "Bonne ambiance, salle propre, horaires qui tiennent. Le créneau du midi me sauve les semaines chargées."}]}],
   ["Marseille Combat Academy", "MCA", "Marseille", 43.305, 5.376, ["Boxe anglaise", "Kickboxing", "Muay Thaï"], "4,7", 98, false, "09h00 – 21h00", true, {"slug": "marseille-combat-academy", "adresse": "62 boulevard National", "cp": "13003", "tel": "04 11 23 37 51", "mail": "contact@marseille-combat-academy.fr", "site": "", "insta": "marseillecombatacademy", "fb": "", "depuis": 2016, "adherents": 180, "presentation": ["Marseille Combat Academy accueille les pratiquants de Marseille depuis 2016. La salle compte aujourd’hui environ 180 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est la boxe anglaise, et la salle enseigne aussi le kickboxing et le Muay Thaï. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "19h00", "a": "20h30", "quoi": "Kickboxing", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Ring de boxe", "ring"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Nicolas", "note": 5, "date": "juin 2025", "texte": "Séance d'essai gratuite et sans pression commerciale derrière. J'ai signé la semaine suivante, deux ans après j'y suis toujours."}, {"nom": "Léa", "note": 5, "date": "juillet 2026", "texte": "Les cours sont vraiment séparés par niveau, ce qui change tout. On travaille la technique avant de sparrer, et le coach corrige un par un."}, {"nom": "Antoine", "note": 4, "date": "février 2026", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}]}],
   ["JJB Marseille", "JJB", "Marseille", 43.2915, 5.3595, ["Jiu-jitsu brésilien", "Grappling"], "4,8", 76, true, "10h00 – 20h00", true, {"slug": "jjb-marseille", "adresse": "9 rue de Rome", "cp": "13006", "tel": "04 12 26 44 62", "mail": "contact@jjb-marseille.fr", "site": "jjb-marseille.fr", "insta": "jjbmarseille", "fb": "", "depuis": 2009, "adherents": 145, "presentation": ["JJB Marseille accueille les pratiquants de Marseille depuis 2009. La salle compte aujourd’hui environ 145 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le jiu-jitsu brésilien, et la salle enseigne aussi le grappling. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Tatami", "tatami"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Karim", "note": 5, "date": "juin 2026", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}, {"nom": "Lina", "note": 5, "date": "janvier 2026", "texte": "J'ai commencé le jiu-jitsu brésilien ici sans aucun niveau. On m'a pris en main dès le premier cours, personne ne m'a fait sentir que j'étais débutant."}, {"nom": "Romain", "note": 4, "date": "août 2025", "texte": "Bonne ambiance, salle propre, horaires qui tiennent. Le créneau du midi me sauve les semaines chargées."}]}],
@@ -736,6 +754,24 @@ var SALLES = [
 var NOM_DISC = { "MMA": "MMA", "Boxe anglaise": "boxe anglaise", "Kickboxing": "kickboxing", "Muay Thaï": "Muay Thaï", "Jiu-jitsu brésilien": "jiu-jitsu brésilien", "Grappling": "grappling", "Karaté": "karaté", "Judo": "judo", "Lutte": "lutte", "Self-défense": "self-défense" };
 function nomDiscipline(d){ return NOM_DISC[d] || d; }
 
+/* La fiche d'exemple, montree depuis « Referencer ma salle » (salle.html?demo=1).
+   Elle n'est dans aucun index : ni la recherche ni l'annuaire ne la voient. */
+var SALLE_DEMO = (function (){
+  var s = SALLES_DEMO[0].slice();
+  s[0] = 'Club Exemple';
+  s[1] = 'EX';
+  s[11] = JSON.parse(JSON.stringify(s[11]));
+  s[11].slug = 'exemple';
+  s[11].presentation = [
+    'Cette fiche est un exemple : ce club n\'existe pas. Elle montre ce qu\'un club '
+    + 'obtient gratuitement sur Mon Club Combat, avec ses vraies informations a la place '
+    + 'de celles-ci.',
+    'Les disciplines, le planning de la semaine, les horaires, l\'adresse et les moyens '
+    + 'de contact sont remplis par le club lui-meme, et modifiables a tout moment.'
+  ];
+  return s;
+})();
+
 /* index par identifiant d'URL, pour que recherche.html et index.html puissent
    pointer vers salle.html?s=<slug> */
 var PAR_SLUG = {};
@@ -752,12 +788,10 @@ function ardoise(t){
 function pageDiscipline(d){ return ardoise(d) + '.html'; }
 function pageVille(v){ return 'sports-de-combat-' + ardoise(v) + '.html'; }
 
-/* les villes ou il y a au moins une salle, donc celles qui ont une page */
-var VILLES_AVEC_SALLE = (function (){
-  var vu = {}, out = [];
-  SALLES.forEach(function (s){ if (!vu[s[2]]){ vu[s[2]] = 1; out.push(s[2]); } });
-  return out;
-})();
+/* Les villes qui ont leur page d'annuaire. Elles l'ont toutes, salle ou pas :
+   une ville sans salle affiche son etat vide et propose au gerant de referencer
+   la sienne. La liste est celle de build_annuaire.VILLES, ecrite au build. */
+var VILLES_AVEC_SALLE = ["Aix-en-Provence", "Angers", "Bordeaux", "Dijon", "Grenoble", "Lille", "Lyon", "Marseille", "Montpellier", "Nantes", "Nice", "Paris", "Rennes", "Strasbourg", "Toulon", "Toulouse"];
 
 /* Vignette de carte de la fiche salle.
 
@@ -834,7 +868,7 @@ function miniCarte(cv, lat, lon, largeurKm){
     ctx.arc(x, y - 13, 9.5, Math.PI * 0.82, Math.PI * 0.18);
     ctx.lineTo(x, y + 3);
     ctx.closePath();
-    ctx.fillStyle = '#FA0117'; ctx.fill();
+    ctx.fillStyle = '#EC162E'; ctx.fill();
     ctx.restore();
     ctx.beginPath(); ctx.arc(x, y - 13, 3.4, 0, Math.PI * 2);
     ctx.fillStyle = '#FFFFFF'; ctx.fill();
@@ -912,8 +946,8 @@ function visuel(s, n, gros){
              '<stop offset="1" stop-color="' + t[1] + '"/></linearGradient></defs>' +
            '<rect width="400" height="300" fill="url(#' + id + ')"/>' +
            '<g transform="rotate(' + ang + ' 200 150)" opacity=".5">' +
-             '<path d="M-60 214 H460" stroke="#FA0117" stroke-width="3" opacity=".55"/>' +
-             '<path d="M-60 236 H460" stroke="#FA0117" stroke-width="1.4" opacity=".3"/>' +
+             '<path d="M-60 214 H460" stroke="#EC162E" stroke-width="3" opacity=".55"/>' +
+             '<path d="M-60 236 H460" stroke="#EC162E" stroke-width="1.4" opacity=".3"/>' +
            '</g>' +
            (gros
              ? '<text x="200" y="176" text-anchor="middle" font-family="Anton, Impact, sans-serif" ' +
@@ -1040,6 +1074,8 @@ function rendFiche(s){
   /* Les salles voisines, par distance réelle plutôt que par nom de ville. Au-delà
      de 60 km on ne parle plus de voisinage : le titre change plutôt que d'annoncer
      « autour de Paris » une salle qui est à 400 km. */
+  var autour = document.getElementById('autour');
+  if (autour) autour.hidden = SALLES.length < 2;
   var classees = SALLES.filter(function (o){ return o !== s; })
     .map(function (o){ return [o, distanceKm(s[3], s[4], o[3], o[4])]; })
     .sort(function (a, b){ return a[1] - b[1]; });
@@ -1060,6 +1096,15 @@ function rendFiche(s){
 }
 
 (function demarre(){
+  /* La fiche d'exemple passe par ?demo=1 plutot que par un slug : elle n'est
+     dans aucun index, donc aucune recherche et aucune page d'annuaire ne peut
+     y mener. On la montre uniquement depuis « Referencer ma salle ». */
+  if (param('demo')){
+    document.getElementById('bandeau-demo').hidden = false;
+    rendFiche(SALLE_DEMO);
+    document.title = 'Exemple de fiche club — Mon Club Combat';
+    return;
+  }
   var s = salleParSlug(param('s'));
   if (s) rendFiche(s);
   else {

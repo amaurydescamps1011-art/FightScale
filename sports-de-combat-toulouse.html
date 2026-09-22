@@ -78,9 +78,9 @@
     font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
     text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
   .btn-rouge{background:var(--rouge-600); color:#fff;
-    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(224,0,22,.5)}
+    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(220,18,41,.5)}
   .btn-rouge:hover{background:var(--rouge-700); color:#fff;
-    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(224,0,22,.6)}
+    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(220,18,41,.6)}
   .site-nav .btn-rouge{color:#fff}
   /* Les menus deroulants du bandeau, comme chez masalledesport : deux colonnes
      titrees qui s'ouvrent au survol. Tout en CSS, sans une ligne de script : la
@@ -141,8 +141,8 @@
   .reseaux a{display:inline-flex; align-items:center; justify-content:center;
     width:40px; height:40px; border-radius:10px; border:1px solid var(--bord-2);
     color:var(--texte-2); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .reseaux a:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600);
-    background:rgba(224,0,22,.05)}
+  .reseaux a:hover{border-color:rgba(220,18,41,.45); color:var(--rouge-600);
+    background:rgba(220,18,41,.05)}
   .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
     color:var(--texte-4)}
   .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
@@ -184,8 +184,8 @@
     display:flex; align-items:center; gap:8px; padding:6px 6px 6px 16px;
     border:1px solid var(--bord-2); border-radius:999px; background:var(--surface);
     transition:border-color .16s ease, box-shadow .16s ease}
-  .champ-ville:focus-within{border-color:rgba(250,1,23,.55);
-    box-shadow:0 0 0 4px rgba(250,1,23,.10)}
+  .champ-ville:focus-within{border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
   .champ-ville > svg{flex-shrink:0; color:var(--rouge-lien)}
   .champ-ville input{flex:1 1 auto; min-width:0; border:0; background:transparent; outline:none;
     padding:8px 0; font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:700;
@@ -224,9 +224,9 @@
     background:var(--surface); font-family:Manrope,system-ui,sans-serif;
     font-size:13.5px; font-weight:700; color:var(--texte-2); white-space:nowrap;
     text-decoration:none; cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .puce:hover{border-color:rgba(224,0,22,.45); color:var(--texte)}
+  .puce:hover{border-color:rgba(220,18,41,.45); color:var(--texte)}
   .puce[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--texte);
-    background:rgba(224,0,22,.08); color:var(--rouge-700)}
+    background:rgba(220,18,41,.08); color:var(--rouge-700)}
   .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--bord)}
 
   /* ---------- une seule colonne ----------
@@ -249,19 +249,19 @@
   .res{position:relative; display:grid; grid-template-columns:186px minmax(0,1fr); gap:0;
     border:1px solid var(--bord-2); border-radius:var(--r-l); background:var(--surface);
     overflow:hidden; transition:border-color .16s ease, box-shadow .16s ease}
-  .res:hover, .res.actif{border-color:rgba(224,0,22,.45);
-    box-shadow:0 0 0 1px rgba(224,0,22,.18), var(--ombre-2)}
+  .res:hover, .res.actif{border-color:rgba(220,18,41,.45);
+    box-shadow:0 0 0 1px rgba(220,18,41,.18), var(--ombre-2)}
   .res-vignette{position:relative; display:grid; place-items:center;
     border-right:1px solid var(--bord);
     background:
-      radial-gradient(120% 90% at 50% 118%, rgba(224,0,22,.13) 0%, rgba(224,0,22,0) 62%),
+      radial-gradient(120% 90% at 50% 118%, rgba(220,18,41,.13) 0%, rgba(220,18,41,0) 62%),
       linear-gradient(145deg,#F2F0EB 0%,#E7E4DD 55%,#DCD8D0 100%)}
   .res-vignette::after{content:""; position:absolute; inset:0;
     background:repeating-linear-gradient(115deg, rgba(22,22,15,.035) 0 1px, transparent 1px 13px)}
   .res-num{position:absolute; top:9px; left:9px; z-index:2; display:grid; place-items:center;
     width:24px; height:24px; border-radius:50%; background:var(--rouge-600); color:#fff;
     font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
-    box-shadow:0 2px 6px -1px rgba(224,0,22,.5)}
+    box-shadow:0 2px 6px -1px rgba(220,18,41,.5)}
   .res-init{position:relative; z-index:1; font-family:Anton,"Arial Narrow",sans-serif;
     font-size:42px; line-height:1; letter-spacing:.04em; color:rgba(22,22,15,.17)}
   .res-corps{display:flex; flex-direction:column; gap:9px; padding:15px 16px}
@@ -295,7 +295,7 @@
 
   .res-etiq{position:absolute; top:9px; right:9px; z-index:2; padding:4px 9px; border-radius:999px;
     font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
-    background:rgba(224,0,22,.9); color:#fff}
+    background:rgba(220,18,41,.9); color:#fff}
   @media (max-width:760px){
     .res{grid-template-columns:104px minmax(0,1fr)}
     .res-init{font-size:26px}
@@ -324,9 +324,9 @@
     font-family:Manrope,system-ui,sans-serif; font-size:13.5px; font-weight:800;
     color:var(--texte); cursor:pointer;
     transition:border-color .15s ease, background-color .15s ease}
-  .btn-carte:hover{border-color:rgba(224,0,22,.45); background:rgba(224,0,22,.05)}
+  .btn-carte:hover{border-color:rgba(220,18,41,.45); background:rgba(220,18,41,.05)}
   .btn-carte svg{color:var(--rouge-lien)}
-  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(224,0,22,.08);
+  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(220,18,41,.08);
     color:var(--rouge-700)}
 
   /* ---------- carte ---------- */
@@ -361,7 +361,7 @@
     font-family:Manrope,system-ui,sans-serif; font-size:17px; font-weight:800;
     color:var(--texte-2); cursor:pointer;
     transition:border-color .15s ease, color .15s ease}
-  .carte-zoom button:hover{border-color:rgba(224,0,22,.45); color:var(--rouge-600)}
+  .carte-zoom button:hover{border-color:rgba(220,18,41,.45); color:var(--rouge-600)}
   .carte-zoom .z-large{width:auto; height:32px; padding:0 13px; font-size:12px; font-weight:800}
 
   /* ---------- pagination ---------- */
@@ -371,8 +371,8 @@
     font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
     color:var(--texte-2); cursor:pointer; font-variant-numeric:tabular-nums;
     transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .pg:hover:not(:disabled){border-color:rgba(224,0,22,.45); color:var(--texte)}
-  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(224,0,22,.08);
+  .pg:hover:not(:disabled){border-color:rgba(220,18,41,.45); color:var(--texte)}
+  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(220,18,41,.08);
     color:var(--rouge-700)}
   .pg:disabled{opacity:.35; cursor:default}
   .pg-fl{font-size:18px; line-height:1}
@@ -437,7 +437,7 @@
         <div class="nav-menu" aria-label="Clubs">
           <div class="nav-col">
             <p class="nav-col-t">Par ville</p>
-            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
+            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
           </div>
           <div class="nav-col">
             <p class="nav-col-t">Parcourir</p>
@@ -486,21 +486,21 @@
     <div class="wrap ann-tete">
       <nav class="fil" aria-label="Fil d'Ariane"><a href="index.html">Accueil</a><i aria-hidden="true">›</i><a href="recherche.html">Salles de sports de combat</a><i aria-hidden="true">›</i><span aria-current="page">Toulouse</span></nav>
       <h1 class="ann-h1 display">Salles de sports de combat à <b>Toulouse</b></h1>
-      <p class="ann-intro">Mon Club Combat référence <b>1 salle</b> de sports de combat à Toulouse, sur 2 disciplines : Boxe anglaise, Kickboxing. <b>1</b> est ouverte aujourd’hui.</p>
-      <div class="ann-actions"><a class="btn btn-rouge" href="recherche.html?ville=Toulouse">Voir sur la carte</a><a class="btn btn-ligne" href="clubs.html">Référencer ma salle</a></div>
+      <p class="ann-intro">Il n’y a pas encore de salle de sports de combat référencée à Toulouse. Nous ouvrons l’annuaire aux clubs en ce moment : si vous dirigez une salle à Toulouse, la fiche est gratuite et prend cinq minutes.</p>
+      <div class="ann-actions"><a class="btn btn-rouge" href="clubs.html">Référencer ma salle</a><a class="btn btn-ligne" href="index.html#villes">Voir les villes couvertes</a></div>
     </div>
   </div>
 
   <section class="colonne-liste" id="resultats" aria-label="Salles">
-    <div class="wrap"><div class="liste"><article class="res"><div class="res-vignette"><span class="res-num">1</span><span class="res-init" aria-hidden="true">TFC</span></div><div class="res-corps"><div class="res-tete"><h2 class="res-nom"><a href="salle.html?s=toulouse-fight-club">Toulouse Fight Club</a></h2><span class="note"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>4,7 <small>(71 avis)</small></span></div><div class="res-chips"><span class="mini-chip">Boxe anglaise</span><span class="mini-chip">Kickboxing</span></div><p class="res-adresse"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>40 allée Jean-Jaurès, 31000 Toulouse</p><p class="res-mot">Toulouse Fight Club accueille les pratiquants de Toulouse depuis 2016. La salle compte aujourd’hui environ 160 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui…</p><div class="res-bas"><span class="paire res-ouvert">Ouvert aujourd'hui · 10h00 – 21h00</span><a class="btn btn-rouge res-essai" href="salle.html?s=toulouse-fight-club#contact">Séance d'essai</a></div></div></article></div></div>
+    <div class="wrap"><div class="liste"><div class="vide"><h2 class="display">Pas encore de salle à Toulouse</h2><p>Il n’y a pas encore de salle référencée dans cette ville. Vous dirigez un club à Toulouse&nbsp;? Soyez le premier, c’est gratuit et votre fiche apparaît ici.</p><a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a><p class="vide-sous">Ou regardez par discipline&nbsp;:</p><div class="vide-villes"><a class="puce" href="mma.html">MMA</a><a class="puce" href="boxe-anglaise.html">Boxe anglaise</a><a class="puce" href="kickboxing.html">Kickboxing</a><a class="puce" href="muay-thai.html">Muay Thaï</a><a class="puce" href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a><a class="puce" href="grappling.html">Grappling</a><a class="puce" href="karate.html">Karaté</a><a class="puce" href="judo.html">Judo</a></div></div></div></div>
   </section>
 
   <section class="fond-seo">
     <div class="wrap">
       <h2 class="seo-sous">Par discipline à Toulouse</h2>
-      <div class="seo-liens"><a class="puce" href="recherche.html?ville=Toulouse&discipline=Boxe%20anglaise">Boxe anglaise à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Kickboxing">Kickboxing à Toulouse</a></div>
+      <div class="seo-liens"><a class="puce" href="recherche.html?ville=Toulouse&discipline=MMA">MMA à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Boxe%20anglaise">Boxe anglaise à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Kickboxing">Kickboxing à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Muay%20Thaï">Muay Thaï à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Jiu-jitsu%20brésilien">Jiu-jitsu brésilien à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Grappling">Grappling à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Karaté">Karaté à Toulouse</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Judo">Judo à Toulouse</a></div>
       <h2 class="seo-sous">Les sports de combat dans d’autres villes</h2>
-      <div class="seo-liens"><a class="puce" href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a><a class="puce" href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a><a class="puce" href="sports-de-combat-lyon.html">Sports de combat à Lyon</a><a class="puce" href="sports-de-combat-marseille.html">Sports de combat à Marseille</a><a class="puce" href="sports-de-combat-nice.html">Sports de combat à Nice</a><a class="puce" href="sports-de-combat-paris.html">Sports de combat à Paris</a></div>
+      <div class="seo-liens"><a class="puce" href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a><a class="puce" href="sports-de-combat-angers.html">Sports de combat à Angers</a><a class="puce" href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a><a class="puce" href="sports-de-combat-dijon.html">Sports de combat à Dijon</a><a class="puce" href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a><a class="puce" href="sports-de-combat-lille.html">Sports de combat à Lille</a><a class="puce" href="sports-de-combat-lyon.html">Sports de combat à Lyon</a><a class="puce" href="sports-de-combat-marseille.html">Sports de combat à Marseille</a><a class="puce" href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a><a class="puce" href="sports-de-combat-nantes.html">Sports de combat à Nantes</a><a class="puce" href="sports-de-combat-nice.html">Sports de combat à Nice</a><a class="puce" href="sports-de-combat-paris.html">Sports de combat à Paris</a><a class="puce" href="sports-de-combat-rennes.html">Sports de combat à Rennes</a><a class="puce" href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a><a class="puce" href="sports-de-combat-toulon.html">Sports de combat à Toulon</a></div>
     </div>
   </section>
 </main>
@@ -564,7 +564,7 @@
   <div class="wrap footer-reseau">
     <section aria-labelledby="f-villes">
       <h2 id="f-villes">Salles de sports de combat par ville</h2>
-      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
+      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Sports de combat à Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Sports de combat à Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a></li><li><a href="sports-de-combat-lille.html">Sports de combat à Lille</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Sports de combat à Nantes</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-rennes.html">Sports de combat à Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Sports de combat à Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
     </section>
     <section aria-labelledby="f-disc">
       <h2 id="f-disc">Salles par discipline</h2>

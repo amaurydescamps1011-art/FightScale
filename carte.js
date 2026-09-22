@@ -151,13 +151,13 @@
       var rr = (1.15 + 0.6 * c.w) * Math.min(1.25, Math.max(0.7, c.k)) * (0.5 + 0.5 * av2);
       var halo = rr * (5.5 + 1.6 * puls);
       var g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, halo);
-      g.addColorStop(0, 'rgba(224,0,22,' + ((0.20 + 0.09 * puls) * av2).toFixed(3) + ')');
-      g.addColorStop(0.42, 'rgba(224,0,22,' + (0.06 * av2).toFixed(3) + ')');
-      g.addColorStop(1, 'rgba(224,0,22,0)');
+      g.addColorStop(0, 'rgba(220,18,41,' + ((0.20 + 0.09 * puls) * av2).toFixed(3) + ')');
+      g.addColorStop(0.42, 'rgba(220,18,41,' + (0.06 * av2).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(220,18,41,0)');
       ctx.beginPath(); ctx.arc(c.x, c.y, halo, 0, 6.2832);
       ctx.fillStyle = g; ctx.fill();
       ctx.beginPath(); ctx.arc(c.x, c.y, rr, 0, 6.2832);
-      ctx.fillStyle = 'rgba(224,0,22,' + ((0.82 + 0.18 * puls) * av2).toFixed(3) + ')';
+      ctx.fillStyle = 'rgba(220,18,41,' + ((0.82 + 0.18 * puls) * av2).toFixed(3) + ')';
       ctx.fill();
     }
   }
