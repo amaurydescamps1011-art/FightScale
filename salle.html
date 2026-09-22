@@ -82,6 +82,46 @@
   .btn-rouge:hover{background:var(--rouge-700); color:#fff;
     box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(224,0,22,.6)}
   .site-nav .btn-rouge{color:#fff}
+  /* Les menus deroulants du bandeau, comme chez masalledesport : deux colonnes
+     titrees qui s'ouvrent au survol. Tout en CSS, sans une ligne de script : la
+     page clubs et les 15 pages d'annuaire n'embarquent aucun JS, et l'en-tete
+     est extrait tel quel pour toutes les pages. :focus-within fait le clavier,
+     et le doigt sur un ecran tactile. */
+  .nav-item{position:relative}
+  .nav-chev{margin-left:5px; translate:0 1px; color:var(--texte-4);
+    transition:rotate .18s ease, color .15s ease}
+  .nav-item:hover .nav-chev, .nav-item:focus-within .nav-chev{rotate:180deg; color:var(--texte-2)}
+  .nav-menu{position:absolute; top:100%; left:50%; translate:-50% 6px;
+    z-index:40; display:flex; gap:34px; padding:22px 26px;
+    background:var(--surface); border:1px solid var(--bord); border-radius:var(--r-l);
+    box-shadow:var(--ombre-3);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .16s ease, translate .16s ease, visibility .16s}
+  /* le pont invisible : sans lui, le menu se referme en traversant l'espace
+     qui le separe du lien */
+  .nav-menu::before{content:""; position:absolute; left:0; right:0; top:-12px; height:12px}
+  .nav-item:hover .nav-menu, .nav-item:focus-within .nav-menu{
+    opacity:1; visibility:visible; pointer-events:auto; translate:-50% 0}
+  .nav-menu-1{gap:0}
+  .nav-col{min-width:150px}
+  .nav-col-t{margin-bottom:11px; font-size:10.5px; font-weight:800; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--texte-4); white-space:nowrap}
+  .nav-col ul{display:grid; gap:2px}
+  /* Sept villes sur une colonne laissaient un grand vide a cote : on les
+     repartit sur deux. En grille, « Aix-en-Provence » debordait de sa cellule
+     et se superposait a la colonne voisine ; le multi-colonnes equilibre tout
+     seul, quel que soit le nombre de villes, et la largeur mini garantit que
+     le plus long nom tienne sur une ligne. */
+  /* `.nav-col ul` l'emportait en specificite et gardait display:grid, ou
+     `columns` ne fait rien : il faut viser la liste aussi precisement. */
+  .nav-col ul.nav-2col{display:block; columns:2; column-gap:22px; min-width:300px}
+  .nav-2col li{break-inside:avoid}
+  .nav-2col a{white-space:nowrap}
+  .nav-menu a{display:block; padding:7px 10px; margin-inline:-10px; border-radius:6px;
+    font-size:14px; font-weight:600; color:var(--texte-2)}
+  .nav-menu a:hover{background:var(--surface-2); color:var(--rouge-700)}
+  @media (max-width:1040px){ .site-nav .nav-link, .site-nav .nav-item{display:none} }
+
   @media (max-width:1040px){ .site-nav .nav-link{display:none} }
   .l-court{display:none}
   @media (max-width:620px){
@@ -363,10 +403,51 @@
       </svg>
     </a>
     <nav class="site-nav" aria-label="Navigation principale">
-      <a class="nav-link" href="recherche.html">Salles</a>
-      <a class="nav-link" href="index.html#disciplines">Disciplines</a>
-      <a class="nav-link" href="index.html#villes">Villes</a>
-      <a class="nav-link" href="index.html#clubs">Acquisition</a>
+      <div class="nav-item">
+        <a class="nav-link" href="recherche.html" aria-haspopup="true">Clubs <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Clubs">
+          <div class="nav-col">
+            <p class="nav-col-t">Par ville</p>
+            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
+          </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Parcourir</p>
+            <ul>
+              <li><a href="recherche.html">Toutes les salles</a></li>
+              <li><a href="index.html#villes">Toutes les villes</a></li>
+              <li><a href="index.html#salles">Les salles à découvrir</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#disciplines" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Disciplines">
+          <div class="nav-col">
+            <p class="nav-col-t">Les plus pratiquées</p>
+            <ul><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li></ul>
+          </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Autres disciplines</p>
+            <ul><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu nav-menu-1" aria-label="Pro">
+          <div class="nav-col">
+            <ul>
+              <li><a href="index.html#pro">Accès pro</a></li>
+              <li><a href="clubs.html">Référencer ma salle</a></li>
+              <li><a href="index.html#acquisition">Acquisition</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <a class="nav-link" href="index.html#connexion">Connexion</a>
       <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>

@@ -82,6 +82,46 @@
   .btn-rouge:hover{background:var(--rouge-700); color:#fff;
     box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(224,0,22,.6)}
   .site-nav .btn-rouge{color:#fff}
+  /* Les menus deroulants du bandeau, comme chez masalledesport : deux colonnes
+     titrees qui s'ouvrent au survol. Tout en CSS, sans une ligne de script : la
+     page clubs et les 15 pages d'annuaire n'embarquent aucun JS, et l'en-tete
+     est extrait tel quel pour toutes les pages. :focus-within fait le clavier,
+     et le doigt sur un ecran tactile. */
+  .nav-item{position:relative}
+  .nav-chev{margin-left:5px; translate:0 1px; color:var(--texte-4);
+    transition:rotate .18s ease, color .15s ease}
+  .nav-item:hover .nav-chev, .nav-item:focus-within .nav-chev{rotate:180deg; color:var(--texte-2)}
+  .nav-menu{position:absolute; top:100%; left:50%; translate:-50% 6px;
+    z-index:40; display:flex; gap:34px; padding:22px 26px;
+    background:var(--surface); border:1px solid var(--bord); border-radius:var(--r-l);
+    box-shadow:var(--ombre-3);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .16s ease, translate .16s ease, visibility .16s}
+  /* le pont invisible : sans lui, le menu se referme en traversant l'espace
+     qui le separe du lien */
+  .nav-menu::before{content:""; position:absolute; left:0; right:0; top:-12px; height:12px}
+  .nav-item:hover .nav-menu, .nav-item:focus-within .nav-menu{
+    opacity:1; visibility:visible; pointer-events:auto; translate:-50% 0}
+  .nav-menu-1{gap:0}
+  .nav-col{min-width:150px}
+  .nav-col-t{margin-bottom:11px; font-size:10.5px; font-weight:800; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--texte-4); white-space:nowrap}
+  .nav-col ul{display:grid; gap:2px}
+  /* Sept villes sur une colonne laissaient un grand vide a cote : on les
+     repartit sur deux. En grille, « Aix-en-Provence » debordait de sa cellule
+     et se superposait a la colonne voisine ; le multi-colonnes equilibre tout
+     seul, quel que soit le nombre de villes, et la largeur mini garantit que
+     le plus long nom tienne sur une ligne. */
+  /* `.nav-col ul` l'emportait en specificite et gardait display:grid, ou
+     `columns` ne fait rien : il faut viser la liste aussi precisement. */
+  .nav-col ul.nav-2col{display:block; columns:2; column-gap:22px; min-width:300px}
+  .nav-2col li{break-inside:avoid}
+  .nav-2col a{white-space:nowrap}
+  .nav-menu a{display:block; padding:7px 10px; margin-inline:-10px; border-radius:6px;
+    font-size:14px; font-weight:600; color:var(--texte-2)}
+  .nav-menu a:hover{background:var(--surface-2); color:var(--rouge-700)}
+  @media (max-width:1040px){ .site-nav .nav-link, .site-nav .nav-item{display:none} }
+
   @media (max-width:1040px){ .site-nav .nav-link{display:none} }
   .l-court{display:none}
   @media (max-width:620px){
@@ -157,7 +197,10 @@
   .barre-nav a:not(.btn){font-size:14.5px; font-weight:700; color:var(--texte-2);
     text-decoration:none; white-space:nowrap}
   .barre-nav a:not(.btn):hover{color:var(--texte)}
-  @media (max-width:1100px){ .barre-nav .nav-link{display:none} }
+  /* le bandeau de recherche porte ses menus dans .barre-nav, pas .site-nav :
+     sans cette ligne les panneaux restaient en place sous 1100 px et
+     debordaient la page a 390. */
+  @media (max-width:1100px){ .barre-nav .nav-link, .barre-nav .nav-item{display:none} }
   @media (max-width:720px){
     .barre-in{flex-wrap:wrap; gap:12px}
     .champ-ville{order:3; flex:1 1 100%; max-width:none}
@@ -394,8 +437,25 @@
     </form>
 
     <nav class="barre-nav" aria-label="Navigation principale">
-      <a class="nav-link" href="index.html#disciplines">Disciplines</a>
-      <a class="nav-link" href="index.html#villes">Villes</a>
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#disciplines" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Disciplines">
+          <div class="nav-col">
+            <p class="nav-col-t">Les plus pratiquées</p>
+            <ul><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li></ul>
+          </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Autres disciplines</p>
+            <ul><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li></ul>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#villes" aria-haspopup="true">Villes <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu nav-menu-1" aria-label="Villes">
+          <div class="nav-col"><ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul></div>
+        </div>
+      </div>
       <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>
   </div>
@@ -774,6 +834,11 @@ var etat = { ville:'Marseille', centre:[43.2965, 5.3698], discipline:'', ouvert:
              pro:false, actif:-1, survolAutre:-1, resultats:[], autres:[],
              page:1, horsRayon:false, verrou:false };
 
+/* Depuis que l'accueil montre toutes les villes, on arrive legitimement sur une
+   ville sans aucune salle. Ce n'est pas un filtre trop serre, et le message
+   d'etat vide doit le dire autrement. */
+function sansFiltre(){ return !etat.discipline && !etat.ouvert && !etat.pro; }
+
 function viseVille(v){ etat.ville = v[0]; etat.centre = [v[1], v[2]]; }
 function formateKm(km){
   return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1).replace('.', ',') + ' km';
@@ -981,8 +1046,11 @@ function rendSeo(){
     if (proche) t.push('La plus proche du centre est <a href="' + proche.fiche + '">' +
                        proche.nom + '</a>, à ' + formateKm(proche.km) + '.');
   } else {
-    t.push('Aucune salle ne correspond à cette recherche ' +
-           (etat.ville ? 'à ' + ou : '') + '. Enlevez un filtre ou essayez une autre ville.');
+    t.push(sansFiltre()
+      ? 'Aucune salle n’est encore référencée ' + (etat.ville ? 'à ' + ou : 'ici') +
+        '. Si vous dirigez un club, c’est le moment de le référencer : c’est gratuit.'
+      : 'Aucune salle ne correspond à cette recherche ' +
+        (etat.ville ? 'à ' + ou : '') + '. Enlevez un filtre ou essayez une autre ville.');
   }
   document.getElementById('seo-texte').innerHTML = '<p>' + t.join(' ') + '</p>';
 
@@ -1020,10 +1088,17 @@ function rendListe(){
       if (s[2] === etat.ville || vu[s[2]]) return;
       vu[s[2]] = 1; ailleurs.push(s[2]);
     });
+    var nu = sansFiltre();
     liste.innerHTML =
       '<div class="vide"><h2 class="display">Pas encore de salle ici</h2>' +
-      '<p>Aucune salle ne correspond à cette recherche. Enlevez un filtre, ' +
-      'ou essayez une autre ville.</p>' +
+      '<p>' + (nu
+        ? 'Aucune salle n’est encore référencée dans cette ville. Vous dirigez un club&nbsp;? ' +
+          'Référencez-le gratuitement, il apparaîtra ici.'
+        : 'Aucune salle ne correspond à cette recherche. Enlevez un filtre, ou essayez ' +
+          'une autre ville.') + '</p>' +
+      (nu ? '<a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a>' : '') +
+      '<p class="vide-sous">' + (nu ? 'En attendant, ces villes ont des salles&nbsp;:'
+                                    : 'Essayez plutôt&nbsp;:') + '</p>' +
       '<div class="vide-villes">' + ailleurs.slice(0, 6).map(function (v){
         return '<a class="puce" href="' + pageVille(v) + '">' + v + '</a>';
       }).join('') + '</div></div>';
