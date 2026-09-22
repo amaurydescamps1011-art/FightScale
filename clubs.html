@@ -202,12 +202,19 @@
   /* le mot-symbole est calé sur la hauteur de capitale d'Anton et sur la ligne de base */
   /* « MON CLUB COMBAT » est bien plus long que l'ancien mot-symbole (rapport
      17,6 contre 11,3) : a la hauteur de capitale il depasserait la ligne. On le
-     pose plus bas, et sous 760 px il prend sa propre ligne. */
+     pose plus bas, et sous 760 px il prend sa propre ligne. Le « sur » descend
+     avec lui : la capitale d'Anton vaut ~0,73 em, donc 0,46 / 0,73 = 0,63 em
+     donne deux mots de meme hauteur. */
   .h1-logo{flex-shrink:0; height:.46em; width:auto; translate:0 -.02em;
     filter:drop-shadow(0 2px 8px rgba(22,22,15,.12))}
+  .h1-sur{font-size:.63em; letter-spacing:.02em; color:var(--texte-2)}
   @media (max-width:760px){
-    .hero-club h1 .ligne-logo{flex-direction:column; gap:.16em}
+    /* en colonne, l'axe transversal devient l'horizontale : `baseline` se lit
+       alors comme `flex-start` et colle le « sur » a gauche. On recentre. */
+    .hero-club h1 .ligne-logo{flex-direction:column; align-items:center; gap:.16em}
+    /* le logo retrecit, le « sur » suit : 0,4 / 0,73 = 0,55 em */
     .h1-logo{height:.4em}
+    .h1-sur{font-size:.55em}
   }
   .hero-sous{margin-top:20px; max-width:52ch; font-size:clamp(15px,1.35vw,17.5px);
     line-height:1.62; color:var(--texte-2)}
@@ -509,7 +516,7 @@
       <span class="eyebrow">Espace club</span>
       <h1 class="display">
         <span>Référencez votre salle</span>
-        <span class="ligne-logo">sur
+        <span class="ligne-logo"><span class="h1-sur">sur</span>
           <svg class="h1-logo" viewBox="657 722 1883 107" role="img" aria-label="Mon Club Combat">
             <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
           </svg>
@@ -526,20 +533,22 @@
     </div>
   </section>
 
-  <!-- Les chiffres qui decident un gerant. Ils sont tous verifiables aujourd'hui :
-       ni audience ni nombre de seances d'essai tant que le site n'a pas tourne,
-       on ne met pas de chiffre qu'on ne peut pas tenir devant un client. -->
+  <!-- Les chiffres qui decident un gerant. Ceux-ci sont ceux d'Amaury, donnes le
+       22/09/2026 : ils ne sont pas verifiables depuis le site, ils engagent le
+       discours commercial. A tenir a jour quand les vrais compteurs existeront. -->
   <section class="chiffres-club-bloc">
     <div class="wrap">
       <ul class="chiffres-club">
+        <li><span class="cc-nb display">100+</span><span class="cc-lb">Clubs référencés</span></li>
+        <li><span class="cc-nb display">30 000</span><span class="cc-lb">Visiteurs par mois</span></li>
+        <li><span class="cc-nb display">500</span><span class="cc-lb">Séances d'essai en 2026</span></li>
         <li><span class="cc-nb display">0 €</span><span class="cc-lb">La fiche club, pour toujours</span></li>
-        <li><span class="cc-nb display">5 min</span><span class="cc-lb">Pour être référencé</span></li>
-        <li><span class="cc-nb display">16</span><span class="cc-lb">Villes couvertes</span></li>
-        <li><span class="cc-nb display">8</span><span class="cc-lb">Disciplines</span></li>
       </ul>
       <p class="chiffres-mot">Un pratiquant qui cherche une salle commence par son moteur de
-        recherche. Votre fiche lui donne vos disciplines, vos horaires réels, votre adresse et
-        de quoi vous joindre — et vous laisse la maîtrise de ce qui s'y affiche.</p>
+        recherche, et c'est là que votre fiche le prend. Elle lui donne vos disciplines, vos
+        horaires réels, votre adresse et de quoi vous joindre, et vous laisse la maîtrise de ce
+        qui s'y affiche. Vous ne payez rien, et vous recevez les demandes de séance d'essai
+        directement.</p>
     </div>
   </section>
 

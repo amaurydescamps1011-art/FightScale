@@ -315,6 +315,65 @@
     white-space:nowrap; transition:color .15s ease}
   .lien-suite:hover{color:var(--rouge-500)}
 
+  /* ---------- cartes salle ---------- */
+  .salles{margin-top:clamp(26px,3vw,36px); display:grid; gap:20px;
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,264px),1fr))}
+  .salle{display:flex; flex-direction:column; overflow:hidden;
+    border:1px solid var(--bord-2); border-radius:var(--r-l); background:var(--surface);
+    transition:border-color .16s ease, transform .16s ease, box-shadow .16s ease}
+  .salle:hover{border-color:rgba(220,18,41,.4); transform:translateY(-3px);
+    box-shadow:var(--ombre-3)}
+  .salle-photo{position:relative; aspect-ratio:16/10; display:grid; place-items:center;
+    background:
+      radial-gradient(120% 90% at 50% 118%, rgba(220,18,41,.13) 0%, rgba(220,18,41,0) 62%),
+      linear-gradient(145deg,#F2F0EB 0%,#E7E4DD 55%,#DCD8D0 100%);
+    border-bottom:1px solid var(--bord); overflow:hidden}
+  .salle-photo::after{content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(22,22,15,.035) 0 1px, transparent 1px 13px)}
+  .salle-initiales{position:relative; z-index:1;
+    font-family:Anton,"Arial Narrow",sans-serif; font-size:54px; line-height:1;
+    letter-spacing:.04em; color:rgba(22,22,15,.16)}
+  .salle-fav{position:absolute; top:9px; right:9px; width:34px; height:34px; border:0;
+    border-radius:999px; background:rgba(255,255,255,.88); border:1px solid var(--bord-2);
+    color:var(--texte-3);
+    display:grid; place-items:center; cursor:pointer;
+    transition:color .15s ease, background-color .15s ease}
+  .salle-fav:hover{color:var(--rouge-600); background:#fff}
+  .salle-fav[aria-pressed="true"]{color:var(--rouge-500)}
+  .salle-fav[aria-pressed="true"] svg{fill:currentColor}
+  .salle-corps{flex:1 1 auto; display:flex; flex-direction:column; gap:11px; padding:17px 17px 18px}
+  .salle-ouvert{margin-bottom:4px}
+  .salle-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+  a.salle-nom{text-decoration:none}
+  a.salle-nom:hover{text-decoration:underline}
+  .salle-nom{font-size:16.5px; font-weight:800; line-height:1.24; letter-spacing:-.01em;
+    min-height:2.48em; color:var(--texte)}
+  .note{display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
+    font-size:13.5px; font-weight:800; color:var(--texte); font-variant-numeric:tabular-nums}
+  .note svg{color:var(--texte)}
+  .note small{font-size:12px; font-weight:600; color:var(--texte-4)}
+  .salle-chips{display:flex; flex-wrap:wrap; gap:6px}
+  .mini-chip{padding:5px 10px; border:1px solid var(--bord-2); border-radius:999px;
+    font-size:11.5px; font-weight:700; color:var(--texte-3)}
+  .salle-meta{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--texte-3)}
+  .salle-meta svg{flex-shrink:0; color:var(--texte-4)}
+  .salle-ouvert{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700;
+    color:var(--vert)}
+  .salle-ouvert::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--vert)}
+  .salle .btn{margin-top:auto; width:100%; min-height:44px; font-size:14px}
+
+  /* sur mobile la rangee de salles devient un carrousel, comme sur les plateformes */
+  @media (max-width:640px){
+    .salles{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory;
+      scroll-padding-inline:var(--gutter); scrollbar-width:none; -ms-overflow-style:none;
+      margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter);
+      padding-block:2px 10px}
+    .salles::-webkit-scrollbar{display:none}
+    .salle{flex:0 0 clamp(228px,80%,320px); scroll-snap-align:start}
+    .salle-photo{aspect-ratio:16/9}
+  }
+
   /* ---------- ouverture de l'annuaire ---------- */
   /* Meme motif que la bande des avantages : aucune boite, c'est la grille de
      filets et le segment rouge en tete qui decoupent. */
@@ -324,13 +383,14 @@
   .ouv-mot{margin-top:16px; max-width:52ch; font-size:15.5px; line-height:1.72;
     color:var(--texte-2)}
   .ouv-actions{margin-top:26px; display:flex; flex-wrap:wrap; gap:10px}
-  .ouv-liste{display:grid; gap:0; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ouv-liste{display:grid; gap:0; grid-template-columns:repeat(2,minmax(0,1fr));
+    align-self:center}
   .ouv-liste li{position:relative; border-top:1px solid var(--bord);
     padding:22px 18px 22px 0}
-  .ouv-liste li:nth-child(even){padding-left:22px; border-left:1px solid var(--bord)}
+  .ouv-liste li + li{padding-left:22px; border-left:1px solid var(--bord)}
   .ouv-liste li::before{content:""; position:absolute; top:-1px; left:0;
     width:30px; height:2px; background:var(--rouge-500)}
-  .ouv-liste li:nth-child(even)::before{left:22px}
+  .ouv-liste li + li::before{left:22px}
   .ouv-nb{display:block; font-size:clamp(26px,3vw,38px); line-height:1;
     letter-spacing:.008em; color:var(--rouge-500); white-space:nowrap}
   .ouv-lb{display:block; margin-top:10px; font-size:13px; font-weight:700;
@@ -341,8 +401,8 @@
   }
   @media (max-width:420px){
     .ouv-liste{grid-template-columns:1fr}
-    .ouv-liste li, .ouv-liste li:nth-child(even){padding-left:0; border-left:0}
-    .ouv-liste li:nth-child(even)::before{left:0}
+    .ouv-liste li, .ouv-liste li + li{padding-left:0; border-left:0}
+    .ouv-liste li + li::before{left:0}
   }
 
   /* ---------- parcourir ---------- */
@@ -599,7 +659,7 @@
       <ul class="avantages">
         <li>
           <span class="av-ic" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 32 32" fill="none" aria-hidden="true"><ellipse cx="16" cy="27.6" rx="6.4" ry="1.9" fill="rgba(236,22,46,.10)"/><path d="M16 3.6c-4.7 0-8.5 3.8-8.5 8.5 0 6.1 8.5 13.9 8.5 13.9s8.5-7.8 8.5-13.9c0-4.7-3.8-8.5-8.5-8.5Z" fill="rgba(236,22,46,.10)" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="16" cy="12.1" r="3.2" stroke="currentColor" stroke-width="1.7"/></svg></span>
-          <h3>16 villes couvertes</h3>
+          <h3>Partout en France</h3>
           <p>Cherchez par ville ou par discipline, et voyez l'adresse exacte,
             les horaires réels et de quoi joindre la salle directement.</p>
         </li>
@@ -631,35 +691,49 @@
       </div>
       <p class="section-chapo">Mon Club Combat couvre les grandes agglomérations françaises.
         Chaque ville a sa page, et les clubs y prennent leur place en ce moment.</p>
-      <div class="cartes-villes"><a class="cv" href="sports-de-combat-paris.html"><span class="cv-vis"><img class="cv-photo" src="photos/paris.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Paris</span></a><a class="cv" href="sports-de-combat-marseille.html"><span class="cv-vis"><img class="cv-photo" src="photos/marseille.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Marseille</span></a><a class="cv" href="sports-de-combat-lyon.html"><span class="cv-vis"><img class="cv-photo" src="photos/lyon.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Lyon</span></a><a class="cv" href="sports-de-combat-toulouse.html"><span class="cv-vis"><img class="cv-photo" src="photos/toulouse.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Toulouse</span></a><a class="cv" href="sports-de-combat-nice.html"><span class="cv-vis"><img class="cv-photo" src="photos/nice.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Nice</span></a><a class="cv" href="sports-de-combat-bordeaux.html"><span class="cv-vis"><img class="cv-photo" src="photos/bordeaux.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Bordeaux</span></a><a class="cv" href="sports-de-combat-aix-en-provence.html"><span class="cv-vis"><svg class="cv-plan" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="320" height="200" fill="#D9E6EC"/><path fill="#F1EFEA" d="M0.0 200.0 0.0 0.0 320.0 0.0 320.0 200.0ZM0.0 200.0 26.1 200.0 40.8 183.4 47.2 179.1 41.7 173.7 43.5 171.7 49.8 177.7 60.9 169.9 62.1 163.9 61.5 161.5 63.0 159.6 61.3 155.4 61.7 153.4 59.6 150.7 59.7 146.1 56.7 143.3 56.0 140.2 47.9 136.8 36.6 143.1 33.4 147.9 24.8 155.1 22.1 154.8 16.1 163.9 17.1 164.7 16.9 167.5 11.2 165.6 8.6 159.5 3.0 154.1 1.7 149.2 0.0 146.7Z"/><path fill="#E8E5DE" stroke="#F4F2EE" stroke-width=".9" d="M298.9 50.1 320.0 70.9 320.0 98.1 305.3 99.9 301.7 103.2 284.5 104.9 266.4 97.3 252.2 81.9 263.3 74.9 264.3 62.6 282.7 53.4 298.9 50.1ZM84.3 97.7 90.4 98.9 102.4 113.5 98.9 122.4 87.3 133.9 66.0 122.0 48.5 109.2 45.5 100.3 65.1 89.9 84.3 97.7ZM282.6 178.6 293.1 187.8 295.7 200.0 266.1 200.0 264.9 186.0 282.6 178.6ZM216.3 119.4 214.3 110.9 244.8 97.9 248.3 125.4 230.5 122.7 224.3 124.6 216.3 119.4ZM106.6 175.7 124.0 162.8 118.2 149.4 125.8 140.1 153.8 156.6 159.8 162.3 161.8 187.0 152.0 197.8 133.1 198.4 112.6 188.0 106.6 175.7ZM27.2 199.0 28.0 200.0 25.8 200.0 27.2 199.0ZM164.1 0.0 163.0 2.6 170.7 13.9 174.3 26.0 136.3 22.7 116.7 12.9 111.2 0.0ZM290.8 128.3 267.0 126.5 263.7 120.9 272.2 98.9 284.5 104.9 301.7 103.2 312.9 111.0 307.7 121.3 290.8 128.3ZM111.2 0.0 116.7 12.9 102.1 9.8 88.0 19.8 80.8 35.8 71.8 38.2 63.3 16.7 54.1 6.9 33.9 10.1 33.2 0.0ZM212.9 200.0 207.0 189.3 214.0 188.1 230.2 191.1 242.0 188.1 247.0 180.8 251.6 195.1 249.6 200.0ZM282.6 178.6 264.9 186.0 261.5 180.5 247.0 180.8 230.1 162.1 226.5 161.2 249.0 144.5 272.7 147.2 280.3 150.4 297.2 160.9 284.2 171.9 282.6 178.6ZM298.9 50.1 282.7 53.4 260.8 40.6 253.2 18.7 258.1 0.0 294.3 0.0 293.4 41.5 298.9 50.1ZM214.5 25.4 218.2 19.0 216.7 4.3 218.0 0.0 258.1 0.0 253.2 18.7 260.8 40.6 282.7 53.4 264.3 62.6 250.3 61.1 235.8 39.2 223.8 34.6 214.5 25.4ZM9.0 0.0 16.4 2.0 22.3 0.0 33.2 0.0 33.1 16.0 23.4 21.3 39.1 31.8 42.3 44.4 22.3 36.2 9.1 34.7 1.5 26.5 0.1 10.3 6.8 0.0ZM33.9 10.1 54.1 6.9 63.3 16.7 71.8 38.2 80.8 35.8 77.8 52.0 47.4 46.6 42.3 44.4 39.1 31.8 23.4 21.3 33.1 16.0 33.9 10.1ZM65.1 89.9 45.5 100.3 30.2 96.3 30.3 77.4 34.4 72.4 48.4 67.0 60.6 73.7 65.1 89.9ZM174.3 26.0 170.7 13.9 163.0 2.6 164.1 0.0 218.0 0.0 216.7 4.3 218.2 19.0 214.5 25.4 206.6 33.7 196.2 26.1 186.4 27.9 174.3 26.0ZM320.0 159.9 303.0 155.5 297.2 160.9 280.3 150.4 291.2 144.7 290.8 128.3 307.7 121.3 320.0 134.1ZM84.3 97.7 86.7 87.0 95.7 86.2 92.8 66.6 107.2 72.7 113.5 79.6 133.4 88.1 135.8 99.3 128.8 112.5 110.4 118.0 102.4 113.5 90.4 98.9 84.3 97.7ZM27.2 199.0 39.1 185.2 57.1 173.1 68.5 195.2 68.0 200.0 28.0 200.0 27.2 199.0ZM58.9 147.8 55.3 140.2 46.2 137.5 42.2 124.9 48.5 109.2 66.0 122.0 87.3 133.9 88.5 142.2 76.7 149.5 58.9 147.8ZM244.8 97.9 232.7 102.8 218.3 101.8 228.0 77.8 225.1 73.6 233.4 64.6 250.3 61.1 264.3 62.6 263.3 74.9 252.2 81.9 266.4 97.3 257.0 101.1 244.8 97.9ZM116.7 12.9 136.3 22.7 146.1 24.2 147.4 28.2 141.1 42.5 127.2 51.4 119.5 48.4 113.9 53.1 92.7 54.2 77.8 52.0 80.8 35.8 88.0 19.8 102.1 9.8 116.7 12.9ZM48.5 109.2 42.2 124.9 46.2 137.5 10.9 165.2 0.0 146.5 0.0 109.8 6.9 108.1 22.8 96.0 30.2 96.3 45.5 100.3 48.5 109.2ZM164.6 200.0 179.4 193.2 177.6 185.4 195.1 174.6 199.1 183.8 207.0 189.3 212.9 200.0ZM22.3 0.0 16.4 2.0 9.0 0.0ZM193.1 154.2 201.5 149.2 209.9 139.4 218.2 146.3 217.9 155.0 226.5 161.2 230.1 162.1 247.0 180.8 242.0 188.1 230.2 191.1 214.0 188.1 207.0 189.3 199.1 183.8 195.1 174.6 197.3 159.5 193.1 154.2ZM90.1 200.0 90.6 198.8 100.5 198.1 102.8 189.8 112.6 188.0 133.1 198.4 152.0 197.8 153.3 200.0ZM216.3 119.4 224.3 124.6 230.5 122.7 251.6 126.3 249.0 144.5 226.5 161.2 217.9 155.0 218.2 146.3 209.9 139.4 206.6 130.2 209.8 121.7 216.3 119.4ZM68.5 195.2 90.6 198.8 90.1 200.0 68.0 200.0 68.5 195.2ZM244.8 97.9 257.0 101.1 266.4 97.3 272.2 98.9 263.7 120.9 267.0 126.5 260.8 130.9 248.3 125.4 244.8 97.9ZM249.6 200.0 251.6 195.1 247.0 180.8 261.5 180.5 264.9 186.0 266.1 200.0ZM249.0 144.5 251.6 126.3 260.8 130.9 267.0 126.5 290.8 128.3 291.2 144.7 280.3 150.4 272.7 147.2 249.0 144.5ZM0.0 0.0 6.8 0.0 0.1 10.3 1.5 26.5 0.0 31.3ZM282.6 178.6 284.2 171.9 303.0 155.5 320.0 159.9 320.0 200.0 295.7 200.0 293.1 187.8 282.6 178.6ZM320.0 134.1 307.7 121.3 312.9 111.0 301.7 103.2 305.3 99.9 320.0 98.1ZM135.8 99.3 133.4 88.1 113.5 79.6 107.2 72.7 92.8 66.6 83.9 67.1 78.8 61.0 77.8 52.0 92.7 54.2 113.9 53.1 119.5 48.4 141.7 54.7 144.3 63.1 156.5 75.2 153.8 92.1 149.0 98.2 135.8 99.3ZM298.9 50.1 293.4 41.5 294.3 0.0 320.0 0.0 320.0 70.9 298.9 50.1ZM84.3 97.7 65.1 89.9 60.6 73.7 75.8 65.5 78.8 61.0 83.9 67.1 92.8 66.6 95.7 86.2 86.7 87.0 84.3 97.7ZM0.0 31.3 1.5 26.5 9.1 34.7 22.3 36.2 47.4 46.6 77.8 52.0 78.8 61.0 75.8 65.5 60.6 73.7 48.4 67.0 34.4 72.4 30.3 77.4 30.2 96.3 22.8 96.0 6.9 108.1 0.0 109.8ZM214.5 25.4 223.8 34.6 235.8 39.2 250.3 61.1 233.4 64.6 225.1 73.6 209.6 67.9 206.8 52.4 206.6 33.7 214.5 25.4ZM68.5 195.2 57.1 173.1 62.9 159.0 58.9 147.8 76.7 149.5 88.5 142.2 99.4 150.9 98.3 157.9 112.6 188.0 102.8 189.8 100.5 198.1 90.6 198.8 68.5 195.2ZM193.1 154.2 197.3 159.5 195.1 174.6 177.6 185.4 179.4 193.2 164.6 200.0 153.3 200.0 152.0 197.8 161.8 187.0 159.8 162.3 169.3 155.8 187.0 152.5 193.1 154.2Z"/><path fill="#EC162E" fill-opacity=".14" stroke="#EC162E" stroke-opacity=".55" stroke-width="1.5" stroke-linejoin="round" d="M87.3 133.9 98.9 122.4 102.4 113.5 110.4 118.0 128.8 112.5 135.8 99.3 149.0 98.2 153.8 92.1 156.5 75.2 144.3 63.1 141.7 54.7 127.2 51.4 141.1 42.5 147.4 28.2 146.1 24.2 174.3 26.0 186.4 27.9 196.2 26.1 206.6 33.7 206.8 52.4 209.6 67.9 225.1 73.6 228.0 77.8 218.3 101.8 232.7 102.8 214.3 110.9 216.3 119.4 209.8 121.7 206.6 130.2 209.9 139.4 201.5 149.2 193.1 154.2 187.0 152.5 169.3 155.8 159.8 162.3 153.8 156.6 125.8 140.1 118.2 149.4 124.0 162.8 106.6 175.7 98.3 157.9 99.4 150.9 88.5 142.2 87.3 133.9Z"/></svg></span><span class="cv-nom">Aix-en-Provence</span></a><a class="cv" href="sports-de-combat-lille.html"><span class="cv-vis"><img class="cv-photo" src="photos/lille.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Lille</span></a><a class="cv" href="sports-de-combat-nantes.html"><span class="cv-vis"><img class="cv-photo" src="photos/nantes.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Nantes</span></a><a class="cv" href="sports-de-combat-strasbourg.html"><span class="cv-vis"><img class="cv-photo" src="photos/strasbourg.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Strasbourg</span></a><a class="cv" href="sports-de-combat-montpellier.html"><span class="cv-vis"><img class="cv-photo" src="photos/montpellier.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Montpellier</span></a><a class="cv" href="sports-de-combat-rennes.html"><span class="cv-vis"><img class="cv-photo" src="photos/rennes.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Rennes</span></a><a class="cv" href="sports-de-combat-toulon.html"><span class="cv-vis"><img class="cv-photo" src="photos/toulon.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Toulon</span></a><a class="cv" href="sports-de-combat-grenoble.html"><span class="cv-vis"><img class="cv-photo" src="photos/grenoble.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Grenoble</span></a><a class="cv" href="sports-de-combat-dijon.html"><span class="cv-vis"><img class="cv-photo" src="photos/dijon.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Dijon</span></a><a class="cv" href="sports-de-combat-angers.html"><span class="cv-vis"><img class="cv-photo" src="photos/angers.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Angers</span></a></div>
+      <div class="cartes-villes"><a class="cv" href="sports-de-combat-paris.html"><span class="cv-vis"><img class="cv-photo" src="photos/paris.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Paris</span></a><a class="cv" href="sports-de-combat-marseille.html"><span class="cv-vis"><img class="cv-photo" src="photos/marseille.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Marseille</span></a><a class="cv" href="sports-de-combat-lyon.html"><span class="cv-vis"><img class="cv-photo" src="photos/lyon.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Lyon</span></a><a class="cv" href="sports-de-combat-toulouse.html"><span class="cv-vis"><img class="cv-photo" src="photos/toulouse.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Toulouse</span></a><a class="cv" href="sports-de-combat-nice.html"><span class="cv-vis"><img class="cv-photo" src="photos/nice.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Nice</span></a><a class="cv" href="sports-de-combat-bordeaux.html"><span class="cv-vis"><img class="cv-photo" src="photos/bordeaux.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Bordeaux</span></a><a class="cv" href="sports-de-combat-aix-en-provence.html"><span class="cv-vis"><img class="cv-photo" src="photos/aix-en-provence.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Aix-en-Provence</span></a><a class="cv" href="sports-de-combat-lille.html"><span class="cv-vis"><img class="cv-photo" src="photos/lille.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Lille</span></a><a class="cv" href="sports-de-combat-nantes.html"><span class="cv-vis"><img class="cv-photo" src="photos/nantes.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Nantes</span></a><a class="cv" href="sports-de-combat-strasbourg.html"><span class="cv-vis"><img class="cv-photo" src="photos/strasbourg.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Strasbourg</span></a><a class="cv" href="sports-de-combat-montpellier.html"><span class="cv-vis"><img class="cv-photo" src="photos/montpellier.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Montpellier</span></a><a class="cv" href="sports-de-combat-rennes.html"><span class="cv-vis"><img class="cv-photo" src="photos/rennes.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Rennes</span></a><a class="cv" href="sports-de-combat-toulon.html"><span class="cv-vis"><img class="cv-photo" src="photos/toulon.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Toulon</span></a><a class="cv" href="sports-de-combat-grenoble.html"><span class="cv-vis"><img class="cv-photo" src="photos/grenoble.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Grenoble</span></a><a class="cv" href="sports-de-combat-dijon.html"><span class="cv-vis"><img class="cv-photo" src="photos/dijon.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Dijon</span></a><a class="cv" href="sports-de-combat-angers.html"><span class="cv-vis"><img class="cv-photo" src="photos/angers.webp" alt="" loading="lazy" decoding="async" width="640" height="400"></span><span class="cv-nom">Angers</span></a></div>
     </div>
   </section>
 
-  <!-- OUVERTURE DE L'ANNUAIRE -->
-  <!-- Aucune salle n'est referencee tant que son gerant n'a pas donne son accord
-       (decision d'Amaury, 22/09/2026). Plutot qu'une grille de cartes vides, on
-       le dit franchement : c'est le premier endroit ou un gerant comprend qu'il
-       peut prendre la place. Quand des salles arriveront, cette section
-       redeviendra « Trouver la meilleure salle ». -->
-  <section class="section ouverture" id="salles">
+  <!-- SALLES -->
+  <!-- Deux sections pour une seule place. Tant qu'aucun club n'a donne son
+       accord, c'est l'offre aux premiers clubs qui s'affiche ; des qu'une salle
+       est referencee, elle laisse la place aux salles referencees. La bascule se
+       fait toute seule dans le script, sur SALLES.length : rien a rebasculer a
+       la main le jour ou les premieres fiches arrivent. -->
+  <section class="section ouverture" id="ouverture">
     <div class="wrap ouv">
       <div class="ouv-dit">
-        <p class="eyebrow">L'annuaire ouvre</p>
-        <h2 class="section-titre display">Aucune salle n'est encore référencée</h2>
-        <p class="ouv-mot">Nous ouvrons l'annuaire aux clubs en ce moment. Une salle
-          n'apparaît sur Mon Club Combat qu'avec l'accord de son gérant : aucune fiche
-          n'est créée dans le dos d'un club.</p>
+        <p class="eyebrow">Offre de lancement</p>
+        <h2 class="section-titre display">Référencez votre salle</h2>
+        <p class="ouv-mot">Le référencement est gratuit et à vie pour les premiers clubs qui
+          rejoignent Mon Club Combat. Votre fiche, vos disciplines, vos horaires et vos
+          coordonnées, sans abonnement et sans engagement.</p>
         <div class="ouv-actions">
           <a class="btn btn-rouge" href="clubs.html">Référencer ma salle</a>
-          <a class="btn btn-ligne" href="#villes">Voir les villes couvertes</a>
+          <a class="btn btn-ligne" href="salle.html?demo=1">Voir un exemple de fiche</a>
         </div>
       </div>
       <ul class="ouv-liste">
         <li><span class="ouv-nb display">0 €</span><span class="ouv-lb">La fiche club, pour toujours</span></li>
-        <li><span class="ouv-nb display">5 min</span><span class="ouv-lb">Pour se référencer</span></li>
-        <li><span class="ouv-nb display">16</span><span class="ouv-lb">Villes couvertes</span></li>
-        <li><span class="ouv-nb display">8</span><span class="ouv-lb">Disciplines</span></li>
+        <li><span class="ouv-nb display">5 min</span><span class="ouv-lb">Pour être référencé</span></li>
       </ul>
+    </div>
+  </section>
+
+  <section class="section" id="salles" hidden>
+    <div class="wrap">
+      <div class="section-tete">
+        <div>
+          <p class="eyebrow">Séances d'essai ouvertes</p>
+          <h2 class="section-titre display">Les salles référencées</h2>
+        </div>
+        <a class="lien-suite" href="recherche.html">Voir toutes les salles <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <p class="section-chapo">Chaque fiche dit la même chose, pour que vous puissiez comparer :
+        les disciplines enseignées, les horaires réels, la note, l'adresse et de quoi joindre la
+        salle. Voici celles qui ouvrent des créneaux d'essai en ce moment.</p>
+      <div class="salles" id="liste-salles"></div>
     </div>
   </section>
 
@@ -776,9 +850,9 @@
 
 <script src="carte.js"></script>
 <script>
-/* Annuaire vide : aucune salle n'est referencee sans l'accord du club.
-   SALLES_DEMO ne sert qu'a la fiche d'exemple. Genere par gen_salles.py. */
-var SALLES = [];
+/* Annuaire vide par defaut : aucune salle n'est referencee sans l'accord
+   du club. MCC_SALLES=1 python3 gen_salles.py remplit SALLES pour verifier
+   la bascule. SALLES_DEMO ne sert qu'a la fiche d'exemple. */
 var SALLES_DEMO = [
   ["Fight Club Marseille", "FCM", "Marseille", 43.286, 5.38, ["MMA", "Boxe anglaise", "Grappling"], "4,8", 124, true, "08h00 – 22h00", true, {"slug": "fight-club-marseille", "adresse": "14 rue Jean-Mermoz", "cp": "13008", "tel": "04 10 20 30 40", "mail": "contact@fight-club-marseille.fr", "site": "fightclubmarseille.fr", "insta": "fightclub.marseille", "fb": "FightClubMarseille", "depuis": 2012, "adherents": 310, "presentation": ["Fight Club Marseille accueille les pratiquants de Marseille depuis 2012. La salle compte aujourd’hui environ 310 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le MMA, et la salle enseigne aussi la boxe anglaise et le grappling. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "Grappling", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Cage MMA", "cage"], ["Ring de boxe", "ring"], ["Tatami", "tatami"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Léa", "note": 5, "date": "mars 2025", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}, {"nom": "Antoine", "note": 5, "date": "avril 2026", "texte": "J'ai commencé le MMA ici sans aucun niveau. On m'a pris en main dès le premier cours, personne ne m'a fait sentir que j'étais débutant."}, {"nom": "Inès", "note": 4, "date": "novembre 2025", "texte": "Bonne ambiance, salle propre, horaires qui tiennent. Le créneau du midi me sauve les semaines chargées."}]}],
   ["Marseille Combat Academy", "MCA", "Marseille", 43.305, 5.376, ["Boxe anglaise", "Kickboxing", "Muay Thaï"], "4,7", 98, false, "09h00 – 21h00", true, {"slug": "marseille-combat-academy", "adresse": "62 boulevard National", "cp": "13003", "tel": "04 11 23 37 51", "mail": "contact@marseille-combat-academy.fr", "site": "", "insta": "marseillecombatacademy", "fb": "", "depuis": 2016, "adherents": 180, "presentation": ["Marseille Combat Academy accueille les pratiquants de Marseille depuis 2016. La salle compte aujourd’hui environ 180 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est la boxe anglaise, et la salle enseigne aussi le kickboxing et le Muay Thaï. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "19h00", "a": "20h30", "quoi": "Kickboxing", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Ring de boxe", "ring"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Nicolas", "note": 5, "date": "juin 2025", "texte": "Séance d'essai gratuite et sans pression commerciale derrière. J'ai signé la semaine suivante, deux ans après j'y suis toujours."}, {"nom": "Léa", "note": 5, "date": "juillet 2026", "texte": "Les cours sont vraiment séparés par niveau, ce qui change tout. On travaille la technique avant de sparrer, et le coach corrige un par un."}, {"nom": "Antoine", "note": 4, "date": "février 2026", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}]}],
@@ -801,6 +875,7 @@ var SALLES_DEMO = [
   ["Bordeaux Combat", "BC", "Bordeaux", 44.842, -0.574, ["MMA", "Jiu-jitsu brésilien"], "4,8", 89, true, "09h00 – 22h00", true, {"slug": "bordeaux-combat", "adresse": "5 cours de la Marne", "cp": "33800", "tel": "05 28 74 36 88", "mail": "contact@bordeaux-combat.fr", "site": "bordeauxcombat.fr", "insta": "bordeaux.combat", "fb": "BordeauxCombat", "depuis": 2011, "adherents": 205, "presentation": ["Bordeaux Combat accueille les pratiquants de Bordeaux depuis 2011. La salle compte aujourd’hui environ 205 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le MMA, et la salle enseigne aussi le jiu-jitsu brésilien. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Mardi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Jeudi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Cage MMA", "cage"], ["Tatami", "tatami"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Mehdi", "note": 5, "date": "avril 2025", "texte": "Les cours sont vraiment séparés par niveau, ce qui change tout. On travaille la technique avant de sparrer, et le coach corrige un par un."}, {"nom": "Sarah", "note": 5, "date": "mai 2026", "texte": "Le niveau monte vite parce que les partenaires sont sérieux. Ça reste bon enfant, personne ne cherche à taper fort pour le plaisir."}, {"nom": "Karim", "note": 4, "date": "décembre 2025", "texte": "J'ai commencé le MMA ici sans aucun niveau. On m'a pris en main dès le premier cours, personne ne m'a fait sentir que j'étais débutant."}]}],
   ["Toulouse Fight Club", "TFC", "Toulouse", 43.6, 1.438, ["Boxe anglaise", "Kickboxing"], "4,7", 71, false, "10h00 – 21h00", true, {"slug": "toulouse-fight-club", "adresse": "40 allée Jean-Jaurès", "cp": "31000", "tel": "05 29 77 43 49", "mail": "contact@toulouse-fight-club.fr", "site": "", "insta": "toulousefightclub", "fb": "ToulouseFightClub", "depuis": 2016, "adherents": 160, "presentation": ["Toulouse Fight Club accueille les pratiquants de Toulouse depuis 2016. La salle compte aujourd’hui environ 160 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est la boxe anglaise, et la salle enseigne aussi le kickboxing. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "19h00", "a": "20h30", "quoi": "Kickboxing", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}], "equipements": [["Ring de boxe", "ring"], ["Sacs de frappe", "sac"], ["Espace musculation", "muscu"], ["Douches", "douche"], ["Casiers", "casier"], ["Prêt de matériel", "materiel"]], "avis": [{"nom": "Camille", "note": 5, "date": "mai 2026", "texte": "Bonne ambiance, salle propre, horaires qui tiennent. Le créneau du midi me sauve les semaines chargées."}, {"nom": "Yanis", "note": 5, "date": "décembre 2025", "texte": "Séance d'essai gratuite et sans pression commerciale derrière. J'ai signé la semaine suivante, deux ans après j'y suis toujours."}, {"nom": "Julie", "note": 4, "date": "juillet 2025", "texte": "Les cours sont vraiment séparés par niveau, ce qui change tout. On travaille la technique avant de sparrer, et le coach corrige un par un."}]}]
 ];
+var SALLES = [];
 /* le nom de la discipline tel qu'on l'ecrit au fil d'une phrase */
 var NOM_DISC = { "MMA": "MMA", "Boxe anglaise": "boxe anglaise", "Kickboxing": "kickboxing", "Muay Thaï": "Muay Thaï", "Jiu-jitsu brésilien": "jiu-jitsu brésilien", "Grappling": "grappling", "Karaté": "karaté", "Judo": "judo", "Lutte": "lutte", "Self-défense": "self-défense" };
 function nomDiscipline(d){ return NOM_DISC[d] || d; }
@@ -1049,9 +1124,62 @@ var VILLES_FR = [["Agen",44.2004,0.6333],["Aix-en-Provence",43.52,5.45],["Ajacci
     });
 
 
-  /* Les cartes de salles de l'accueil sont parties le 22/09/2026 avec la section
-     « salles a decouvrir » : l'annuaire est vide, il n'y a rien a mettre en
-     avant. Le bloc d'ouverture qui l'a remplacee est ecrit en dur, sans JS. */
+  /* ---- salles referencees, ou offre aux premiers clubs ----
+     La page porte les deux sections ; c'est le nombre de salles referencees qui
+     decide laquelle s'affiche. Le jour ou une premiere fiche est validee, la
+     section des salles apparait d'elle-meme. */
+  var ouverture = document.getElementById('ouverture');
+  var sectionSalles = document.getElementById('salles');
+  var aDesSalles = SALLES.length > 0;
+  if (ouverture) ouverture.hidden = aDesSalles;
+  if (sectionSalles) sectionSalles.hidden = !aDesSalles;
+
+  /* ---- salles mises en avant ----
+     Un seul jeu de salles pour tout le site (_salles.js). Règle produit : seules
+     les salles Pro sont mises en avant ici, et le pratiquant ne doit jamais
+     pouvoir deviner lesquelles le sont — donc aucun badge, juste la sélection. */
+  var VEDETTES = SALLES.filter(function (s){ return s[8]; }).slice(0, 8);
+
+  var ETOILE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+    '<path d="m12 2 3 6.5 7 .9-5 4.8 1.3 7L12 17.8 5.7 21.2 7 14.2 2 9.4l7-.9L12 2z"/></svg>';
+  var PIN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  var COEUR = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/></svg>';
+
+  var liste = document.getElementById('liste-salles');
+  if (liste) {
+    VEDETTES.forEach(function (s) {
+      var art = document.createElement('article');
+      art.className = 'salle';
+      art.innerHTML =
+        '<div class="salle-photo">' +
+          '<span class="salle-initiales" aria-hidden="true">' + s[1] + '</span>' +
+              '<button class="salle-fav" type="button" aria-pressed="false" ' +
+            'aria-label="Ajouter ' + s[0] + ' à mes favoris">' + COEUR + '</button>' +
+        '</div>' +
+        '<div class="salle-corps">' +
+          '<div class="salle-tete">' +
+            '<a class="salle-nom" href="' + lienFiche(s) + '">' + s[0] + '</a>' +
+            '<span class="note">' + ETOILE + s[6] + ' <small>(' + s[7] + ')</small></span>' +
+          '</div>' +
+          '<div class="salle-chips">' +
+            s[5].map(function (d) { return '<span class="mini-chip">' + d + '</span>'; }).join('') +
+          '</div>' +
+          '<p class="salle-meta">' + PIN + s[2] + '</p>' +
+          '<p class="salle-ouvert">' +
+            (s[10] ? 'Ouvert aujourd’hui · ' + s[9] : 'Fermé aujourd’hui') + '</p>' +
+          '<a class="btn btn-rouge" href="' + lienFiche(s) + '">Voir la salle</a>' +
+        '</div>';
+      art.querySelector('.salle-fav').addEventListener('click', function () {
+        var on = this.getAttribute('aria-pressed') === 'true';
+        this.setAttribute('aria-pressed', on ? 'false' : 'true');
+      });
+      liste.appendChild(art);
+    });
+  }
 
   /* ---- parcourir par discipline ---- */
   var grille = document.getElementById('grille-disc');
