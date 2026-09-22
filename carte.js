@@ -96,7 +96,9 @@
     var etroit = W < 760;
     var s = Math.min((W * (etroit ? 1.02 : 0.80)) / (x1 - x0), (H * 0.94) / (y1 - y0));
     var cx = W / 2 - ((x0 + x1) / 2) * s;
-    var cy = H * 0.5 - ((y0 + y1) / 2) * s;
+    /* Amaury, 22/09/2026 : sur telephone l'illustration de la France tombait trop bas
+       derriere le titre. Sur un ecran etroit on la remonte au-dessus du milieu. */
+    var cy = H * (etroit ? 0.42 : 0.5) - ((y0 + y1) / 2) * s;
     var rayon = Math.max((x1 - x0), (y1 - y0)) * s * 0.62;
 
     function place(lon, lat) {

@@ -125,10 +125,21 @@
 
   @media (max-width:1040px){ .site-nav .nav-link{display:none} }
   .l-court{display:none}
+  /* Amaury, 22/09/2026 : « j'aimerais bien que Mon Club Combat soit visible sur le
+     mode telephone aussi ». Le mot-symbole reste donc affiche, reduit, et c'est le
+     bouton qui se resserre pour lui faire de la place : a 390 px les deux tiennent
+     sur la ligne du bandeau sans que rien ne passe a la ligne. */
   @media (max-width:620px){
     .l-long{display:none}
     .l-court{display:inline}
-    .brand-mot{display:none}
+    .header-in{gap:12px; padding-block:18px}
+    .brand-mot{width:142px; height:8.1px}
+    .site-nav .btn{min-height:40px; padding-inline:15px; font-size:13.5px}
+  }
+  @media (max-width:360px){
+    .brand{gap:6px}
+    .brand-mot{width:116px; height:6.6px}
+    .site-nav .btn{padding-inline:13px; font-size:13px}
   }
 
   .eyebrow{display:inline-flex; align-items:center; gap:10px;
@@ -169,7 +180,16 @@
     .footer-haut{grid-template-columns:repeat(2,minmax(0,1fr))}
     .footer-marque{grid-column:1 / -1}
   }
-  @media (max-width:430px){ .footer-haut{grid-template-columns:1fr} }
+  /* A une seule colonne, les trois listes de liens s'empilaient sur 877 px. Elles
+     tiennent a deux jusqu'a 320 px : « Referencer ma salle » est le plus long lien
+     et il passe. (Amaury, 22/09/2026 : trop de defilement sur telephone.) */
+  @media (max-width:620px){
+    .footer-haut{padding-block:34px; gap:26px}
+    .footer-marque p{margin-top:14px; font-size:13.5px}
+    .reseaux{margin-top:16px}
+    .footer-col ul{margin-top:12px; gap:9px}
+    .footer-col a{font-size:14px}
+  }
 
   .footer-reseau{padding-top:clamp(28px,3vw,38px); display:grid; gap:clamp(22px,2.6vw,32px);
     grid-template-columns:1.6fr 1fr}
@@ -182,6 +202,11 @@
     color:var(--texte-3); text-decoration:none}
   .f-liens a:hover{color:var(--rouge-700); text-decoration:underline}
   @media (max-width:820px){ .footer-reseau{grid-template-columns:1fr} }
+  @media (max-width:620px){
+    .footer-reseau{padding-top:26px; gap:20px}
+    .f-liens{margin-top:11px; gap:7px 16px}
+    .f-liens a{font-size:13px}
+  }
 
 
   /* ---------- héros club ---------- */
@@ -224,9 +249,26 @@
     border:1px solid var(--bord); border-radius:999px; background:var(--surface);
     font-size:13.5px; font-weight:700; color:var(--texte-2)}
   .rassure svg{color:var(--rouge-lien); flex-shrink:0}
+  /* Le premier bouton tombait a 2126 px sur un telephone : deux ecrans et demi avant
+     de pouvoir agir. Il y en a un ici aussi, celui du bloc « Comment ca se passe »
+     reste en place (Amaury, 22/09/2026). */
+  .hero-club-actions{margin-top:28px}
+
+  /* Le heros faisait 602 px sur un telephone pour un titre de deux lignes : on ne
+     garde au-dessus que la hauteur du bandeau. */
+  @media (max-width:620px){
+    .hero-club-in{padding-block:86px 30px}
+    .hero-club h1{margin-top:18px}
+    .hero-sous{margin-top:15px}
+    .rassure{margin-top:18px; gap:8px}
+    .rassure li{padding:7px 13px; font-size:13px}
+    .hero-club-actions{margin-top:22px}
+    .hero-exemple{margin-top:14px}
+  }
 
   /* ---------- sections ---------- */
   .section{padding-block:clamp(44px,5.4vw,72px)}
+  @media (max-width:620px){ .section{padding-block:34px} }
   .grille-form{display:grid; gap:clamp(22px,2.6vw,32px);
     grid-template-columns:minmax(0,1.45fr) minmax(280px,.95fr); align-items:start}
   @media (max-width:940px){ .grille-form{grid-template-columns:1fr} }
@@ -432,10 +474,15 @@
       padding-left:0; border-left:0}
     .chiffres-club li:nth-child(odd)::before{left:0}
   }
+  /* « 100+ », « 30 000 », « 500 », « 0 € » tiennent a deux par ligne jusqu'a 320 px :
+     les empiler faisait quatre rangees pour quatre mots (Amaury, 22/09/2026). */
   @media (max-width:420px){
-    .chiffres-club{grid-template-columns:1fr}
-    .chiffres-club li, .chiffres-club li + li{padding-left:0; border-left:0}
-    .chiffres-club li::before{left:0}
+    .chiffres-club li{padding-right:10px}
+    .chiffres-club li + li:not(:nth-child(odd)){padding-left:14px}
+    .chiffres-club li + li:not(:nth-child(odd))::before{left:14px}
+  }
+  @media (max-width:620px){
+    .chiffres-club-bloc .chiffres-mot{margin-top:20px; font-size:14.5px}
   }
 
   .hero-exemple{margin-top:18px; font-size:14px}
@@ -464,6 +511,14 @@
     .etapes li, .etapes li + li{padding-left:0; padding-right:0; border-left:0}
     .etapes li + li::before{left:0}
   }
+  @media (max-width:620px){
+    .etapes{margin-top:24px}
+    .etapes li{padding-block:20px}
+    .et-titre{margin-top:9px}
+    .etapes p{margin-top:7px}
+    .creer{margin-top:30px; padding-top:26px}
+    .btn-grand{margin-top:20px}
+  }
 
   .obtenez{display:grid; gap:clamp(28px,3.4vw,54px);
     grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr); align-items:center}
@@ -476,9 +531,13 @@
   /* une plage grise nue se lirait comme une image cassee : l'appareil photo dit
      que c'est la place de la photo du club */
   .ob-bande{display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden;
     gap:8px; height:128px; border-bottom:1px solid var(--bord);
     background:var(--surface-2); color:var(--texte-4);
     font-size:12.5px; font-weight:700}
+  /* Une vraie photo au lieu de la bande grise : le gerant voit la fiche qu'il aura,
+     et non un rectangle vide qui se lit comme une image cassee. */
+  .ob-photo{display:block; width:100%; height:100%; object-fit:cover}
   .ob-corps{padding:18px 20px 22px}
   .ob-nom{display:block; font-size:16.5px; font-weight:800; color:var(--texte)}
   .ob-lieu{display:block; margin-top:4px; font-size:13.5px; font-weight:700;
@@ -505,7 +564,18 @@
   .pro-bande-in p{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
   .pro-bande-note{font-size:13.5px; color:var(--texte-4)}
 
+  /* ---------- page de la fiche : le fil de l'etape 2 ---------- */
+  /* le bandeau est en position absolue : la premiere section lui laisse la place */
+  .sous-bandeau{padding-top:clamp(112px,11vw,136px)}
+  .fil{max-width:72ch; margin-bottom:clamp(24px,2.8vw,36px)}
+  .fil-titre{margin-top:12px; font-size:clamp(26px,3.4vw,40px); line-height:1;
+    letter-spacing:.012em; color:var(--texte)}
+  .fil-mot{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
   /* ---------- la fenetre de creation de l'espace club ---------- */
+  /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
+     ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
+     sont portes ici, scopes a .fen-form, pour que la fenetre tienne toute seule
+     sur une page qui n'a pas le CSS du formulaire. */
   .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:center;
     justify-content:center; padding:20px; overflow:auto;
     background:rgba(22,22,15,.52); backdrop-filter:blur(2px)}
@@ -526,18 +596,21 @@
     color:var(--texte)}
   .fen-mot{margin-top:12px; font-size:14.5px; line-height:1.6; color:var(--texte-2)}
   .fen-form{margin-top:22px; display:flex; flex-direction:column; gap:15px}
+  .fen-form .champ{display:flex; flex-direction:column; gap:7px; min-width:0}
+  .fen-form label{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .fen-form input{width:100%; min-height:48px; padding:12px 14px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600; line-height:1.4;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .fen-form input::placeholder{color:var(--texte-4); font-weight:500}
+  .fen-form input:focus{outline:none; border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  .fen-form .champ-aide{margin:0; color:var(--texte-4); font-size:12.5px}
   .fen-form .btn{margin-top:5px; width:100%}
   .fen-note{font-size:12.5px; line-height:1.55; color:var(--texte-4)}
   .champ.manque input{border-color:var(--rouge-500);
     box-shadow:0 0 0 4px rgba(236,22,46,.10)}
-
-  /* ---------- page de la fiche : le fil de l'etape 2 ---------- */
-  /* le bandeau est en position absolue : la premiere section lui laisse la place */
-  .sous-bandeau{padding-top:clamp(112px,11vw,136px)}
-  .fil{max-width:72ch; margin-bottom:clamp(24px,2.8vw,36px)}
-  .fil-titre{margin-top:12px; font-size:clamp(26px,3.4vw,40px); line-height:1;
-    letter-spacing:.012em; color:var(--texte)}
-  .fil-mot{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -592,11 +665,11 @@
       </div>
 
       <div class="nav-item">
-        <a class="nav-link" href="index.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <a class="nav-link" href="clubs.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         <div class="nav-menu nav-menu-1" aria-label="Pro">
           <div class="nav-col">
             <ul>
-              <li><a href="index.html#pro">Accès pro</a></li>
+              <li><a href="clubs.html#pro">Accès pro</a></li>
               <li><a href="clubs.html">Référencer ma salle</a></li>
               <li><a href="index.html#acquisition">Acquisition</a></li>
             </ul>
@@ -806,7 +879,7 @@
       <h2 id="f-clubs">Clubs</h2>
       <ul>
         <li><a href="clubs.html">Référencer ma salle</a></li>
-        <li><a href="index.html#pro">Mon Club Combat Pro</a></li>
+        <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
         <li><a href="index.html#acquisition">Acquisition de leads</a></li>
         <li><a href="index.html#connexion">Espace club</a></li>
       </ul>

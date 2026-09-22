@@ -124,10 +124,21 @@
 
   @media (max-width:1040px){ .site-nav .nav-link{display:none} }
   .l-court{display:none}
+  /* Amaury, 22/09/2026 : « j'aimerais bien que Mon Club Combat soit visible sur le
+     mode telephone aussi ». Le mot-symbole reste donc affiche, reduit, et c'est le
+     bouton qui se resserre pour lui faire de la place : a 390 px les deux tiennent
+     sur la ligne du bandeau sans que rien ne passe a la ligne. */
   @media (max-width:620px){
     .l-long{display:none}
     .l-court{display:inline}
-    .brand-mot{display:none}
+    .header-in{gap:12px; padding-block:18px}
+    .brand-mot{width:142px; height:8.1px}
+    .site-nav .btn{min-height:40px; padding-inline:15px; font-size:13.5px}
+  }
+  @media (max-width:360px){
+    .brand{gap:6px}
+    .brand-mot{width:116px; height:6.6px}
+    .site-nav .btn{padding-inline:13px; font-size:13px}
   }
 
   /* ---------- pied de page ---------- */
@@ -159,7 +170,16 @@
     .footer-haut{grid-template-columns:repeat(2,minmax(0,1fr))}
     .footer-marque{grid-column:1 / -1}
   }
-  @media (max-width:430px){ .footer-haut{grid-template-columns:1fr} }
+  /* A une seule colonne, les trois listes de liens s'empilaient sur 877 px. Elles
+     tiennent a deux jusqu'a 320 px : « Referencer ma salle » est le plus long lien
+     et il passe. (Amaury, 22/09/2026 : trop de defilement sur telephone.) */
+  @media (max-width:620px){
+    .footer-haut{padding-block:34px; gap:26px}
+    .footer-marque p{margin-top:14px; font-size:13.5px}
+    .reseaux{margin-top:16px}
+    .footer-col ul{margin-top:12px; gap:9px}
+    .footer-col a{font-size:14px}
+  }
 
   .footer-reseau{padding-top:clamp(28px,3vw,38px); display:grid; gap:clamp(22px,2.6vw,32px);
     grid-template-columns:1.6fr 1fr}
@@ -172,6 +192,11 @@
     color:var(--texte-3); text-decoration:none}
   .f-liens a:hover{color:var(--rouge-700); text-decoration:underline}
   @media (max-width:820px){ .footer-reseau{grid-template-columns:1fr} }
+  @media (max-width:620px){
+    .footer-reseau{padding-top:26px; gap:20px}
+    .f-liens{margin-top:11px; gap:7px 16px}
+    .f-liens a{font-size:13px}
+  }
 
 
   /* ---------- barre applicative ---------- */
@@ -411,6 +436,46 @@
     border:1px solid var(--bord-3); box-shadow:none}
   .btn-ligne:hover{border-color:var(--texte-3); color:var(--texte); background:transparent}
   .fond-seo .seo-sous:first-of-type{margin-top:0}
+  /* ---------- la fenetre de creation de l'espace club ---------- */
+  /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
+     ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
+     sont portes ici, scopes a .fen-form, pour que la fenetre tienne toute seule
+     sur une page qui n'a pas le CSS du formulaire. */
+  .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:center;
+    justify-content:center; padding:20px; overflow:auto;
+    background:rgba(22,22,15,.52); backdrop-filter:blur(2px)}
+  .voile[hidden]{display:none}
+  body.fige{overflow:hidden}
+  .fenetre{position:relative; width:min(100%,440px); padding:clamp(24px,3vw,34px);
+    border-radius:var(--r-l); background:var(--surface);
+    box-shadow:0 36px 90px -30px rgba(22,22,15,.6);
+    animation:monte .24s cubic-bezier(.2,.7,.2,1)}
+  @keyframes monte{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){ .fenetre{animation:none} }
+  .fen-fermer{position:absolute; top:12px; right:12px; display:inline-flex;
+    align-items:center; justify-content:center; width:38px; height:38px;
+    border:0; border-radius:999px; background:transparent; color:var(--texte-4);
+    cursor:pointer; transition:background-color .15s ease, color .15s ease}
+  .fen-fermer:hover{background:var(--fond); color:var(--texte)}
+  .fen-titre{margin-top:10px; font-size:clamp(23px,3vw,29px); line-height:1.02;
+    color:var(--texte)}
+  .fen-mot{margin-top:12px; font-size:14.5px; line-height:1.6; color:var(--texte-2)}
+  .fen-form{margin-top:22px; display:flex; flex-direction:column; gap:15px}
+  .fen-form .champ{display:flex; flex-direction:column; gap:7px; min-width:0}
+  .fen-form label{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .fen-form input{width:100%; min-height:48px; padding:12px 14px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600; line-height:1.4;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .fen-form input::placeholder{color:var(--texte-4); font-weight:500}
+  .fen-form input:focus{outline:none; border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  .fen-form .champ-aide{margin:0; color:var(--texte-4); font-size:12.5px}
+  .fen-form .btn{margin-top:5px; width:100%}
+  .fen-note{font-size:12.5px; line-height:1.55; color:var(--texte-4)}
+  .champ.manque input{border-color:var(--rouge-500);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -465,11 +530,11 @@
       </div>
 
       <div class="nav-item">
-        <a class="nav-link" href="index.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <a class="nav-link" href="clubs.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         <div class="nav-menu nav-menu-1" aria-label="Pro">
           <div class="nav-col">
             <ul>
-              <li><a href="index.html#pro">Accès pro</a></li>
+              <li><a href="clubs.html#pro">Accès pro</a></li>
               <li><a href="clubs.html">Référencer ma salle</a></li>
               <li><a href="index.html#acquisition">Acquisition</a></li>
             </ul>
@@ -487,12 +552,12 @@
       <nav class="fil" aria-label="Fil d'Ariane"><a href="index.html">Accueil</a><i aria-hidden="true">›</i><a href="recherche.html">Salles de sports de combat</a><i aria-hidden="true">›</i><span aria-current="page">Aix-en-Provence</span></nav>
       <h1 class="ann-h1 display">Salles de sports de combat à <b>Aix-en-Provence</b></h1>
       <p class="ann-intro">Il n’y a pas encore de salle de sports de combat référencée à Aix-en-Provence. Nous ouvrons l’annuaire aux clubs en ce moment : si vous dirigez une salle à Aix-en-Provence, la fiche est gratuite et prend cinq minutes.</p>
-      <div class="ann-actions"><a class="btn btn-rouge" href="clubs.html">Référencer ma salle</a><a class="btn btn-ligne" href="index.html#villes">Voir les villes couvertes</a></div>
+      <div class="ann-actions"><button class="btn btn-rouge" type="button" data-compte>Référencer ma salle</button><a class="btn btn-ligne" href="index.html#villes">Voir les villes couvertes</a></div>
     </div>
   </div>
 
   <section class="colonne-liste" id="resultats" aria-label="Salles">
-    <div class="wrap"><div class="liste"><div class="vide"><h2 class="display">Pas encore de salle à Aix-en-Provence</h2><p>Il n’y a pas encore de salle référencée dans cette ville. Vous dirigez un club à Aix-en-Provence&nbsp;? Soyez le premier, c’est gratuit et votre fiche apparaît ici.</p><a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a><p class="vide-sous">Ou regardez par discipline&nbsp;:</p><div class="vide-villes"><a class="puce" href="mma.html">MMA</a><a class="puce" href="boxe-anglaise.html">Boxe anglaise</a><a class="puce" href="kickboxing.html">Kickboxing</a><a class="puce" href="muay-thai.html">Muay Thaï</a><a class="puce" href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a><a class="puce" href="grappling.html">Grappling</a><a class="puce" href="karate.html">Karaté</a><a class="puce" href="judo.html">Judo</a></div></div></div></div>
+    <div class="wrap"><div class="liste"><div class="vide"><h2 class="display">Pas encore de salle à Aix-en-Provence</h2><p>Il n’y a pas encore de salle référencée dans cette ville. Vous dirigez un club à Aix-en-Provence&nbsp;? Soyez le premier, c’est gratuit et votre fiche apparaît ici.</p><button class="btn btn-rouge vide-cta" type="button" data-compte>Référencer ma salle</button><p class="vide-sous">Ou regardez par discipline&nbsp;:</p><div class="vide-villes"><a class="puce" href="mma.html">MMA</a><a class="puce" href="boxe-anglaise.html">Boxe anglaise</a><a class="puce" href="kickboxing.html">Kickboxing</a><a class="puce" href="muay-thai.html">Muay Thaï</a><a class="puce" href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a><a class="puce" href="grappling.html">Grappling</a><a class="puce" href="karate.html">Karaté</a><a class="puce" href="judo.html">Judo</a></div></div></div></div>
   </section>
 
   <section class="fond-seo">
@@ -544,7 +609,7 @@
       <h2 id="f-clubs">Clubs</h2>
       <ul>
         <li><a href="clubs.html">Référencer ma salle</a></li>
-        <li><a href="index.html#pro">Mon Club Combat Pro</a></li>
+        <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
         <li><a href="index.html#acquisition">Acquisition de leads</a></li>
         <li><a href="index.html#connexion">Espace club</a></li>
       </ul>
@@ -583,6 +648,100 @@
     </nav>
   </div>
 </footer>
+
+<!-- La creation de l'espace club se fait dans une fenetre, pas dans la page : le gerant
+     voit ce qu'on lui demande avant de s'engager, et le formulaire de la fiche l'attend
+     sur referencer.html. Elle est posee sur TOUTES les pages, parce que seul le bouton
+     du bandeau mene a la page de vente : partout ailleurs, « Referencer ma salle »
+     ouvre directement la creation de compte (Amaury, 22/09/2026).
+     Aucun compte n'est reellement cree : pas de back-end. -->
+<div class="voile" id="voile" hidden>
+  <div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="fen-titre">
+    <button class="fen-fermer" type="button" id="fermer-compte" aria-label="Fermer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
+    <p class="eyebrow">Étape 1 sur 2</p>
+    <h2 class="fen-titre display" id="fen-titre">Créez votre espace club</h2>
+    <p class="fen-mot">Vous y modifierez votre fiche et vous y recevrez les demandes de séance
+      d'essai. La fiche de votre salle se remplit juste après.</p>
+    <form class="fen-form" id="form-compte" novalidate>
+      <div class="champ">
+        <label for="k-nom">Nom de la salle</label>
+        <input id="k-nom" name="nom" required autocomplete="organization" placeholder="Fight Club Marseille">
+      </div>
+      <div class="champ">
+        <label for="k-mail">Votre e-mail</label>
+        <input id="k-mail" name="mail" type="email" required autocomplete="email" placeholder="contact@votre-salle.fr">
+      </div>
+      <div class="champ">
+        <label for="k-mdp">Mot de passe</label>
+        <input id="k-mdp" name="mdp" type="password" required autocomplete="new-password" minlength="8">
+        <span class="champ-aide">Huit caractères au minimum.</span>
+      </div>
+      <button class="btn btn-rouge" type="submit">Continuer vers ma fiche</button>
+      <p class="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ---- la fenetre de creation de l'espace club ----
+   Presente sur toutes les pages. Tout element portant data-compte l'ouvre :
+   boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
+   Seul le bouton du bandeau reste un lien vers la page de vente. */
+(function (){
+  var voile = document.getElementById('voile');
+  if (!voile) return;
+  var formCompte = document.getElementById('form-compte');
+  var rendu = null;
+
+  function ouvre(){
+    rendu = document.activeElement;
+    voile.hidden = false;
+    document.body.classList.add('fige');
+    document.getElementById('k-nom').focus();
+  }
+  function ferme(){
+    voile.hidden = true;
+    document.body.classList.remove('fige');
+    if (rendu) rendu.focus();
+  }
+  /* la recherche et l'annuaire reecrivent leurs resultats : on ecoute le document
+     plutot que chaque bouton, pour que ceux crees plus tard marchent aussi */
+  document.addEventListener('click', function (e){
+    var d = e.target.closest ? e.target.closest('[data-compte]') : null;
+    if (!d) return;
+    e.preventDefault();
+    ouvre();
+  });
+
+  document.getElementById('fermer-compte').addEventListener('click', ferme);
+  voile.addEventListener('mousedown', function (e){ if (e.target === voile) ferme(); });
+  document.addEventListener('keydown', function (e){
+    if (e.key === 'Escape' && !voile.hidden) ferme();
+    /* la fenetre garde le focus tant qu'elle est ouverte */
+    if (e.key === 'Tab' && !voile.hidden) {
+      var f = voile.querySelectorAll('button, input, a[href]');
+      var premier = f[0], dernier = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === premier) { e.preventDefault(); dernier.focus(); }
+      else if (!e.shiftKey && document.activeElement === dernier) { e.preventDefault(); premier.focus(); }
+    }
+  });
+
+  formCompte.addEventListener('submit', function (e){
+    e.preventDefault();
+    var manque = false;
+    [].forEach.call(formCompte.querySelectorAll('input[required]'), function (c){
+      var vide = !c.value.trim() || (c.type === 'email' && c.value.indexOf('@') < 1)
+                 || (c.minLength > 0 && c.value.length < c.minLength);
+      c.closest('.champ').classList.toggle('manque', vide);
+      if (vide && !manque) { c.focus(); manque = true; }
+    });
+    if (manque) return;
+    /* le nom saisi ici ouvre la fiche deja amorcee sur la page suivante */
+    location.href = 'referencer.html?nom=' +
+      encodeURIComponent(document.getElementById('k-nom').value.trim());
+  });
+})();
+</script>
 
 </body>
 </html>
