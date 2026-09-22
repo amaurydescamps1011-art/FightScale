@@ -312,8 +312,9 @@
       </svg>
     </a>
     <nav class="site-nav" aria-label="Navigation principale">
-      <a class="nav-link" href="recherche.html">Rechercher une salle</a>
+      <a class="nav-link" href="recherche.html">Salles</a>
       <a class="nav-link" href="index.html#disciplines">Disciplines</a>
+      <a class="nav-link" href="index.html#villes">Villes</a>
       <a class="nav-link" href="index.html#clubs">Acquisition</a>
       <a class="nav-link" href="index.html#connexion">Connexion</a>
       <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
@@ -576,6 +577,9 @@ var SALLES = [
   ["Bordeaux Combat", "BC", "Bordeaux", 44.842, -0.574, ["MMA", "Jiu-jitsu brésilien"], "4,8", 89, true, "09h00 – 22h00", true, {"slug": "bordeaux-combat", "adresse": "5 cours de la Marne", "cp": "33800", "tel": "05 28 74 36 88", "mail": "contact@bordeaux-combat.fr", "site": "bordeauxcombat.fr", "insta": "bordeaux.combat", "fb": "BordeauxCombat", "depuis": 2011, "adherents": 205, "presentation": ["Bordeaux Combat accueille les pratiquants de Bordeaux depuis 2011. La salle compte aujourd’hui environ 205 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le MMA, et la salle enseigne aussi le jiu-jitsu brésilien. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Mardi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Jeudi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}]}],
   ["Toulouse Fight Club", "TFC", "Toulouse", 43.6, 1.438, ["Boxe anglaise", "Kickboxing"], "4,7", 71, false, "10h00 – 21h00", true, {"slug": "toulouse-fight-club", "adresse": "40 allée Jean-Jaurès", "cp": "31000", "tel": "05 29 77 43 49", "mail": "contact@toulouse-fight-club.fr", "site": "", "insta": "toulousefightclub", "fb": "ToulouseFightClub", "depuis": 2016, "adherents": 160, "presentation": ["Toulouse Fight Club accueille les pratiquants de Toulouse depuis 2016. La salle compte aujourd’hui environ 160 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est la boxe anglaise, et la salle enseigne aussi le kickboxing. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "19h00", "a": "20h30", "quoi": "Kickboxing", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}]}]
 ];
+/* le nom de la discipline tel qu'on l'ecrit au fil d'une phrase */
+var NOM_DISC = { "MMA": "MMA", "Boxe anglaise": "boxe anglaise", "Kickboxing": "kickboxing", "Muay Thaï": "Muay Thaï", "Jiu-jitsu brésilien": "jiu-jitsu brésilien", "Grappling": "grappling", "Karaté": "karaté", "Judo": "judo", "Lutte": "lutte", "Self-défense": "self-défense" };
+function nomDiscipline(d){ return NOM_DISC[d] || d; }
 
 /* index par identifiant d'URL, pour que recherche.html et index.html puissent
    pointer vers salle.html?s=<slug> */
@@ -583,6 +587,22 @@ var PAR_SLUG = {};
 SALLES.forEach(function (s){ PAR_SLUG[s[11].slug] = s; });
 function salleParSlug(sl){ return PAR_SLUG[sl] || null; }
 function lienFiche(s){ return 'salle.html?s=' + encodeURIComponent(s[11].slug); }
+
+/* Les pages d'annuaire, une par discipline et une par ville (build_annuaire.py).
+   Le meme calcul d'identifiant des deux cotes, sinon les liens tombent a cote. */
+function ardoise(t){
+  return t.normalize('NFD').replace(/[̀-ͯ]/g, '')
+          .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function pageDiscipline(d){ return ardoise(d) + '.html'; }
+function pageVille(v){ return 'sports-de-combat-' + ardoise(v) + '.html'; }
+
+/* les villes ou il y a au moins une salle, donc celles qui ont une page */
+var VILLES_AVEC_SALLE = (function (){
+  var vu = {}, out = [];
+  SALLES.forEach(function (s){ if (!vu[s[2]]){ vu[s[2]] = 1; out.push(s[2]); } });
+  return out;
+})();
 
 /* Vignette de carte de la fiche salle.
 
@@ -751,7 +771,7 @@ function rendFiche(s){
 
   var filVille = document.getElementById('fil-ville');
   filVille.textContent = 'Salles à ' + s[2];
-  filVille.href = 'recherche.html?ville=' + encodeURIComponent(s[2]);
+  filVille.href = pageVille(s[2]);       /* la page d'annuaire de la ville */
   document.getElementById('fil-nom').textContent = s[0];
 
   /* visuels : un grand sur deux rangées puis quatre petits, la grille tombe juste */

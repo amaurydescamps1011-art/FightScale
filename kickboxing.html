@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Toutes les salles de Kickboxing référencées sur FightScale : horaires, planning des cours, adresse et contact direct.">
+<meta name="theme-color" content="#0A0A0B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FightScale">
+<meta property="og:title" content="Kickboxing — salles et clubs en France | FightScale">
+<meta property="og:description" content="Toutes les salles de Kickboxing référencées sur FightScale : horaires, planning des cours, adresse et contact direct.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+  :root{color-scheme:dark; padding-top:env(safe-area-inset-top,0px);
+        padding-bottom:env(safe-area-inset-bottom,0px)}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{margin:0; background:#0A0A0B}
+  img{max-width:100%}
+  [hidden]{display:none !important}
+</style>
+<title>Kickboxing — salles et clubs en France | FightScale</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+  :root{
+    --encre-950:#0A0A0B; --encre-900:#121214; --encre-850:#18181B; --encre-800:#1F1F23;
+    --encre-700:#2A2A2F; --encre-600:#3A3A41;
+    --craie-100:#F5F3EF; --craie-200:#D6D2CB; --craie-400:#9A948C; --craie-500:#6F6B66;
+    --rouge-300:#FF5E68; --rouge-500:#FA0117; --rouge-600:#E00016; --rouge-700:#B80012;
+    --vert:#3FBF87;
+    --max:1240px;
+    --gutter:clamp(20px, 4.5vw, 52px);
+    --r-m:8px; --r-l:12px;
+    color-scheme:dark;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    margin:0; background:var(--encre-950); color:var(--craie-100);
+    font-family:Manrope,"Segoe UI",system-ui,sans-serif; font-weight:500;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+  h1,h2{margin:0}
+  p{margin:0}
+  ul{margin:0; padding:0; list-style:none}
+  a{color:var(--rouge-300)}
+  :focus-visible{outline:2px solid var(--rouge-300); outline-offset:3px; border-radius:6px}
+
+  .wrap{width:100%; max-width:var(--max); margin-inline:auto; padding-inline:var(--gutter)}
+  .display{font-family:Anton,"Haettenschweiler","Arial Narrow",sans-serif; font-weight:400;
+    text-transform:uppercase}
+
+  .skip{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
+  .skip:focus{position:fixed; width:auto; height:auto; overflow:visible; clip-path:none;
+    left:8px; top:8px; z-index:99; background:var(--rouge-600); color:#fff;
+    padding:12px 16px; border-radius:var(--r-m); text-decoration:none}
+
+  /* ---------- en-tête ---------- */
+  .site-header{position:absolute; inset:env(safe-area-inset-top,0px) 0 auto 0; z-index:30}
+  .header-in{display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding-block:22px}
+  .brand{display:inline-flex; align-items:center; gap:13px; flex-shrink:0}
+  .site-nav{display:flex; align-items:center; gap:30px}
+  .site-nav a{font-size:14.5px; font-weight:700; color:var(--craie-200); text-decoration:none;
+    white-space:nowrap; transition:color .15s ease}
+  .site-nav a:hover{color:var(--craie-100)}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:9px;
+    min-height:44px; padding:11px 22px; border:0; border-radius:var(--r-m);
+    font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
+    text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
+  .btn-rouge{background:var(--rouge-600); color:#fff;
+    box-shadow:0 10px 30px -12px rgba(224,0,22,.9)}
+  .btn-rouge:hover{background:var(--rouge-700); color:#fff;
+    box-shadow:0 14px 34px -12px rgba(224,0,22,1)}
+  .site-nav .btn-rouge{color:#fff}
+  @media (max-width:1040px){ .site-nav .nav-link{display:none} }
+  .l-court{display:none}
+  @media (max-width:620px){
+    .l-long{display:none}
+    .l-court{display:inline}
+    .brand-mot{display:none}
+  }
+
+  /* ---------- pied de page ---------- */
+  .site-footer{border-top:1px solid var(--encre-800); background:var(--encre-950)}
+  .footer-haut{padding-block:clamp(44px,5vw,64px);
+    display:grid; gap:clamp(30px,4vw,44px);
+    grid-template-columns:minmax(240px,1.35fr) repeat(3,minmax(140px,1fr))}
+  .footer-marque p{margin-top:18px; max-width:34ch; font-size:14px; line-height:1.62;
+    color:var(--craie-400)}
+  .reseaux{margin-top:22px; display:flex; gap:10px}
+  .reseaux a{display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px; border:1px solid var(--encre-700);
+    color:var(--craie-200); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .reseaux a:hover{border-color:rgba(250,1,23,.55); color:var(--rouge-300);
+    background:rgba(250,1,23,.08)}
+  .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--craie-500)}
+  .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
+  .footer-col a{font-size:14.5px; font-weight:600; color:var(--craie-200); text-decoration:none;
+    transition:color .15s ease}
+  .footer-col a:hover{color:var(--rouge-300)}
+  .footer-bas{border-top:1px solid var(--encre-800); padding-block:22px;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 26px}
+  .footer-bas p{font-size:13px; color:var(--craie-500)}
+  .footer-legal{display:flex; flex-wrap:wrap; gap:10px 22px}
+  .footer-legal a{font-size:13px; font-weight:600; color:var(--craie-500); text-decoration:none}
+  .footer-legal a:hover{color:var(--craie-200)}
+  @media (max-width:860px){
+    .footer-haut{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .footer-marque{grid-column:1 / -1}
+  }
+  @media (max-width:430px){ .footer-haut{grid-template-columns:1fr} }
+
+
+  /* ---------- barre applicative ---------- */
+  .barre-appli{position:sticky; top:env(safe-area-inset-top,0px); z-index:40;
+    border-bottom:1px solid var(--encre-800); background:rgba(10,10,11,.92);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px)}
+  .barre-in{display:flex; align-items:center; gap:clamp(14px,2vw,28px); padding-block:14px}
+  .barre-in .brand{flex-shrink:0}
+  .champ-ville{position:relative; flex:1 1 auto; min-width:0; max-width:520px;
+    display:flex; align-items:center; gap:8px; padding:6px 6px 6px 16px;
+    border:1px solid var(--encre-700); border-radius:999px; background:var(--encre-900);
+    transition:border-color .16s ease, box-shadow .16s ease}
+  .champ-ville:focus-within{border-color:rgba(250,1,23,.55);
+    box-shadow:0 0 0 4px rgba(250,1,23,.10)}
+  .champ-ville > svg{flex-shrink:0; color:var(--rouge-300)}
+  .champ-ville input{flex:1 1 auto; min-width:0; border:0; background:transparent; outline:none;
+    padding:8px 0; font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:700;
+    color:var(--craie-100)}
+  .champ-ville input::placeholder{color:var(--craie-500); font-weight:600}
+  .champ-ville .btn{flex:0 0 auto; min-height:40px; padding:10px 20px; border-radius:999px;
+    font-size:14px}
+  .barre-nav{margin-left:auto; display:flex; align-items:center; gap:22px}
+  .barre-nav a:not(.btn){font-size:14.5px; font-weight:700; color:var(--craie-200);
+    text-decoration:none; white-space:nowrap}
+  .barre-nav a:not(.btn):hover{color:var(--craie-100)}
+  @media (max-width:1100px){ .barre-nav .nav-link{display:none} }
+  @media (max-width:720px){
+    .barre-in{flex-wrap:wrap; gap:12px}
+    .champ-ville{order:3; flex:1 1 100%; max-width:none}
+    .barre-nav{margin-left:auto}
+  }
+
+  /* ---------- barre de filtres ---------- */
+  .filtres-bloc{border-bottom:1px solid var(--encre-800); background:var(--encre-950)}
+  .compte{padding-top:22px; font-size:clamp(17px,2vw,21px); font-weight:800; letter-spacing:-.01em;
+    color:var(--craie-100)}
+  .compte b{color:var(--rouge-300)}
+  .rangee-filtres{display:flex; flex-wrap:wrap; gap:10px; padding-block:16px 18px;
+    margin-inline:0; padding-inline:0}
+  @media (max-width:900px){
+  .rangee-filtres{flex-wrap:nowrap; overflow-x:auto;
+    scrollbar-width:none; -ms-overflow-style:none;
+    margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter)}
+  .rangee-filtres::-webkit-scrollbar{display:none} }
+  .puce{flex:0 0 auto; display:inline-flex; align-items:center; gap:8px; min-height:40px;
+    padding:9px 16px; border:1px solid var(--encre-700); border-radius:999px;
+    background:var(--encre-900); font-family:Manrope,system-ui,sans-serif;
+    font-size:13.5px; font-weight:700; color:var(--craie-200); white-space:nowrap;
+    text-decoration:none; cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .puce:hover{border-color:rgba(250,1,23,.5); color:var(--craie-100)}
+  .puce[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--craie-100);
+    background:rgba(224,0,22,.16); box-shadow:0 0 22px -6px rgba(250,1,23,.75)}
+  .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--encre-800)}
+
+  /* ---------- une seule colonne ----------
+     Modele annuaire : la liste occupe la page, la carte se deplie au-dessus.
+     On borne la colonne, sinon les lignes de texte deviennent illisibles. */
+  .colonne-liste{padding-block:clamp(22px,2.6vw,32px) clamp(30px,4vw,44px)}
+  .colonne-liste .wrap, .fond-seo .wrap, .filtres-bloc .wrap, .carte-zone .wrap{max-width:1040px}
+
+  /* ---------- fil d'Ariane ---------- */
+  .fil{display:flex; flex-wrap:wrap; align-items:center; gap:7px; padding-top:18px;
+    font-size:12.5px; font-weight:700; color:var(--craie-500)}
+  .fil a{color:var(--craie-400); text-decoration:none}
+  .fil a:hover{color:var(--rouge-300)}
+  .fil i{font-style:normal; color:var(--encre-600)}
+  .fil [aria-current]{color:var(--craie-200)}
+
+  /* ---------- liste de résultats ---------- */
+  .liste{display:flex; flex-direction:column; gap:14px}
+  .res-corps{gap:9px}
+  .res{position:relative; display:grid; grid-template-columns:186px minmax(0,1fr); gap:0;
+    border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900);
+    overflow:hidden; transition:border-color .16s ease, box-shadow .16s ease}
+  .res:hover, .res.actif{border-color:rgba(250,1,23,.55);
+    box-shadow:0 0 0 1px rgba(250,1,23,.25), 0 24px 50px -34px rgba(0,0,0,.95)}
+  .res-vignette{position:relative; display:grid; place-items:center;
+    border-right:1px solid var(--encre-800);
+    background:
+      radial-gradient(120% 90% at 50% 118%, rgba(224,0,22,.30) 0%, rgba(224,0,22,0) 62%),
+      linear-gradient(145deg,#26262C 0%,#151518 55%,#0D0D0F 100%)}
+  .res-vignette::after{content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(245,243,239,.026) 0 1px, transparent 1px 13px)}
+  .res-num{position:absolute; top:9px; left:9px; z-index:2; display:grid; place-items:center;
+    width:24px; height:24px; border-radius:50%; background:var(--rouge-600); color:#fff;
+    font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
+    box-shadow:0 0 18px -2px rgba(250,1,23,.9)}
+  .res-init{position:relative; z-index:1; font-family:Anton,"Arial Narrow",sans-serif;
+    font-size:42px; line-height:1; letter-spacing:.04em; color:rgba(245,243,239,.13);
+    text-shadow:0 0 26px rgba(250,1,23,.28)}
+  .res-corps{display:flex; flex-direction:column; gap:9px; padding:15px 16px}
+  .res-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+  .res-nom{font-size:16px; font-weight:800; line-height:1.25; letter-spacing:-.01em;
+    color:var(--craie-100)}
+  .res-nom a{color:inherit; text-decoration:none}
+  .res-chips{display:flex; flex-wrap:wrap; gap:6px}
+  .note{display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
+    font-size:13px; font-weight:800; color:var(--craie-100); font-variant-numeric:tabular-nums}
+  .note svg{color:var(--craie-100)}
+  .note small{font-size:11.5px; font-weight:600; color:var(--craie-500)}
+  .mini-chip{padding:4px 9px; border:1px solid var(--encre-700); border-radius:999px;
+    font-size:11px; font-weight:700; color:var(--craie-400)}
+  .res-meta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px;
+    font-size:12.5px; color:var(--craie-400)}
+  .res-meta svg{flex-shrink:0; color:var(--craie-500)}
+  .res-meta .paire{display:inline-flex; align-items:center; gap:6px}
+  .res-ouvert{color:var(--vert); font-weight:700}
+  .res-ouvert::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--vert);
+    box-shadow:0 0 8px 1px rgba(63,191,135,.7)}
+  .res-adresse{display:flex; align-items:flex-start; gap:7px;
+    font-size:13px; line-height:1.5; color:var(--craie-400)}
+  .res-adresse svg{flex-shrink:0; margin-top:2px; color:var(--craie-500)}
+  .res-km{color:var(--craie-500); white-space:nowrap}
+  .res-mot{max-width:74ch; font-size:13.5px; line-height:1.6; color:var(--craie-200)}
+  .res-bas{margin-top:2px; display:flex; flex-wrap:wrap; align-items:center;
+    justify-content:space-between; gap:10px 16px; font-size:12.5px; color:var(--craie-400)}
+  .res-bas .paire{display:inline-flex; align-items:center; gap:6px}
+  .res-essai{min-height:40px; padding:10px 18px; font-size:13.5px; border-radius:999px}
+
+  .res-etiq{position:absolute; top:9px; right:9px; z-index:2; padding:4px 9px; border-radius:999px;
+    font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+    background:rgba(224,0,22,.9); color:#fff}
+  @media (max-width:760px){
+    .res{grid-template-columns:104px minmax(0,1fr)}
+    .res-init{font-size:26px}
+    .res-corps{padding:13px 14px}
+    .res-nom{font-size:15px}
+    .res-bas{justify-content:flex-start}
+    .res-essai{flex:1 1 100%}
+  }
+  @media (max-width:440px){
+    .res{grid-template-columns:1fr}
+    .res-vignette{aspect-ratio:16/7; border-right:0; border-bottom:1px solid var(--encre-800)}
+  }
+
+  /* rien trouvé */
+  .vide{padding:clamp(34px,5vw,56px) clamp(22px,3vw,36px); text-align:center;
+    border:1px dashed var(--encre-700); border-radius:var(--r-l); background:var(--encre-900)}
+  .vide h2{font-size:clamp(20px,2.4vw,26px); line-height:1.1; color:var(--craie-100)}
+  .vide p{margin-top:12px; margin-inline:auto; max-width:44ch; font-size:14.5px; line-height:1.6;
+    color:var(--craie-400)}
+  .vide-villes{margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:9px}
+
+  /* ---------- le bouton qui deplie la carte ---------- */
+  .btn-carte{display:inline-flex; align-items:center; gap:9px; min-height:42px;
+    margin-bottom:18px; padding:10px 18px; border:1px solid var(--encre-700);
+    border-radius:999px; background:var(--encre-900);
+    font-family:Manrope,system-ui,sans-serif; font-size:13.5px; font-weight:800;
+    color:var(--craie-100); cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease}
+  .btn-carte:hover{border-color:rgba(250,1,23,.55); background:rgba(224,0,22,.10)}
+  .btn-carte svg{color:var(--rouge-300)}
+  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(224,0,22,.16)}
+
+  /* ---------- carte ---------- */
+  .carte-zone{padding-block:clamp(18px,2.4vw,26px); background:var(--encre-950);
+    border-bottom:1px solid var(--encre-800)}
+  .carte-boite{position:relative; height:min(66svh,560px); overflow:hidden;
+    border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900)}
+  #plan{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
+  #plan.tire{cursor:grabbing}
+  .carte-haut{position:absolute; z-index:2; top:12px; left:12px; right:12px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    pointer-events:none}
+  .carte-etiq{padding:7px 13px; border-radius:999px; border:1px solid var(--encre-700);
+    background:rgba(10,10,11,.82); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--craie-200)}
+  .carte-nord{display:grid; place-items:center; width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--encre-700); background:rgba(10,10,11,.82);
+    font-size:11px; font-weight:800; color:var(--craie-400)}
+  .carte-bas{position:absolute; z-index:2; left:12px; bottom:12px; right:12px;
+    display:flex; align-items:center; gap:12px; pointer-events:none}
+  .echelle{display:inline-flex; align-items:center; gap:8px; padding:5px 10px; border-radius:6px;
+    background:rgba(10,10,11,.7); font-size:11px; font-weight:700; color:var(--craie-400);
+    font-variant-numeric:tabular-nums}
+  .echelle i{display:block; height:7px; width:60px; border:1px solid var(--craie-500);
+    border-top:0}
+  .carte-zoom{position:absolute; z-index:3; right:12px; bottom:12px;
+    display:flex; flex-direction:column; align-items:flex-end; gap:6px}
+  .carte-zoom button{display:grid; place-items:center; width:34px; height:34px; padding:0;
+    border:1px solid var(--encre-700); border-radius:8px; background:rgba(10,10,11,.88);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    font-family:Manrope,system-ui,sans-serif; font-size:17px; font-weight:800;
+    color:var(--craie-200); cursor:pointer;
+    transition:border-color .15s ease, color .15s ease}
+  .carte-zoom button:hover{border-color:rgba(250,1,23,.55); color:var(--craie-100)}
+  .carte-zoom .z-large{width:auto; height:32px; padding:0 13px; font-size:12px; font-weight:800}
+
+  /* ---------- pagination ---------- */
+  .pagination{margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+  .pg{display:grid; place-items:center; min-width:42px; min-height:42px; padding:0 12px;
+    border:1px solid var(--encre-700); border-radius:10px; background:var(--encre-900);
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
+    color:var(--craie-200); cursor:pointer; font-variant-numeric:tabular-nums;
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .pg:hover:not(:disabled){border-color:rgba(250,1,23,.55); color:var(--craie-100)}
+  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(224,0,22,.18);
+    color:var(--craie-100)}
+  .pg:disabled{opacity:.35; cursor:default}
+  .pg-fl{font-size:18px; line-height:1}
+
+  /* ---------- le texte de fond, sous la liste ----------
+     Il est sous les salles, jamais avant : on montre le stock d'abord. */
+  .fond-seo{border-top:1px solid var(--encre-800); background:var(--encre-900);
+    padding-block:clamp(38px,5vw,60px)}
+  .seo-titre{font-size:clamp(21px,2.6vw,30px); line-height:1.05; color:var(--craie-100)}
+  .seo-texte{margin-top:16px; max-width:76ch; font-size:14.5px; line-height:1.7;
+    color:var(--craie-400)}
+  .seo-texte b{color:var(--craie-100); font-weight:800}
+  .seo-texte a{color:var(--rouge-300)}
+  .seo-sous{margin-top:34px; font-size:11.5px; font-weight:800; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--craie-500)}
+  .seo-liens{margin-top:14px; display:flex; flex-wrap:wrap; gap:9px}
+
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+
+  /* la barre collante ne doit pas recouvrir la carte qu'on vient de sélectionner
+     depuis la carte : on réserve sa hauteur au défilement */
+  .res{ scroll-margin-top:112px; }
+
+  .site-header{position:relative; inset:auto; background:var(--encre-950);
+    border-bottom:1px solid var(--encre-800)}
+  .ann-tete{padding-block:clamp(26px,3.4vw,40px) 0}
+  .ann-h1{margin-top:14px; font-size:clamp(25px,3.6vw,42px); line-height:1.03;
+    letter-spacing:.012em; color:var(--craie-100)}
+  .ann-h1 b{color:var(--rouge-500)}
+  .ann-intro{margin-top:16px; max-width:70ch; font-size:15px; line-height:1.7;
+    color:var(--craie-400)}
+  .ann-intro b{color:var(--craie-100); font-weight:800}
+  .ann-actions{margin-top:22px; padding-bottom:26px; display:flex; flex-wrap:wrap; gap:10px}
+  /* le bouton secondaire vit dans la bande club de l'accueil, qu'on n'extrait pas */
+  .btn-ligne{background:transparent; color:var(--craie-100);
+    border:1px solid var(--encre-600); box-shadow:none}
+  .btn-ligne:hover{border-color:var(--craie-400); color:var(--craie-100); background:transparent}
+  .fond-seo .seo-sous:first-of-type{margin-top:0}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<path id="fs-mono-f" fill-rule="evenodd" d="M297.91 9.48L292.8 16.22L201.31 294.45L201.06 298.42L297.59 218.95L317.07 155.67L362 155.51L405.5 113C405.42 112.42 405.08 110.08 405 109.5L331.39 109.49L344.8 62.69L495.57 62.41L552.73 9.53L297.91 9.48Z"/>
+<path id="fs-mono-s" fill-rule="evenodd" d="M649 -0.02L560.42 40.44L579.8 46C579.73 46.5 579.47 48.5 579.41 49L512.33 109.58L456.53 109.7L385.36 186.83L387.67 195.99L395.59 207.49L419.41 220.65L543.82 221.56L551.14 226.29L552.19 235.51L549.63 244.39L543.15 251.2L535.87 253.59L350.18 253.62L292.16 297.77L543.26 297.75L566.77 291.35L585.14 279.41L601.02 259.61L607.74 238.79L607.78 213.75L597.67 194.54L581.91 183.3L560.48 177.57L452 177.31C451.33 176.92 448.64 175.38 447.97 175L446.32 169.13L448.08 160.64L457.88 153.52L525.78 153.46L614.83 67.44L628.83 83.21L651.1 5L651.55 0C651.12 -0 649.42 -0.02 649 -0.02Z"/>
+<path id="fs-mot-fight" fill-rule="evenodd" d="M15.28 372.2L-0.5 447C-0.25 447.21 0.75 448.05 1 448.26L20.73 448.02L26.64 420.92L72.59 420.7L75.54 408C75.45 407.17 75.09 403.87 75 403.04L30.51 402.81L32.92 390.93L87.99 390.69L91.45 377C91.38 376.2 91.08 372.99 91 372.18L15.28 372.2ZM103.07 372.09L87.85 442L87.49 448.33L106 448.32C106.46 448.1 108.29 447.22 108.74 447L124.57 372.32L103.07 372.09ZM156.31 372.24L146.14 375.4L138.34 380.61L129.98 393.1L123.58 424.9L124.82 433.81L127.95 440.37L133.84 445.63L143.37 448.38L199.46 448.37L204.57 446.06L207.31 438L213.49 407.56L213.45 402.81L169.57 403.08L165.81 419.53L189.76 419.81L187.73 429.3L151.65 429.29L146.26 425.3L146.76 416L150.6 398.53L155.63 392.43L162.7 390.88L213 390.56C213.54 390.13 215.71 388.43 216.25 388L219.57 372.13L156.31 372.24ZM233.24 372.17L217.08 448.28L238.69 448.31L245.18 418.8L284.69 418.83L279 447.09C279.33 447.29 280.67 448.12 281 448.33L300.39 448.12L316.33 372.24L294.87 372.25L288.63 400.17L254 400.22C253.2 400.02 249.98 399.2 249.18 399L254.69 372.34L233.24 372.17ZM326.57 372.15L324.03 377.09L321.51 390.73L350 390.7C350.26 390.92 351.29 391.78 351.55 392L339.78 447C340.15 447.23 341.63 448.14 342 448.36L360 448.06C360.33 447.53 361.67 445.42 362 444.89L373.4 391.07L403.62 390.65L407.76 372.2L326.57 372.15Z"/>
+<path id="fs-mot-scale" fill-rule="evenodd" d="M446.1 371.81L431.93 377.91L425.48 386.15L421.83 400.65L424.05 409.8L432.59 417.57L479 418.43C479.37 418.69 480.86 419.74 481.23 420L481.7 424.79L478.83 429.38L422.14 429.49L418.02 433.89L415.33 447.85L479.91 447.83L488.91 445.13L497.69 436.94L503.21 424.18L503.35 415.45L500.72 408.76L490.68 401.2L447.45 401.08L444 397.27C444 396.73 443.31 395 443.97 394C444.64 393 447.33 391.73 448 391.28L501.5 391C501.75 390.9 502.75 390.51 503 390.41L505.28 381L505.51 371.86L446.1 371.81ZM542.96 371.82L527.63 377.6L518.59 388.4L513.68 400L509.92 420L509.63 430.68L511.84 437.08L516.16 443.17L524.04 447.8L586.72 447.78L589.93 429.47L536.02 429.34L531.43 423.66L535.83 399.63L542.26 391.4L598.21 391.06L601.45 375.18L601.41 371.86L542.96 371.82ZM648.23 371.88L641.9 378L593.37 446C593.47 446.27 593.89 447.36 594 447.63L616.16 447.63L622.54 437.37L624.22 436.17L654.29 392.73L663.12 419.24L640.67 419.6L635.09 429L628.34 435.69L667 435.91C667.4 436.26 668.99 437.65 669.39 438L672.19 447.82L695.35 447.61L670.61 374C670.01 373.64 667.6 372.21 667 371.85L648.23 371.88ZM719.94 371.82L715.78 375.93L715.22 385C714.98 385.17 714.02 385.83 713.78 386L701.71 447.78L773.11 447.84L777.44 429.51L726.86 429.37L737.62 374C737.52 373.66 737.1 372.32 737 371.98L719.94 371.82ZM801 371.96C800.48 372.3 798.38 373.66 797.85 374L795.79 380L782.32 447.82L856.84 447.8L859.39 437L859.58 429.42L810 429.4C809.63 429.34 808.12 429.57 807.79 429C807.47 428.43 807.99 426.5 808.03 426L810 417.86L856.25 417.68L859.42 401.57L813.64 401.49L814 395.27C814.33 394.59 815.67 391.89 816 391.21L867.37 391.06L871.74 371.88L801 371.96Z"/>
+</defs></svg>
+
+<a class="skip" href="#resultats">Aller aux salles</a>
+<header class="site-header">
+  <div class="wrap header-in">
+    <a class="brand" href="index.html" aria-label="FightScale, accueil">
+      <svg viewBox="200 0 452 300" width="48" height="32" role="img" aria-label="FightScale">
+        <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+      </svg>
+      <svg class="brand-mot" viewBox="0 372 872 77" width="150" height="13.3" aria-hidden="true">
+        <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+      </svg>
+    </a>
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a class="nav-link" href="recherche.html">Salles</a>
+      <a class="nav-link" href="index.html#disciplines">Disciplines</a>
+      <a class="nav-link" href="index.html#villes">Villes</a>
+      <a class="nav-link" href="index.html#clubs">Acquisition</a>
+      <a class="nav-link" href="index.html#connexion">Connexion</a>
+      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+    </nav>
+  </div>
+</header>
+<main id="contenu">
+  <div class="filtres-bloc">
+    <div class="wrap ann-tete">
+      <nav class="fil" aria-label="Fil d'Ariane"><a href="index.html">Accueil</a><i aria-hidden="true">›</i><a href="recherche.html">Salles de sports de combat</a><i aria-hidden="true">›</i><span aria-current="page">Kickboxing</span></nav>
+      <h1 class="ann-h1 display">Salles de <b>kickboxing</b> en France</h1>
+      <p class="ann-intro">FightScale référence <b>6 salles</b> où pratiquer le kickboxing en France, dans 4 villes. Chaque fiche donne les horaires, le planning de la semaine, l’adresse et le contact direct de la salle.</p>
+      <div class="ann-actions"><a class="btn btn-rouge" href="recherche.html?discipline=Kickboxing">Voir sur la carte</a><a class="btn btn-ligne" href="clubs.html">Référencer ma salle</a></div>
+    </div>
+  </div>
+
+  <section class="colonne-liste" id="resultats" aria-label="Salles">
+    <div class="wrap"><div class="liste"><article class="res"><div class="res-vignette"><span class="res-num">1</span><span class="res-init" aria-hidden="true">ABT</span></div><div class="res-corps"><div class="res-tete"><h2 class="res-nom"><a href="salle.html?s=aix-boxing-team">Aix Boxing Team</a></h2><span class="note"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>4,5 <small>(37 avis)</small></span></div><div class="res-chips"><span class="mini-chip">Boxe anglaise</span><span class="mini-chip">Kickboxing</span></div><p class="res-adresse"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>33 avenue des Belges, 13100 Aix-en-Provence</p><p class="res-mot">Aix Boxing Team accueille les pratiquants de Aix-en-Provence depuis 2013. La salle compte aujourd’hui environ 95 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui…</p><div class="res-bas"><span class="paire res-ouvert">Ouvert aujourd'hui · 10h00 – 21h00</span><a class="btn btn-rouge res-essai" href="salle.html?s=aix-boxing-team#contact">Séance d'essai</a></div></div></article><article class="res"><div class="res-vignette"><span class="res-num">2</span><span class="res-init" aria-hidden="true">MCA</span></div><div class="res-corps"><div class="res-tete"><h2 class="res-nom"><a href="salle.html?s=marseille-combat-academy">Marseille Combat Academy</a></h2><span class="note"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>4,7 <small>(98 avis)</small></span></div><div class="res-chips"><span class="mini-chip">Boxe anglaise</span><span class="mini-chip">Kickboxing</span><span class="mini-chip">Muay Thaï</span></div><p class="res-adresse"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>62 boulevard National, 13003 Marseille</p><p class="res-mot">Marseille Combat Academy accueille les pratiquants de Marseille depuis 2016. La salle compte aujourd’hui environ 180 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui…</p><div class="res-bas"><span class="paire res-ouvert">Ouvert aujourd'hui · 09h00 – 21h00</span><a class="btn btn-rouge res-essai" href="salle.html?s=marseille-combat-academy#contact">Séance d'essai</a></div></div></article><article class="res"><div class="res-vignette"><span class="res-num">3</span><span class="res-init" aria-hidden="true">TPM</span></div><div class="res-corps"><div class="res-tete"><h2 class="res-nom"><a href="salle.html?s=team-phoenix-muay-thai">Team Phoenix Muay Thaï</a></h2><span class="note"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>4,7 <small>(67 avis)</small></span></div><div class="res-chips"><span class="mini-chip">Muay Thaï</span><span class="mini-chip">Kickboxing</span></div><p class="res-adresse"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>27 boulevard Chave, 13005 Marseille</p><p class="res-mot">Team Phoenix Muay Thaï accueille les pratiquants de Marseille depuis 2018. La salle compte aujourd’hui environ 150 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui…</p><div class="res-bas"><span class="paire res-ouvert">Ouvert aujourd'hui · 09h00 – 22h00</span><a class="btn btn-rouge res-essai" href="salle.html?s=team-phoenix-muay-thai#contact">Séance d'essai</a></div></div></article><article class="res"><div class="res-vignette"><span class="res-num">4</span><span class="res-init" aria-hidden="true">TJM</span></div><div class="res-corps"><div class="res-tete"><h2 class="res-nom"><a href="salle.html?s=the-jungle-mma">The Jungle MMA</a></h2><span class="note"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>4,9 <small>(112 avis)</small></span></div><div class="res-chips"><span class="mini-chip">MMA</span><span class="mini-chip">Muay Thaï</span><span class="mini-chip">Kickboxing</span></div><p class="res-adresse"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>108 avenue de Mazargues, 13008 Marseille</p><p class="res-mot">The Jungle MMA accueille les pratiquants de Marseille depuis 2014. La salle compte aujourd’hui environ 260 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa…</p><div class="res-bas"><span class="paire res-ouvert">Ouvert aujourd'hui · 08h00 – 22h00</span><a class="btn btn-rouge res-essai" href="salle.html?s=the-jungle-mma#contact">Séance d'essai</a></div></div></article><article class="res"><div class="res-vignette"><span class="res-num">5</span><span class="res-init" aria-hidden="true">BSR</span></div><div class="res-corps"><div class="res-tete"><h2 class="res-nom"><a href="salle.html?s=boxing-squad-republique">Boxing Squad République</a></h2><span class="note"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>4,7 <small>(141 avis)</small></span></div><div class="res-chips"><span class="mini-chip">Boxe anglaise</span><span class="mini-chip">Kickboxing</span></div><p class="res-adresse"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>11 rue du Faubourg-du-Temple, 75011 Paris</p><p class="res-mot">Boxing Squad République accueille les pratiquants de Paris depuis 2015. La salle compte aujourd’hui environ 300 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui…</p><div class="res-bas"><span class="paire res-ouvert">Ouvert aujourd'hui · 08h00 – 22h00</span><a class="btn btn-rouge res-essai" href="salle.html?s=boxing-squad-republique#contact">Séance d'essai</a></div></div></article><article class="res"><div class="res-vignette"><span class="res-num">6</span><span class="res-init" aria-hidden="true">TFC</span></div><div class="res-corps"><div class="res-tete"><h2 class="res-nom"><a href="salle.html?s=toulouse-fight-club">Toulouse Fight Club</a></h2><span class="note"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>4,7 <small>(71 avis)</small></span></div><div class="res-chips"><span class="mini-chip">Boxe anglaise</span><span class="mini-chip">Kickboxing</span></div><p class="res-adresse"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>40 allée Jean-Jaurès, 31000 Toulouse</p><p class="res-mot">Toulouse Fight Club accueille les pratiquants de Toulouse depuis 2016. La salle compte aujourd’hui environ 160 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui…</p><div class="res-bas"><span class="paire res-ouvert">Ouvert aujourd'hui · 10h00 – 21h00</span><a class="btn btn-rouge res-essai" href="salle.html?s=toulouse-fight-club#contact">Séance d'essai</a></div></div></article></div></div>
+  </section>
+
+  <section class="fond-seo">
+    <div class="wrap">
+      <h2 class="seo-sous">Kickboxing par ville</h2>
+      <div class="seo-liens"><a class="puce" href="recherche.html?ville=Aix-en-Provence&discipline=Kickboxing">Kickboxing à Aix-en-Provence</a><a class="puce" href="recherche.html?ville=Marseille&discipline=Kickboxing">Kickboxing à Marseille</a><a class="puce" href="recherche.html?ville=Paris&discipline=Kickboxing">Kickboxing à Paris</a><a class="puce" href="recherche.html?ville=Toulouse&discipline=Kickboxing">Kickboxing à Toulouse</a></div>
+      <h2 class="seo-sous">Les autres disciplines</h2>
+      <div class="seo-liens"><a class="puce" href="mma.html">MMA</a><a class="puce" href="boxe-anglaise.html">Boxe anglaise</a><a class="puce" href="muay-thai.html">Muay Thaï</a><a class="puce" href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a><a class="puce" href="grappling.html">Grappling</a><a class="puce" href="karate.html">Karaté</a><a class="puce" href="judo.html">Judo</a></div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-haut">
+    <div class="footer-marque">
+      <a class="brand" href="index.html" aria-label="FightScale, accueil">
+        <svg viewBox="200 0 452 300" width="45" height="30" role="img" aria-label="FightScale">
+          <use href="#fs-mono-f" fill="#FFFFFF"/><use href="#fs-mono-s" fill="#FA0117"/>
+        </svg>
+        <svg viewBox="0 372 872 77" width="141" height="12.5" aria-hidden="true">
+          <use href="#fs-mot-fight" fill="#FFFFFF"/><use href="#fs-mot-scale" fill="#FA0117"/>
+        </svg>
+      </a>
+      <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
+        les clubs qui veulent remplir leurs séances d'essai.</p>
+      <div class="reseaux">
+        <a href="index.html#instagram" aria-label="FightScale sur Instagram">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="index.html#tiktok" aria-label="FightScale sur TikTok">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.2 4v10.4a3.6 3.6 0 1 1-3.6-3.6"/><path d="M14.2 4.4c.5 2.4 2.2 4 4.6 4.2"/></svg>
+        </a>
+        <a href="index.html#facebook" aria-label="FightScale sur Facebook">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.8 21v-7.4h2.6l.4-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.5V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H9.2v3h2.6V21"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <nav class="footer-col" aria-labelledby="f-prat">
+      <h2 id="f-prat">Pratiquants</h2>
+      <ul>
+        <li><a href="index.html#recherche">Rechercher une salle</a></li>
+        <li><a href="index.html#disciplines">Toutes les disciplines</a></li>
+        <li><a href="index.html#villes">Salles par ville</a></li>
+        <li><a href="index.html#seance-essai">Réserver une séance d'essai</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-clubs">
+      <h2 id="f-clubs">Clubs</h2>
+      <ul>
+        <li><a href="clubs.html">Référencer ma salle</a></li>
+        <li><a href="index.html#pro">FightScale Pro</a></li>
+        <li><a href="index.html#acquisition">Acquisition de leads</a></li>
+        <li><a href="index.html#connexion">Espace club</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-fs">
+      <h2 id="f-fs">FightScale</h2>
+      <ul>
+        <li><a href="index.html#a-propos">À propos</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="index.html#aide">Aide</a></li>
+        <li><a href="index.html#presse">Presse</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="wrap footer-bas">
+    <p>© 2026 FightScale. Tous droits réservés.</p>
+    <nav class="footer-legal" aria-label="Informations légales">
+      <a href="index.html#mentions">Mentions légales</a>
+      <a href="index.html#cgu">CGU</a>
+      <a href="index.html#cgv">CGV</a>
+      <a href="index.html#confidentialite">Confidentialité</a>
+      <a href="index.html#cookies">Cookies</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

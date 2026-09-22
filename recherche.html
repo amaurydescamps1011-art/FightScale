@@ -166,18 +166,24 @@
     background:rgba(224,0,22,.16); box-shadow:0 0 22px -6px rgba(250,1,23,.75)}
   .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--encre-800)}
 
-  /* ---------- deux colonnes ---------- */
-  .split{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);
-    gap:0; align-items:start}
-  .colonne-liste{padding:clamp(20px,2.4vw,28px) clamp(16px,2.4vw,28px)
-    clamp(40px,5vw,64px) var(--gutter)}
-  .colonne-carte{position:sticky; top:calc(74px + env(safe-area-inset-top,0px));
-    height:calc(100svh - 74px - env(safe-area-inset-top,0px));
-    padding:clamp(20px,2.4vw,28px) var(--gutter) clamp(20px,2.4vw,28px) clamp(16px,2.4vw,28px)}
+  /* ---------- une seule colonne ----------
+     Modele annuaire : la liste occupe la page, la carte se deplie au-dessus.
+     On borne la colonne, sinon les lignes de texte deviennent illisibles. */
+  .colonne-liste{padding-block:clamp(22px,2.6vw,32px) clamp(30px,4vw,44px)}
+  .colonne-liste .wrap, .fond-seo .wrap, .filtres-bloc .wrap, .carte-zone .wrap{max-width:1040px}
+
+  /* ---------- fil d'Ariane ---------- */
+  .fil{display:flex; flex-wrap:wrap; align-items:center; gap:7px; padding-top:18px;
+    font-size:12.5px; font-weight:700; color:var(--craie-500)}
+  .fil a{color:var(--craie-400); text-decoration:none}
+  .fil a:hover{color:var(--rouge-300)}
+  .fil i{font-style:normal; color:var(--encre-600)}
+  .fil [aria-current]{color:var(--craie-200)}
 
   /* ---------- liste de résultats ---------- */
   .liste{display:flex; flex-direction:column; gap:14px}
-  .res{position:relative; display:grid; grid-template-columns:132px minmax(0,1fr); gap:0;
+  .res-corps{gap:9px}
+  .res{position:relative; display:grid; grid-template-columns:186px minmax(0,1fr); gap:0;
     border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900);
     overflow:hidden; transition:border-color .16s ease, box-shadow .16s ease}
   .res:hover, .res.actif{border-color:rgba(250,1,23,.55);
@@ -194,14 +200,13 @@
     font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
     box-shadow:0 0 18px -2px rgba(250,1,23,.9)}
   .res-init{position:relative; z-index:1; font-family:Anton,"Arial Narrow",sans-serif;
-    font-size:34px; line-height:1; letter-spacing:.04em; color:rgba(245,243,239,.13);
+    font-size:42px; line-height:1; letter-spacing:.04em; color:rgba(245,243,239,.13);
     text-shadow:0 0 26px rgba(250,1,23,.28)}
   .res-corps{display:flex; flex-direction:column; gap:9px; padding:15px 16px}
   .res-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
   .res-nom{font-size:16px; font-weight:800; line-height:1.25; letter-spacing:-.01em;
     color:var(--craie-100)}
   .res-nom a{color:inherit; text-decoration:none}
-  .res-nom a::after{content:""; position:absolute; inset:0}
   .res-chips{display:flex; flex-wrap:wrap; gap:6px}
   .note{display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
     font-size:13px; font-weight:800; color:var(--craie-100); font-variant-numeric:tabular-nums}
@@ -216,14 +221,30 @@
   .res-ouvert{color:var(--vert); font-weight:700}
   .res-ouvert::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--vert);
     box-shadow:0 0 8px 1px rgba(63,191,135,.7)}
+  .res-adresse{display:flex; align-items:flex-start; gap:7px;
+    font-size:13px; line-height:1.5; color:var(--craie-400)}
+  .res-adresse svg{flex-shrink:0; margin-top:2px; color:var(--craie-500)}
+  .res-km{color:var(--craie-500); white-space:nowrap}
+  .res-mot{max-width:74ch; font-size:13.5px; line-height:1.6; color:var(--craie-200)}
+  .res-bas{margin-top:2px; display:flex; flex-wrap:wrap; align-items:center;
+    justify-content:space-between; gap:10px 16px; font-size:12.5px; color:var(--craie-400)}
+  .res-bas .paire{display:inline-flex; align-items:center; gap:6px}
+  .res-essai{min-height:40px; padding:10px 18px; font-size:13.5px; border-radius:999px}
+
   .res-etiq{position:absolute; top:9px; right:9px; z-index:2; padding:4px 9px; border-radius:999px;
     font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
     background:rgba(224,0,22,.9); color:#fff}
-  @media (max-width:520px){
-    .res{grid-template-columns:96px minmax(0,1fr)}
-    .res-init{font-size:24px}
-    .res-corps{padding:13px 13px}
+  @media (max-width:760px){
+    .res{grid-template-columns:104px minmax(0,1fr)}
+    .res-init{font-size:26px}
+    .res-corps{padding:13px 14px}
     .res-nom{font-size:15px}
+    .res-bas{justify-content:flex-start}
+    .res-essai{flex:1 1 100%}
+  }
+  @media (max-width:440px){
+    .res{grid-template-columns:1fr}
+    .res-vignette{aspect-ratio:16/7; border-right:0; border-bottom:1px solid var(--encre-800)}
   }
 
   /* rien trouvé */
@@ -234,8 +255,21 @@
     color:var(--craie-400)}
   .vide-villes{margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:9px}
 
+  /* ---------- le bouton qui deplie la carte ---------- */
+  .btn-carte{display:inline-flex; align-items:center; gap:9px; min-height:42px;
+    margin-bottom:18px; padding:10px 18px; border:1px solid var(--encre-700);
+    border-radius:999px; background:var(--encre-900);
+    font-family:Manrope,system-ui,sans-serif; font-size:13.5px; font-weight:800;
+    color:var(--craie-100); cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease}
+  .btn-carte:hover{border-color:rgba(250,1,23,.55); background:rgba(224,0,22,.10)}
+  .btn-carte svg{color:var(--rouge-300)}
+  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(224,0,22,.16)}
+
   /* ---------- carte ---------- */
-  .carte-boite{position:relative; height:100%; min-height:380px; overflow:hidden;
+  .carte-zone{padding-block:clamp(18px,2.4vw,26px); background:var(--encre-950);
+    border-bottom:1px solid var(--encre-800)}
+  .carte-boite{position:relative; height:min(66svh,560px); overflow:hidden;
     border:1px solid var(--encre-700); border-radius:var(--r-l); background:var(--encre-900)}
   #plan{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
   #plan.tire{cursor:grabbing}
@@ -267,39 +301,33 @@
   .carte-zoom button:hover{border-color:rgba(250,1,23,.55); color:var(--craie-100)}
   .carte-zoom .z-large{width:auto; height:32px; padding:0 13px; font-size:12px; font-weight:800}
 
-  /* ---------- bascule mobile ---------- */
-  .bascule{display:none}
-  @media (max-width:980px){
-    .split{grid-template-columns:1fr}
-    .colonne-liste{padding-inline:var(--gutter); padding-bottom:96px}
-    .colonne-carte{position:static; height:auto; padding:0 var(--gutter) 96px}
-    .carte-boite{height:min(62svh,520px)}
-    body.vue-carte .colonne-liste{display:none}
-    body:not(.vue-carte) .colonne-carte{display:none}
-    .bascule{display:flex; position:fixed; z-index:50; left:50%; translate:-50% 0;
-      bottom:calc(18px + env(safe-area-inset-bottom,0px));
-      padding:5px; gap:4px; border-radius:999px; border:1px solid var(--encre-700);
-      background:rgba(10,10,11,.92); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
-      box-shadow:0 20px 44px -20px rgba(0,0,0,.95)}
-    .bascule button{display:inline-flex; align-items:center; gap:8px; min-height:42px;
-      padding:10px 20px; border:0; border-radius:999px; background:transparent;
-      font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
-      color:var(--craie-400); cursor:pointer; transition:color .15s ease, background-color .15s ease}
-    .bascule button[aria-pressed="true"]{background:var(--rouge-600); color:#fff}
-    /* on remonte les commandes du plan pour qu'elles ne passent pas sous la bascule */
-    .carte-zoom{bottom:58px}
-    .carte-bas{bottom:62px}
-  }
+  /* ---------- pagination ---------- */
+  .pagination{margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+  .pg{display:grid; place-items:center; min-width:42px; min-height:42px; padding:0 12px;
+    border:1px solid var(--encre-700); border-radius:10px; background:var(--encre-900);
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
+    color:var(--craie-200); cursor:pointer; font-variant-numeric:tabular-nums;
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .pg:hover:not(:disabled){border-color:rgba(250,1,23,.55); color:var(--craie-100)}
+  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(224,0,22,.18);
+    color:var(--craie-100)}
+  .pg:disabled{opacity:.35; cursor:default}
+  .pg-fl{font-size:18px; line-height:1}
+
+  /* ---------- le texte de fond, sous la liste ----------
+     Il est sous les salles, jamais avant : on montre le stock d'abord. */
+  .fond-seo{border-top:1px solid var(--encre-800); background:var(--encre-900);
+    padding-block:clamp(38px,5vw,60px)}
+  .seo-titre{font-size:clamp(21px,2.6vw,30px); line-height:1.05; color:var(--craie-100)}
+  .seo-texte{margin-top:16px; max-width:76ch; font-size:14.5px; line-height:1.7;
+    color:var(--craie-400)}
+  .seo-texte b{color:var(--craie-100); font-weight:800}
+  .seo-texte a{color:var(--rouge-300)}
+  .seo-sous{margin-top:34px; font-size:11.5px; font-weight:800; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--craie-500)}
+  .seo-liens{margin-top:14px; display:flex; flex-wrap:wrap; gap:9px}
 
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
-
-  /* repère « Voir la fiche » : la carte entière est déjà le lien, c'est donc un
-     simple indice visuel et non un second lien à tabuler */
-  .res-fiche{ display:inline-flex; gap:6px; align-items:center; margin-top:10px;
-              font-size:13.5px; font-weight:800; color:var(--rouge-300); }
-  .res:hover .res-fiche{ text-decoration:underline; }
-  .res-fiche svg{ transition:transform .15s; }
-  .res:hover .res-fiche svg{ transform:translateX(3px); }
 
   /* la barre collante ne doit pas recouvrir la carte qu'on vient de sélectionner
      depuis la carte : on réserve sa hauteur au défilement */
@@ -357,17 +385,17 @@
 
   <div class="filtres-bloc">
     <div class="wrap">
+      <nav class="fil" id="fil" aria-label="Fil d'Ariane"></nav>
       <h1 class="compte" id="compte">Chargement des salles…</h1>
       <div class="rangee-filtres" id="filtres" role="group" aria-label="Filtrer les résultats"></div>
+      <button type="button" class="btn-carte" id="b-carte" aria-expanded="false" aria-controls="carte-zone">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg><span id="b-carte-txt">Afficher sur la carte</span>
+      </button>
     </div>
   </div>
 
-  <div class="split">
-    <section class="colonne-liste" id="resultats" aria-label="Salles trouvées">
-      <div class="liste" id="liste"></div>
-    </section>
-
-    <aside class="colonne-carte" aria-label="Carte des salles">
+  <section class="carte-zone" id="carte-zone" aria-label="Carte des salles" hidden>
+    <div class="wrap">
       <div class="carte-boite">
         <canvas id="plan" aria-label="Plan de proximité des salles autour du centre-ville"></canvas>
         <div class="carte-haut">
@@ -383,15 +411,30 @@
           <span class="echelle"><i id="echelle-barre"></i><span id="echelle-txt">1 km</span></span>
         </div>
       </div>
-    </aside>
-  </div>
+    </div>
+  </section>
+
+  <section class="colonne-liste" id="resultats" aria-label="Salles trouvées">
+    <div class="wrap">
+      <div class="liste" id="liste"></div>
+      <nav class="pagination" id="pagination" aria-label="Pages de résultats"></nav>
+    </div>
+  </section>
+
+  <section class="fond-seo" id="fond-seo" aria-labelledby="seo-titre">
+    <div class="wrap">
+      <h2 class="seo-titre display" id="seo-titre"></h2>
+      <div class="seo-texte" id="seo-texte"></div>
+
+      <h2 class="seo-sous" id="seo-disc-titre">Par discipline</h2>
+      <div class="seo-liens" id="seo-disc"></div>
+
+      <h2 class="seo-sous">Salles de sports de combat dans d'autres villes</h2>
+      <div class="seo-liens" id="seo-villes"></div>
+    </div>
+  </section>
 
 </main>
-
-<div class="bascule" role="group" aria-label="Affichage">
-  <button type="button" id="b-liste" aria-pressed="true">Liste</button>
-  <button type="button" id="b-carte" aria-pressed="false">Carte</button>
-</div>
 
 <footer class="site-footer">
   <div class="wrap footer-haut">
@@ -541,6 +584,9 @@ var SALLES = [
   ["Bordeaux Combat", "BC", "Bordeaux", 44.842, -0.574, ["MMA", "Jiu-jitsu brésilien"], "4,8", 89, true, "09h00 – 22h00", true, {"slug": "bordeaux-combat", "adresse": "5 cours de la Marne", "cp": "33800", "tel": "05 28 74 36 88", "mail": "contact@bordeaux-combat.fr", "site": "bordeauxcombat.fr", "insta": "bordeaux.combat", "fb": "BordeauxCombat", "depuis": 2011, "adherents": 205, "presentation": ["Bordeaux Combat accueille les pratiquants de Bordeaux depuis 2011. La salle compte aujourd’hui environ 205 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est le MMA, et la salle enseigne aussi le jiu-jitsu brésilien. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Mardi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Jeudi", "cours": [{"de": "12h15", "a": "13h30", "quoi": "JJB gi", "niveau": "Tous niveaux"}, {"de": "19h30", "a": "21h00", "quoi": "JJB no-gi", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "19h00", "a": "20h30", "quoi": "MMA", "niveau": "Tous niveaux"}, {"de": "20h30", "a": "22h00", "quoi": "MMA", "niveau": "Confirmés"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}]}],
   ["Toulouse Fight Club", "TFC", "Toulouse", 43.6, 1.438, ["Boxe anglaise", "Kickboxing"], "4,7", 71, false, "10h00 – 21h00", true, {"slug": "toulouse-fight-club", "adresse": "40 allée Jean-Jaurès", "cp": "31000", "tel": "05 29 77 43 49", "mail": "contact@toulouse-fight-club.fr", "site": "", "insta": "toulousefightclub", "fb": "ToulouseFightClub", "depuis": 2016, "adherents": 160, "presentation": ["Toulouse Fight Club accueille les pratiquants de Toulouse depuis 2016. La salle compte aujourd’hui environ 160 adhérents, du débutant qui n’a jamais mis de gants au compétiteur qui prépare sa saison.", "La discipline principale est la boxe anglaise, et la salle enseigne aussi le kickboxing. Les cours sont séparés par niveau, et les créneaux du midi sont ouverts à tous.", "Premier cours d’essai gratuit : venez avec une tenue de sport, le matériel est prêté sur place."], "planning": [{"jour": "Lundi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Mardi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "19h00", "a": "20h30", "quoi": "Kickboxing", "niveau": "Tous niveaux"}]}, {"jour": "Mercredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Jeudi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Vendredi", "cours": [{"de": "12h30", "a": "13h30", "quoi": "Boxe anglaise", "niveau": "Pause déjeuner"}, {"de": "18h30", "a": "20h00", "quoi": "Boxe anglaise", "niveau": "Tous niveaux"}]}, {"jour": "Samedi", "cours": [{"de": "10h00", "a": "12h00", "quoi": "Sparring encadré", "niveau": "Tous niveaux"}]}, {"jour": "Dimanche", "cours": []}]}]
 ];
+/* le nom de la discipline tel qu'on l'ecrit au fil d'une phrase */
+var NOM_DISC = { "MMA": "MMA", "Boxe anglaise": "boxe anglaise", "Kickboxing": "kickboxing", "Muay Thaï": "Muay Thaï", "Jiu-jitsu brésilien": "jiu-jitsu brésilien", "Grappling": "grappling", "Karaté": "karaté", "Judo": "judo", "Lutte": "lutte", "Self-défense": "self-défense" };
+function nomDiscipline(d){ return NOM_DISC[d] || d; }
 
 /* index par identifiant d'URL, pour que recherche.html et index.html puissent
    pointer vers salle.html?s=<slug> */
@@ -548,6 +594,22 @@ var PAR_SLUG = {};
 SALLES.forEach(function (s){ PAR_SLUG[s[11].slug] = s; });
 function salleParSlug(sl){ return PAR_SLUG[sl] || null; }
 function lienFiche(s){ return 'salle.html?s=' + encodeURIComponent(s[11].slug); }
+
+/* Les pages d'annuaire, une par discipline et une par ville (build_annuaire.py).
+   Le meme calcul d'identifiant des deux cotes, sinon les liens tombent a cote. */
+function ardoise(t){
+  return t.normalize('NFD').replace(/[̀-ͯ]/g, '')
+          .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function pageDiscipline(d){ return ardoise(d) + '.html'; }
+function pageVille(v){ return 'sports-de-combat-' + ardoise(v) + '.html'; }
+
+/* les villes ou il y a au moins une salle, donc celles qui ont une page */
+var VILLES_AVEC_SALLE = (function (){
+  var vu = {}, out = [];
+  SALLES.forEach(function (s){ if (!vu[s[2]]){ vu[s[2]] = 1; out.push(s[2]); } });
+  return out;
+})();
 
 var VILLES_FR = [["Agen",44.2004,0.6333],["Aix-en-Provence",43.52,5.45],["Ajaccio",41.9271,8.7283],["Albi",43.9396,2.1512],["Alençon",48.428,0.0896],["Amiens",49.9004,2.3],["Angers",47.48,-0.53],["Angoulême",45.6432,0.1487],["Annecy",45.9,6.1167],["Antibes",43.5801,7.0997],["Argenteuil",48.9482,2.2413],["Arles",43.7097,4.6374],["Arras",50.2833,2.7833],["Asnières-sur-Seine",48.9173,2.2873],["Aubagne",43.2907,5.5648],["Aulnay-sous-Bois",48.9432,2.4969],["Aurillac",44.9146,2.4406],["Auxerre",47.8004,3.5666],["Avignon",43.9451,4.8374],["Bar-le-Duc",48.7696,5.1748],["Bastia",42.7032,9.45],["Bayeux",49.278,-0.7051],["Bayonne",43.4856,-1.4679],["Beauvais",49.4317,2.0892],["Belfort",47.6432,6.8565],["Berck",50.4145,1.5823],["Bergerac",44.8501,0.4858],["Besançon",47.23,6.03],["Biarritz",43.4733,-1.5616],["Blois",47.5949,1.3194],["Bordeaux",44.852,-0.597],["Boulogne-Billancourt",48.8404,2.2401],["Boulogne-sur-Mer",50.7298,1.6075],["Bourg-en-Bresse",46.202,5.2395],["Bourges",47.0837,2.4],["Brest",48.3904,-4.495],["Brive-la-Gaillarde",45.1581,1.5193],["Béthune",50.5297,2.6423],["Béziers",43.3505,3.21],["Caen",49.1838,-0.35],["Cahors",44.4434,1.4361],["Calais",50.9504,1.8333],["Cambrai",50.1807,3.2458],["Cannes",43.5563,7.0042],["Carcassonne",43.2139,2.3409],["Chalon-sur-Saône",46.7883,4.8529],["Chambéry",45.585,5.904],["Charleville-Mézières",49.7688,4.7251],["Chartres",48.4489,1.5079],["Chaumont",48.1092,5.1337],["Cherbourg-en-Cotentin",49.6408,-1.6103],["Cholet",47.0547,-0.8714],["Châteauroux",46.808,1.7067],["Châtellerault",46.8086,0.5416],["Clermont-Ferrand",45.78,3.08],["Colmar",48.0791,7.3536],["Colombes",48.9237,2.2473],["Compiègne",49.4069,2.8241],["Concarneau",47.8966,-3.9083],["Courbevoie",48.897,2.2511],["Créteil",48.7814,2.4525],["Dieppe",49.9337,1.0833],["Dijon",47.3304,5.03],["Dole",47.0898,5.4955],["Douai",50.375,3.0767],["Dunkerque",51.0311,2.3488],["Fontainebleau",48.4172,2.7072],["Forbach",49.1924,6.8836],["Fréjus",43.4442,6.7406],["Granville",48.8338,-1.5595],["Grenoble",45.1804,5.72],["Haguenau",48.8143,7.8321],["Hyères",43.1213,6.1525],["Istres",43.5487,4.963],["La Roche-sur-Yon",46.6675,-1.4288],["La Rochelle",46.1667,-1.15],["Laon",49.5707,3.6267],["Laval",48.0727,-0.77],["Le Havre",49.505,0.105],["Le Mans",48.0044,0.2026],["Le Puy-en-Velay",45.0347,3.903],["Le Touquet-Paris-Plage",50.5098,1.5895],["Lens",50.4375,2.8195],["Lille",50.6519,3.0781],["Limoges",45.83,1.25],["Lisieux",49.148,0.2377],["Lorient",47.7504,-3.3666],["Lyon",45.772,4.8281],["Mantes-la-Jolie",48.9984,1.6912],["Marseille",43.2919,5.3731],["Martigues",43.375,5.0555],["Meaux",48.9564,2.9032],["Melun",48.5333,2.6666],["Metz",49.1203,6.18],["Mont-de-Marsan",43.8984,-0.4888],["Montargis",47.998,2.7353],["Montauban",44.0193,1.3588],["Montbéliard",47.5122,6.7985],["Montluçon",46.3468,2.595],["Montpellier",43.6104,3.87],["Montreuil",46.3961,-0.8434],["Morlaix",48.5996,-3.8198],["Moulins",48.009,-1.3632],["Mulhouse",47.7504,7.35],["Mâcon",46.3035,4.8241],["Mérignac",44.8309,-0.6786],["Nancy",48.6837,6.2],["Nanterre",48.8974,2.2024],["Nantes",47.2104,-1.59],["Narbonne",43.1777,3.0116],["Nevers",46.9837,3.1667],["Nice",43.717,7.2631],["Niort",46.3257,-0.4449],["Nîmes",43.8304,4.35],["Orléans",47.9004,1.9],["Paris",48.8581,2.353],["Pau",43.3231,-0.3406],["Perpignan",42.7,2.9],["Poitiers",46.582,0.3615],["Pontoise",49.0534,2.0947],["Périgueux",45.192,0.7183],["Quimper",47.9911,-4.087],["Reims",49.2504,4.03],["Rennes",48.1,-1.67],["Roanne",46.0333,4.0667],["Rodez",44.3592,2.5696],["Romans-sur-Isère",45.0525,5.0631],["Roubaix",50.6914,3.1822],["Rouen",49.4304,1.08],["Royan",45.6372,-1.0264],["Rueil-Malmaison",48.8725,2.1795],["Saint-Brieuc",48.51,-2.7625],["Saint-Denis",48.9288,2.3577],["Saint-Louis",47.602,7.5381],["Saint-Lô",49.1095,-1.078],["Saint-Malo",48.6498,-1.9868],["Saint-Nazaire",47.2767,-2.2321],["Saint-Quentin",49.8493,3.2814],["Saint-Étienne",45.4304,4.38],["Saintes",45.7451,-0.6307],["Salon-de-Provence",43.6476,5.1053],["Saumur",47.2687,-0.0693],["Sedan",49.6982,4.9406],["Sens",48.1945,3.2972],["Soissons",49.3775,3.3227],["Strasbourg",48.58,7.75],["Sète",43.4104,3.6999],["Sélestat",48.2758,7.4641],["Tarbes",43.2333,0.0833],["Thionville",49.3517,6.1596],["Toulon",43.1342,5.9188],["Toulouse",43.6219,1.448],["Tourcoing",50.7219,3.1532],["Tours",47.3804,0.6999],["Troyes",48.3404,4.0834],["Valence",44.9285,4.9127],["Valenciennes",50.3541,3.5117],["Vannes",47.6567,-2.7441],["Verdun",49.158,5.3883],["Versailles",48.8005,2.1333],["Vesoul",47.6233,6.1545],["Vichy",46.1171,3.4167],["Vierzon",47.2349,2.058],["Villeurbanne",45.7717,4.8813],["Vitrolles",43.4575,5.2595],["Vitry-sur-Seine",48.7899,2.3984],["Épinal",48.1746,6.4661],["Évreux",49.0222,1.1563],["Évry",48.6282,2.4451]];
 /* ---------- suggestions de villes ----------
@@ -678,7 +740,8 @@ var ICONES = {
 
 /* ---------- état ---------- */
 var etat = { ville:'Marseille', centre:[43.2965, 5.3698], discipline:'', ouvert:false,
-             pro:false, actif:-1, survolAutre:-1, resultats:[], autres:[] };
+             pro:false, actif:-1, survolAutre:-1, resultats:[], autres:[],
+             page:1, horsRayon:false, verrou:false };
 
 function viseVille(v){ etat.ville = v[0]; etat.centre = [v[1], v[2]]; }
 function formateKm(km){
@@ -713,7 +776,7 @@ function construisFiltres(){
     var b = e.target.closest('.puce'); if (!b) return;
     if (b.dataset.bool) etat[b.dataset.bool] = !etat[b.dataset.bool];
     else etat.discipline = b.dataset.disc;
-    majFiltres(); rendu();
+    majFiltres(); rendu(); majUrl();
   });
 }
 function majFiltres(){
@@ -723,64 +786,203 @@ function majFiltres(){
   });
 }
 
-/* ---------- résultats ---------- */
-/* le cadre qui décide des résultats : ce que la carte montre. Tant qu'elle n'est
-   pas mesurée (vue liste sur mobile), on prend un carré autour du point cherché. */
-function zoneVue(){
-  if (W > 2 && H > 2) return [lonDe(0), latDe(H), lonDe(W), latDe(0)];
-  var dlat = 12 / 111.32;
-  var dlon = 12 / (111.32 * Math.cos(etat.centre[0] * Math.PI / 180));
-  return [etat.centre[1] - dlon, etat.centre[0] - dlat,
-          etat.centre[1] + dlon, etat.centre[0] + dlat];
-}
+/* ---------- résultats ----------
+   Modèle d'annuaire : les résultats sont ceux de la ville cherchée, triés par
+   distance au centre et paginés. La carte ne décide plus de la liste — elle
+   est repliée derrière un bouton et ne fait qu'illustrer les résultats. */
+var RAYON_KM = 15;      /* la ville et sa proche banlieue, pas le departement */
+var LARGE_KM = 120;     /* le repli quand la ville n'a presque rien */
+var PAR_PAGE = 8;       /* 8 plutot que 25 : avec 20 salles fictives, la pagination
+                           reste visible dans la maquette */
 
 function calcule(){
-  var z = zoneVue();
-  var clat = (z[1] + z[3]) / 2, clon = (z[0] + z[2]) / 2;
-  var res = [], autres = [];
-  SALLES.forEach(function (s){
-    if (s[4] < z[0] || s[4] > z[2] || s[3] < z[1] || s[3] > z[3]) return;
-    var o = {
+  var lat = etat.centre[0], lon = etat.centre[1];
+  var candidats = SALLES.map(function (s){
+    return {
       nom:s[0], init:s[1], ville:s[2], lat:s[3], lon:s[4], disc:s[5], note:s[6],
-      avis:s[7], pro:s[8], horaires:s[9], ouvert:s[10], fiche:lienFiche(s),
-      km:distanceKm(clat, clon, s[3], s[4])
+      avis:s[7], pro:s[8], horaires:s[9], ouvert:s[10], detail:s[11],
+      fiche:lienFiche(s), km:distanceKm(lat, lon, s[3], s[4])
     };
-    var garde = (!etat.discipline || s[5].indexOf(etat.discipline) >= 0) &&
-                (!etat.ouvert || s[10]) && (!etat.pro || s[8]);
+  });
+  candidats.sort(function (a, b){ return a.km - b.km; });
+
+  var zone = candidats;
+  if (etat.ville){
+    zone = candidats.filter(function (o){ return o.km <= RAYON_KM; });
+    /* une ville presque vide ne doit pas renvoyer une page nue : on elargit a la
+       region, et le texte sous la liste le dit au lecteur */
+    if (zone.length < 3)
+      zone = candidats.filter(function (o){ return o.km <= LARGE_KM; }).slice(0, 8);
+  }
+
+  var res = [], autres = [];
+  zone.forEach(function (o){
+    var garde = (!etat.discipline || o.disc.indexOf(etat.discipline) >= 0) &&
+                (!etat.ouvert || o.ouvert) && (!etat.pro || o.pro);
     (garde ? res : autres).push(o);
   });
-  res.sort(function (a, b){ return a.km - b.km; });
   etat.resultats = res;
   etat.autres = autres;
-  etat.centre = [clat, clon];
-  /* on nomme la zone d'après la grande ville la plus proche du centre de la carte,
-     mais seulement si on est assez près : « à Montluçon » n'a aucun sens sur la
-     France entière */
-  var largeurKm = (z[2] - z[0]) * 111.32 * Math.cos(clat * Math.PI / 180);
-  var v = largeurKm <= 80 ? villeLaPlusProche(clat, clon, Math.min(30, largeurKm * .45)) : null;
-  etat.ville = v ? v[0] : '';
+  etat.horsRayon = !!(etat.ville && res.length && res[res.length - 1].km > RAYON_KM);
 }
 
-function rendu(){
-  calcule();
-  etat.actif = -1;
+/* ---------- fil d'Ariane ---------- */
+function rendFil(){
+  var p = ['<a href="index.html">Accueil</a>'];
+  if (etat.ville || etat.discipline)
+    p.push('<a href="recherche.html">Salles de sports de combat</a>');
+  else p.push('<span aria-current="page">Salles de sports de combat</span>');
+  if (etat.ville){
+    if (etat.discipline)
+      p.push('<a href="recherche.html?ville=' + encodeURIComponent(etat.ville) + '">' +
+             etat.ville + '</a>');
+    else p.push('<span aria-current="page">' + etat.ville + '</span>');
+  }
+  if (etat.discipline) p.push('<span aria-current="page">' + etat.discipline + '</span>');
+  document.getElementById('fil').innerHTML = p.join('<i aria-hidden="true">›</i>');
+}
+
+/* ---------- titre ---------- */
+function rendTitre(){
   var n = etat.resultats.length;
-  /* on garde la casse d'origine : « en MMA » et « en Muay Thaï » ne se minusculent pas */
-  var suffixe = etat.discipline ? ' en ' + etat.discipline : '';
-  var lieu = etat.ville ? ' à ' + etat.ville : ' dans cette zone';
-  document.getElementById('compte').innerHTML = n
-    ? '<b>' + n + '</b> salle' + (n > 1 ? 's' : '') + suffixe + lieu
-    : 'Aucune salle' + suffixe + lieu;
+  /* « de boxe anglaise » mais « de MMA » : le nom s'ecrit differemment dans une
+     phrase et sur une pastille de filtre (nomDiscipline, dans _salles.js) */
+  var quoi = etat.discipline ? ' de ' + nomDiscipline(etat.discipline) : ' de sports de combat';
+  var lieu = etat.ville ? ' à ' + etat.ville : ' en France';
+  var h1 = document.getElementById('compte');
+  h1.innerHTML = n
+    ? '<b>' + n + '</b> salle' + (n > 1 ? 's' : '') + quoi + lieu +
+      ' <span class="compte-suite">— comparez les horaires, les disciplines et les avis</span>'
+    : 'Aucune salle' + quoi + lieu;
   var etiq = document.getElementById('carte-ville');
   etiq.textContent = etat.ville; etiq.hidden = !etat.ville;
-  /* le champ suit la carte, sauf pendant qu'on y tape */
-  var champ = document.getElementById('q-ville');
-  var sug = champ.parentNode.querySelector('.sug');
-  if (!sug || sug.hidden) champ.value = etat.ville;
   document.title = (etat.ville ? 'Salles de sports de combat à ' + etat.ville
                                : 'Salles de sports de combat') + ' — FightScale';
+}
 
+/* ---------- une carte de résultat ---------- */
+function carteResultat(r, i){
+  var d = r.detail || {};
+  var mot = (d.presentation && d.presentation[0]) || '';
+  if (mot.length > 190) mot = mot.slice(0, 188).replace(/\s+\S*$/, '') + '…';
+  return '' +
+  '<article class="res' + (i === etat.actif ? ' actif' : '') +
+          '" data-i="' + i + '" id="res-' + i + '">' +
+    '<div class="res-vignette">' +
+      '<span class="res-num">' + (i + 1) + '</span>' +
+      '<span class="res-init" aria-hidden="true">' + r.init + '</span>' +
+    '</div>' +
+    '<div class="res-corps">' +
+      '<div class="res-tete">' +
+        '<h2 class="res-nom"><a href="' + r.fiche + '">' + r.nom + '</a></h2>' +
+        '<span class="note">' + ICONES.etoile + r.note + ' <small>(' + r.avis + ' avis)</small></span>' +
+      '</div>' +
+      '<div class="res-chips">' + r.disc.map(function (x){
+        return '<span class="mini-chip">' + x + '</span>'; }).join('') + '</div>' +
+      '<p class="res-adresse">' + ICONES.epingle +
+        (d.adresse ? d.adresse + ', ' + (d.cp || '') + ' ' + r.ville : r.ville) +
+        ' <span class="res-km">· ' + formateKm(r.km) +
+        (etat.ville ? ' du centre' : '') + '</span></p>' +
+      (mot ? '<p class="res-mot">' + mot + '</p>' : '') +
+      '<div class="res-bas">' +
+        (r.ouvert
+          ? '<span class="paire res-ouvert">Ouvert aujourd\'hui · ' + r.horaires + '</span>'
+          : '<span class="paire">Fermé aujourd\'hui</span>') +
+        '<a class="btn btn-rouge res-essai" href="' + r.fiche + '#contact">Séance d\'essai</a>' +
+      '</div>' +
+    '</div>' +
+  '</article>';
+}
+
+/* ---------- pagination ---------- */
+function nbPages(){ return Math.max(1, Math.ceil(etat.resultats.length / PAR_PAGE)); }
+
+function rendPagination(){
+  var boite = document.getElementById('pagination'), total = nbPages();
+  if (total < 2){ boite.innerHTML = ''; boite.hidden = true; return; }
+  boite.hidden = false;
+  var h = '<button type="button" class="pg pg-fl" data-p="' + (etat.page - 1) + '"' +
+          (etat.page === 1 ? ' disabled' : '') + ' aria-label="Page précédente">‹</button>';
+  for (var p = 1; p <= total; p++){
+    h += '<button type="button" class="pg" data-p="' + p + '"' +
+         (p === etat.page ? ' aria-current="page"' : '') + '>' + p + '</button>';
+  }
+  h += '<button type="button" class="pg pg-fl" data-p="' + (etat.page + 1) + '"' +
+       (etat.page === total ? ' disabled' : '') + ' aria-label="Page suivante">›</button>';
+  boite.innerHTML = h;
+}
+
+function vaPage(p){
+  etat.page = Math.max(1, Math.min(nbPages(), p));
+  rendListe();
+  document.getElementById('resultats').scrollIntoView({ block:'start', behavior:'smooth' });
+}
+
+/* ---------- le texte de fond, sous la liste ----------
+   Il est construit à partir des salles réellement présentes : aucune donnée
+   inventée, et il se met à jour tout seul quand la liste change. */
+function rendSeo(){
+  var res = etat.resultats, n = res.length;
+  var ou = etat.ville || 'France';
+  document.getElementById('seo-titre').textContent =
+    etat.ville ? 'Les sports de combat à ' + etat.ville
+               : 'Les sports de combat en France';
+
+  var discs = [], vu = {};
+  res.forEach(function (r){ r.disc.forEach(function (d){ if (!vu[d]){ vu[d] = 1; discs.push(d); } }); });
+  var ouverts = res.filter(function (r){ return r.ouvert; }).length;
+
+  var t = [];
+  if (n){
+    t.push('FightScale référence <b>' + n + ' salle' + (n > 1 ? 's' : '') +
+           '</b> de sports de combat ' + (etat.ville ? 'à ' + etat.ville : 'en France') +
+           (discs.length > 1
+             ? ', réparties sur ' + discs.length + ' disciplines : ' + discs.join(', ') + '.'
+             : discs.length ? ', en ' + nomDiscipline(discs[0]) + '.' : '.'));
+    if (etat.horsRayon)
+      t.push('Il y a peu de salles référencées à ' + ou +
+             ' pour l’instant, alors cette liste s’étend aux villes alentour.');
+    t.push('<b>' + ouverts + '</b> d’entre elles ' + (ouverts > 1 ? 'sont ouvertes' : 'est ouverte') +
+           ' aujourd’hui. Chaque fiche donne les horaires, le planning de la semaine, ' +
+           'l’adresse et le contact direct de la salle : vous appelez ou vous écrivez, ' +
+           'sans passer par nous.');
+    var proche = res[0];
+    if (proche) t.push('La plus proche du centre est <a href="' + proche.fiche + '">' +
+                       proche.nom + '</a>, à ' + formateKm(proche.km) + '.');
+  } else {
+    t.push('Aucune salle ne correspond à cette recherche ' +
+           (etat.ville ? 'à ' + ou : '') + '. Enlevez un filtre ou essayez une autre ville.');
+  }
+  document.getElementById('seo-texte').innerHTML = '<p>' + t.join(' ') + '</p>';
+
+  /* par discipline, dans cette ville */
+  var base = etat.ville ? 'recherche.html?ville=' + encodeURIComponent(etat.ville) + '&discipline='
+                        : 'recherche.html?discipline=';
+  document.getElementById('seo-disc-titre').textContent =
+    etat.ville ? 'Par discipline à ' + etat.ville : 'Par discipline';
+  document.getElementById('seo-disc').innerHTML = DISCIPLINES.map(function (d){
+    /* sans ville, la discipline a sa propre page d'annuaire ; avec une ville, le
+       croisement n'existe qu'en recherche */
+    var h = etat.ville ? base + encodeURIComponent(d) : pageDiscipline(d);
+    return '<a class="puce" href="' + h + '">' + d +
+           (etat.ville ? ' à ' + etat.ville : '') + '</a>';
+  }).join('');
+
+  /* les autres villes ou il y a des salles */
+  var villes = [], deja = {};
+  SALLES.forEach(function (s){
+    if (s[2] === etat.ville || deja[s[2]]) return;
+    deja[s[2]] = 1; villes.push(s[2]);
+  });
+  document.getElementById('seo-villes').innerHTML = villes.map(function (v){
+    return '<a class="puce" href="' + pageVille(v) + '">Sports de combat à ' + v + '</a>';
+  }).join('');
+}
+
+/* ---------- la liste de la page courante ---------- */
+function rendListe(){
   var liste = document.getElementById('liste');
+  var n = etat.resultats.length;
   if (!n){
     var ailleurs = [], vu = {};
     SALLES.forEach(function (s){
@@ -789,39 +991,17 @@ function rendu(){
     });
     liste.innerHTML =
       '<div class="vide"><h2 class="display">Pas encore de salle ici</h2>' +
-      '<p>Aucune salle ne correspond dans cette zone. Déplacez la carte, dézoomez, ' +
-      'ou enlevez un filtre.</p>' +
+      '<p>Aucune salle ne correspond à cette recherche. Enlevez un filtre, ' +
+      'ou essayez une autre ville.</p>' +
       '<div class="vide-villes">' + ailleurs.slice(0, 6).map(function (v){
-        return '<a class="puce" href="recherche.html?ville=' + encodeURIComponent(v) + '">' + v + '</a>';
+        return '<a class="puce" href="' + pageVille(v) + '">' + v + '</a>';
       }).join('') + '</div></div>';
+    document.getElementById('pagination').innerHTML = '';
     return;
   }
-
-  liste.innerHTML = etat.resultats.map(function (r, i){
-    return '' +
-    '<article class="res" data-i="' + i + '">' +
-      '<div class="res-vignette">' +
-        '<span class="res-num">' + (i + 1) + '</span>' +
-        '<span class="res-init" aria-hidden="true">' + r.init + '</span>' +
-      '</div>' +
-      '<div class="res-corps">' +
-        '<div class="res-tete">' +
-          '<h2 class="res-nom"><a href="' + r.fiche + '">' + r.nom + '</a></h2>' +
-          '<span class="note">' + ICONES.etoile + r.note + ' <small>(' + r.avis + ')</small></span>' +
-        '</div>' +
-        '<div class="res-chips">' + r.disc.map(function (d){
-          return '<span class="mini-chip">' + d + '</span>'; }).join('') + '</div>' +
-        '<div class="res-meta">' +
-          '<span class="paire">' + ICONES.epingle + formateKm(r.km) +
-            (etat.ville ? ' du centre' : ' d\'ici') + '</span>' +
-          (r.ouvert
-            ? '<span class="paire res-ouvert">Ouvert · ' + r.horaires + '</span>'
-            : '<span class="paire">Fermé aujourd\'hui</span>') +
-        '</div>' +
-        '<span class="res-fiche">Voir la fiche' + ICONES.fleche + '</span>' +
-      '</div>' +
-    '</article>';
-  }).join('');
+  var debut = (etat.page - 1) * PAR_PAGE;
+  liste.innerHTML = etat.resultats.slice(debut, debut + PAR_PAGE)
+    .map(function (r, k){ return carteResultat(r, debut + k); }).join('');
 
   Array.prototype.forEach.call(liste.querySelectorAll('.res'), function (el){
     var i = +el.dataset.i;
@@ -829,17 +1009,32 @@ function rendu(){
     el.addEventListener('mouseleave', function (){ selectionne(-1, false); });
     el.addEventListener('focusin',    function (){ selectionne(i, false); });
   });
-  liste.scrollTop = 0;
-  document.getElementById('resultats').scrollTop = 0;
+  rendPagination();
+}
+
+function rendu(){
+  calcule();
+  etat.actif = -1;
+  etat.verrou = false;
+  etat.page = 1;
+  rendFil();
+  rendTitre();
+  /* le champ suit la ville, sauf pendant qu'on y tape */
+  var champ = document.getElementById('q-ville');
+  var sug = champ.parentNode.querySelector('.sug');
+  if (!sug || sug.hidden) champ.value = etat.ville;
+  rendListe();
+  rendSeo();
   fondSale = true;      /* les noms du fond se replacent autour des nouvelles épingles */
 }
 
-/* après un déplacement ou un zoom, la liste se recalcule sur ce qu'on voit */
-var minuteurZone = null;
-function zoneAChange(){
-  clearTimeout(minuteurZone);
-  minuteurZone = setTimeout(rendu, 260);
-}
+document.getElementById('pagination').addEventListener('click', function (e){
+  var b = e.target.closest('.pg'); if (!b || b.disabled) return;
+  vaPage(+b.dataset.p);
+});
+
+/* la carte n'entraine plus de recalcul : la liste ne depend que de la recherche */
+function zoneAChange(){}
 
 function selectionne(i, defile){
   if (etat.actif === i) return;
@@ -847,10 +1042,21 @@ function selectionne(i, defile){
   Array.prototype.forEach.call(document.querySelectorAll('.res'), function (el){
     el.classList.toggle('actif', +el.dataset.i === i);
   });
-  if (defile && i >= 0){
-    var cible = document.querySelector('.res[data-i="' + i + '"]');
-    if (cible) cible.scrollIntoView({ block:'nearest', behavior:'smooth' });
+  if (defile && i >= 0) montreResultat(i);
+}
+
+/* amene le resultat i sous les yeux, en changeant de page s'il le faut : une
+   epingle de la carte peut designer une salle qui n'est pas sur la page ouverte */
+function montreResultat(i){
+  etat.verrou = true;
+  var page = Math.floor(i / PAR_PAGE) + 1;
+  if (page !== etat.page){
+    etat.page = page;
+    rendListe();                      /* rendListe repose la classe « actif » */
+    rendPagination();
   }
+  var cible = document.getElementById('res-' + i);
+  if (cible) cible.scrollIntoView({ block:'center', behavior:'smooth' });
 }
 
 /* ---------- plan ----------
@@ -1158,7 +1364,7 @@ function boiteNom(p, nom, rayon, vif){
   cx.textBaseline = 'alphabetic';
 }
 
-function boucle(t){ dessine(t); requestAnimationFrame(boucle); }
+function boucle(t){ if (carteOuverte) dessine(t); requestAnimationFrame(boucle); }
 
 /* ---------- zoom et déplacement ---------- */
 function zoomVers(facteur, ax, ay){
@@ -1204,20 +1410,21 @@ cv.addEventListener('pointermove', function (e){
   var gris = trouve < 0 ? laPlusProche(pastilleAutre, 12) : -1;
   etat.survolAutre = gris;
   cv.style.cursor = trouve >= 0 ? 'pointer' : (gris >= 0 ? 'help' : '');
-  selectionne(trouve, false);
+  /* une salle choisie d'un clic reste en evidence tant qu'on n'en vise pas une
+     autre : sinon le defilement de la liste eteint la selection a l'instant meme */
+  if (trouve >= 0){ etat.verrou = false; selectionne(trouve, false); }
+  else if (!etat.verrou) selectionne(-1, false);
 });
 function relache(e){
-  if (tire && tire.bouge) zoneAChange();
-  if (tire && !tire.bouge && etat.actif >= 0){
-    document.body.classList.remove('vue-carte'); majBascule();
-    var cible = document.querySelector('.res[data-i="' + etat.actif + '"]');
-    if (cible) cible.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  }
+  /* un clic net sur une epingle amene le resultat correspondant sous les yeux */
+  if (tire && !tire.bouge && etat.actif >= 0) montreResultat(etat.actif);
   tire = null; cv.classList.remove('tire');
 }
 cv.addEventListener('pointerup', relache);
 cv.addEventListener('pointercancel', function (){ tire = null; cv.classList.remove('tire'); });
-cv.addEventListener('mouseleave', function (){ if (!tire) selectionne(-1, false); });
+cv.addEventListener('mouseleave', function (){
+  if (!tire && !etat.verrou) selectionne(-1, false);
+});
 cv.addEventListener('wheel', function (e){
   e.preventDefault();
   var r = cv.getBoundingClientRect();
@@ -1232,15 +1439,19 @@ document.getElementById('z-france').addEventListener('click', function (){
 });
 
 /* ---------- recherche de ville ---------- */
+function majUrl(){
+  var u = new URL(location.href);
+  if (etat.ville) u.searchParams.set('ville', etat.ville);
+  else u.searchParams.delete('ville');
+  if (etat.discipline) u.searchParams.set('discipline', etat.discipline);
+  else u.searchParams.delete('discipline');
+  history.replaceState(null, '', u);
+}
 function vaVers(v){
   viseVille(v);
   cadreSurVille();
   rendu();
-  var u = new URL(location.href);
-  u.searchParams.set('ville', v[0]);
-  if (etat.discipline) u.searchParams.set('discipline', etat.discipline);
-  else u.searchParams.delete('discipline');
-  history.replaceState(null, '', u);
+  majUrl();
 }
 suggestions(document.getElementById('q-ville'), vaVers);
 document.getElementById('form-ville').addEventListener('submit', function (e){
@@ -1251,39 +1462,40 @@ document.getElementById('form-ville').addEventListener('submit', function (e){
   else { champ.value = etat.ville; champ.select(); }   /* ville inconnue : on ne bouge pas */
 });
 
-/* ---------- bascule liste / carte sur mobile ---------- */
-function majBascule(){
-  var carte = document.body.classList.contains('vue-carte');
-  document.getElementById('b-liste').setAttribute('aria-pressed', String(!carte));
-  document.getElementById('b-carte').setAttribute('aria-pressed', String(carte));
-  if (carte) mesure();
-}
-document.getElementById('b-liste').addEventListener('click', function (){
-  document.body.classList.remove('vue-carte'); majBascule();
-});
-document.getElementById('b-carte').addEventListener('click', function (){
-  document.body.classList.add('vue-carte');
-  majBascule();
-  if (W && !vueCadree){ cadreSurVille(); rendu(); vueCadree = true; }
+/* ---------- la carte, repliee par defaut ----------
+   Modele annuaire : on arrive sur une liste, et la carte ne s'ouvre que si on
+   la demande. Le canvas n'est mesure qu'une fois visible, sinon il fait 0 px. */
+var zone = document.getElementById('carte-zone');
+var bCarte = document.getElementById('b-carte');
+var carteOuverte = false, vueCadree = false;
+
+function ouvreCarte(ouvre){
+  carteOuverte = ouvre;
+  zone.hidden = !ouvre;
+  bCarte.setAttribute('aria-expanded', String(ouvre));
+  document.getElementById('b-carte-txt').textContent =
+    ouvre ? 'Masquer la carte' : 'Afficher sur la carte';
+  if (!ouvre) return;
+  mesure();
+  if (W && !vueCadree){ cadreSurVille(); vueCadree = true; }
   dessine(0);
-});
-var vueCadree = false;
+}
+bCarte.addEventListener('click', function (){ ouvreCarte(!carteOuverte); });
 
 /* ---------- démarrage ---------- */
 prepGeo();
 construisFiltres();
-mesure();
-if (W) cadreSurVille();
 rendu();
 function reMesure(){
+  if (!carteOuverte) return;
   var avant = W;
   mesure();
-  if (W && !avant){ cadreSurVille(); rendu(); }
+  if (W && !avant){ cadreSurVille(); vueCadree = true; }
   if (CALME) dessine(0);
 }
 if (window.ResizeObserver) new ResizeObserver(reMesure).observe(cv);
 else window.addEventListener('resize', reMesure);
-if (CALME) dessine(0); else requestAnimationFrame(boucle);
+if (!CALME) requestAnimationFrame(boucle);
 
 </script>
 
