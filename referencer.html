@@ -490,10 +490,12 @@
   .ob-vue figcaption{margin-top:14px; text-align:center; font-size:13px;
     color:var(--texte-4)}
 
-  .creer-bloc{background:var(--surface); border-block:1px solid var(--bord)}
-  .creer{max-width:58ch; margin-inline:auto; text-align:center}
-  .creer-mot{margin-top:16px; font-size:15.5px; line-height:1.68; color:var(--texte-2)}
-  .btn-grand{margin-top:28px; min-height:56px; padding-inline:34px; font-size:16px}
+  /* Le bouton est au pied des trois etapes, pas en bas de page : le gerant vient de
+     lire ce qu'on attend de lui, c'est la qu'il decide. Centre sous la grille. */
+  .creer{max-width:56ch; margin:clamp(38px,4.2vw,56px) auto 0; padding-top:clamp(30px,3.4vw,42px);
+    border-top:1px solid var(--bord); text-align:center}
+  .creer-mot{font-size:15.5px; line-height:1.68; color:var(--texte-2)}
+  .btn-grand{margin-top:24px; min-height:58px; padding-inline:38px; font-size:16.5px}
   .creer-note{margin-top:16px; font-size:13.5px; color:var(--texte-4)}
   .creer-note a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
 
