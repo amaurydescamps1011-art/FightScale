@@ -326,6 +326,16 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('un mauvais mot de passe est explique',
      await pg.textContent('#fen-erreur'), 'Adresse e-mail ou mot de passe incorrect.');
 
+  /* Amaury, 23/09/2026 : en cherchant le reglage de la confirmation il a eteint
+     le fournisseur e-mail, et Supabase a repondu « Email signups are disabled »,
+     en anglais, dans la fenetre. Ces messages-la se traduisent. */
+  ok('un fournisseur e-mail eteint se dit en francais',
+     await pg.evaluate(() => window.MCC.dire({ message: 'Email signups are disabled' })),
+     'La création de compte par e-mail est fermée pour l’instant. Réessayez plus tard, ou passez par « Continuer avec Google ».');
+  ok('des inscriptions fermees aussi',
+     await pg.evaluate(() => window.MCC.dire({ message: 'Signups not allowed for this instance' })),
+     'Les inscriptions sont fermées pour l’instant. Réessayez plus tard.');
+
   console.log('');
   if (erreurs.length) {
     console.log('PROBLEMES:\n- ' + erreurs.join('\n- '));

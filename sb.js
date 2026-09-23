@@ -117,6 +117,13 @@ window.MCC = (function (){
     if (/Password should be at least/i.test(m)) return 'Le mot de passe doit faire huit caractères au minimum.';
     if (/Unable to validate email|invalid format/i.test(m)) return 'Cette adresse e-mail n’est pas valide.';
     if (/Email not confirmed/i.test(m)) return 'Il faut d’abord confirmer votre adresse, le lien est dans votre boîte mail.';
+    /* Deux reglages du projet Supabase, et deux messages anglais qui arrivaient
+       tels quels sous les yeux d'un gerant. Le premier est le fournisseur e-mail
+       eteint, le second la creation de compte fermee pour tout le projet. */
+    if (/Email signups are disabled|email provider.*disabled/i.test(m))
+      return 'La création de compte par e-mail est fermée pour l’instant. Réessayez plus tard, ou passez par « Continuer avec Google ».';
+    if (/Signups not allowed|signup is disabled/i.test(m))
+      return 'Les inscriptions sont fermées pour l’instant. Réessayez plus tard.';
     if (/gere deja un club|already/i.test(m)) return 'Ce compte gère déjà un club.';
     if (/rate limit|too many/i.test(m)) return 'Trop de tentatives. Réessayez dans quelques minutes.';
     if (/Failed to fetch|NetworkError|Load failed/i.test(m))

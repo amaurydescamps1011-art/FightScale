@@ -61,6 +61,15 @@ Selon la version, la case s'appelle *Confirm email* ou *Enable email
 confirmations* ; si elle n'est pas là, elle est sur
 https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/settings/auth
 
+**Attention à ne pas confondre trois interrupteurs voisins** (Amaury s'est fait
+avoir le 23/09) :
+
+| Réglage | Doit être |
+|---|---|
+| **Enable email provider** | activé — sinon « Email signups are disabled » |
+| **Allow new users to sign up** (bloc *User Signups*, au-dessus de la liste) | activé |
+| **Confirm email** | **désactivé** — c'est le seul à couper |
+
 **Pourquoi.** Par défaut, Supabase crée le compte mais n'ouvre pas de session tant
 que le lien reçu par e-mail n'est pas cliqué — et son expéditeur intégré est limité
 à quelques messages par heure sur un domaine partagé : le mail arrive en retard, en
