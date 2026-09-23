@@ -20,6 +20,10 @@ MINI_KM = 5.5                # une petite commune ne doit pas etre montree de tr
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 GEO_DIR = os.path.join(ICI, '..', 'geo')
+# Le site (photos, carte.js, geo.js, sb.js) vit a la racine du depot ; outils/ ne
+# porte que ce qui sert a le fabriquer. Les chemins ecrits dans les pages restent
+# relatifs a la racine, seuls les acces disque passent par DEPOT.
+DEPOT = os.path.join(ICI, '..')
 PHOTOS = 'photos'                      # ou Amaury depose ses photos de villes
 EXT_PHOTO = ('.jpg', '.jpeg', '.png', '.webp', '.avif')
 COMMUNES = os.path.join(GEO_DIR, 'communes-simpl.geojson')
@@ -60,7 +64,8 @@ _GEO = None
 def geo():
     global _GEO
     if _GEO is None:
-        s = io.open('geo.js', encoding='utf-8').read()
+        # geo.js est servi par le site, donc il vit a la racine du depot, pas ici
+        s = io.open(os.path.join(ICI, '..', 'geo.js'), encoding='utf-8').read()
         brut = json.loads(s[s.index('{'):s.rindex('}') + 1])
         _GEO = dict((k, [deplie(t) for t in brut[k]])
                     for k in ('fr', 'lac', 'riv'))
@@ -246,11 +251,30 @@ def photo(ville):
     """Le chemin d'une vraie photo si elle a ete deposee dans photos/, sinon None."""
     for e in EXT_PHOTO:
         rel = PHOTOS + '/' + ardoise(ville) + e
-        if os.path.exists(os.path.join(ICI, rel)): return rel
+        if os.path.exists(os.path.join(DEPOT, rel)): return rel
     return None
 
 def photos_deposees():
     return [photo(v) for v in CODES if photo(v)]
+
+# Les fonds de carte (communes-simpl.geojson et compagnie) pesent des dizaines
+# de megaoctets : ils ne sont pas dans le depot. Les vignettes qu'on en tire,
+# elles, sont de petits SVG, alors on les garde ici. Un build sans les fonds
+# relit le cache ; c'est ce qui permet a la reconstruction horaire de tourner
+# sur un clone nu. Effacer un fichier de vignettes/ suffit a le redessiner.
+CACHE = os.path.join(ICI, 'vignettes')
+
+def vignette_en_cache(ville):
+    f = os.path.join(CACHE, ardoise(ville) + '.svg')
+    if os.path.exists(COMMUNES):
+        svg = vignette(ville)
+        if not os.path.isdir(CACHE): os.makedirs(CACHE)
+        io.open(f, 'w', encoding='utf-8').write(svg)
+        return svg
+    if os.path.exists(f):
+        return io.open(f, encoding='utf-8').read()
+    raise SystemExit(
+        'Pas de fond de carte (%s) et pas de vignette en cache pour %s.' % (COMMUNES, ville))
 
 def visuel(ville):
     """La photo si elle existe, le plan dessine sinon. C'est le seul point de
@@ -259,4 +283,4 @@ def visuel(ville):
     if p:
         return ('<img class="cv-photo" src="%s" alt="" loading="lazy" '
                 'decoding="async" width="640" height="400">' % p)
-    return vignette(ville)
+    return vignette_en_cache(ville)

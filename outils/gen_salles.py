@@ -9,6 +9,9 @@ en service.
 """
 import json, os, subprocess, sys, unicodedata
 
+# outils/ fabrique le site ; le site lui-meme (photos, carte.js...) est a la racine
+DEPOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+
 
 def depuis_la_base():
     """Les clubs publies, tels que le site les affichera.
@@ -61,7 +64,7 @@ def photos_exemple():
     out = []
     for n in range(1, 6):
         p = 'photos/salle-exemple-%d.webp' % n
-        out.append(p if os.path.exists(p) else None)
+        out.append(p if os.path.exists(os.path.join(DEPOT, p)) else None)
     return out
 
 # nom, sigle, ville, lat, lon, disciplines, note, avis, pro, horaires, ouvert

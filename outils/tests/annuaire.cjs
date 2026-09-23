@@ -4,10 +4,10 @@
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 
-const RACINE = __dirname + '/site';
+const RACINE = __dirname + '/../site';
 const T = {'.html':'text/html; charset=utf-8','.js':'text/javascript','.svg':'image/svg+xml',
            '.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp'};
-const faux = fs.readFileSync(__dirname + '/_faux_sb.js', 'utf8');
+const faux = fs.readFileSync(__dirname + '/../_faux_sb.js', 'utf8');
 
 const CLUB = {
   id: 'c1', statut: 'publie', slug: 'team-ouragan-boxe', nom: 'Team Ouragan Boxe',
@@ -15,7 +15,7 @@ const CLUB = {
   disciplines: ['Boxe anglaise', 'Kickboxing'], photos: [],
   presentation: 'Une salle de quartier ouverte à tous.',
   tel: '06 12 34 56 78', mail: 'contact@teamouragan.fr', site: '', instagram: '', facebook: '',
-  horaires: { lundi: ['18:00','21:00'], mardi: ['18:00','21:00'] }, offre: 'gratuit'
+  horaires: { lundi: ['18:00','21:00'], mardi: ['18:00','21:00'] }, offre: 'pro'
 };
 const ETAT = { session:null, users:{}, equipe:[], club_membre:[], club:[CLUB], demande:[], fichiers:[] };
 
@@ -107,7 +107,22 @@ const dit = (b, quoi) => { console.log((b ? '  ok    ' : '  RATE  ') + quoi); b 
   dit(/1 salle/.test(rech.compte), 'le compteur suit : ' + rech.compte);
   dit(!rech.note, 'toujours pas de note inventée');
 
-  console.log('\n6. sans base, le site ne bouge pas');
+  console.log('\n6. la même salle en fiche gratuite');
+  await p.evaluate(e => sessionStorage.setItem('faux', JSON.stringify(e)),
+    Object.assign({}, ETAT, { club: [Object.assign({}, CLUB, { offre: 'gratuit' })] }));
+  await p.goto(base + 'sports-de-combat-marseille.html', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(800);
+  const grat = await p.evaluate(() => ({
+    n: document.querySelectorAll('.res').length,
+    href: document.querySelector('.res-essai')?.getAttribute('href'),
+    mot: document.querySelector('.res-essai')?.textContent
+  }));
+  dit(grat.n === 1, 'elle reste dans l’annuaire');
+  dit(grat.href === 'salle.html?s=team-ouragan-boxe' && /Voir la salle/.test(grat.mot || ''),
+      'le bouton renvoie à la fiche, pas à un formulaire de réservation');
+  await p.evaluate(e => sessionStorage.setItem('faux', JSON.stringify(e)), ETAT);
+
+  console.log('\n7. sans base, le site ne bouge pas');
   const ctx2 = await nav.newContext({ viewport: { width: 1280, height: 900 }, locale: 'fr-FR' });
   const p2 = await ctx2.newPage();
   const errs2 = [];

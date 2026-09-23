@@ -1,7 +1,10 @@
 const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
-const D = __dirname;
+// les pages testees sont celles qui partent en ligne, dans site/ ;
+// les captures vont dans captures/, qui n'est pas deploye
+const D = require('path').join(__dirname, '..', 'site');
+const OUT = require('path').join(__dirname, '..', 'captures');
 
 // une vraie image PNG minuscule, pour eprouver le televersement pour de bon
 const PNG = Buffer.from(
@@ -44,7 +47,7 @@ const PNG = Buffer.from(
   await p.uncheck('[data-jour="5"]');
 
   // --- les photos ---
-  const f1 = path.join(D, '_t1.png'), f2 = path.join(D, '_t2.png');
+  const f1 = path.join(OUT, '_t1.png'), f2 = path.join(OUT, '_t2.png');
   fs.writeFileSync(f1, PNG); fs.writeFileSync(f2, PNG);
   await p.setInputFiles('#c-photos', [f1, f2]);
   await p.waitForTimeout(350);
@@ -74,7 +77,7 @@ const PNG = Buffer.from(
   if (bilan.joursFermes !== 2) erreurs.push('horaires : ' + bilan.joursFermes + ' jours fermes');
   if (bilan.compteur === '0') erreurs.push('le compteur de caracteres ne bouge pas');
 
-  await p.screenshot({ path: path.join(D, 'cl-rempli2.png'), fullPage: true });
+  await p.screenshot({ path: path.join(OUT, 'cl-rempli2.png'), fullPage: true });
 
   // --- on retire une photo ---
   await p.click('#photo-liste .photo-x');
@@ -91,7 +94,7 @@ const PNG = Buffer.from(
   console.log('envoi       :', merci, '|', recap.trim());
   if (!merci) erreurs.push('l\'ecran de confirmation ne s\'affiche pas');
   if (!recap.includes('Team Ouragan Boxe')) erreurs.push('le recapitulatif est vide');
-  await p.screenshot({ path: path.join(D, 'cl-merci2.png'), fullPage: true });
+  await p.screenshot({ path: path.join(OUT, 'cl-merci2.png'), fullPage: true });
 
   // --- un formulaire vide ne part pas ---
   const q = await b.newPage({ viewport: { width: 1440, height: 1000 } });
@@ -111,7 +114,7 @@ const PNG = Buffer.from(
   const debord = await m.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   console.log('mobile      : debordement =', debord);
   if (debord) erreurs.push('debordement horizontal en 390');
-  await m.screenshot({ path: path.join(D, 'cl-mob2.png'), fullPage: true });
+  await m.screenshot({ path: path.join(OUT, 'cl-mob2.png'), fullPage: true });
 
   fs.unlinkSync(f1); fs.unlinkSync(f2);
   console.log(erreurs.length ? '\nPROBLEMES:\n- ' + erreurs.join('\n- ') : '\nOK, aucun probleme');

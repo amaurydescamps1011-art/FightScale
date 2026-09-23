@@ -47,8 +47,11 @@
         '<div class="res-bas">' +
           (s[9] ? '<span class="paire' + (s[10] ? ' res-ouvert' : '') + '">' +
                   (s[10] ? 'Ouvert aujourd’hui · ' + ech(s[9]) : 'Fermé aujourd’hui') + '</span>' : '') +
-          '<a class="btn btn-rouge res-essai" href="salle.html?s=' +
-            encodeURIComponent(d.slug) + '#essai">Séance d’essai</a>' +
+          (s[8]
+            ? '<a class="btn btn-rouge res-essai" href="salle.html?s=' +
+              encodeURIComponent(d.slug) + '#essai">Séance d’essai</a>'
+            : '<a class="btn btn-ligne res-essai" href="salle.html?s=' +
+              encodeURIComponent(d.slug) + '">Voir la salle</a>') +
         '</div>' +
       '</div></article>';
   }

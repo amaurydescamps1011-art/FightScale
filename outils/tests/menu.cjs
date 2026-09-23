@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 (async () => {
   const b = await chromium.launch({ args: ['--ignore-certificate-errors'] });
-  const dir = '/tmp/claude-0/-home-claude/fe1486f2-8126-5a24-9c89-ca3cc04a2b8e/scratchpad/home/site/';
+  const dir = require('path').join(__dirname, '..', 'site') + '/';
   const vu = async (p, sel) => p.evaluate(s => {
     const e = document.querySelector(s); if (!e) return 'absent';
     const c = getComputedStyle(e);

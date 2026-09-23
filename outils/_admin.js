@@ -70,6 +70,7 @@
     var d = (c.disciplines || []).join(' · ');
     var jours = Object.keys(c.horaires || {}).length;
     var enAttente = c.statut === 'en_attente';
+    var pro = c.offre === 'pro';
     return '<li class="fiche" data-id="' + ech(c.id) + '">' +
       '<div class="fiche-tete"><b>' + ech(c.nom) + '</b>' +
         '<span class="fiche-lieu">' + ech([c.code_postal, c.ville].filter(Boolean).join(' ') || 'Ville non renseignée') + '</span></div>' +
@@ -78,21 +79,39 @@
         '<li>' + (jours ? jours + ' jours d’ouverture' : 'Aucun horaire') + '</li>' +
         '<li>' + ((c.photos || []).length) + ' photo' + ((c.photos || []).length > 1 ? 's' : '') + '</li>' +
         '<li>' + ech(c.tel || c.mail || 'Aucune coordonnée') + '</li>' +
+        '<li>' + (c.offre === 'pro' ? 'Abonné Pro' : 'Fiche gratuite') + '</li>' +
       '</ul>' +
       (c.presentation ? '<p class="fiche-mot">' + ech(c.presentation) + '</p>' : '') +
       '<div class="fiche-actions">' +
         (enAttente
           ? '<button type="button" class="btn btn-rouge btn-mini" data-act="publie">Publier</button>' +
             '<button type="button" class="btn btn-ligne btn-mini" data-act="refuse">Refuser</button>'
-          : '<button type="button" class="btn btn-ligne btn-mini" data-act="suspendu">Retirer de l’annuaire</button>') +
+          : '<button type="button" class="btn btn-ligne btn-mini" data-act="suspendu">Retirer de l’annuaire</button>' +
+            /* tant que le paiement n'existe pas, c'est l'equipe qui ouvre le Pro a
+               la main ; le jour ou Stripe est branche, c'est son webhook qui ecrit
+               cette meme colonne et ce bouton ne sert plus qu'aux gestes commerciaux */
+            (pro
+              ? '<button type="button" class="btn btn-ligne btn-mini" data-offre="gratuit">Repasser en gratuit</button>'
+              : '<button type="button" class="btn btn-ligne btn-mini" data-offre="pro">Activer le Pro</button>')) +
       '</div></li>';
   }
 
   document.querySelector('main').addEventListener('click', function (e){
-    var b = e.target.closest('[data-act]');
+    var b = e.target.closest('[data-act], [data-offre]');
     if (!b) return;
     var li = b.closest('.fiche');
     var id = li.dataset.id;
+
+    /* changer l'offre ne touche pas au statut : une fiche reste publiee qu'elle
+       soit gratuite ou Pro. Seule l'equipe passe ce trigger (club_offre_figee). */
+    if (b.dataset.offre) {
+      b.disabled = true;
+      sb.from('club').update({ offre: b.dataset.offre }).eq('id', id)
+        .then(function (r){ if (r.error) throw r.error; return recharge(); })
+        .catch(function (err){ b.disabled = false; rate(SB.dire(err)); });
+      return;
+    }
+
     var act = b.dataset.act;
     var champs = { statut: act };
 

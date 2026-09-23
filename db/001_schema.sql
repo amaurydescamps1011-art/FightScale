@@ -60,8 +60,11 @@ create table if not exists club (
   -- chemins dans le bucket « photos-clubs », dans l'ordre de la galerie
   photos        text[] not null default '{}',
 
-  -- l'abonnement, pour plus tard. Aucun ecran ne s'en sert encore.
+  -- l'abonnement : 'gratuit' ou 'pro'. C'est lui qui ouvre la reservation en
+  -- ligne, donc un gerant ne doit jamais pouvoir se le donner (voir le trigger
+  -- club_offre_figee plus bas). Seuls l'equipe et le service_role l'ecrivent.
   offre         text not null default 'gratuit'
+                check (offre in ('gratuit', 'pro'))
 );
 
 create index if not exists club_statut_idx on club (statut);
@@ -195,6 +198,28 @@ create policy club_edition_gerant on club
   using (gere_le_club(id))
   with check (gere_le_club(id) and statut in ('brouillon', 'en_attente'));
 
+-- L'offre ne s'achete pas en modifiant sa fiche. Le RLS ne sait pas proteger une
+-- colonne : un gerant qui edite son club passe la politique ci-dessus et pourrait
+-- y glisser offre = 'pro'. Ce trigger remet l'ancienne valeur pour tout le monde
+-- sauf l'equipe ; le service_role (le webhook de paiement) ne passe pas par la
+-- puisqu'il contourne le RLS, mais il contourne aussi ce trigger seulement s'il
+-- est admin -- donc on le laisse passer explicitement quand auth.uid() est nul.
+create or replace function club_offre_figee() returns trigger
+  language plpgsql security definer set search_path = public, auth as
+$$
+begin
+  if new.offre is distinct from old.offre
+     and auth.uid() is not null and not est_admin() then
+    new.offre := old.offre;
+  end if;
+  return new;
+end
+$$;
+
+drop trigger if exists club_offre_figee_t on club;
+create trigger club_offre_figee_t before update on club
+  for each row execute function club_offre_figee();
+
 -- L'equipe fait tout le reste : publier, refuser, suspendre.
 drop policy if exists club_edition_admin on club;
 create policy club_edition_admin on club
@@ -224,13 +249,18 @@ create policy equipe_lecture on equipe
   for select to authenticated using (membre_id = auth.uid());
 
 -- --- demande ---
--- Un pratiquant depose une demande sans compte, sur un club publie uniquement.
+-- Un pratiquant depose une demande sans compte, sur un club publie ET abonne Pro.
+-- La reservation en ligne est ce que le club achete : la cacher dans la page ne
+-- suffit pas, sinon une requete a la main donnerait le lead gratuitement. Le
+-- sous-select lit une ligne que tout le monde voit deja (club publie), donc il
+-- protege vraiment -- contrairement au piege decrit plus haut sur club_membre.
 drop policy if exists demande_depot on demande;
 create policy demande_depot on demande
   for insert to anon, authenticated
   with check (
     statut = 'recue'
-    and exists (select 1 from club c where c.id = club_id and c.statut = 'publie')
+    and exists (select 1 from club c
+                 where c.id = club_id and c.statut = 'publie' and c.offre = 'pro')
   );
 
 -- Personne ne relit les demandes sauf le club concerne et l'equipe : ce sont des

@@ -1,7 +1,9 @@
 const { chromium } = require('playwright');
 (async () => {
 const b = await chromium.launch({ args: ['--ignore-certificate-errors'] });
-const base = 'file://' + process.cwd() + '/site/';
+const path = require('path');
+const base = 'file://' + path.join(__dirname, '..', 'site') + '/';
+const OUT = path.join(__dirname, '..', 'captures');
 const e = [];
 async function go(f, w, h, tag, wait) {
   const p = await b.newPage({ viewport: { width: w, height: h } });
@@ -13,7 +15,7 @@ async function go(f, w, h, tag, wait) {
   console.log(tag, '| titre:', await p.title(),
     '| overflow', await p.evaluate(()=>document.documentElement.scrollWidth),
     '| viewport', await p.evaluate(()=>!!document.querySelector('meta[name=viewport]')));
-  await p.screenshot({ path: tag + '.png' });
+  await p.screenshot({ path: path.join(OUT, tag + '.png') });
   return p;
 }
 await (await go('index.html', 1440, 900, 's-accueil')).close();

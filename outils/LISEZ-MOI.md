@@ -30,14 +30,19 @@ toutes seules quand une fiche est publiée. Le visiteur, lui, n'attend pas :
 
 - `page.tpl.html` — le gabarit commun : styles, bandeau, pied de page.
 - `build.py` — l'accueil.
-- `build_clubs.py` — les quatre pages qui partagent la feuille `_clubs.css` :
-  page de vente, formulaire de fiche, espace club, back-office.
+- `build_clubs.py` — les cinq pages qui partagent la feuille `_clubs.css` :
+  page de vente, formulaire de fiche, espace club, back-office, nouveau mot de
+  passe.
 - `build_recherche.py`, `build_salle.py`, `build_annuaire.py` — la recherche,
   la fiche d'une salle, les pages de ville et de discipline.
 - `compte.py` — pose la fenêtre de création d'espace club et charge le client
   Supabase sur toutes les pages.
 - `gen_salles.py`, `tuiles.py`, `vitrine.py` — les données de démonstration et
-  les visuels de ville.
+  les visuels de ville. Les fonds de carte dont `tuiles.py` tire ses vignettes
+  pèsent des dizaines de mégaoctets et ne sont pas dans le dépôt : les vignettes
+  déjà dessinées sont gardées dans `vignettes/`, et c'est elles que le build
+  relit. Effacer un fichier de `vignettes/` suffit à le faire redessiner, à
+  condition d'avoir les fonds dans `../geo/`.
 - `sync_artifact.py` — recopie `site/` vers la maquette publiée en Artifact.
 - `adapte.cjs` — convertit des clubs de la base en salles du site. Il n'a pas
   son propre convertisseur : il charge celui du site (`MCC.enSalle`, dans
@@ -55,6 +60,10 @@ base par son slug, ne montre rien d'inventé, et la demande de séance d'essai
 part. `annuaire.cjs` vérifie qu'un club publié apparaît partout où on le
 cherche — accueil, recherche, page de ville, page de discipline — sans attendre
 une reconstruction.
+
+La réservation en ligne appartient au palier Pro : `essai.cjs` vérifie aussi
+qu'une fiche gratuite n'affiche aucun formulaire, et que la base refuse une
+demande envoyée à la main sur un club gratuit.
 
 `backend.cjs` est le seul à part : il sert `site/` sur un petit serveur local et
 remplace Supabase par `_faux_sb.js`, un faux serveur en mémoire. Il éprouve le

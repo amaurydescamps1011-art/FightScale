@@ -1,7 +1,9 @@
-/* Fiche salle — profil gratuit.
+/* Fiche salle.
    Ce que porte la fiche gratuite : adresse et localisation, horaires, disciplines,
-   présentation, coordonnées, site et réseaux. Pas de réservation : le créneau
-   confirmé appartient au palier payant, qui reste à construire. */
+   présentation, coordonnées, site et réseaux. Le pratiquant appelle ou écrit,
+   et le club rappelle : rien ne passe par nous.
+   Ce que le palier Pro ajoute : la demande de séance d'essai en ligne, qui
+   arrive dans l'espace club et devient un lead une fois confirmée. */
 
 var I = {
   etoile:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>',
@@ -108,11 +110,14 @@ function rendFiche(s){
   document.getElementById('s-disc').innerHTML =
     s[5].map(function (x){ return '<li>' + echappe(x) + '</li>'; }).join('');
 
-  /* la fiche gratuite met en avant le contact direct : c'est là que naît le lead */
+  /* La reservation en ligne appartient au palier Pro : sur une fiche gratuite,
+     le pratiquant appelle ou ecrit, et c'est au club de rappeler. Le lead passe
+     par nous uniquement quand le club paie pour ca. */
+  var reserve = d.reel && !!s[8];
   var actions = [];
-  if (d.reel) actions.push('<a class="btn btn-rouge" href="#essai">' + I.gant +
-                           'Réserver une séance d’essai</a>');
-  if (d.tel) actions.push('<a class="btn ' + (d.reel ? 'btn-ligne' : 'btn-rouge') +
+  if (reserve) actions.push('<a class="btn btn-rouge" href="#essai">' + I.gant +
+                            'Réserver une séance d’essai</a>');
+  if (d.tel) actions.push('<a class="btn ' + (reserve ? 'btn-ligne' : 'btn-rouge') +
     '" href="tel:' + d.tel.replace(/\s/g, '') + '">' + I.tel + 'Appeler la salle</a>');
   if (d.mail) actions.push('<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
                            I.mail + 'Écrire un e-mail</a>');
@@ -251,7 +256,7 @@ function rendFiche(s){
      reclamee : c'est la demande de seance d'essai qui prend sa place. */
   var bloc = document.querySelector('.pan-club');
   if (bloc) bloc.hidden = !!d.reel;
-  if (d.reel) ouvreEssai(s);
+  if (reserve) ouvreEssai(s);
 }
 
 /* Cache une section quand elle n'a rien a montrer. Un panneau vide avec son
@@ -262,9 +267,10 @@ function montre(id, oui){
 }
 
 /* ---- la demande de seance d'essai ----
-   Le formulaire ne s'ouvre que sur la fiche d'un vrai club. Il ecrit directement
-   dans la base ; la politique d'acces n'accepte qu'un club publie et le statut
-   « recue », donc rien ici ne peut donner plus que ca. */
+   Le formulaire ne s'ouvre que sur la fiche d'un vrai club abonne Pro : la
+   reservation est ce que le club achete. Il ecrit directement dans la base ;
+   la politique d'acces n'accepte qu'un club publie et le statut « recue »,
+   donc rien ici ne peut donner plus que ca. */
 function ouvreEssai(s){
   var bloc = document.getElementById('essai');
   var SB = window.MCC;

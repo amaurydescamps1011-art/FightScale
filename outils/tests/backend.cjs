@@ -9,7 +9,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const D = __dirname;
+const D = require('path').join(__dirname, '..');
 const RACINE = path.join(D, 'site');
 /* On sert le site en http plutot qu'en file:// : sessionStorage, dont se sert le
    faux serveur pour garder son etat d'une page a l'autre, n'est pas fiable sur

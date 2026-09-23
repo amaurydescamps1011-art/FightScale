@@ -1,0 +1,15 @@
+# Fonds de carte (des dizaines de Mo, telecharges a part). Les vignettes qui en
+# sont tirees, elles, sont dans outils/vignettes/ et versionnees : c'est ce qui
+# permet de rebatir le site sans eux.
+geo
+
+# Captures d'ecran des tests
+captures
+outils/*.png
+
+# Ce que le build fabrique : les pages intermediaires dans outils/, puis site/
+outils/__pycache__/
+outils/site/
+outils/*.html
+!outils/_*.html
+!outils/page.tpl.html

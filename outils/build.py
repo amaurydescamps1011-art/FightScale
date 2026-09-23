@@ -48,7 +48,10 @@ page = page.replace('<script src="carte.js"></script>',
 page = compte.pose(page)
 open('index.html', 'w', encoding='utf-8').write(page)
 
-carte = open('carte.js', encoding='utf-8').read()
+# carte.js est servi par le site : il vit a la racine du depot, pas dans outils/
+import os
+carte = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'carte.js'),
+             encoding='utf-8').read()
 prev  = page.replace('<script src="carte.js"></script>',
                      '<script>\n' + carte + '\n</script>')
 assert '<script src="carte.js"></script>' not in prev

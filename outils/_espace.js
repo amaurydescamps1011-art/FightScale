@@ -76,6 +76,27 @@
         document.getElementById('esp-nb').textContent = l.length;
         document.getElementById('esp-nb-ok').textContent = l.filter(function (d){
           return d.statut === 'confirmee' || d.statut === 'honoree'; }).length;
+
+        /* La reservation en ligne appartient au palier Pro. Sur une fiche
+           gratuite, deux compteurs a zero donneraient l'impression que la page
+           est cassee : on les retire et on dit ce qui les remplirait. */
+        var gratuit = (club.offre || 'gratuit') !== 'pro';
+        var compteurs = document.querySelector('.esp-chiffres');
+        if (compteurs) compteurs.hidden = gratuit && !l.length;
+        /* sur une fiche gratuite, annoncer « les demandes » promet une liste qui
+           n'arrivera jamais : la section dit alors ce qui la remplirait */
+        document.getElementById('esp-oeil').textContent =
+          gratuit ? 'Mon Club Combat Pro' : 'Ce que vous avez reçu';
+        document.getElementById('esp-titre').textContent =
+          gratuit ? 'Recevez vos demandes de séance d’essai'
+                  : 'Les demandes de séance d’essai';
+        document.getElementById('esp-vide').textContent = gratuit
+          ? 'Les pratiquants vous appellent et vous écrivent directement : vos '
+            + 'coordonnées sont sur votre fiche. La réservation en ligne, elle, fait '
+            + 'partie de Mon Club Combat Pro : la demande arriverait ici et vous la '
+            + 'confirmeriez d’un bouton.'
+          : 'Aucune demande pour l’instant. Elles arriveront ici dès que votre fiche '
+            + 'sera en ligne.';
         document.getElementById('esp-vide').hidden = l.length > 0;
         document.getElementById('esp-demandes').innerHTML = l.map(ligne).join('');
       });

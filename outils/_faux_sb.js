@@ -45,11 +45,12 @@ window.supabase = {
           var l;
           if (f.op === 'insert') {
             /* le depot d'une demande : la vraie politique n'accepte qu'un club
-               publie et le statut « recue », on refait ce controle ici pour que
-               le test echoue si la page envoie autre chose */
+               publie, abonne Pro, et le statut « recue ». On refait ce controle
+               ici pour que le test echoue si la page envoie autre chose */
             var c = f.champs;
             var vise = S.club.filter(function (x){ return x.id === c.club_id; })[0];
-            if (!vise || vise.statut !== 'publie' || c.statut !== 'recue') {
+            if (!vise || vise.statut !== 'publie' || vise.offre !== 'pro'
+                || c.statut !== 'recue') {
               res({ data: null, error: { message: 'new row violates row-level security policy' } });
               return;
             }
@@ -119,7 +120,7 @@ window.supabase = {
           return Promise.resolve({ error: { message: 'Ce compte gere deja un club' } });
         var id = neuf();
         S.club.push({ id: id, nom: args.nom_salle, statut: 'brouillon',
-                      disciplines: [], horaires: {}, photos: [] });
+                      disciplines: [], horaires: {}, photos: [], offre: 'gratuit' });
         S.club_membre.push({ club_id: id, membre_id: uid() });
         sauve();
         return Promise.resolve({ data: id, error: null });

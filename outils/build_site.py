@@ -110,15 +110,17 @@ for nom, (titre, descr) in DESCR.items():
                             '<meta name="robots" content="noindex, follow">\n<meta name="description"', 1)
     open(os.path.join(SORTIE, nom), 'w', encoding='utf-8').write(page)
 
+# ces trois-la sont servis par le site, donc ils vivent a la racine du depot
+DEPOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 for f in ('carte.js', 'geo.js', 'sb.js'):
-    shutil.copy(f, os.path.join(SORTIE, f))
+    shutil.copy(os.path.join(DEPOT, f), os.path.join(SORTIE, f))
 
 # Les photos de villes et celles de la fiche d'exemple, quand elles existent.
 import tuiles, gen_salles
 for rel in tuiles.photos_deposees() + [x for x in gen_salles.photos_exemple() if x]:
     dest = os.path.join(SORTIE, rel)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    shutil.copy(rel, dest)
+    shutil.copy(os.path.join(DEPOT, rel), dest)
 
 # maquette de travail : on ne veut pas qu'elle se retrouve dans Google
 open(os.path.join(SORTIE, 'robots.txt'), 'w', encoding='utf-8').write(

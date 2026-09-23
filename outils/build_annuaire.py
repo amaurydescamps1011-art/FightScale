@@ -147,8 +147,7 @@ def carte_salle(s, i):
           '<div class="res-chips">%s</div>'
           '<p class="res-adresse">%s%s</p>'
           '%s'
-          '<div class="res-bas">%s'
-            '<a class="btn btn-rouge res-essai" href="salle.html?s=%s#essai">Séance d\'essai</a>'
+          '<div class="res-bas">%s%s'
           '</div>'
         '</div>'
       '</article>'
@@ -163,7 +162,12 @@ def carte_salle(s, i):
          '' if not s[9] else
          ('<span class="paire res-ouvert">Ouvert aujourd\'hui · %s</span>' % s[9]) if s[10]
            else '<span class="paire">Fermé aujourd\'hui</span>',
-         d['slug'])
+         # la réservation en ligne est ce que le club achète : sans Pro, la carte
+         # renvoie à la fiche, où le pratiquant trouve le téléphone
+         ('<a class="btn btn-rouge res-essai" href="salle.html?s=%s#essai">'
+          'Séance d\'essai</a>' % d['slug']) if s[8] else
+         ('<a class="btn btn-ligne res-essai" href="salle.html?s=%s">'
+          'Voir la salle</a>' % d['slug']))
 
 def vide(titre, phrase, sous, puces):
     """Ce qu'on affiche a la place de la liste quand rien n'est reference.

@@ -4,10 +4,10 @@
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 
-const RACINE = __dirname + '/site';
+const RACINE = __dirname + '/../site';
 const T = {'.html':'text/html; charset=utf-8','.js':'text/javascript','.svg':'image/svg+xml',
            '.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp'};
-const faux = fs.readFileSync(__dirname + '/_faux_sb.js', 'utf8');
+const faux = fs.readFileSync(__dirname + '/../_faux_sb.js', 'utf8');
 
 const ETAT = {
   session: null, users: {}, equipe: [], club_membre: [],
@@ -20,6 +20,17 @@ const ETAT = {
     tel: '06 12 34 56 78', mail: 'contact@teamouragan.fr', site: '', instagram: '', facebook: '',
     horaires: { lundi: ['18:00','21:00'], mardi: ['18:00','21:00'], mercredi: ['10:00','21:00'],
                 jeudi: ['18:00','21:00'], vendredi: ['18:00','20:00'] },
+    offre: 'pro'
+  }, {
+    /* le meme club, mais sur la fiche gratuite : la reservation en ligne est ce
+       que le Pro achete, donc elle ne doit exister ni dans la page ni en base */
+    id: 'c2', statut: 'publie', slug: 'boxing-club-lyon',
+    nom: 'Boxing Club Lyon', ville: 'Lyon',
+    adresse: '9 rue de la Part-Dieu', code_postal: '69003',
+    disciplines: ['Boxe anglaise'], photos: [],
+    presentation: 'Le club de boxe du quartier.',
+    tel: '04 78 00 00 00', mail: 'contact@bclyon.fr', site: '', instagram: '', facebook: '',
+    horaires: { lundi: ['18:00','21:00'] },
     offre: 'gratuit'
   }],
   demande: [], fichiers: []
@@ -141,13 +152,35 @@ const dit = (b, quoi) => { console.log((b ? '  ok    ' : '  RATE  ') + quoi); b 
   dit(!demo.essai, 'pas de formulaire de réservation');
   dit(demo.note && demo.reclamer && demo.bandeau, 'la fiche d’exemple n’a pas bougé');
 
-  console.log('\n5. un slug inconnu');
+  console.log('\n5. la fiche gratuite ne prend pas de réservation');
+  await p.goto(base + 'salle.html?s=boxing-club-lyon', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(600);
+  const grat = await p.evaluate(() => ({
+    visible: !document.getElementById('fiche').hidden,
+    essai: !document.getElementById('essai').hidden,
+    ancre: !!document.querySelector('#s-actions a[href="#essai"]'),
+    premier: (document.querySelector('#s-actions .btn') || {}).className || '',
+    tel: (document.getElementById('s-actions').textContent || '')
+  }));
+  dit(grat.visible, 'la fiche gratuite s’affiche quand même');
+  dit(!grat.essai && !grat.ancre, 'ni formulaire ni bouton de réservation');
+  dit(/btn-rouge/.test(grat.premier) && /Appeler la salle/.test(grat.tel),
+      'c’est « Appeler la salle » qui prend la place');
+
+  /* et pas seulement dans la page : la politique d'acces refuse le depot */
+  const force = await p.evaluate(() => window.MCC.deposeDemande('c2', {
+    nom: 'Forceur', mail: 'f@exemple.fr' }).then(() => 'accepte', e => 'refuse'));
+  dit(force === 'refuse', 'une demande envoyée à la main est refusée par la base');
+  dit(await p.evaluate(() => JSON.parse(sessionStorage.getItem('faux')).demande.length) === 1,
+      'la base n’a toujours qu’une demande');
+
+  console.log('\n6. un slug inconnu');
   await p.goto(base + 'salle.html?s=nawak', { waitUntil: 'networkidle' });
   await p.waitForTimeout(600);
   dit(await p.evaluate(() => !document.getElementById('introuvable').hidden),
       'la page « cette salle n’existe pas »');
 
-  console.log('\n6. au téléphone');
+  console.log('\n7. au téléphone');
   await p.setViewportSize({ width: 390, height: 844 });
   await p.goto(base + 'salle.html?s=team-ouragan-boxe', { waitUntil: 'networkidle' });
   await p.waitForTimeout(600);

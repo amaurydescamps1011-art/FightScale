@@ -6,7 +6,7 @@
    « Referencer ma salle ». */
 const { chromium } = require('playwright');
 const path = require('path');
-const S = path.join(__dirname, 'site');
+const S = path.join(__dirname, '..', 'site');
 const url = f => 'file://' + path.join(S, f);
 
 (async () => {

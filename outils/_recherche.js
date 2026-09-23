@@ -174,7 +174,11 @@ function carteResultat(r, i){
           : r.ouvert
           ? '<span class="paire res-ouvert">Ouvert aujourd\'hui · ' + r.horaires + '</span>'
           : '<span class="paire">Fermé aujourd\'hui</span>') +
-        '<a class="btn btn-rouge res-essai" href="' + r.fiche + '#essai">Séance d\'essai</a>' +
+        /* la réservation en ligne est ce que le club achète : sans Pro, la carte
+           renvoie simplement à la fiche, où le pratiquant trouve le téléphone */
+        (r.pro
+          ? '<a class="btn btn-rouge res-essai" href="' + r.fiche + '#essai">Séance d\'essai</a>'
+          : '<a class="btn btn-ligne res-essai" href="' + r.fiche + '">Voir la salle</a>') +
       '</div>' +
     '</div>' +
   '</article>';

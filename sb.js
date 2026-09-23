@@ -150,8 +150,10 @@ window.MCC = (function (){
       equipements: [],
       avis: []
     };
+    /* la 9e case est le drapeau Pro : c'est lui qui ouvre la reservation en
+       ligne, sur la fiche comme sur les cartes de resultats */
     return [c.nom, sigleDe(c.nom), c.ville || '', coord[0], coord[1],
-            c.disciplines || [], null, 0, c.offre !== 'gratuit',
+            c.disciplines || [], null, 0, c.offre === 'pro',
             amplitude(h), !!(h[auj] && h[auj][0]), detail];
   }
 

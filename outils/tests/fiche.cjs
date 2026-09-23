@@ -1,6 +1,9 @@
 const { chromium } = require('playwright');
 const path = require('path');
-const D = __dirname;
+// les pages testees sont celles qui partent en ligne, dans site/ ;
+// les captures vont dans captures/, qui n'est pas deploye
+const D = require('path').join(__dirname, '..', 'site');
+const OUT = require('path').join(__dirname, '..', 'captures');
 
 // L'annuaire est vide depuis le 22/09/2026 : aucune salle n'est referencee sans
 // l'accord du club. Ce qui se teste ici, ce n'est donc plus le passage d'un
@@ -87,7 +90,7 @@ const D = __dirname;
   console.log('mini-carte  :', pixels, 'couleurs distinctes');
   if (pixels < 6) erreurs.push('la mini-carte ne dessine presque rien (' + pixels + ' couleurs)');
 
-  await p.screenshot({ path: path.join(D, 'fi-desk.png'), fullPage: true });
+  await p.screenshot({ path: path.join(OUT, 'fi-desk.png'), fullPage: true });
 
   // --- 3. une salle inconnue ---
   await p.goto('file://' + path.join(D, 'salle.html') + '?s=nimporte-quoi');
@@ -104,7 +107,7 @@ const D = __dirname;
   const debordM = await m.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   console.log('mobile      : debordement =', debordM);
   if (debordM) erreurs.push('debordement horizontal en 390');
-  await m.screenshot({ path: path.join(D, 'fi-mob.png'), fullPage: true });
+  await m.screenshot({ path: path.join(OUT, 'fi-mob.png'), fullPage: true });
 
   console.log(erreurs.length ? '\nPROBLEMES:\n- ' + erreurs.join('\n- ') : '\nOK, aucun probleme');
   await b.close();
