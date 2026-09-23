@@ -1,0 +1,51 @@
+<!-- La coque de l'espace pro.
+
+     Amaury, 23/09/2026 : « c'est comme si c'etait un peu deux sites differents.
+     Donc tu as le site B2C et le site B2B (...) ca doit etre comme un logiciel,
+     avec sur le cote : l'espace club, modifie ma fiche, mon compte, back-office
+     (...) il peut naviguer entre les differents espaces comme ca. »
+
+     Les pages restent quatre pages -- le site est statique, et un panneau qui se
+     charge tout seul ne se verrait pas plus vite -- mais elles partagent la meme
+     coque : le meme rail a gauche, la meme tete, la meme place pour le contenu.
+     Le bandeau public (Clubs, Disciplines, Pro) et le pied de page a liens de
+     villes n'y sont plus : ils s'adressent aux pratiquants, pas aux gerants.
+
+     Ce qui est ecrit ici est un squelette : le nom de la salle, la ligne du
+     back-office, le lien vers la fiche en ligne et la pastille des demandes sont
+     poses par _pro.js, une fois la session lue. -->
+<div class="pro">
+  <header class="pro-tete">
+    <a class="pro-marque" href="index.html" aria-label="Mon Club Combat, accueil">
+      <svg viewBox="212 589 389 369" width="30" height="28" role="img" aria-label="Mon Club Combat">
+        <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+      </svg>
+      <span class="pro-marque-mot">Espace pro</span>
+    </a>
+    <p class="pro-salle" id="pro-salle"></p>
+    <a class="pro-sortir" href="index.html" id="pro-voir" hidden>Voir ma fiche en ligne</a>
+  </header>
+
+  <nav class="pro-rail" id="pro-rail" aria-label="Votre espace">
+    <ul class="pro-liens">
+      <li><a href="espace-club.html" data-page="espace-club">%%I_BORD%%<span>Espace club</span>
+        <b class="pro-pastille" id="pro-pastille" hidden></b></a></li>
+      <li><a href="referencer.html" data-page="referencer">%%I_FICHE%%<span>Ma fiche</span></a></li>
+      <li><a href="mon-compte.html" data-page="mon-compte">%%I_COMPTE%%<span>Mon compte</span></a></li>
+      <li id="pro-admin" hidden><a href="admin.html" data-page="admin">%%I_ADMIN%%<span>Back-office</span></a></li>
+    </ul>
+
+    <!-- Le rappel du palier, au pied du rail : il suit le gerant de page en page
+         sans jamais couper ce qu'il est en train de faire. -->
+    <div class="pro-palier" id="pro-palier" hidden>
+      <p class="pro-palier-t" id="pro-palier-t">Fiche gratuite</p>
+      <p class="pro-palier-m" id="pro-palier-m"></p>
+      <a class="btn btn-rouge btn-mini" href="espace-club.html#esp-verrou-bloc"
+         id="pro-palier-a">Passer au Pro</a>
+    </div>
+
+    <button type="button" class="pro-quitter" id="pro-quitter"
+      aria-label="Se déconnecter">%%I_SORTIE%%<span>Se déconnecter</span></button>
+  </nav>
+
+  <div class="pro-vue">

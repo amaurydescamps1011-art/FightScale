@@ -349,6 +349,33 @@ window.MCC = (function (){
       .catch(function (){ return 0; });
   }
 
+  /* ---- vouloir passer au Pro ----
+     Stripe n'est pas branche : le gerant le dit d'un bouton, l'equipe ouvre
+     l'abonnement a la main. Une ligne par club, donc appuyer deux fois ne fait
+     pas deux demandes -- la seconde revient en doublon, et on la lit comme un
+     succes plutot que d'afficher une erreur a quelqu'un qui a bien demande. */
+  function veutLePro(clubId){
+    if (!client || !clubId) return Promise.reject(new Error('Hors ligne'));
+    return session().then(function (s){
+      if (!s) throw new Error('Il faut être connecté');
+      return client.from('interet_pro')
+        .insert({ club_id: clubId, membre_id: s.user.id });
+    }).then(function (r){
+      if (r && r.error && !/duplicate key|already exists/i.test(r.error.message)) throw r.error;
+      return true;
+    });
+  }
+
+  /* La demande en cours, s'il y en a une : la page dit « c'est note » plutot que
+     de reproposer un bouton sur lequel il a deja appuye. */
+  function monInteretPro(clubId){
+    if (!client || !clubId) return Promise.resolve(null);
+    return client.from('interet_pro').select('cree_le, repondu_le')
+      .eq('club_id', clubId).maybeSingle()
+      .then(function (r){ return (r && r.data) || null; })
+      .catch(function (){ return null; });
+  }
+
   /* Le depot d'une demande de seance d'essai. La politique d'acces n'accepte
      que le statut « recue » et un club publie : c'est la le garde-fou, pas ici. */
   function deposeDemande(clubId, champs){
@@ -370,6 +397,7 @@ window.MCC = (function (){
     enSalle: enSalle, clubsPublies: clubsPublies, chargeSalles: chargeSalles,
     deposeDemande: deposeDemande, lienPhoto: lienPhoto,
     compteVue: compteVue, vuesDuClub: vuesDuClub,
-    nouvellesDemandes: nouvellesDemandes
+    nouvellesDemandes: nouvellesDemandes,
+    veutLePro: veutLePro, monInteretPro: monInteretPro
   };
 })();

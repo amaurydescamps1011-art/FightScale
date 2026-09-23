@@ -160,7 +160,11 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await garde();
 
   // ---------- 5. une demande de seance d'essai ----------
+  /* Une demande n'arrive que chez un club Pro : la base le refuse autrement, et
+     depuis le 23/09/2026 l'espace d'un gratuit montre le bloc verrouille a la
+     place de la liste. Le jeu d'essai suit donc la realite. */
   await pg.evaluate(() => {
+    window.__FAUX__.club[0].offre = 'pro';
     window.__FAUX__.demande.push({
       id: 'd1', club_id: window.__FAUX__.club[0].id, statut: 'recue',
       cree_le: new Date().toISOString(), nom: 'Léa Martin',
@@ -252,6 +256,10 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
      await pg.locator('#esp-check .ok').count() >= 4, true);
 
   // ---------- 6 bis. les visites de la fiche, comptees pour de vrai ----------
+  /* on repasse en gratuit : c'est le palier ou « ce qui manque » a un sens */
+  await pg.evaluate(() => { window.__FAUX__.club[0].offre = 'gratuit'; });
+  await garde();
+
   /* Le chiffre que le gerant veut voir, et celui qui vend le Pro. Il est ecrit
      par `compte_vue()` en base : la page n'ajoute jamais elle-meme une ligne. */
   await aller('salle.html?s=team-ouragan-boxe-marseille');
@@ -286,20 +294,98 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('avec le taux d\'une etape a l\'autre',
      /% de l’étape précédente/.test(await pg.textContent('#esp-etapes li:nth-child(2)')), true);
 
-  /* Ce que le gratuit fait manquer, avec le vrai chiffre et pas un argumentaire */
+  /* Ce que le gratuit fait manquer, avec le vrai chiffre et pas un argumentaire.
+     C'est le titre du bloc du Pro : les deux disaient deux fois la meme chose. */
   ok('le gratuit s\'entend dire ce qu\'il manque',
-     await pg.isVisible('#esp-manque-bloc'), true);
-  ok('avec le nombre de gens qui sont passes',
-     await pg.textContent('#esp-manque-titre'), 'Une personne a vu votre fiche ce mois-ci');
+     await pg.textContent('#esp-verrou-titre'), 'Une personne a vu votre fiche ce mois-ci');
   ok('et ce qu\'elle n\'a pas trouve',
-     /ni votre téléphone/.test(await pg.textContent('#esp-manque-mot')), true);
+     /ni votre téléphone/.test(await pg.textContent('#esp-verrou-mot')), true);
 
   ok('la formule en cours est rappelee',
      await pg.textContent('#esp-formule-titre'), 'Fiche gratuite');
   ok('avec ce qu\'elle donne', await pg.locator('#esp-formule li.ok').count(), 2);
-  ok('et ce qu\'elle ne donne pas', await pg.locator('#esp-formule li.non').count(), 3);
+  ok('et ce qu\'elle ne donne pas encore',
+     await pg.locator('#esp-formule li.ferme').count(), 4);
   ok('le prix est dit sans detour',
      /39 € par mois/.test(await pg.textContent('#esp-formule-note')), true);
+
+  // ---------- 6 ter. le Pro : grise et ferme, pas cache ----------
+  /* Amaury, 23/09/2026 : « ne pas barrer les espaces auxquels il n'a pas acces,
+     mais les mettre en grise ». Un club gratuit doit donc voir les sections du
+     Pro, fermees, et pouvoir les ouvrir. */
+  ok('le club gratuit voit ce que le Pro ouvre',
+     await pg.isVisible('#esp-verrou-bloc'), true);
+  ok('section par section', await pg.locator('#esp-verrou li').count(), 6);
+  ok('la reservation en fait partie',
+     /réservation de séance d’essai/i.test(await pg.textContent('#esp-verrou')), true);
+  ok('et le suivi des prospects aussi',
+     /suivi de chaque prospect/i.test(await pg.textContent('#esp-verrou')), true);
+  /* rien d'invente : ce sont les fonctions, pas de fausses lignes de prospects */
+  ok('la liste des prospects reste fermee a un gratuit',
+     await pg.isVisible('#esp-demandes-bloc'), false);
+  /* les chiffres qu'il ne peut pas faire bouger sont grises, pas retires */
+  ok('les tuiles fermees restent visibles', await pg.locator('#esp-kpi li').count(), 4);
+  ok('trois d\'entre elles portent le cadenas',
+     await pg.locator('#esp-kpi li.ferme').count(), 3);
+  ok('celle des visites reste ouverte',
+     await pg.locator('#esp-kpi li:nth-child(1).ferme').count(), 0);
+  /* et la formule ne barre plus : elle ferme */
+  ok('la formule montre les portes fermees',
+     await pg.locator('#esp-formule li.ferme').count(), 4);
+
+  // le bouton enregistre la demande ; c'est le back-office qui ouvrira le Pro
+  ok('le bouton est là, une seule fois', await pg.isVisible('#esp-pro'), true);
+  await pg.click('#esp-pro');
+  await pg.waitForTimeout(500);
+  ok('la demande part', await pg.evaluate(() => window.__FAUX__.interet_pro.length), 1);
+  ok('pour son club et sous son nom', await pg.evaluate(() => {
+    const i = window.__FAUX__.interet_pro[0];
+    return i.club_id === window.__FAUX__.club[0].id
+        && i.membre_id === window.__FAUX__.session.user.id;
+  }), true);
+  ok('et on le lui dit', /C’est noté/.test(await pg.textContent('#esp-pro-fait')), true);
+  ok('le bouton ne se represente plus',
+     await pg.isDisabled('#esp-pro'), true);
+  await garde();
+
+  /* au retour sur la page, on se souvient qu'il a demande */
+  await aller('espace-club.html');
+  await pg.waitForTimeout(800);
+  ok('la demande est retenue d\'une visite a l\'autre',
+     /C’est noté/.test(await pg.textContent('#esp-pro-fait')), true);
+  ok('et appuyer deux fois ne fait pas deux demandes',
+     await pg.evaluate(() => window.__FAUX__.interet_pro.length), 1);
+
+  // ---------- 6 quater. le back-office voit qui attend ----------
+  await aller('admin.html');
+  await pg.waitForTimeout(700);
+  ok('le club qui a demande remonte en tete',
+     await pg.isVisible('#ad-veut-bloc'), true);
+  ok('avec son nom', await pg.textContent('#ad-veulent .fiche b'), 'Team Ouragan Boxe');
+  ok('et la date de sa demande',
+     /A demandé le Pro le /.test(await pg.textContent('#ad-veulent .fiche-veut')), true);
+  await pg.click('#ad-veulent .fiche [data-offre="pro"]');
+  await pg.waitForTimeout(800);
+  ok('ouvrir le Pro répond a la demande',
+     await pg.evaluate(() => !!window.__FAUX__.interet_pro[0].repondu_le), true);
+  ok('et le club est passe au Pro',
+     await pg.evaluate(() => window.__FAUX__.club[0].offre), 'pro');
+  ok('la liste des demandes se vide', await pg.isVisible('#ad-veut-bloc'), false);
+  await garde();
+
+  // ---------- 6 quinquies. l'espace d'un Pro n'a plus de verrou ----------
+  await aller('espace-club.html');
+  await pg.waitForTimeout(800);
+  ok('le bloc verrouille disparait', await pg.isVisible('#esp-verrou-bloc'), false);
+  ok('la liste des prospects s\'ouvre', await pg.isVisible('#esp-demandes-bloc'), true);
+  ok('plus aucune tuile fermee', await pg.locator('#esp-kpi li.ferme').count(), 0);
+  ok('et la formule est celle du Pro',
+     await pg.textContent('#esp-formule-titre'), 'Mon Club Combat Pro');
+
+
+  /* on remet le club en gratuit : la suite du test l'attend ainsi */
+  await pg.evaluate(() => { window.__FAUX__.club[0].offre = 'gratuit'; });
+  await garde();
 
   // ---------- 7. le compte dans le bandeau ----------
   await aller('index.html');
@@ -357,6 +443,68 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('une demande traitee ne compte plus',
      await pg.locator('.cpt-rond .cpt-pastille').count(), 0);
 
+  // ---------- 7 ter. la coque de l'espace pro ----------
+  /* Amaury, 23/09/2026 : « ca doit etre comme un logiciel, avec sur le cote :
+     l'espace club, modifie ma fiche, mon compte, back-office (...) il peut
+     naviguer entre les differents espaces comme ca. » */
+  await aller('espace-club.html');
+  await pg.waitForTimeout(800);
+  ok('le bandeau public n\'entre pas dans l\'espace pro',
+     await pg.locator('.site-nav').count(), 0);
+  ok('le pied de page a liens de villes non plus',
+     await pg.locator('.site-footer').count(), 0);
+  ok('le rail est la', await pg.isVisible('#pro-rail'), true);
+  ok('il mene aux quatre espaces',
+     await pg.evaluate(() => Array.from(document.querySelectorAll('#pro-liens a, .pro-liens a'))
+       .filter(a => a.offsetParent !== null).map(a => a.getAttribute('href'))),
+     ['espace-club.html', 'referencer.html', 'mon-compte.html', 'admin.html']);
+  ok('la page ouverte se marque',
+     await pg.getAttribute('#pro-rail [data-page="espace-club"]', 'aria-current'), 'page');
+  ok('et les autres non',
+     await pg.getAttribute('#pro-rail [data-page="referencer"]', 'aria-current'), null);
+  ok('la tete nomme la salle', await pg.textContent('#pro-salle'), 'Team Ouragan Boxe');
+  ok('et mene a la fiche en ligne',
+     await pg.getAttribute('#pro-voir', 'href'), 'salle.html?s=team-ouragan-boxe-marseille');
+  ok('le palier est rappele de page en page',
+     await pg.textContent('#pro-palier-t'), 'Fiche gratuite');
+
+  /* naviguer d'un espace a l'autre garde la coque et deplace la marque */
+  await pg.click('#pro-rail [data-page="mon-compte"]');
+  await pg.waitForURL(/mon-compte\.html/, { timeout: 5000 });
+  await pg.waitForTimeout(700);
+  ok('on change d\'espace sans quitter la coque', await pg.isVisible('#pro-rail'), true);
+  ok('et la marque suit',
+     await pg.getAttribute('#pro-rail [data-page="mon-compte"]', 'aria-current'), 'page');
+  ok('l\'espace club n\'est plus marque',
+     await pg.getAttribute('#pro-rail [data-page="espace-club"]', 'aria-current'), null);
+
+  /* la pastille des demandes suit le gerant dans tout l'espace pro */
+  await pg.evaluate(() => {
+    window.__FAUX__.demande.push({
+      id: 'd3', club_id: window.__FAUX__.club[0].id, statut: 'recue',
+      cree_le: new Date().toISOString(), nom: 'Nour Amrani', mail: 'nour@example.fr'
+    });
+  });
+  await garde();
+  await aller('referencer.html');
+  await pg.waitForTimeout(900);
+  ok('la pastille suit d\'un espace a l\'autre',
+     await pg.textContent('#pro-pastille'), '1');
+
+  /* le back-office n'apparait que pour l'equipe : on retire le compte de
+     `equipe` pour le verifier, puis on le remet */
+  await pg.evaluate(() => { window.__FAUX__.equipe = []; });
+  await garde();
+  await aller('espace-club.html');
+  await pg.waitForTimeout(800);
+  ok('un gerant ordinaire ne voit pas le back-office',
+     await pg.isVisible('#pro-admin'), false);
+  await pg.evaluate(() => {
+    window.__FAUX__.equipe.push({ membre_id: window.__FAUX__.session.user.id });
+    window.__FAUX__.demande = window.__FAUX__.demande.filter(d => d.id !== 'd3');
+  });
+  await garde();
+
   // ---------- 8. la page « Mon compte » ----------
   await aller('mon-compte.html');
   await pg.waitForTimeout(600);
@@ -384,7 +532,10 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await aller('mon-compte.html');
   await pg.waitForTimeout(600);
   ok('il est relu au retour sur la page', await pg.inputValue('#mc-nom'), 'Amaury Descamps');
-  ok('et le bandeau porte le nom de la salle', await pg.textContent('.cpt-nom'), 'Team Ouragan Boxe');
+  /* « Mon compte » est une page de l'espace pro : elle porte le rail, pas le
+     bandeau public. C'est la tete de la coque qui nomme la salle. */
+  ok('la coque pro nomme la salle', await pg.textContent('#pro-salle'), 'Team Ouragan Boxe');
+  ok('et le bandeau public n\'y est plus', await pg.locator('.site-nav').count(), 0);
 
   // le mot de passe : deux fois le meme, huit caracteres au minimum
   await pg.fill('#mc-mdp', 'nouveau-mot');

@@ -4,8 +4,8 @@
   <section class="section sous-bandeau">
     <div class="wrap">
       <div class="fil">
-        <p class="eyebrow">Espace club</p>
-        <h1 class="section-titre display" id="esp-nom">Votre espace club</h1>
+        <p class="eyebrow" id="esp-nom">Votre salle</p>
+        <h1 class="section-titre display">Espace club</h1>
       </div>
 
       <!-- l'etat de la fiche est un mot, pas un chiffre : il va dans une pastille,
@@ -19,11 +19,9 @@
 
       <div id="esp-corps" hidden>
         <p class="esp-mot" id="esp-mot"></p>
-        <div class="esp-actions">
-          <a class="btn btn-rouge" href="referencer.html">Modifier ma fiche</a>
-          <a class="btn btn-ligne" id="esp-voir" href="#" hidden>Voir ma fiche en ligne</a>
-          <a class="btn btn-ligne" href="mon-compte.html">Mon compte</a>
-        </div>
+        <!-- Plus de rangee de boutons ici : le rail de gauche mene a la fiche, au
+             compte et au back-office, et la tete porte « Voir ma fiche en ligne ».
+             Les repeter faisait quatre fois le meme geste a l'ecran. -->
       </div>
     </div>
   </section>
@@ -59,16 +57,28 @@
     </div>
   </section>
 
-  <!-- Ce que le gratuit fait manquer, chiffre a l'appui : ce n'est pas un
-       argument de vente invente, c'est le nombre de gens qui sont passes. -->
-  <section class="section esp-manque-bloc" id="esp-manque-bloc" hidden>
+  <!-- Amaury, 23/09/2026 : « ne pas barrer les espaces auxquels il n'a pas acces,
+       mais les mettre en grise ». Un club gratuit voit donc le Pro au lieu de ne
+       rien voir : les memes sections, grisees et fermees, avec le cadenas qui dit
+       pourquoi. Cacher lui ferait croire que le produit s'arrete la. -->
+  <section class="section esp-bloc esp-verrou-bloc" id="esp-verrou-bloc" hidden>
     <div class="wrap">
-      <div class="esp-manque">
-        <p class="eyebrow">Mon Club Combat Pro</p>
-        <h2 class="esp-manque-titre display" id="esp-manque-titre"></h2>
-        <p class="esp-manque-mot" id="esp-manque-mot"></p>
-        <a class="btn btn-rouge" href="clubs.html#pro">Voir ce que le Pro ajoute</a>
+      <p class="eyebrow">Avec Mon Club Combat Pro</p>
+      <!-- Le titre porte le vrai chiffre des que la fiche a ete vue : ce n'est pas
+           un argument invente, c'est le nombre de gens qui sont passes sans
+           pouvoir joindre la salle. Sans visite, il reste generique. -->
+      <h2 class="section-titre display" id="esp-verrou-titre">Ce qui s'ouvre avec le Pro</h2>
+      <p class="section-chapo" id="esp-verrou-mot">Tout est déjà construit&nbsp;: il n'y a que
+        votre abonnement à ouvrir.</p>
+
+      <ul class="esp-verrou" id="esp-verrou"></ul>
+
+      <div class="esp-pro-pied">
+        <button class="btn btn-rouge" type="button" id="esp-pro">Passer au Pro — 39 €/mois</button>
+        <a class="btn btn-ligne" href="clubs.html#pro">Voir le détail des deux formules</a>
       </div>
+      <p class="form-etat" id="esp-pro-fait" hidden role="status"></p>
+      <p class="form-erreur" id="esp-pro-err" hidden role="alert"></p>
     </div>
   </section>
 

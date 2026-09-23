@@ -83,6 +83,48 @@ OB_VISUEL = ('<img class="ob-photo" src="%s" alt="" width="1600" height="800" lo
              'decoding="async">' % _ph[0] if _ph
              else APPAREIL + '<span>Votre photo</span>')
 
+# ---- l'espace pro ----
+# Amaury, 23/09/2026 : « c'est comme si c'etait un peu deux sites differents (...)
+# ca doit etre comme un logiciel, avec sur le cote : l'espace club, modifie ma
+# fiche, mon compte, back-office ». Quatre pages portent donc une autre coque :
+# un rail a gauche au lieu du bandeau public, et pas de pied de page a liens de
+# villes -- il s'adresse aux pratiquants.
+PRO = {'referencer', 'espace-club', 'admin', 'mon-compte'}
+
+def icone(d, w=18):
+    return ('<svg viewBox="0 0 24 24" width="%d" height="%d" fill="none" stroke="currentColor" '
+            'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" '
+            'aria-hidden="true">%s</svg>' % (w, w, d))
+
+ICONES = {
+    # un tableau de bord : quatre pave
+    'I_BORD': icone('<rect x="3.4" y="3.4" width="7.4" height="7.4" rx="1.6"/>'
+                    '<rect x="13.2" y="3.4" width="7.4" height="7.4" rx="1.6"/>'
+                    '<rect x="3.4" y="13.2" width="7.4" height="7.4" rx="1.6"/>'
+                    '<rect x="13.2" y="13.2" width="7.4" height="7.4" rx="1.6"/>'),
+    # une fiche : une feuille avec ses lignes
+    'I_FICHE': icone('<path d="M14 2.8H6.6A1.8 1.8 0 0 0 4.8 4.6v14.8a1.8 1.8 0 0 0 1.8 1.8h10.8a1.8 '
+                     '1.8 0 0 0 1.8-1.8V7.6Z"/><path d="M14 2.8v4.8h5.2"/>'
+                     '<path d="M8.4 12.6h7.2M8.4 16.6h7.2"/>'),
+    # un compte : une personne
+    'I_COMPTE': icone('<circle cx="12" cy="8" r="3.6"/>'
+                      '<path d="M4.8 20.4a7.2 7.2 0 0 1 14.4 0"/>'),
+    # le back-office : un trousseau de reglages
+    'I_ADMIN': icone('<path d="M4 7.2h10M18 7.2h2M4 16.8h2M10 16.8h10"/>'
+                     '<circle cx="16" cy="7.2" r="2.2"/><circle cx="8" cy="16.8" r="2.2"/>'),
+    # sortir : une porte avec la fleche dehors
+    'I_SORTIE': icone('<path d="M9.6 20.4H5.8A1.8 1.8 0 0 1 4 18.6V5.4a1.8 1.8 0 0 1 1.8-1.8h3.8"/>'
+                      '<path d="M15.2 16.4 19.6 12l-4.4-4.4"/><path d="M19.6 12H9.6"/>'),
+}
+
+if QUI in PRO:
+    coque = R('_pro.html')
+    for k, v in ICONES.items():
+        coque = coque.replace('%%' + k + '%%', v)
+    header = coque
+    footer = R('_pro_pied.html')
+    clubc = clubc + R('_pro.css')
+
 body = (body.replace('%%HEADER%%', header).replace('%%FOOTER%%', footer)
             .replace('%%CHECKBIG%%', CHECKBIG).replace('%%CHECK%%', CHECK)
             .replace('%%OB_VISUEL%%', OB_VISUEL)
@@ -118,5 +160,9 @@ APRES = {'referencer': '_referencer.sb.js', 'espace-club': '_espace.js', 'admin'
          'motdepasse': '_motdepasse.js', 'mon-compte': '_mon_compte.js'}
 if QUI in APRES:
     page = page + '\n<script>\n' + R(APRES[QUI]) + '</script>\n'
+# le rail en dernier : il lit window.MCC, pose par compte.pose(), et n'a besoin
+# d'aucun des scripts de page -- il marche meme si l'un d'eux echoue
+if QUI in PRO:
+    page = page + '\n<script>\n' + R('_pro.js') + '</script>\n'
 open(QUI + '.html', 'w', encoding='utf-8').write(page)
 print(QUI + '.html', len(page))

@@ -314,6 +314,23 @@ $$;
 revoke all on function compte_vue(uuid) from public;
 grant execute on function compte_vue(uuid) to anon, authenticated;
 
+-- ------------------------------------------------- vouloir passer au Pro
+-- Stripe n'est pas branche (il faut une societe et un IBAN). En attendant, un
+-- gerant qui veut le Pro le dit d'un bouton, et c'est le back-office qui ouvre
+-- l'abonnement a la main. Le jour ou le paiement existe, ce bouton devient le
+-- passage en caisse et cette table garde son sens : elle dit qui a demande et
+-- quand, ce qu'un paiement ne dit pas quand il echoue.
+--
+-- Une ligne par club, pas une par clic : le gerant qui appuie trois fois ne
+-- fait pas trois demandes. `repondu_le` est pose par l'equipe quand elle a
+-- traite -- on ne supprime pas la ligne, pour garder la trace.
+create table if not exists interet_pro (
+  club_id    uuid primary key references club (id) on delete cascade,
+  membre_id  uuid references auth.users (id) on delete set null,
+  cree_le    timestamptz not null default now(),
+  repondu_le timestamptz
+);
+
 -- ----------------------------------------------------- l'abonnement Stripe
 -- Une table a part, et pas des colonnes sur `club` : l'annuaire lit `club` en
 -- `select *` avec la cle publique, donc tout ce qui vit sur cette table est
@@ -356,6 +373,7 @@ alter table profil      enable row level security;
 alter table vue_fiche   enable row level security;
 alter table demande     enable row level security;
 alter table abonnement  enable row level security;
+alter table interet_pro enable row level security;
 
 -- --- club ---
 -- Il n'y a plus de lecture publique de la table. Elle rendait `select *`, donc
@@ -510,6 +528,29 @@ create policy demande_suivi on demande
 drop policy if exists vue_lecture on vue_fiche;
 create policy vue_lecture on vue_fiche
   for select to authenticated using (gere_le_club(club_id) or est_admin());
+
+-- --- interet_pro ---
+-- Un gerant dit qu'il veut le Pro, pour son club et sous son nom : `membre_id`
+-- est force a `auth.uid()` par le `with check`, sinon il pourrait signer la
+-- demande d'un autre. Il relit la sienne (la page affiche « c'est note ») et
+-- peut la retirer. Il ne pose pas `repondu_le` : c'est le mot de l'equipe, et
+-- l'`update` ne lui est pas ouvert.
+drop policy if exists interet_lecture on interet_pro;
+create policy interet_lecture on interet_pro
+  for select to authenticated using (gere_le_club(club_id) or est_admin());
+
+drop policy if exists interet_creation on interet_pro;
+create policy interet_creation on interet_pro
+  for insert to authenticated
+  with check (gere_le_club(club_id) and membre_id = auth.uid());
+
+drop policy if exists interet_retrait on interet_pro;
+create policy interet_retrait on interet_pro
+  for delete to authenticated using (gere_le_club(club_id) or est_admin());
+
+drop policy if exists interet_reponse on interet_pro;
+create policy interet_reponse on interet_pro
+  for update to authenticated using (est_admin()) with check (est_admin());
 
 -- --- abonnement ---
 -- Un gerant lit le sien, pour savoir jusqu'a quand il est Pro et rouvrir son

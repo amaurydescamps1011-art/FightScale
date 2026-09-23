@@ -81,7 +81,7 @@
     clubCourant = club;
     charge.hidden = true;
     document.getElementById('esp-corps').hidden = false;
-    document.getElementById('esp-nom').textContent = club.nom || 'Votre espace club';
+    document.getElementById('esp-nom').textContent = club.nom || 'Votre salle';
 
     var m = MOT[club.statut] || ['—', ''];
     document.getElementById('esp-statut').textContent = m[0];
@@ -95,12 +95,9 @@
 
     complet(club);
     formule(club);
+    verrou(club);
+    poseBouton('esp-pro', club);
 
-    if (club.statut === 'publie' && club.slug) {
-      var voir = document.getElementById('esp-voir');
-      voir.href = 'salle.html?s=' + encodeURIComponent(club.slug);
-      voir.hidden = false;
-    }
     /* les demandes d'abord, les visites ensuite : les chiffres du tableau de
        bord melangent les deux, autant les calculer une fois tout lu */
     return prospects(club).then(function (){ return vues(club); });
@@ -116,6 +113,12 @@
     '<path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>';
   var NON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" ' +
     'stroke-linecap="round" aria-hidden="true"><path d="M12 7v7M12 17.4v.2"/></svg>';
+  /* Le cadenas remplace la croix partout ou le gerant n'a pas acces : une croix
+     dit « ca n'existe pas », un cadenas dit « c'est la, et ca s'ouvre ». */
+  var CLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/>' +
+    '<path d="M8.2 10.5V7.4a3.8 3.8 0 0 1 7.6 0v3.1"/></svg>';
 
   function complet(club){
     var h = club.horaires || {};
@@ -162,7 +165,10 @@
       .then(function (r){
         if (r.error) throw r.error;
         tout = r.data || [];
-        document.getElementById('esp-demandes-bloc').hidden = false;
+        /* Un club gratuit n'en recoit aucune : ce bloc serait un vide de plus,
+           et le bloc verrouille dit deja ce qu'il y aurait ici. */
+        document.getElementById('esp-demandes-bloc').hidden =
+          (clubCourant.offre || 'gratuit') !== 'pro';
         chiffres();
         entetes();
         rend();
@@ -206,15 +212,23 @@
        publie ? 'Sur les 30 derniers jours, dont ' + v7 + (v7 === 1 ? ' cette semaine.' : ' cette semaine.')
               : 'Votre fiche n’est pas encore en ligne : personne ne peut la voir.'],
       [tout.length, tout.length === 1 ? 'demande reçue' : 'demandes reçues',
-       gratuit ? 'La réservation de séance d’essai demande le Pro.'
+       gratuit ? 'Votre fiche ne prend pas encore de réservation.'
                : 'Depuis la mise en ligne de votre fiche.'],
       [compte(['confirmee', 'honoree', 'adherent']), 'réservations confirmées',
-       'Une demande confirmée par vous, c’est un essai qui aura lieu.'],
+       gratuit ? 'Les essais que vous auriez confirmés vous-même.'
+               : 'Une demande confirmée par vous, c’est un essai qui aura lieu.'],
       [compte(['adherent']), 'devenus adhérents',
-       'La seule fin qui compte vraiment.']
+       gratuit ? 'Ceux que vous auriez suivis jusqu’à l’adhésion.'
+               : 'La seule fin qui compte vraiment.']
     ];
-    document.getElementById('esp-kpi').innerHTML = tuiles.map(function (t){
-      return '<li><span class="esp-kpi-nb display">' + t[0] + '</span>' +
+    /* Pour un club gratuit, les trois derniers chiffres ne peuvent pas bouger :
+       ils sont grises et portent le cadenas, plutot que d'etre retires. Il voit
+       ainsi ce que son espace contiendra, pas un tableau amoindri. */
+    document.getElementById('esp-kpi').innerHTML = tuiles.map(function (t, i){
+      var ferme = gratuit && i > 0;
+      return '<li' + (ferme ? ' class="ferme"' : '') + '>' +
+             (ferme ? '<span class="esp-kpi-cle">' + CLE + '</span>' : '') +
+             '<span class="esp-kpi-nb display">' + t[0] + '</span>' +
              '<span class="esp-kpi-lb">' + ech(t[1]) + '</span>' +
              '<span class="esp-kpi-mot">' + ech(t[2]) + '</span></li>';
     }).join('');
@@ -281,24 +295,90 @@
     }).join('');
   }
 
-  /* Ce que le gratuit fait manquer, avec le vrai chiffre. Pas d'argumentaire
-     invente : le nombre de gens qui sont passes et n'ont rien trouve pour
-     joindre la salle. Sans visite, on ne dit rien -- ce serait du vent. */
+  /* Ce que le gratuit fait manquer, avec le vrai chiffre, en tete du bloc du Pro.
+     Pas d'argumentaire invente : le nombre de gens qui sont passes et n'ont rien
+     trouve pour joindre la salle. Sans visite, le titre reste generique -- un
+     « 0 personne a vu votre fiche » ne vend rien et se retourne contre nous. */
   function manque(){
-    var gratuit = (clubCourant.offre || 'gratuit') !== 'pro';
+    if ((clubCourant.offre || 'gratuit') === 'pro') return;
     var v = sommeVues(30);
-    var bloc = document.getElementById('esp-manque-bloc');
-    if (!gratuit || !v) { bloc.hidden = true; return; }
-    bloc.hidden = false;
-    document.getElementById('esp-manque-titre').textContent = v === 1
+    if (!v) return;
+    document.getElementById('esp-verrou-titre').textContent = v === 1
       ? 'Une personne a vu votre fiche ce mois-ci'
       : v + ' personnes ont vu votre fiche ce mois-ci';
-    document.getElementById('esp-manque-mot').textContent = v === 1
-      ? 'Elle n’a trouvé ni votre téléphone, ni votre e-mail, ni de quoi réserver : '
-        + 'votre fiche est gratuite, et c’est l’abonnement qui ouvre le contact.'
+    document.getElementById('esp-verrou-mot').textContent = v === 1
+      ? 'Elle n’a trouvé ni votre téléphone, ni votre e-mail, ni de quoi réserver. '
+        + 'Voilà ce qui s’ouvrirait dans cet espace.'
       : 'Aucune n’a trouvé votre téléphone, votre e-mail, ni de quoi réserver une '
-        + 'séance d’essai : votre fiche est gratuite, et c’est l’abonnement qui '
-        + 'ouvre le contact.';
+        + 'séance d’essai. Voilà ce qui s’ouvrirait dans cet espace.';
+  }
+
+  /* ---------- le Pro, montre plutot que cache ----------
+     Amaury, 23/09/2026 : « ne pas barrer les espaces auxquels il n'a pas acces,
+     mais les mettre en grise ». Un club gratuit voit donc les sections du Pro,
+     grisees et fermees, avec de quoi les ouvrir. Rien n'est simule : ce sont les
+     fonctions, pas de fausses lignes de prospects. */
+  var LEPRO = [
+    ['La réservation de séance d’essai',
+     'Un bouton sur votre fiche, qui ne propose que vos vrais cours.'],
+    ['Vos coordonnées visibles',
+     'Téléphone, e-mail, site et réseaux. Aujourd’hui un visiteur ne peut pas vous joindre.'],
+    ['Les demandes, ici même',
+     'Chaque personne qui veut essayer arrive dans cette page, avec ce qu’elle cherche.'],
+    ['Le suivi de chaque prospect',
+     'De la demande à l’adhésion, avec vos notes et la date à laquelle le rappeler.'],
+    ['L’export de vos prospects',
+     'Toute votre liste en un fichier, pour votre logiciel ou votre comptable.'],
+    ['Votre salle mise en avant',
+     'Plus haut dans les résultats de votre ville et de vos disciplines.']
+  ];
+
+  function verrou(club){
+    var bloc = document.getElementById('esp-verrou-bloc');
+    var pro = (club.offre || 'gratuit') === 'pro';
+    if (pro) { bloc.hidden = true; return; }
+    bloc.hidden = false;
+    document.getElementById('esp-verrou').innerHTML = LEPRO.map(function (l){
+      return '<li><span class="esp-puce">' + CLE + '</span>' +
+             '<b>' + ech(l[0]) + '</b><span>' + ech(l[1]) + '</span></li>';
+    }).join('');
+    /* s'il a deja demande, on ne lui repropose pas le bouton */
+    SB.monInteretPro(club.id).then(function (i){ if (i) deja(i.cree_le); });
+  }
+
+  function deja(quand){
+    var d = new Date(quand);
+    var le = isNaN(d) ? '' : ' (demandé le ' +
+      d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) + ')';
+    ['esp-pro'].forEach(function (id){
+      var b = document.getElementById(id);
+      if (b) { b.disabled = true; b.textContent = 'Demande envoyée'; }
+    });
+    var p = document.getElementById('esp-pro-fait');
+    p.textContent = 'C’est noté' + le + '. Nous revenons vers vous pour ouvrir votre ' +
+      'abonnement. En attendant, votre fiche reste en ligne.';
+    p.hidden = false;
+  }
+
+  /* Le paiement n'est pas branche : le bouton enregistre la demande, et c'est le
+     back-office qui ouvre l'abonnement. Le jour ou Stripe existe, c'est le meme
+     bouton qui mene en caisse. */
+  function poseBouton(id, club){
+    var b = document.getElementById(id);
+    if (!b) return;
+    b.addEventListener('click', function (){
+      var err = document.getElementById('esp-pro-err');
+      err.hidden = true;
+      b.disabled = true;
+      var mot = b.textContent;
+      b.textContent = 'Envoi…';
+      SB.veutLePro(club.id)
+        .then(function (){ deja(new Date().toISOString()); })
+        .catch(function (e){
+          b.disabled = false; b.textContent = mot;
+          err.textContent = SB.dire(e); err.hidden = false;
+        });
+    });
   }
 
   /* Le rappel de la formule : ce qu'il a, et ce qu'il n'a pas. Dit franchement,
@@ -317,12 +397,16 @@
          [0, 'Les relances par e-mail et les statistiques d’acquisition, bientôt']]
       : [[1, 'Votre fiche, vos photos et votre planning dans l’annuaire'],
          [1, 'Les visites de votre fiche, comptées ici'],
-         [0, 'Téléphone, e-mail, site et réseaux : masqués'],
-         [0, 'Réservation de séance d’essai : fermée'],
-         [0, 'Mise en avant dans les résultats : non']];
+         [0, 'Votre téléphone, votre e-mail, votre site et vos réseaux'],
+         [0, 'La réservation de séance d’essai, sur vos vrais cours'],
+         [0, 'Le suivi de vos prospects, de la demande à l’adhésion'],
+         [0, 'Votre salle mise en avant dans les résultats']];
+    /* Un manque n'est pas une croix : c'est une porte fermee. Elle se montre
+       grisee, avec son cadenas, pour qu'il voie ce qu'il n'a pas plutot que de
+       lire une liste barree. */
     document.getElementById('esp-formule').innerHTML = lignes.map(function (l){
-      return '<li class="' + (l[0] ? 'ok' : 'non') + '">' +
-        '<span class="esp-puce">' + (l[0] ? OUI : NON) + '</span>' + ech(l[1]) + '</li>';
+      return '<li class="' + (l[0] ? 'ok' : 'ferme') + '">' +
+        '<span class="esp-puce">' + (l[0] ? OUI : CLE) + '</span>' + ech(l[1]) + '</li>';
     }).join('');
     document.getElementById('esp-formule-note').innerHTML = pro
       ? 'Mon Club Combat Pro, 39 € par mois, sans engagement.'
@@ -330,17 +414,12 @@
         '<a href="clubs.html#pro">Voir ce qu’il ajoute</a>.';
   }
 
+  /* Ce bloc ne parait que pour un Pro, donc il n'a plus a plaider : il dit
+     seulement ou en est la liste. Le gratuit, lui, a son bloc verrouille. */
   function entetes(){
-    var gratuit = (clubCourant.offre || 'gratuit') !== 'pro';
-    document.getElementById('esp-oeil').textContent =
-      gratuit ? 'Mon Club Combat Pro' : 'Ce que vous avez reçu';
-    document.getElementById('esp-titre').textContent =
-      gratuit ? 'Recevez vos demandes de séance d’essai' : 'Vos prospects';
-    document.getElementById('esp-vide').textContent = gratuit
-      ? 'Sans abonnement, votre fiche ne montre ni votre téléphone ni votre e-mail, et '
-        + 'ne prend pas de réservation. Avec Mon Club Combat Pro, la demande arriverait '
-        + 'ici, vous la confirmeriez d’un bouton et vous suivriez chaque prospect '
-        + 'jusqu’à l’adhésion.'
+    document.getElementById('esp-vide').textContent = clubCourant.statut === 'publie'
+      ? 'Aucune demande pour l’instant. Elles arriveront ici dès qu’une personne '
+        + 'réservera une séance d’essai sur votre fiche.'
       : 'Aucune demande pour l’instant. Elles arriveront ici dès que votre fiche '
         + 'sera en ligne.';
   }

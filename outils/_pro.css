@@ -1,0 +1,113 @@
+  /* ---------- la coque de l'espace pro ----------
+     Un logiciel, pas une page : le rail tient a gauche et ne bouge pas quand le
+     contenu defile, la tete reste en haut. A 900 px le rail ne peut plus etre
+     une colonne -- il deviendrait un tiroir a ouvrir, donc un geste de plus avant
+     chaque navigation. Il passe en bande de pastilles sous la tete : toujours
+     visible, atteignable au pouce, et rien a ouvrir ni a refermer. */
+  /* Le fond peint la colonne du rail sur toute la hauteur : le rail lui-meme est
+     colle en haut et ne descend pas jusqu'au pied, et sans ce degrade sa colonne
+     se coupait net au milieu de la page. */
+  .pro{min-height:100vh; display:grid;
+    grid-template-columns:250px minmax(0,1fr); grid-template-rows:auto minmax(0,1fr);
+    background:linear-gradient(to right, var(--surface) 0 250px, var(--fond) 250px)}
+  .pro-tete{grid-column:1 / -1; position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; gap:16px; min-height:62px;
+    padding:10px clamp(16px,2.4vw,26px);
+    background:var(--surface); border-bottom:1px solid var(--bord)}
+  .pro-marque{display:inline-flex; align-items:center; gap:10px; text-decoration:none;
+    flex-shrink:0}
+  .pro-marque-mot{font-size:12px; font-weight:800; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--texte-4)}
+  .pro-salle{margin:0 auto 0 8px; min-width:0; font-size:15px; font-weight:800;
+    color:var(--texte); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pro-sortir{flex-shrink:0; font-size:13.5px; font-weight:700; color:var(--texte-2);
+    text-decoration:none; border-bottom:1px solid var(--bord-3); padding-bottom:1px}
+  .pro-sortir:hover{color:var(--rouge-700); border-color:currentColor}
+  .pro-sortir[hidden]{display:none}
+
+  /* Le rail tient toute la hauteur meme quand il a peu de liens : sans cela son
+     fond blanc s'arretait au milieu de la page et la colonne de gauche se
+     coupait en deux. */
+  .pro-rail{grid-row:2; position:sticky; top:62px; align-self:start;
+    min-height:calc(100vh - 62px); max-height:calc(100vh - 62px); overflow:auto;
+    display:flex; flex-direction:column; gap:8px;
+    padding:16px 12px; border-right:1px solid var(--bord); background:var(--surface)}
+  .pro-liens{margin:0; padding:0; list-style:none; display:grid; gap:2px}
+  .pro-liens a{display:flex; align-items:center; gap:11px; padding:10px 12px;
+    border-radius:var(--r-m); font-size:14.5px; font-weight:700;
+    color:var(--texte-2); text-decoration:none}
+  .pro-liens a svg{width:18px; height:18px; flex-shrink:0; opacity:.75}
+  .pro-liens a span{flex:1; min-width:0}
+  .pro-liens a:hover{background:var(--surface-2); color:var(--texte)}
+  /* La page ouverte se marque par un aplat et un filet rouge, pas par une
+     couleur de texte seule : d'un coup d'oeil il sait ou il est. */
+  .pro-liens a[aria-current="page"]{background:rgba(236,22,46,.08);
+    color:var(--rouge-700); box-shadow:inset 3px 0 0 var(--rouge-600)}
+  .pro-liens a[aria-current="page"] svg{opacity:1}
+  .pro-liens li[hidden]{display:none}
+  .pro-pastille{display:inline-flex; align-items:center; justify-content:center;
+    min-width:19px; height:19px; padding:0 6px; border-radius:999px;
+    background:var(--rouge-600); color:#fff; font-size:11.5px; font-weight:800;
+    line-height:1}
+  .pro-pastille[hidden]{display:none}
+
+  .pro-palier{margin-top:auto; padding:14px; border-radius:var(--r-l);
+    background:var(--surface-2); border:1px solid var(--bord)}
+  .pro-palier[hidden]{display:none}
+  .pro-palier-t{margin:0; font-size:13px; font-weight:800; color:var(--texte)}
+  .pro-palier-m{margin:5px 0 11px; font-size:12.5px; line-height:1.5; color:var(--texte-4)}
+  .pro-palier .btn{width:100%; justify-content:center}
+
+  .pro-quitter{display:flex; align-items:center; gap:11px; width:100%;
+    padding:10px 12px; border:0; border-radius:var(--r-m); background:none;
+    cursor:pointer; text-align:left;
+    font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:700;
+    color:var(--texte-4)}
+  .pro-quitter svg{width:18px; height:18px; opacity:.75}
+  .pro-quitter:hover{background:var(--surface-2); color:var(--rouge-700)}
+
+  .pro-vue{grid-row:2; min-width:0}
+  /* Les sections de ces pages viennent du site public, ou elles sont centrees
+     dans une colonne de 1180 px. Ici elles vivent a droite du rail : la colonne
+     se cale a gauche et respire moins haut, comme un ecran de logiciel. */
+  .pro-vue .wrap{margin-inline:0; max-width:none; padding-inline:clamp(16px,2.6vw,34px)}
+  .pro-vue .section{padding-block:clamp(22px,2.6vw,32px)}
+  .pro-vue .sous-bandeau{padding-top:clamp(24px,3vw,36px)}
+  .pro-vue .section-titre{font-size:clamp(23px,2.6vw,31px)}
+  .pro-pied{grid-column:2; margin:0; padding:20px clamp(16px,2.6vw,34px) 28px;
+    font-size:12.5px; color:var(--texte-4)}
+  .pro-pied a{color:var(--texte-2); font-weight:700}
+
+  @media (max-width:900px){
+    .pro{grid-template-columns:minmax(0,1fr); background:var(--fond)}
+    .pro-tete{min-height:56px}
+    .pro-marque-mot{display:none}
+    .pro-salle{margin-left:4px}
+    /* La grille n'a plus qu'une colonne : chaque bloc reprend sa place dans
+       l'ordre du document. Sans remettre `grid-row` a auto, la vue restait sur
+       la ligne 2 et la bande de navigation tombait en bas de page. */
+    .pro-tete, .pro-rail, .pro-vue, .pro-pied{grid-row:auto}
+    .pro-rail{position:sticky; top:56px; min-height:0; max-height:none;
+      flex-direction:row; align-items:center; gap:6px; overflow-x:auto;
+      padding:8px clamp(12px,3vw,16px);
+      border-right:0; border-bottom:1px solid var(--bord);
+      scrollbar-width:none}
+    .pro-rail::-webkit-scrollbar{display:none}
+    .pro-liens{grid-auto-flow:column; gap:6px}
+    .pro-liens a{padding:8px 13px; border-radius:999px; white-space:nowrap;
+      background:var(--surface-2)}
+    .pro-liens a[aria-current="page"]{box-shadow:none; background:var(--rouge-600);
+      color:#fff}
+    .pro-liens a[aria-current="page"] svg{opacity:1}
+    .pro-liens a svg{width:16px; height:16px}
+    .pro-pastille{background:var(--texte)}
+    .pro-liens a[aria-current="page"] .pro-pastille{background:#fff; color:var(--rouge-700)}
+    /* au telephone le rappel du palier quitte le rail -- l'espace club le porte
+       deja en grand. La deconnexion reste, en derniere pastille : c'est le seul
+       endroit d'ou elle est atteignable. */
+    .pro-palier{display:none}
+    .pro-quitter{width:auto; flex-shrink:0; padding:8px 13px; border-radius:999px;
+      background:var(--surface-2); white-space:nowrap}
+    .pro-quitter span{display:none}
+    .pro-pied{grid-column:1}
+  }

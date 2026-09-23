@@ -20,6 +20,8 @@ window.supabase = {
       profil: [],
       /* une ligne par club et par jour, comptee par la fonction compte_vue */
       vue_fiche: [],
+      /* une ligne par club : « je veux passer au Pro », tant que Stripe n'est pas la */
+      interet_pro: [],
       /* `annuaire` est une vue, pas une table : elle est calculee a la lecture */
       annuaire: [],
       fichiers: []
@@ -29,7 +31,7 @@ window.supabase = {
        defaut, une lecture sur une table absente casse la page entiere -- c'est
        ce qui est arrive a la fiche le jour ou `vue_fiche` est apparue. */
     ['users', 'club', 'club_membre', 'demande', 'equipe', 'profil', 'vue_fiche',
-     'annuaire', 'fichiers'].forEach(function (t){
+     'interet_pro', 'annuaire', 'fichiers'].forEach(function (t){
       if (!S[t]) S[t] = (t === 'users') ? {} : [];
     });
     var sauve = window.__FAUX_ECRIT__;
@@ -82,6 +84,27 @@ window.supabase = {
             }
             sauve();
             res({ data: f.un ? deja : [deja], error: null });
+            return;
+          }
+          if (f.op === 'insert' && f.table === 'interet_pro') {
+            /* Comme en base : le gerant demande pour SON club et sous SON nom,
+               et une seule ligne existe par club -- appuyer deux fois renvoie le
+               doublon que `veutLePro` sait lire comme un succes. */
+            var i = f.champs;
+            var sien = S.club_membre.some(function (m){
+              return m.club_id === i.club_id && m.membre_id === uid(); });
+            if (!sien || i.membre_id !== uid()) {
+              res({ data: null, error: { message: 'new row violates row-level security policy' } });
+              return;
+            }
+            if (S.interet_pro.some(function (x){ return x.club_id === i.club_id; })) {
+              res({ data: null, error: { message: 'duplicate key value violates unique constraint' } });
+              return;
+            }
+            S.interet_pro.push({ club_id: i.club_id, membre_id: i.membre_id,
+                                 cree_le: new Date().toISOString(), repondu_le: null });
+            sauve();
+            res({ data: null, error: null });
             return;
           }
           if (f.op === 'insert') {
@@ -143,6 +166,14 @@ window.supabase = {
                 var c = S.club.filter(function (x){ return x.id === m.club_id; })[0];
                 return { club_id: m.club_id, club: c };
               });
+          } else if (f.table === 'interet_pro' && f.op === 'select') {
+            var chef = S.equipe.some(function (e){ return e.membre_id === uid(); });
+            var aMoi = S.club_membre.filter(function (m){ return m.membre_id === uid(); })
+                                    .map(function (m){ return m.club_id; });
+            l = S.interet_pro.filter(function (x){
+              return (chef || aMoi.indexOf(x.club_id) >= 0)
+                && f.filtres.every(function (q){ return x[q[0]] === q[1]; });
+            });
           } else if (f.table === 'equipe' && f.op === 'select') {
             l = S.equipe.filter(function (e){ return e.membre_id === uid(); });
           } else {

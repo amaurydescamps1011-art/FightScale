@@ -46,11 +46,22 @@
     return recharge();
   }).catch(function (e){ rate(SB.dire(e)); });
 
+  /* qui a demande le Pro et n'a pas encore eu de reponse, par club */
+  var VEUT = {};
+
   function recharge(){
-    return sb.from('club').select('*').order('modifie_le', { ascending: false })
+    return sb.from('interet_pro').select('club_id, cree_le, repondu_le')
+      .then(function (r){
+        VEUT = {};
+        (r.data || []).forEach(function (i){ if (!i.repondu_le) VEUT[i.club_id] = i.cree_le; });
+        return sb.from('club').select('*').order('modifie_le', { ascending: false });
+      })
       .then(function (r){
         if (r.error) throw r.error;
         var tous = r.data || [];
+        var veulent = tous.filter(function (c){ return VEUT[c.id]; });
+        document.getElementById('ad-veut-bloc').hidden = veulent.length === 0;
+        document.getElementById('ad-veulent').innerHTML = veulent.map(carte).join('');
         var attente = tous.filter(function (c){ return c.statut === 'en_attente'; });
         var enligne = tous.filter(function (c){ return c.statut === 'publie'; });
 
@@ -66,6 +77,12 @@
       });
   }
 
+  function leJour(iso){
+    var d = new Date(iso);
+    return isNaN(d) ? '—'
+      : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+  }
+
   function carte(c){
     var d = (c.disciplines || []).join(' · ');
     var jours = Object.keys(c.horaires || {}).length;
@@ -74,6 +91,8 @@
     return '<li class="fiche" data-id="' + ech(c.id) + '">' +
       '<div class="fiche-tete"><b>' + ech(c.nom) + '</b>' +
         '<span class="fiche-lieu">' + ech([c.code_postal, c.ville].filter(Boolean).join(' ') || 'Ville non renseignée') + '</span></div>' +
+      (VEUT[c.id] ? '<p class="fiche-veut">A demandé le Pro le ' +
+         ech(leJour(VEUT[c.id])) + '</p>' : '') +
       '<ul class="fiche-faits">' +
         '<li>' + (d ? ech(d) : 'Aucune discipline') + '</li>' +
         '<li>' + (jours ? jours + ' jours d’ouverture' : 'Aucun horaire') + '</li>' +
@@ -107,7 +126,15 @@
     if (b.dataset.offre) {
       b.disabled = true;
       sb.from('club').update({ offre: b.dataset.offre }).eq('id', id)
-        .then(function (r){ if (r.error) throw r.error; return recharge(); })
+        .then(function (r){
+          if (r.error) throw r.error;
+          /* On repond a la demande plutot que de l'effacer : la ligne garde qui
+             a demande et quand, ce qui reste utile une fois le Pro ouvert. */
+          if (b.dataset.offre !== 'pro' || !VEUT[id]) return null;
+          return sb.from('interet_pro')
+            .update({ repondu_le: new Date().toISOString() }).eq('club_id', id);
+        })
+        .then(function (){ return recharge(); })
         .catch(function (err){ b.disabled = false; rate(SB.dire(err)); });
       return;
     }

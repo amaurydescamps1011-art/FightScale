@@ -37,7 +37,7 @@ $P -v ON_ERROR_STOP=1 -f "$ICI/001_schema.sql" >/dev/null 2>&1 || { echo "le sch
 
 $P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
 grant usage on schema public to anon, authenticated;
-grant select, insert, update on all tables in schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to anon, authenticated;
 grant execute on all functions in schema public to anon, authenticated;
 insert into auth.users (id, raw_user_meta_data) values
   ('11111111-1111-1111-1111-111111111111', '{"full_name":"Alain"}'::jsonb),
@@ -198,6 +198,28 @@ ok "le club lit les siennes" \
    "$(q "$(cnx $B) select n from vue_fiche where club_id='bbbbbbbb-0000-0000-0000-000000000002';")" "1 "
 ok "un autre gerant ne voit pas celles-la" \
    "$(q "$(cnx $A) select count(*) from vue_fiche where club_id='bbbbbbbb-0000-0000-0000-000000000002';")" "0 "
+
+# vouloir passer au Pro : le gerant le dit pour son club, sous son nom, et c'est
+# l'equipe seule qui repond. Tant que Stripe n'est pas branche, c'est ce bouton
+# qui remplace le passage en caisse.
+ok "un gerant demande le Pro pour son club" \
+   "$(q "$(cnx $A) with i as (insert into interet_pro (club_id, membre_id) values ('aaaaaaaa-0000-0000-0000-000000000001','$A') returning 1) select count(*) from i;")" "1 "
+ok "mais pas pour celui d'un autre" \
+   "$(q "$(cnx $A) insert into interet_pro (club_id, membre_id) values ('bbbbbbbb-0000-0000-0000-000000000002','$A');" | cut -c1-5)" "ERROR"
+ok "ni sous le nom d'un autre" \
+   "$(q "$(cnx $A) insert into interet_pro (club_id, membre_id) values ('aaaaaaaa-0000-0000-0000-000000000001','$B');" | cut -c1-5)" "ERROR"
+ok "il relit la sienne" \
+   "$(q "$(cnx $A) select count(*) from interet_pro;")" "1 "
+ok "un autre gerant ne la voit pas" \
+   "$(q "$(cnx $B) select count(*) from interet_pro;")" "0 "
+ok "le visiteur anonyme n'en voit aucune" \
+   "$(q "set role anon; select count(*) from interet_pro;")" "0 "
+ok "et ne s'en invente pas" \
+   "$(q "set role anon; insert into interet_pro (club_id) values ('aaaaaaaa-0000-0000-0000-000000000001');" | cut -c1-5)" "ERROR"
+ok "le gerant ne se repond pas a lui-meme" \
+   "$(q "$(cnx $A) with u as (update interet_pro set repondu_le = now() where club_id='aaaaaaaa-0000-0000-0000-000000000001' returning 1) select count(*) from u;")" "0 "
+ok "il peut retirer sa demande" \
+   "$(q "$(cnx $A) with d as (delete from interet_pro where club_id='aaaaaaaa-0000-0000-0000-000000000001' returning 1) select count(*) from d;")" "1 "
 
 # l'identifiant Stripe d'un club vit dans `abonnement` et pas sur `club`, parce
 # que l'annuaire lit `club` en select * avec la cle publique
