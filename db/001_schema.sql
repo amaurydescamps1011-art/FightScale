@@ -57,6 +57,14 @@ create table if not exists club (
   disciplines   text[] not null default '{}',
   -- { "lundi": ["18:00","21:00"], ... } ; un jour absent = ferme
   horaires      jsonb  not null default '{}'::jsonb,
+  -- Le planning des cours, que le club saisit sur sa fiche :
+  --   [{ "id":"k3f9", "jour":1, "de":"18:30", "a":"20:00",
+  --      "quoi":"MMA", "niveau":"Tous niveaux" }, ... ]
+  -- `jour` va de 0 (lundi) a 6. L'`id` est tire au sort par le formulaire et ne
+  -- change plus : c'est lui qu'une demande de seance d'essai designe, pour que
+  -- la reservation tombe sur un vrai cours et le reste quand le club reordonne
+  -- son planning (Amaury, 23/09/2026).
+  cours         jsonb  not null default '[]'::jsonb,
   -- chemins dans le bucket « photos-clubs », dans l'ordre de la galerie
   photos        text[] not null default '{}',
 
@@ -70,6 +78,7 @@ create table if not exists club (
 -- `create table if not exists` ne touche pas a une table deja creee : les
 -- colonnes arrivees apres le premier collage s'ajoutent ici, sinon le fichier
 -- ne serait rejouable qu'en apparence.
+alter table club add column if not exists cours jsonb not null default '[]'::jsonb;
 alter table club add column if not exists offre text not null default 'gratuit';
 do $$ begin
   alter table club add constraint club_offre_connue
@@ -176,6 +185,9 @@ create table if not exists demande (
   -- veut lire. La colonne etait un timestamptz, et tout depot aurait echoue sur
   -- la vraie base -- le faux serveur des tests, lui, l'acceptait.
   creneau   text,
+  -- L'`id` du cours choisi dans le planning du club. `creneau` en garde le
+  -- libelle lisible ; cette colonne-ci est ce que la base verifie.
+  cours_id  text,
 
   -- Ce que le club ajoute ensuite, et que le pratiquant ne voit jamais. C'est
   -- le minimum d'un suivi de prospect : d'ou il vient, ce qu'on s'est dit, et
@@ -192,6 +204,7 @@ create table if not exists demande (
 do $$ begin
   alter table demande alter column creneau type text using creneau::text;
 exception when others then null; end $$;
+alter table demande add column if not exists cours_id text;
 alter table demande add column if not exists origine text not null default 'annuaire';
 alter table demande add column if not exists notes   text;
 alter table demande add column if not exists relance date;
@@ -347,10 +360,28 @@ $$ select exists (
       where id = cible and statut = 'publie' and offre = 'pro'
    ) $$;
 
+-- Amaury, 23/09/2026 : une seance d'essai doit tomber sur un horaire de cours.
+-- Ce serait facile a tenir dans le formulaire, et ne tiendrait rien : la page
+-- parle a la base avec une cle publique. La regle est donc ici. Un club qui n'a
+-- pas encore saisi son planning accepte le texte libre d'avant ; des qu'il en a
+-- un, seul un de ses cours passe.
+create or replace function club_a_ce_cours(cible uuid, choisi text) returns boolean
+  language sql stable security definer set search_path = public, auth as
+$$ select case
+     when choisi is null or choisi = '' then not exists (
+       select 1 from club
+        where id = cible and jsonb_array_length(coalesce(cours, '[]'::jsonb)) > 0)
+     else exists (
+       select 1 from club c, jsonb_array_elements(c.cours) e
+        where c.id = cible and e->>'id' = choisi)
+   end $$;
+
 drop policy if exists demande_depot on demande;
 create policy demande_depot on demande
   for insert to anon, authenticated
-  with check (statut = 'recue' and club_ouvert_aux_essais(club_id));
+  with check (statut = 'recue'
+              and club_ouvert_aux_essais(club_id)
+              and club_a_ce_cours(club_id, cours_id));
 
 -- Personne ne relit les demandes sauf le club concerne et l'equipe : ce sont des
 -- coordonnees personnelles.
@@ -399,7 +430,7 @@ create view annuaire as
     c.id, c.cree_le, c.modifie_le, c.statut, c.publie_le,
     c.nom, c.slug, c.presentation,
     c.adresse, c.code_postal, c.ville, c.lat, c.lon,
-    c.disciplines, c.horaires, c.photos, c.offre,
+    c.disciplines, c.horaires, c.cours, c.photos, c.offre,
     -- le paywall, en six colonnes
     case when c.offre = 'pro' then c.tel       end as tel,
     case when c.offre = 'pro' then c.mail      end as mail,

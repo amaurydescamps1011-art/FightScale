@@ -125,6 +125,19 @@ window.MCC = (function (){
     return URL_BASE + '/storage/v1/object/public/photos-clubs/' + chemin;
   }
 
+  /* Le planning que le club a saisi, range par jour et remis dans l'ordre des
+     heures. C'est la meme liste qui s'affiche sur la fiche et qui alimente le
+     choix de la seance d'essai : un pratiquant reserve un cours qui existe,
+     jamais un creneau invente (Amaury, 23/09/2026). */
+  function coursDuJour(liste, jour){
+    return (liste || []).filter(function (x){ return +x.jour === jour && x.de && x.a; })
+      .sort(function (a, b){ return a.de < b.de ? -1 : a.de > b.de ? 1 : 0; })
+      .map(function (x){
+        return { id: x.id || '', de: hhmm(x.de), a: hhmm(x.a),
+                 quoi: x.quoi || '', niveau: x.niveau || '' };
+      });
+  }
+
   function enSalle(c){
     var h = c.horaires || {};
     var jourJs = new Date().getDay();
@@ -145,7 +158,8 @@ window.MCC = (function (){
       photos: (c.photos || []).map(lienPhoto),
       planning: LIBELLE.map(function (nom, i){
         var p = h[JOURS[i]];
-        return { jour: nom, heures: (p && p[0] && p[1]) ? [hhmm(p[0]), hhmm(p[1])] : null, cours: [] };
+        return { jour: nom, heures: (p && p[0] && p[1]) ? [hhmm(p[0]), hhmm(p[1])] : null,
+                 cours: coursDuJour(c.cours, i) };
       }),
       equipements: [],
       avis: []
@@ -217,6 +231,7 @@ window.MCC = (function (){
       club_id: clubId, statut: 'recue',
       nom: champs.nom, mail: champs.mail, tel: champs.tel || null,
       discipline: champs.discipline || null, creneau: champs.creneau || null,
+      cours_id: champs.cours_id || null,
       message: champs.message || null
     }).then(function (r){ if (r.error) throw r.error; return true; });
   }

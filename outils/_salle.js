@@ -181,9 +181,10 @@ function rendFiche(s){
   /* getDay() : 0 = dimanche, or notre semaine commence le lundi */
   var jourJs = new Date().getDay();
   var aujourdhui = (jourJs + 6) % 7;
-  /* La fiche gratuite porte les heures d'ouverture que le club a saisies. Le
-     planning des cours, lui, n'existe que dans le jeu de demonstration : on ne
-     l'invente pas pour un vrai club. */
+  /* Le pave porte les heures d'ouverture du club, et son planning de cours des
+     qu'il en a saisi un (depuis le 23/09/2026 : c'est ce planning que la seance
+     d'essai propose). Rien n'est invente : un club qui n'a rien saisi n'affiche
+     que ses heures, et un club qui n'a meme pas d'heures n'affiche pas le pave. */
   var planning = d.planning || [];
   var aDesHeures = planning.some(function (j){ return j.heures || j.cours.length; });
   var titreHoraires = document.querySelector('#horaires .pan-titre');
@@ -295,6 +296,31 @@ function ouvreEssai(s){
   choix.innerHTML = ['<option value="">Peu importe</option>'].concat(
     s[5].map(function (x){ return '<option>' + echappe(x) + '</option>'; })).join('');
 
+  /* Amaury, 23/09/2026 : une seance d'essai tombe sur un horaire de cours. Si la
+     salle a saisi son planning, le pratiquant choisit un cours et rien d'autre ;
+     sinon on garde le texte libre, sans quoi une salle sans planning ne pourrait
+     plus rien recevoir. La base tient la meme regle, elle ne se contente pas de
+     cette page. */
+  var lesCours = [];
+  ((s[11] && s[11].planning) || []).forEach(function (j){
+    (j.cours || []).forEach(function (c){
+      if (!c.id) return;
+      lesCours.push({ id: c.id, quoi: c.quoi,
+        texte: j.jour + ' ' + c.de + ' – ' + c.a +
+               (c.quoi ? ' · ' + c.quoi : '') +
+               (c.niveau ? ' (' + c.niveau + ')' : '') });
+    });
+  });
+  var listeCours = document.getElementById('e-cours');
+  if (lesCours.length) {
+    listeCours.innerHTML = lesCours.map(function (c){
+      return '<option value="' + echappe(c.id) + '">' + echappe(c.texte) + '</option>';
+    }).join('');
+  }
+  document.getElementById('e-champ-cours').hidden = !lesCours.length;
+  document.getElementById('e-champ-quand').hidden = !!lesCours.length;
+  document.getElementById('e-champ-disc').hidden  = !!lesCours.length;
+
   var form = document.getElementById('essai-form');
   var erreur = document.getElementById('e-erreur');
   var envoi = document.getElementById('e-envoi');
@@ -317,8 +343,15 @@ function ouvreEssai(s){
     champs.nom = document.getElementById('e-nom').value.trim();
     champs.mail = document.getElementById('e-mail').value.trim();
     champs.tel = document.getElementById('e-tel').value.trim();
-    champs.discipline = document.getElementById('e-disc').value;
-    champs.creneau = document.getElementById('e-quand').value.trim();
+    if (lesCours.length) {
+      var pris = lesCours.filter(function (c){ return c.id === listeCours.value; })[0];
+      champs.cours_id = listeCours.value;
+      champs.creneau = pris ? pris.texte : '';
+      champs.discipline = pris ? pris.quoi : '';
+    } else {
+      champs.discipline = document.getElementById('e-disc').value;
+      champs.creneau = document.getElementById('e-quand').value.trim();
+    }
     champs.message = document.getElementById('e-mot').value.trim();
 
     envoi.disabled = true;

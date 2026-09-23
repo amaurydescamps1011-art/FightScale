@@ -79,9 +79,21 @@
 
           <div class="bloc">
             <h2 class="bloc-titre">Horaires d'ouverture</h2>
-            <p class="bloc-aide">Décochez les jours de fermeture. Vous pourrez détailler
-              vos créneaux de cours depuis l'espace club.</p>
+            <p class="bloc-aide">Décochez les jours de fermeture, et ajustez l'heure
+              d'ouverture et de fermeture de chaque jour.</p>
             <ul class="horaires" id="horaires-jours"></ul>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Vos cours</h2>
+            <p class="bloc-aide">Un pratiquant ne réserve pas « quand ça l'arrange » : il
+              réserve un de vos cours. Ceux que vous mettez ici sont ceux qu'il verra, et
+              les seuls qu'il pourra demander.</p>
+            <ul class="cours-liste" id="cours-liste"></ul>
+            <p class="cours-vide" id="cours-vide">Aucun cours pour l'instant. Tant qu'il n'y
+              en a pas, un pratiquant écrit son créneau à la main.</p>
+            <button type="button" class="btn btn-ligne btn-mini" id="cours-plus">
+              Ajouter un cours</button>
           </div>
 
           <div class="bloc">
@@ -188,9 +200,9 @@
       '<label class="jour-bascule"><input type="checkbox" data-jour="' + n + '"' +
         (ouvert ? ' checked' : '') + '><span>' + j + '</span></label>' +
       '<span class="jour-creneau">' +
-        '<input type="time" value="09:00" aria-label="Ouverture le ' + j + '">' +
+        '<input type="time" value="09:00" data-de="' + n + '" aria-label="Ouverture le ' + j + '">' +
         '<span aria-hidden="true">–</span>' +
-        '<input type="time" value="21:00" aria-label="Fermeture le ' + j + '">' +
+        '<input type="time" value="21:00" data-a="' + n + '" aria-label="Fermeture le ' + j + '">' +
       '</span>' +
       '<span class="jour-ferme">Fermé</span></li>';
   }).join('');
@@ -200,6 +212,99 @@
     e.target.closest('.jour-ligne').classList.toggle('ferme', !e.target.checked);
     apercu();
   });
+
+  /* ---------- les cours ----------
+     Amaury, 23/09/2026 : « sur les seances d'essai, ca doit correspondre aux
+     horaires de cours ». Le club les saisit donc ici, et c'est cette liste que
+     sa fiche proposera a la reservation. Chaque ligne porte un identifiant tire
+     au sort une seule fois : c'est lui que la demande designe, et il survit a un
+     changement d'ordre ou d'horaire, la ou un numero de ligne ne survivrait pas. */
+  var cours = [];
+  var listeCours = document.getElementById('cours-liste');
+
+  function neuf(){ return Math.random().toString(36).slice(2, 8); }
+
+  /* la discipline d'un cours se choisit parmi celles que la salle a cochees ;
+     une discipline decochee apres coup reste proposee, sinon le cours deja
+     saisi changerait de discipline tout seul */
+  function optionsDisc(sel){
+    var l = choisies();
+    if (sel && l.indexOf(sel) < 0) l = [sel].concat(l);
+    if (!l.length) l = DISC;
+    return l.map(function (d){
+      return '<option' + (d === sel ? ' selected' : '') + '>' + ech(d) + '</option>';
+    }).join('');
+  }
+
+  function dessineCours(){
+    listeCours.innerHTML = cours.map(function (c, i){
+      return '<li class="cours-ligne" data-i="' + i + '">' +
+        '<select class="c-jour" aria-label="Jour du cours">' +
+          JOURS.map(function (j, n){
+            return '<option value="' + n + '"' + (n === c.jour ? ' selected' : '') +
+                   '>' + j + '</option>';
+          }).join('') + '</select>' +
+        '<span class="cours-h">' +
+          '<input type="time" class="c-de" value="' + c.de + '" aria-label="Début du cours">' +
+          '<span aria-hidden="true">–</span>' +
+          '<input type="time" class="c-a" value="' + c.a + '" aria-label="Fin du cours">' +
+        '</span>' +
+        '<select class="c-quoi" aria-label="Discipline du cours">' + optionsDisc(c.quoi) + '</select>' +
+        '<input type="text" class="c-niveau" value="' + ech(c.niveau) +
+          '" placeholder="Tous niveaux" aria-label="Niveau du cours">' +
+        '<button type="button" class="cours-x" aria-label="Retirer ce cours">&times;</button>' +
+      '</li>';
+    }).join('');
+    document.getElementById('cours-vide').hidden = cours.length > 0;
+    apercu();
+  }
+
+  /* on ne redessine pas a chaque frappe : le champ perdrait le focus. La saisie
+     est reportee dans le tableau, le dessin n'a lieu qu'a l'ajout et au retrait. */
+  listeCours.addEventListener('change', function (e){
+    var li = e.target.closest('.cours-ligne');
+    if (!li) return;
+    var c = cours[+li.dataset.i];
+    if (e.target.matches('.c-jour')) c.jour = +e.target.value;
+    if (e.target.matches('.c-de'))   c.de   = e.target.value;
+    if (e.target.matches('.c-a'))    c.a    = e.target.value;
+    if (e.target.matches('.c-quoi')) c.quoi = e.target.value;
+    apercu();
+  });
+  listeCours.addEventListener('input', function (e){
+    var li = e.target.closest('.cours-ligne');
+    if (li && e.target.matches('.c-niveau')) cours[+li.dataset.i].niveau = e.target.value;
+  });
+  listeCours.addEventListener('click', function (e){
+    var b = e.target.closest('.cours-x');
+    if (!b) return;
+    cours.splice(+b.closest('.cours-ligne').dataset.i, 1);
+    dessineCours();
+  });
+  document.getElementById('cours-plus').addEventListener('click', function (){
+    var d = cours[cours.length - 1];
+    cours.push({ id: neuf(), jour: d ? d.jour : 1, de: d ? d.de : '18:30',
+                 a: d ? d.a : '20:00', quoi: choisies()[0] || '', niveau: '' });
+    dessineCours();
+    var l = listeCours.lastElementChild;
+    if (l) l.querySelector('.c-jour').focus();
+  });
+  /* cocher une discipline doit l'ouvrir aux cours tout de suite */
+  document.getElementById('choix-disc').addEventListener('change', dessineCours);
+
+  window.MCC_COURS = function (){
+    return cours.filter(function (c){ return c.de && c.a; }).map(function (c){
+      return { id: c.id, jour: c.jour, de: c.de, a: c.a,
+               quoi: c.quoi || '', niveau: (c.niveau || '').trim() };
+    });
+  };
+  window.MCC_POSE_COURS = function (l){
+    cours = (l || []).map(function (c){
+      return { id: c.id || neuf(), jour: +c.jour || 0, de: c.de || '', a: c.a || '',
+               quoi: c.quoi || '', niveau: c.niveau || '' };
+    });
+    dessineCours();
+  };
 
   /* ---------- photos ---------- */
   /* Les fichiers restent dans le navigateur : on en fait une URL locale pour
@@ -281,10 +386,12 @@
       coord.map(function (c){ return '<li>' + ech(c) + '</li>'; }).join('') ||
       '<li class="creux">Vos coordonnées</li>';
 
+    var nb = cours.length;
     document.getElementById('ap-jours').textContent =
-      jours.length === 7 ? 'Ouvert tous les jours'
-      : jours.length ? 'Ouvert ' + jours.length + ' jours sur 7'
-      : 'Aucun jour d’ouverture';
+      (jours.length === 7 ? 'Ouvert tous les jours'
+       : jours.length ? 'Ouvert ' + jours.length + ' jours sur 7'
+       : 'Aucun jour d’ouverture') +
+      (nb ? ' · ' + nb + ' cours par semaine' : '');
 
     document.getElementById('c-mot-n').textContent = mot.length;
   }

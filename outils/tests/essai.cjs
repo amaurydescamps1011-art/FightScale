@@ -32,6 +32,22 @@ const ETAT = {
     tel: '04 78 00 00 00', mail: 'contact@bclyon.fr', site: '', instagram: '', facebook: '',
     horaires: { lundi: ['18:00','21:00'] },
     offre: 'gratuit'
+  }, {
+    /* un club Pro qui a saisi son planning : c'est lui que la reservation doit
+       proposer, et rien d'autre (Amaury, 23/09/2026) */
+    id: 'c3', statut: 'publie', slug: 'academie-du-vieux-port',
+    nom: 'Académie du Vieux-Port', ville: 'Marseille',
+    adresse: '3 quai du Port', code_postal: '13002',
+    disciplines: ['MMA', 'Grappling'], photos: [],
+    presentation: 'Le MMA sur le port.',
+    tel: '04 91 00 00 00', mail: 'contact@avp.fr', site: '', instagram: '', facebook: '',
+    horaires: { mardi: ['18:00','21:00'], jeudi: ['18:00','21:00'] },
+    cours: [
+      { id: 'j4x2', jour: 3, de: '19:00', a: '20:30', quoi: 'Grappling', niveau: '' },
+      { id: 'k3f9', jour: 1, de: '20:00', a: '21:30', quoi: 'MMA', niveau: 'Confirmés' },
+      { id: 'm7p1', jour: 1, de: '18:30', a: '20:00', quoi: 'MMA', niveau: 'Débutants' }
+    ],
+    offre: 'pro'
   }],
   demande: [], fichiers: []
 };
@@ -194,7 +210,42 @@ const dit = (b, quoi) => { console.log((b ? '  ok    ' : '  RATE  ') + quoi); b 
   dit(await p.evaluate(() => !document.getElementById('introuvable').hidden),
       'la page « cette salle n’existe pas »');
 
-  console.log('\n7. au téléphone');
+  console.log('\n7. la réservation tombe sur un cours');
+  await p.goto(base + 'salle.html?s=academie-du-vieux-port', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(700);
+  const pl = await p.evaluate(() => ({
+    titre: document.querySelector('#horaires .pan-titre').textContent,
+    mardi: [...document.querySelectorAll('#s-semaine li')][1].textContent.replace(/\s+/g, ' ').trim(),
+    options: [...document.querySelectorAll('#e-cours option')].map(o => o.textContent),
+    ids: [...document.querySelectorAll('#e-cours option')].map(o => o.value),
+    champCours: !document.getElementById('e-champ-cours').hidden,
+    champQuand: !document.getElementById('e-champ-quand').hidden,
+    champDisc: !document.getElementById('e-champ-disc').hidden
+  }));
+  dit(pl.titre === 'Planning de la semaine', 'le pavé devient un planning de cours');
+  dit(/18h30 – 20h00MMADébutants20h00 – 21h30MMAConfirmés/.test(pl.mardi),
+      'le mardi porte ses deux cours, dans l’ordre : ' + pl.mardi);
+  dit(pl.champCours && !pl.champQuand, 'le choix du cours remplace le texte libre');
+  dit(!pl.champDisc, 'la discipline n’est plus redemandée : le cours la porte');
+  dit(pl.options.length === 3, 'les trois cours sont proposés');
+  /* l'ordre compte : le plus tot d'abord, et le mardi avant le jeudi. Une liste
+     dans l'ordre de saisie donnerait jeudi, puis 20h00, puis 18h30. */
+  dit(pl.ids.join(',') === 'm7p1,k3f9,j4x2', 'dans l’ordre du planning : ' + pl.ids.join(', '));
+  dit(pl.options[0] === 'Mardi 18h30 – 20h00 · MMA (Débutants)',
+      'le libellé dit le jour, l’heure et la discipline : ' + pl.options[0]);
+
+  await p.fill('#e-nom', 'Inès R.');
+  await p.fill('#e-mail', 'ines@exemple.fr');
+  await p.selectOption('#e-cours', 'j4x2');
+  await p.click('#e-envoi');
+  await p.waitForTimeout(400);
+  const dc = await p.evaluate(() =>
+    JSON.parse(sessionStorage.getItem('faux')).demande.filter(x => x.club_id === 'c3')[0] || {});
+  dit(dc.cours_id === 'j4x2', 'la demande désigne le cours choisi');
+  dit(dc.creneau === 'Jeudi 19h00 – 20h30 · Grappling', 'et en garde le libellé lisible');
+  dit(dc.discipline === 'Grappling', 'la discipline vient du cours');
+
+  console.log('\n8. au téléphone');
   await p.setViewportSize({ width: 390, height: 844 });
   await p.goto(base + 'salle.html?s=team-ouragan-boxe', { waitUntil: 'networkidle' });
   await p.waitForTimeout(600);

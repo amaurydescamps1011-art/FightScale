@@ -138,6 +138,21 @@ ok "le visiteur ne relit pas son propre depot" \
    "$(q "set role anon; insert into demande (club_id,nom,mail) values ('bbbbbbbb-0000-0000-0000-000000000002','Zoe','z@ex.fr') returning nom;" | cut -c1-5)" "ERROR"
 ok "et la demande passe alors" \
    "$(q "set role anon; with i as (insert into demande (club_id,nom,mail) values ('dddddddd-0000-0000-0000-000000000004','P','p@ex.fr') returning 1) select count(*) from i;")" "1 "
+# Amaury, 23/09/2026 : une seance d'essai doit tomber sur un horaire de cours.
+# Tant que le club n'a pas de planning, le texte libre reste accepte (ci-dessus).
+# Des qu'il en a un, la base n'accepte plus qu'un de ses cours -- sinon la regle
+# ne tiendrait que dans le formulaire, et un depot a la main passerait a cote.
+q "$(cnx $AD) update club set cours='[{\"id\":\"k3f9\",\"jour\":1,\"de\":\"18:30\",\"a\":\"20:00\",\"quoi\":\"MMA\"}]'::jsonb where id='dddddddd-0000-0000-0000-000000000004';" >/dev/null
+ok "un cours du planning est accepte" \
+   "$(q "set role anon; with i as (insert into demande (club_id,nom,mail,cours_id,creneau) values ('dddddddd-0000-0000-0000-000000000004','Ines','i@ex.fr','k3f9','Mardi 18h30 - 20h00 - MMA') returning 1) select count(*) from i;")" "1 "
+ok "un cours invente est refuse" \
+   "$(q "set role anon; insert into demande (club_id,nom,mail,cours_id) values ('dddddddd-0000-0000-0000-000000000004','Max','m@ex.fr','zzzz');" | cut -c1-5)" "ERROR"
+ok "et le texte libre ne passe plus sur ce club" \
+   "$(q "set role anon; insert into demande (club_id,nom,mail,creneau) values ('dddddddd-0000-0000-0000-000000000004','Max','m@ex.fr','quand je veux');" | cut -c1-5)" "ERROR"
+ok "le cours d'un club ne sert pas a un autre" \
+   "$(q "set role anon; insert into demande (club_id,nom,mail,cours_id) values ('bbbbbbbb-0000-0000-0000-000000000002','Max','m@ex.fr','k3f9');" | cut -c1-5)" "ERROR"
+ok "le planning sort cote public" \
+   "$(q "set role anon; select cours->0->>'quoi' from annuaire where id='dddddddd-0000-0000-0000-000000000004';")" "MMA "
 ok "le visiteur ne relit pas les demandes" \
    "$(q "set role anon; select count(*) from demande;")" "0 "
 # le suivi de prospect : le club annote et reclasse les siens, personne d'autre

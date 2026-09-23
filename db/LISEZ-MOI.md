@@ -26,10 +26,12 @@ et ce sont les politiques d'accès du schéma qui font la sécurité.
   adherent`, plus `absente` et `annulee` comme fins. S'y ajoutent `notes` (libre),
   `relance` (la date du prochain rappel) et `origine`. Tout cela n'est lisible que
   par le club concerné et par l'équipe.
-  **`creneau` est du texte, pas une date** : le formulaire demande « quand vous
-  arrange » et le pratiquant écrit « mardi soir ». La colonne était un `timestamptz`,
-  et tout dépôt aurait échoué sur la vraie base — le faux serveur des tests, lui,
-  l'acceptait.
+  **`creneau` est du texte, pas une date** : il porte le libellé lisible du cours
+  choisi (« Mardi 18h30 – 20h00 · MMA »), ou, pour un club sans planning, ce que le
+  pratiquant a écrit. La colonne était un `timestamptz`, et tout dépôt aurait échoué
+  sur la vraie base — le faux serveur des tests, lui, l'acceptait.
+  **`cours_id` est ce que la base vérifie** : l'identifiant du cours dans le planning
+  du club (voir `club.cours`).
 - **`abonnement`** — l'état Stripe d'un club : identifiants, statut, fin de période
   payée. Une table à part, et pas des colonnes sur `club`, parce que `club` est lu
   publiquement : un identifiant Stripe n'a rien à faire dans une page. Seul le
@@ -68,6 +70,25 @@ Une seule chose : `club.offre`. Deux verrous autour d'elle.
   l'accorder en modifiant sa fiche. Seuls l'équipe et la clé `service_role` passent.
 - La politique `demande_depot` exige `offre = 'pro'` : une demande de séance d'essai
   forgée à la main sur un club gratuit est refusée par la base.
+
+## Une séance d'essai tombe sur un cours
+
+Règle d'Amaury du 23/09/2026. Le club saisit son planning sur sa fiche, dans
+`club.cours` : une liste d'objets `{ id, jour, de, a, quoi, niveau }`, où `jour` va
+de 0 (lundi) à 6 et où `id` est tiré au sort par le formulaire, une fois pour
+toutes. C'est cet `id` qu'une demande désigne, et pas un numéro de ligne : le club
+peut réordonner son planning ou décaler une heure sans que les demandes déjà reçues
+changent de cours.
+
+`club_a_ce_cours()`, en `security definer`, tient la règle côté base, et
+`demande_depot` l'appelle :
+- club sans planning → le texte libre passe encore, sinon une salle qui n'a rien
+  saisi ne pourrait plus rien recevoir ;
+- club avec un planning → seul un `cours_id` qui existe chez **lui** passe ; le
+  texte libre seul est refusé.
+
+Le tenir dans le formulaire ne tiendrait rien : la page parle à la base avec une
+clé publique.
 
 Aujourd'hui, le Pro s'ouvre à la main depuis le back-office. Demain, c'est le webhook
 Stripe qui l'écrira — voir `../supabase/LISEZ-MOI.md`.

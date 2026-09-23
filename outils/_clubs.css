@@ -188,11 +188,57 @@
   .jour-creneau{ display:flex; gap:8px; align-items:center; color:var(--texte-3); }
   .jour-creneau input{ font:inherit; font-size:14px; padding:7px 9px; color:var(--texte);
                        background:var(--surface-2); border:1px solid var(--bord-2);
-                       border-radius:var(--r-m); color-scheme:dark; }
+                       border-radius:var(--r-m); }
   .jour-ferme{ display:none; color:var(--texte-4); font-size:14px; font-weight:600; }
   .jour-ligne.ferme .jour-creneau{ display:none; }
   .jour-ligne.ferme .jour-ferme{ display:inline; }
   .jour-ligne.ferme .jour-bascule{ color:var(--texte-4); }
+
+  /* ---------- les cours ----------
+     Un cours = une petite carte de deux lignes : le jour et la plage horaire
+     dessus, la discipline et le niveau dessous. Les quatre champs plus la croix
+     tenaient sur une seule ligne a l'ecran, mais de justesse : un navigateur qui
+     ecrit l'heure en AM/PM elargit les deux champs d'heure d'une trentaine de
+     pixels chacun, et tout le reste se retrouvait coupe. Deux lignes ne coupent
+     rien, quel que soit le format de l'heure. */
+  .cours-liste{ list-style:none; margin:0 0 14px; padding:0; display:grid; gap:10px; }
+  .cours-ligne{ display:grid; gap:8px 10px; align-items:center;
+                grid-template-columns:minmax(104px,.9fr) minmax(0,1.4fr) auto;
+                padding:12px; border:1px solid var(--bord-2); border-radius:var(--r-m);
+                background:var(--surface);
+                transition:border-color .15s ease; }
+  .cours-ligne:focus-within{ border-color:var(--bord-3); }
+  .cours-ligne select, .cours-ligne input{
+    font:inherit; font-size:14px; font-weight:600; min-width:0; width:100%;
+    padding:8px 9px; color:var(--texte); background:var(--surface-2);
+    border:1px solid var(--bord-2); border-radius:var(--r-m); }
+  .cours-ligne select:focus, .cours-ligne input:focus{
+    outline:none; border-color:rgba(236,22,46,.55); box-shadow:0 0 0 4px rgba(236,22,46,.10); }
+  .cours-ligne .c-jour  { grid-column:1; grid-row:1; }
+  .cours-h              { grid-column:2; grid-row:1; }
+  .cours-x              { grid-column:3; grid-row:1; }
+  .cours-ligne .c-quoi  { grid-column:1; grid-row:2; }
+  .cours-ligne .c-niveau{ grid-column:2 / 4; grid-row:2; }
+  .cours-h{ display:flex; gap:6px; align-items:center; min-width:0; color:var(--texte-3); }
+  .cours-h input{ width:auto; min-width:0; flex:1 1 auto; }
+  .cours-x{ display:inline-flex; align-items:center; justify-content:center;
+            width:34px; height:34px; flex:0 0 34px; padding:0; border:0; border-radius:999px;
+            background:transparent; color:var(--texte-4); font-size:21px; line-height:1;
+            cursor:pointer; transition:background-color .15s ease, color .15s ease; }
+  .cours-x:hover{ background:rgba(236,22,46,.08); color:var(--rouge-700); }
+  .cours-vide{ margin:0 0 14px; font-size:13.5px; line-height:1.6; color:var(--texte-4); }
+  .cours-vide[hidden]{ display:none; }
+  /* Au telephone meme la premiere ligne est trop etroite pour le jour et les
+     deux heures : tout s'empile, la croix restant en face du jour. */
+  @media (max-width: 620px){
+    .cours-ligne{ grid-template-columns:1fr auto; gap:7px; padding:10px; }
+    .cours-h              { grid-column:1 / -1; grid-row:auto; }
+    .cours-ligne .c-quoi  { grid-column:1 / -1; grid-row:auto; }
+    .cours-ligne .c-niveau{ grid-column:1 / -1; grid-row:auto; }
+    /* les deux champs d'heure se partagent la ligne a parts egales, et se
+       serrent : en AM/PM le champ natif est plus large qu'en 24 h */
+    .cours-h input{ flex:1 1 0; padding-inline:6px; }
+  }
 
   /* ---------- aperçu en direct ---------- */
   .apercu{ margin-bottom:26px; padding-bottom:26px; border-bottom:1px solid var(--bord); }

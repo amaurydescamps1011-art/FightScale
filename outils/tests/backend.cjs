@@ -79,6 +79,16 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.fill('#c-mail', 'contact@ouragan.fr');
   await pg.check('input[name="disciplines"][value="Boxe anglaise"]');
   await pg.check('input[name="disciplines"][value="Kickboxing"]');
+  /* le planning des cours : c'est lui que la fiche proposera a la reservation,
+     et l'heure saisie doit etre celle qui part -- elle etait ignoree, tout
+     partait en 09:00 - 21:00 */
+  await pg.click('#cours-plus');
+  await pg.click('#cours-plus');
+  await pg.selectOption('.cours-ligne:nth-child(2) .c-jour', '3');
+  await pg.fill('.cours-ligne:nth-child(2) .c-de', '19:00');
+  await pg.selectOption('.cours-ligne:nth-child(2) .c-quoi', 'Kickboxing');
+  await pg.fill('.cours-ligne:nth-child(2) .c-niveau', 'Tous niveaux');
+  await pg.fill('[data-de="0"]', '17:00');
   await pg.click('#form-club button[type="submit"]');
   await pg.waitForTimeout(700);
   const c = await pg.evaluate(() => window.__FAUX__.club[0]);
@@ -88,6 +98,13 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('la presentation aussi', c.presentation, 'Une salle de boxe au cœur de Marseille.');
   ok('les disciplines aussi', c.disciplines, ['Boxe anglaise', 'Kickboxing']);
   ok('les horaires aussi', Object.keys(c.horaires).length, 6);
+  ok('avec l\'heure saisie, pas une heure par defaut', c.horaires.lundi, ['17:00', '21:00']);
+  ok('les deux cours sont enregistres', c.cours.length, 2);
+  ok('chacun avec son identifiant', c.cours.every(x => /^[a-z0-9]{4,8}$/.test(x.id)), true);
+  ok('et deux identifiants differents', c.cours[0].id !== c.cours[1].id, true);
+  ok('le second porte ce qui a ete saisi',
+     [c.cours[1].jour, c.cours[1].de, c.cours[1].a, c.cours[1].quoi, c.cours[1].niveau],
+     [3, '19:00', '20:00', 'Kickboxing', 'Tous niveaux']);
   ok('l\'ecran de confirmation s\'affiche', await pg.isVisible('#merci'), true);
   await garde();
 

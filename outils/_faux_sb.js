@@ -51,8 +51,15 @@ window.supabase = {
                ici pour que le test echoue si la page envoie autre chose */
             var c = f.champs;
             var vise = S.club.filter(function (x){ return x.id === c.club_id; })[0];
+            /* et, depuis le 23/09/2026, le cours choisi doit exister dans le
+               planning du club -- tant qu'il n'en a pas saisi, le texte libre
+               passe encore (club_a_ce_cours, dans 001_schema.sql) */
+            var planning = (vise && vise.cours) || [];
+            var bonCours = c.cours_id
+              ? planning.some(function (x){ return x.id === c.cours_id; })
+              : planning.length === 0;
             if (!vise || vise.statut !== 'publie' || vise.offre !== 'pro'
-                || c.statut !== 'recue') {
+                || c.statut !== 'recue' || !bonCours) {
               res({ data: null, error: { message: 'new row violates row-level security policy' } });
               return;
             }

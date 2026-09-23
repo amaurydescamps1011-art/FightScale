@@ -56,10 +56,15 @@
     /* horaires vides = fiche neuve : on laisse la semaine par defaut du formulaire */
     if (Object.keys(h).length) {
       Array.prototype.forEach.call(document.querySelectorAll('[data-jour]'), function (ch){
-        ch.checked = !!h[JOURS[+ch.dataset.jour]];
+        var p = h[JOURS[+ch.dataset.jour]];
+        ch.checked = !!p;
+        if (p && p[0]) poseTemps('[data-de="' + ch.dataset.jour + '"]', p[0]);
+        if (p && p[1]) poseTemps('[data-a="'  + ch.dataset.jour + '"]', p[1]);
         ch.dispatchEvent(new Event('change', { bubbles: true }));
       });
     }
+    /* le planning des cours : c'est lui que la fiche proposera a la reservation */
+    if (window.MCC_POSE_COURS) window.MCC_POSE_COURS(c.cours || []);
     /* une fiche deja envoyee le dit, plutot que de faire croire a un brouillon */
     if (c.statut === 'en_attente') etat('Votre fiche est en cours de vérification.');
     if (c.statut === 'publie')     etat('Votre fiche est en ligne. Vos modifications repasseront par une vérification.');
@@ -79,12 +84,28 @@
   }
 
   /* ---------- du formulaire vers le club ---------- */
+  function poseTemps(sel, v){
+    var ch = document.querySelector(sel);
+    if (ch) ch.value = v;
+  }
+  function temps(sel, repli){
+    var ch = document.querySelector(sel);
+    return (ch && ch.value) || repli;
+  }
+  /* Les deux heures saisies par le club etaient ignorees : tout partait en
+     09:00 - 21:00. Une salle ouverte le soir se voyait donc annoncer ouverte
+     des le matin, sur sa fiche comme dans le « ouvert aujourd'hui ». */
   function horaires(){
     var h = {};
     Array.prototype.forEach.call(document.querySelectorAll('[data-jour]'), function (ch){
-      if (ch.checked) h[JOURS[+ch.dataset.jour]] = ['09:00', '21:00'];
+      if (!ch.checked) return;
+      h[JOURS[+ch.dataset.jour]] = [temps('[data-de="' + ch.dataset.jour + '"]', '09:00'),
+                                    temps('[data-a="'  + ch.dataset.jour + '"]', '21:00')];
     });
     return h;
+  }
+  function coursSaisis(){
+    return (window.MCC_COURS && window.MCC_COURS()) || [];
   }
   function disciplines(){
     return Array.prototype.map.call(
@@ -138,7 +159,7 @@
         code_postal: val('c-cp'), presentation: val('c-mot'),
         contact_nom: val('c-contact'), tel: val('c-tel'), mail: val('c-mail'),
         site: val('c-web'), instagram: val('c-insta'), facebook: val('c-fb'),
-        disciplines: disciplines(), horaires: horaires(),
+        disciplines: disciplines(), horaires: horaires(), cours: coursSaisis(),
         statut: 'en_attente'
       };
       if (chemins.length) champs.photos = chemins;
@@ -148,7 +169,8 @@
       document.getElementById('merci-recap').textContent =
         val('c-nom') + ' · ' + disciplines().length + ' discipline' +
         (disciplines().length > 1 ? 's' : '') + ' · ' +
-        Object.keys(horaires()).length + ' jours d’ouverture';
+        Object.keys(horaires()).length + ' jours d’ouverture' +
+        (coursSaisis().length ? ' · ' + coursSaisis().length + ' cours' : '');
       form.classList.add('envoye');
       document.getElementById('merci').classList.add('on');
       form.scrollIntoView({ block: 'center', behavior: 'smooth' });
