@@ -48,43 +48,58 @@ https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/storage/buckets
 
 **New bucket** → nom exactement `photos-clubs` → cocher **Public bucket** → Create.
 
-### c. Ne pas rester bloqué sur la confirmation d'e-mail
+### c. Créer ton compte, puis te donner les droits
 
-Par défaut, Supabase crée bien le compte mais n'ouvre pas de session tant que le
-lien reçu par e-mail n'est pas cliqué. Son expéditeur intégré est limité à
-quelques messages par heure, donc le mail arrive en retard, en spam, ou jamais.
-C'est ce qui donne l'impression que la création de compte ne marche pas.
+Ces deux points n'en font qu'un, il faut juste les faire dans l'ordre.
 
-**Le réglage**, si tu le trouves :
-https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/providers
-→ ouvrir **Email** dans la liste → décocher **Confirm email** → Save.
-Selon la version, la case s'appelle *Confirm email* ou *Enable email
-confirmations*, et elle peut être sous **Authentication → Sign In / Providers**
-ou sous **Authentication → Settings**.
+**c.1 — Crée ton compte sur le site.**
+https://fight-scale.vercel.app/clubs.html → bouton **Référencer ma salle** → nom
+de ta salle, ton e-mail, un mot de passe d'au moins huit caractères → Continuer.
 
-**Si tu ne le trouves pas**, tu peux t'en passer : crée le compte sur le site,
-puis colle ça dans le SQL Editor pour confirmer l'adresse à la main.
+Deux cas possibles :
+- ça t'emmène directement sur le formulaire de fiche → saute à **c.3** ;
+- ça affiche « vérifiez votre boîte mail » → le mail de Supabase n'arrivera
+  probablement pas, passe à **c.2**.
+
+**c.2 — Colle ce bloc dans le SQL Editor**, en remplaçant l'adresse par la tienne.
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/sql/new
 
 ```sql
 update auth.users
    set email_confirmed_at = now()
  where email_confirmed_at is null;
-```
 
-Puis retourne sur le site, ouvre la fenêtre et clique **Connectez-vous** au lieu
-de recréer un compte. Ça marche aussi bien, et c'est à refaire à chaque nouveau
-compte de test tant que la case n'est pas décochée.
-
-### d. Te mettre dans l'équipe
-
-Une fois ton compte créé et connecté, dans le SQL Editor :
-
-```sql
 insert into equipe (membre_id)
-select id from auth.users where email = 'ton-adresse@exemple.fr';
+select id from auth.users where email = 'ton-adresse@exemple.fr'
+on conflict do nothing;
 ```
 
-Après ça, https://fight-scale.vercel.app/admin.html s'ouvre.
+La première instruction fait à la main ce que le mail de confirmation aurait
+fait. La seconde te met dans `equipe`, la table des administrateurs : on n'y
+entre qu'à la main depuis Supabase, et c'est ce qui empêche un gérant de club de
+s'y ajouter tout seul.
+
+**c.3 — Retourne sur le site**, rouvre la fenêtre et clique **Connectez-vous**
+plutôt que de recréer un compte. Même adresse, même mot de passe.
+
+Après ça, https://fight-scale.vercel.app/admin.html s'ouvre pour toi.
+
+### d. Pourquoi le mail de confirmation ne part pas
+
+Par défaut Supabase crée le compte mais n'ouvre pas de session tant que le lien
+reçu par e-mail n'est pas cliqué, et son expéditeur intégré est limité à quelques
+messages par heure sur un domaine partagé : le mail arrive en retard, en spam, ou
+jamais. Le bloc SQL du point c.2 est à rejouer à chaque nouveau compte de test.
+
+Le réglage qui supprime l'étape, si tu le trouves :
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/providers
+→ ouvrir **Email** dans la liste → décocher **Confirm email** → Save. Selon la
+version, la case s'appelle *Confirm email* ou *Enable email confirmations*.
+
+**La vraie réponse est ailleurs** : garder la confirmation, mais avec un vrai
+expéditeur. Voir la section « L'expéditeur d'e-mails » plus bas — c'est le même
+chaînon qui manque pour prévenir un gérant qu'une demande est arrivée et pour les
+relances du Pro.
 
 ---
 
@@ -142,18 +157,38 @@ page, et le site n'en a pas besoin — c'est Supabase qui porte l'échange.
 
 ---
 
-## 3. Vercel — ouvrir le site
+## 3. Vercel — fait
 
-Aujourd'hui le site est protégé : seuls les comptes de ton équipe Vercel y entrent.
-Tant que c'est le cas, un club à qui tu envoies le lien tombe sur un écran de
-connexion Vercel.
+Le site est ouvert à tout le monde : vérifié le 23/09/2026 en navigation privée.
+Rien à faire dans Deployment Protection.
 
-Vercel → projet `fight-scale` → **Settings → Deployment Protection → Vercel
-Authentication** → désactiver.
+Il reste invisible pour Google (balise `noindex`), et c'est volontaire : une page
+d'annuaire vide indexée fait plus de mal que pas de page. À enlever quand
+l'annuaire aura quelques clubs — dis-le moi, c'est une ligne à changer.
 
-Le site reste invisible pour Google (balise `noindex`) tant que tu ne me dis pas de
-l'enlever. À faire quand l'annuaire aura quelques clubs : une page vide indexée est
-pire que pas de page.
+---
+
+## 3 bis. L'expéditeur d'e-mails
+
+Trois choses attendent le même chaînon manquant, et une seule mise en place les
+débloque toutes :
+
+1. la confirmation d'adresse à la création de compte ;
+2. la notification au gérant quand une demande de séance d'essai arrive — pour
+   l'instant il doit ouvrir son espace pour la voir ;
+3. les relances par e-mail, promises dans le Pro à 39 €.
+
+Ce qu'il faut : **un nom de domaine**, une dizaine d'euros par an, sans société.
+`monclubcombat.fr` ou équivalent. Il sert deux fois : les e-mails partent de
+`contact@monclubcombat.fr` au lieu d'une adresse partagée qui finit en spam, et le
+site quitte `fight-scale.vercel.app` pour ton vrai nom.
+
+Ensuite, un compte chez **Resend** (gratuit jusqu'à 3 000 e-mails par mois, le plus
+simple à brancher) ou **Brevo** si tu préfères un français. Deux enregistrements
+DNS à poser, les identifiants SMTP à coller dans Supabase sous Authentication →
+Emails → SMTP Settings, et je câble le reste.
+
+Dis-moi quand tu veux t'y mettre et je te fais la marche à suivre.
 
 ---
 
