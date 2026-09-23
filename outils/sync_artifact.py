@@ -8,7 +8,10 @@ regarde soit exactement ce que Vercel sert.
 """
 import os, re, shutil
 
-SRC = '/tmp/claude-0/-home-claude/fe1486f2-8126-5a24-9c89-ca3cc04a2b8e/scratchpad/home/site'
+# Le dossier bati, a cote de ce script. Il etait ecrit en dur vers l'ancien
+# repertoire de travail : apres le deplacement du depot, la maquette a
+# continue de se republier depuis une copie figee, sans rien signaler.
+SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')
 DST = '/tmp/claude-0/-home-claude-fightscale/fe1486f2-8126-5a24-9c89-ca3cc04a2b8e/scratchpad/artifact'
 SAUF = {'robots.txt', 'vercel.json', 'README.md'}
 
