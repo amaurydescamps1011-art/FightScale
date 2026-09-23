@@ -32,6 +32,11 @@
       <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
       <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
       <p class="fen-note" id="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+      <!-- Un gerant qui revient trois mois plus tard a oublie son mot de passe.
+           Sans ce lien, il n'a aucun moyen de rentrer dans son espace. -->
+      <p class="fen-bascule" data-mode="connexion" hidden>
+        <button type="button" class="lien-bouton" id="fen-oubli">Mot de passe oublié ?</button>
+      </p>
       <p class="fen-bascule">
         <span data-mode="creation">Vous avez déjà un espace club ?
           <button type="button" class="lien-bouton" id="fen-vers-connexion">Connectez-vous</button>.</span>
@@ -42,6 +47,12 @@
 
     <!-- quand la confirmation par e-mail est active cote Supabase, il n'y a pas de
          session a la sortie de l'inscription : on le dit au lieu de tourner en rond -->
+    <div id="fen-renvoi" hidden>
+      <p class="fen-mot">Si un compte existe avec <b id="fen-renvoi-mail"></b>, un lien de
+        réinitialisation vient d'y être envoyé. Ouvrez-le pour choisir un nouveau
+        mot de passe.</p>
+    </div>
+
     <div id="fen-verif" hidden>
       <p class="fen-mot">Nous venons d'envoyer un lien de confirmation à
         <b id="fen-verif-mail"></b>. Ouvrez-le, puis revenez vous connecter ici pour

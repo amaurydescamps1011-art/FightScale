@@ -651,6 +651,15 @@
   .dem-honoree{border-color:rgba(29,138,74,.35); color:var(--vert)}
   .dem-honoree::before{background:var(--vert)}
   .dem-absente, .dem-annulee{color:var(--texte-4)}
+
+  /* ---------- nouveau mot de passe ---------- */
+  .mdp-form{margin-top:clamp(22px,2.6vw,30px); display:grid; gap:14px; max-width:380px}
+  .mdp-form .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .mdp-form .champ-aide{margin:0}
+  .mdp-fait{margin-top:clamp(22px,2.6vw,30px); padding:15px 16px; max-width:52ch;
+    border-radius:var(--r-m); border:1px solid rgba(29,138,74,.32);
+    background:rgba(29,138,74,.06); font-size:15px; line-height:1.65; color:var(--texte-2)}
+  .mdp-fait b{color:var(--vert)}
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -1018,6 +1027,11 @@
       <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
       <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
       <p class="fen-note" id="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+      <!-- Un gerant qui revient trois mois plus tard a oublie son mot de passe.
+           Sans ce lien, il n'a aucun moyen de rentrer dans son espace. -->
+      <p class="fen-bascule" data-mode="connexion" hidden>
+        <button type="button" class="lien-bouton" id="fen-oubli">Mot de passe oublié ?</button>
+      </p>
       <p class="fen-bascule">
         <span data-mode="creation">Vous avez déjà un espace club ?
           <button type="button" class="lien-bouton" id="fen-vers-connexion">Connectez-vous</button>.</span>
@@ -1028,6 +1042,12 @@
 
     <!-- quand la confirmation par e-mail est active cote Supabase, il n'y a pas de
          session a la sortie de l'inscription : on le dit au lieu de tourner en rond -->
+    <div id="fen-renvoi" hidden>
+      <p class="fen-mot">Si un compte existe avec <b id="fen-renvoi-mail"></b>, un lien de
+        réinitialisation vient d'y être envoyé. Ouvrez-le pour choisir un nouveau
+        mot de passe.</p>
+    </div>
+
     <div id="fen-verif" hidden>
       <p class="fen-mot">Nous venons d'envoyer un lien de confirmation à
         <b id="fen-verif-mail"></b>. Ouvrez-le, puis revenez vous connecter ici pour
@@ -1126,6 +1146,26 @@
   }
   document.getElementById('fen-vers-connexion').addEventListener('click', function (){ bascule('connexion'); });
   document.getElementById('fen-vers-creation').addEventListener('click',  function (){ bascule('creation'); });
+
+  /* Mot de passe oublie. On ne dit jamais si l'adresse existe : ce serait dire
+     a n'importe qui quels clubs ont un compte chez nous. */
+  document.getElementById('fen-oubli').addEventListener('click', function (){
+    var mail = document.getElementById('k-mail').value.trim();
+    if (!mail) {
+      document.getElementById('k-mail').focus();
+      montre('Écrivez votre e-mail, nous vous enverrons un lien.');
+      return;
+    }
+    if (!reel) { montre('La réinitialisation a besoin d’une connexion au serveur.'); return; }
+    occupe(true);
+    SB.client.auth.resetPasswordForEmail(mail, {
+      redirectTo: location.href.replace(/[^/]*$/, '') + 'motdepasse.html'
+    }).then(function (){
+      form.hidden = true;
+      document.getElementById('fen-renvoi-mail').textContent = mail;
+      document.getElementById('fen-renvoi').hidden = false;
+    }).catch(function (e){ occupe(false); montre(SB.dire(e)); });
+  });
 
   function montre(msg){
     erreur.textContent = msg || '';

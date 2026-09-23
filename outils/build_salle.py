@@ -18,7 +18,10 @@ defs   = R('defs.svg')
 header = bloc('<header class="site-header">', '</header>')
 footer = bloc('<footer class="site-footer">', '</footer>')
 body   = R('_salle.body.html')
-js     = R('_geobase.js') + R('_salles.js') + R('_minicarte.js') + R('_salle.js')
+# _villes.js porte les coordonnees des villes : un club saisit une adresse,
+# pas une latitude, donc c'est sa ville qui le place sur le plan.
+js     = (R('_geobase.js') + R('_salles.js') + R('_villes.js')
+          + R('_minicarte.js') + R('_salle.js'))
 
 # depuis la fiche, les ancres du menu et du pied de page renvoient a l'accueil
 SYMBOLES = set(re.findall(r'<path id="([^"]+)"', R('defs.svg')))

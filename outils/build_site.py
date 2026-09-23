@@ -27,12 +27,14 @@ DESCR = {
    "Suivez votre fiche et vos demandes de séance d'essai."),
  'admin.html': ("Back-office — Mon Club Combat",
    "Vérification des fiches de club."),
+ 'motdepasse.html': ("Nouveau mot de passe — Mon Club Combat",
+   "Choisissez un nouveau mot de passe pour votre espace club."),
 }
 
 # Pages sans interet pour un moteur : un formulaire ne se lit pas dans un resultat,
 # et l'espace club comme le back-office sont derriere une session. Le noindex n'est
 # pas ce qui les protege — c'est le RLS ; il evite seulement qu'ils soient indexes.
-SANS_INDEX = {'referencer.html', 'espace-club.html', 'admin.html'}
+SANS_INDEX = {'referencer.html', 'espace-club.html', 'admin.html', 'motdepasse.html'}
 
 # Les pages d'annuaire (une par discipline, une par ville) sont generees a part.
 import build_annuaire as ann

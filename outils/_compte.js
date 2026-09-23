@@ -86,6 +86,26 @@
   document.getElementById('fen-vers-connexion').addEventListener('click', function (){ bascule('connexion'); });
   document.getElementById('fen-vers-creation').addEventListener('click',  function (){ bascule('creation'); });
 
+  /* Mot de passe oublie. On ne dit jamais si l'adresse existe : ce serait dire
+     a n'importe qui quels clubs ont un compte chez nous. */
+  document.getElementById('fen-oubli').addEventListener('click', function (){
+    var mail = document.getElementById('k-mail').value.trim();
+    if (!mail) {
+      document.getElementById('k-mail').focus();
+      montre('Écrivez votre e-mail, nous vous enverrons un lien.');
+      return;
+    }
+    if (!reel) { montre('La réinitialisation a besoin d’une connexion au serveur.'); return; }
+    occupe(true);
+    SB.client.auth.resetPasswordForEmail(mail, {
+      redirectTo: location.href.replace(/[^/]*$/, '') + 'motdepasse.html'
+    }).then(function (){
+      form.hidden = true;
+      document.getElementById('fen-renvoi-mail').textContent = mail;
+      document.getElementById('fen-renvoi').hidden = false;
+    }).catch(function (e){ occupe(false); montre(SB.dire(e)); });
+  });
+
   function montre(msg){
     erreur.textContent = msg || '';
     erreur.hidden = !msg;

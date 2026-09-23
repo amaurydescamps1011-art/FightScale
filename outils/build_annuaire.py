@@ -142,20 +142,25 @@ def carte_salle(s, i):
         '<div class="res-corps">'
           '<div class="res-tete">'
             '<h2 class="res-nom"><a href="salle.html?s=%s">%s</a></h2>'
-            '<span class="note">%s%s <small>(%d avis)</small></span>'
+            '%s'
           '</div>'
           '<div class="res-chips">%s</div>'
-          '<p class="res-adresse">%s%s, %s %s</p>'
+          '<p class="res-adresse">%s%s</p>'
           '%s'
           '<div class="res-bas">%s'
-            '<a class="btn btn-rouge res-essai" href="salle.html?s=%s#contact">Séance d\'essai</a>'
+            '<a class="btn btn-rouge res-essai" href="salle.html?s=%s#essai">Séance d\'essai</a>'
           '</div>'
         '</div>'
       '</article>'
-    ) % (i, s[1], d['slug'], s[0], ETOILE, s[6], s[7],
+    ) % (i, s[1], d['slug'], s[0],
+         # un vrai club n'a ni note ni avis : on n'affiche pas une etoile vide
+         ('<span class="note">%s%s <small>(%d avis)</small></span>'
+          % (ETOILE, s[6], s[7])) if s[6] else '',
          ''.join('<span class="mini-chip">%s</span>' % x for x in s[5]),
-         PIN, d['adresse'], d['cp'], s[2],
+         PIN, ', '.join(x for x in [d.get('adresse'),
+                                    ' '.join(y for y in [d.get('cp'), s[2]] if y)] if x),
          '<p class="res-mot">%s</p>' % mot if mot else '',
+         '' if not s[9] else
          ('<span class="paire res-ouvert">Ouvert aujourd\'hui · %s</span>' % s[9]) if s[10]
            else '<span class="paire">Fermé aujourd\'hui</span>',
          d['slug'])
@@ -199,7 +204,7 @@ GABARIT = '''<title>%(titre)s</title>
     </div>
   </div>
 
-  <section class="colonne-liste" id="resultats" aria-label="Salles">
+  <section class="colonne-liste" id="resultats" aria-label="Salles"%(filtre)s>
     <div class="wrap"><div class="liste">%(salles)s</div></div>
   </section>
 
@@ -215,13 +220,21 @@ GABARIT = '''<title>%(titre)s</title>
 %(footer)s
 '''
 
-def page(titre, fil, h1, intro, actions, salles, t1, l1, t2, l2):
+ANNJS = open('_annuaire.js', encoding='utf-8').read()
+
+def page(titre, fil, h1, intro, actions, salles, t1, l1, t2, l2, filtre=''):
     # chaque page d'annuaire porte la fenetre de creation de l'espace club :
     # ses boutons « Referencer ma salle » l'ouvrent au lieu d'aller a clubs.html
+    # `filtre` dit a _annuaire.js quelle ville ou quelle discipline cette page montre
     return compte.pose(
         GABARIT % dict(titre=titre, css=base + footc + rechc + SUPP + compte.css(), defs=defs,
                        header=header, footer=footer, fil=fil, h1=h1, intro=intro,
-                       actions=actions, salles=salles, t1=t1, l1=l1, t2=t2, l2=l2))
+                       actions=actions, salles=salles, t1=t1, l1=l1, t2=t2, l2=l2,
+                       filtre=filtre)) + '\n<script>\n' + ANNJS + '</script>\n'
+
+
+def att(cle, valeur):
+    return ' data-%s="%s"' % (cle, valeur.replace('"', '&quot;'))
 
 FIL = '<a href="index.html">Accueil</a><i aria-hidden="true">›</i>'
 ECRITS = {}
@@ -269,7 +282,8 @@ for d in DISCIPLINES:
                    '%s à %s' % (d, v)) for v in villes]) or
            liens([(fichier_ville(v), 'Sports de combat à %s' % v) for v in VILLES]),
         t2='Les autres disciplines',
-        l2=liens([(fichier_disc(x), x) for x in DISCIPLINES if x != d]))
+        l2=liens([(fichier_disc(x), x) for x in DISCIPLINES if x != d]),
+        filtre=att('discipline', d))
 
 # ---------- une page par ville ----------
 for v in VILLES:
@@ -316,7 +330,8 @@ for v in VILLES:
                                                              d.replace(' ', '%20')),
                    '%s à %s' % (d, v)) for d in (discs or DISCIPLINES)]),
         t2='Les sports de combat dans d’autres villes',
-        l2=liens([(fichier_ville(x), 'Sports de combat à %s' % x) for x in VILLES if x != v]))
+        l2=liens([(fichier_ville(x), 'Sports de combat à %s' % x) for x in VILLES if x != v]),
+        filtre=att('ville', v))
 
 if __name__ == '__main__':
     import os

@@ -9,20 +9,22 @@ gabarit demanderait de repasser sur quarante fichiers.
 
 ## Reconstruire le site
 
-Dans l'ordre, sinon une étape travaille sur la version précédente :
+    ./rebatir.sh
 
-    python3 gen_salles.py
-    python3 build_clubs.py --clubs
-    python3 build_clubs.py --referencer
-    python3 build_clubs.py --espace-club
-    python3 build_clubs.py --admin
-    python3 build_recherche.py
-    python3 build_salle.py
-    python3 build.py
-    python3 build_site.py       # recopie tout dans site/
-    python3 build_annuaire.py   # les 24 pages de villes et de disciplines
+L'ordre des étapes n'est pas négociable : chacune lit ce que la précédente a
+écrit. `rebatir.sh` le tient. Le résultat est dans `site/`, à recopier à la
+racine du dépôt.
 
-Puis recopier `site/` à la racine du dépôt.
+Pour reconstruire en relisant les clubs publiés dans la base :
+
+    MCC_BASE=1 ./rebatir.sh
+
+L'adresse du projet et la clé publiable sont lues dans `sb.js` à défaut de
+`SUPABASE_URL` et `SUPABASE_CLE`. C'est ce que fait le workflow GitHub
+`.github/workflows/annuaire.yml`, toutes les heures : les pages de ville et de
+discipline sont écrites à l'avance pour Google, donc elles ne changent pas
+toutes seules quand une fiche est publiée. Le visiteur, lui, n'attend pas :
+`_annuaire.js` complète la page depuis la base au chargement.
 
 ## Ce que fait chaque script
 
@@ -37,6 +39,9 @@ Puis recopier `site/` à la racine du dépôt.
 - `gen_salles.py`, `tuiles.py`, `vitrine.py` — les données de démonstration et
   les visuels de ville.
 - `sync_artifact.py` — recopie `site/` vers la maquette publiée en Artifact.
+- `adapte.cjs` — convertit des clubs de la base en salles du site. Il n'a pas
+  son propre convertisseur : il charge celui du site (`MCC.enSalle`, dans
+  `sb.js`) dans un faux navigateur, pour qu'il n'y en ait jamais deux.
 
 ## Les tests
 
@@ -44,6 +49,12 @@ Puis recopier `site/` à la racine du dépôt.
 vérifient ce qu'un visiteur verrait.
 
     NODE_PATH=/opt/node22/lib/node_modules /opt/node22/bin/node tests/parcours.cjs
+
+`essai.cjs` suit le pratiquant : la fiche d'un vrai club se charge depuis la
+base par son slug, ne montre rien d'inventé, et la demande de séance d'essai
+part. `annuaire.cjs` vérifie qu'un club publié apparaît partout où on le
+cherche — accueil, recherche, page de ville, page de discipline — sans attendre
+une reconstruction.
 
 `backend.cjs` est le seul à part : il sert `site/` sur un petit serveur local et
 remplace Supabase par `_faux_sb.js`, un faux serveur en mémoire. Il éprouve le

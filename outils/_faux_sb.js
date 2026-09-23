@@ -43,6 +43,25 @@ window.supabase = {
       function execute(){
         return new Promise(function (res){
           var l;
+          if (f.op === 'insert') {
+            /* le depot d'une demande : la vraie politique n'accepte qu'un club
+               publie et le statut « recue », on refait ce controle ici pour que
+               le test echoue si la page envoie autre chose */
+            var c = f.champs;
+            var vise = S.club.filter(function (x){ return x.id === c.club_id; })[0];
+            if (!vise || vise.statut !== 'publie' || c.statut !== 'recue') {
+              res({ data: null, error: { message: 'new row violates row-level security policy' } });
+              return;
+            }
+            var ligne = {};
+            Object.keys(c).forEach(function (k){ ligne[k] = c[k]; });
+            ligne.id = ligne.id || neuf();
+            ligne.cree_le = ligne.cree_le || new Date().toISOString();
+            S[f.table].push(ligne);
+            sauve();
+            res({ data: f.un ? ligne : [ligne], error: null });
+            return;
+          }
           if (f.table === 'club' && f.op === 'select' && !f.filtres.length) {
             /* la politique de lecture : les publies, plus les siens ; l'equipe voit tout */
             var admin = S.equipe.some(function (e){ return e.membre_id === uid(); });

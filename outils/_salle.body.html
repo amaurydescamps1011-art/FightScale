@@ -79,6 +79,38 @@
       <aside class="col-cote">
         <div class="cote-collant">
 
+          <!-- La demande de seance d'essai : c'est la que naît le lead, donc
+               elle passe avant le plan. Elle n'apparait que sur la fiche d'un
+               vrai club : une salle de demonstration ne recoit rien. -->
+          <section class="pan pan-essai" id="essai" hidden>
+            <h2 class="cote-titre">Réserver une séance d'essai</h2>
+            <p class="cote-note">La salle vous rappelle pour confirmer le créneau.
+              C'est gratuit et sans engagement.</p>
+            <form class="essai-form" id="essai-form" novalidate>
+              <label class="champ"><span>Votre nom</span>
+                <input type="text" id="e-nom" name="nom" autocomplete="name" required></label>
+              <label class="champ"><span>Votre e-mail</span>
+                <input type="email" id="e-mail" name="mail" autocomplete="email" required></label>
+              <label class="champ"><span>Votre téléphone</span>
+                <input type="tel" id="e-tel" name="tel" autocomplete="tel"></label>
+              <label class="champ"><span>La discipline</span>
+                <select id="e-disc" name="discipline"></select></label>
+              <label class="champ"><span>Quand vous arrange</span>
+                <input type="text" id="e-quand" name="creneau" placeholder="Mardi soir, samedi matin…"></label>
+              <label class="champ"><span>Un mot pour la salle</span>
+                <textarea id="e-mot" name="message" rows="3"
+                  placeholder="Votre niveau, vos questions…"></textarea></label>
+              <p class="form-erreur" id="e-erreur" hidden role="alert"></p>
+              <button class="btn btn-rouge" type="submit" id="e-envoi">Envoyer ma demande</button>
+              <p class="cote-note">Vos coordonnées ne servent qu'à cette salle, pour vous
+                répondre.</p>
+            </form>
+            <p class="essai-merci" id="e-merci" hidden>
+              <b>C'est envoyé.</b> La salle a reçu votre demande et vous répondra
+              directement. Gardez un œil sur vos e-mails.
+            </p>
+          </section>
+
           <section class="pan pan-carte">
             <div class="mini-carte">
               <canvas id="mini" aria-label="Plan du quartier de la salle"></canvas>

@@ -22,15 +22,16 @@ defs   = R('defs.svg')
 header = bloc('<header class="site-header">', '</header>')
 footer = bloc('<footer class="site-footer">', '</footer>')
 import sys, compte
-# Quatre pages sortent du meme assemblage : la page de vente, le formulaire de la
-# fiche, l'espace club et le back-office. Elles partagent en-tete, pied de page et
-# CSS, donc elles ne peuvent pas diverger de l'accueil.
-PAGES = ['clubs', 'referencer', 'espace-club', 'admin']
+# Cinq pages sortent du meme assemblage : la page de vente, le formulaire de la
+# fiche, l'espace club, le back-office et le nouveau mot de passe. Elles partagent
+# en-tete, pied de page et CSS, donc elles ne peuvent pas diverger de l'accueil.
+PAGES = ['clubs', 'referencer', 'espace-club', 'admin', 'motdepasse']
 QUI = 'clubs'
 for _p in PAGES:
     if '--' + _p in sys.argv: QUI = _p
 CORPS = {'clubs': '_clubs.body.html', 'referencer': '_referencer.body.html',
-         'espace-club': '_espace.body.html', 'admin': '_admin.body.html'}
+         'espace-club': '_espace.body.html', 'admin': '_admin.body.html',
+         'motdepasse': '_motdepasse.body.html'}
 body   = R(CORPS[QUI])
 
 # depuis la page clubs, les liens du menu et du pied de page renvoient a l'accueil
@@ -88,7 +89,8 @@ body = (body.replace('%%HEADER%%', header).replace('%%FOOTER%%', footer)
 TITRE = {'clubs': 'Référencer ma salle — Mon Club Combat',
          'referencer': 'La fiche de votre salle — Mon Club Combat',
          'espace-club': 'Mon espace club — Mon Club Combat',
-         'admin': 'Back-office — Mon Club Combat'}[QUI]
+         'admin': 'Back-office — Mon Club Combat',
+         'motdepasse': 'Nouveau mot de passe — Mon Club Combat'}[QUI]
 
 page = (
 '''<title>''' + TITRE + '''</title>
@@ -109,7 +111,8 @@ page = (
 page = compte.pose(page)
 # le script propre a la page, pose apres la fenetre : il compte sur window.MCC,
 # que compte.pose() vient de charger
-APRES = {'referencer': '_referencer.sb.js', 'espace-club': '_espace.js', 'admin': '_admin.js'}
+APRES = {'referencer': '_referencer.sb.js', 'espace-club': '_espace.js', 'admin': '_admin.js',
+         'motdepasse': '_motdepasse.js'}
 if QUI in APRES:
     page = page + '\n<script>\n' + R(APRES[QUI]) + '</script>\n'
 open(QUI + '.html', 'w', encoding='utf-8').write(page)

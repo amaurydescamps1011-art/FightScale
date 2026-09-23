@@ -24,6 +24,13 @@ directement depuis le navigateur, il n'y a pas de serveur à nous. La clé
 publiable qui se trouve dans `sb.js` est faite pour être publique ; ce qui
 protège les données, ce sont les politiques RLS de `db/001_schema.sql`.
 
-Trois pages en dépendent : `referencer.html` (le gérant remplit sa fiche),
+Quatre pages en dépendent : `referencer.html` (le gérant remplit sa fiche),
 `espace-club.html` (il suit sa fiche et ses demandes de séance d'essai) et
-`admin.html` (notre back-office, où une fiche est publiée ou refusée).
+`admin.html` (notre back-office, où une fiche est publiée ou refusée) et
+`motdepasse.html` (le lien reçu par e-mail quand un gérant l'a oublié).
+
+Côté pratiquant, la fiche d'une salle porte un formulaire de séance d'essai qui
+écrit directement dans la base, et les pages de recherche, de ville et de
+discipline se complètent depuis la base au chargement. Elles sont en plus
+refabriquées toutes les heures pour Google, par
+`.github/workflows/annuaire.yml`.

@@ -7,7 +7,52 @@ pour que la maquette reste coherente d'une page a l'autre sans qu'on ait a ecrir
 vingt fiches a la main. Tout est a remplacer par de vraies donnees avant la mise
 en service.
 """
-import json, os, unicodedata
+import json, os, subprocess, sys, unicodedata
+
+
+def depuis_la_base():
+    """Les clubs publies, tels que le site les affichera.
+
+    Personne ne saisit de page d'annuaire a la main : elles sont ecrites a
+    l'avance pour que Google les lise sans JavaScript. Il faut donc les
+    reconstruire quand un club est valide, et pour ca relire la base.
+
+    La conversion n'est pas refaite ici : c'est adapte.cjs qui appelle le
+    convertisseur du site (MCC.enSalle, dans sb.js). Un seul convertisseur,
+    donc une seule verite.
+
+    Renvoie None quand la reconstruction n'est pas demandee, pour que le build
+    ordinaire ne depende ni du reseau ni de la base.
+    """
+    if os.environ.get('MCC_BASE') != '1':
+        return None
+    import re, urllib.request
+    # A defaut de variables d'environnement, on relit l'adresse et la cle dans
+    # sb.js : elles y sont deja, en clair, et c'est fait pour. Une seule source.
+    conf = open('sb.js', encoding='utf-8').read()
+    def dans_sb(nom):
+        m = re.search(r"var %s = '([^']+)'" % nom, conf)
+        return m.group(1) if m else ''
+    url = (os.environ.get('SUPABASE_URL') or dans_sb('URL_BASE')).rstrip('/')
+    cle = os.environ.get('SUPABASE_CLE') or dans_sb('CLE')
+    if not url or not cle:
+        sys.exit('MCC_BASE=1 mais ni SUPABASE_URL/SUPABASE_CLE ni sb.js ne donnent la base.')
+    q = (url + '/rest/v1/club?statut=eq.publie&select=*')
+    req = urllib.request.Request(q, headers={'apikey': cle, 'Authorization': 'Bearer ' + cle})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        clubs = json.loads(r.read().decode())
+    node = os.environ.get('NODE', 'node')
+    out = subprocess.run([node, 'adapte.cjs'], input=json.dumps(clubs).encode(),
+                         stdout=subprocess.PIPE, check=True).stdout
+    salles = json.loads(out.decode())
+    print('base :', len(clubs), 'club(s) publie(s),', len(salles), 'retenu(s)')
+    return salles
+
+
+# Les autres scripts importent ce module pour photos_exemple() : ils ne doivent
+# ni rappeler la base ni reecrire _salles.js. Sans cette garde, un build lance
+# avec MCC_BASE=1 se faisait effacer son fichier par le premier import venu.
+DE_LA_BASE = depuis_la_base() if __name__ == '__main__' else None
 
 def photos_exemple():
     """Les photos de la fiche d'exemple, dans l'ordre des cinq emplacements de la
@@ -323,7 +368,18 @@ for s in sorties:
 js[-1] = js[-1][:-1]
 js.append('];')
 js.append('')
-js.append('var SALLES = ' + ('SALLES_DEMO.slice();' if PUBLIEES else '[];'))
+if DE_LA_BASE is not None:
+    # les vrais clubs, relus dans la base au moment de la reconstruction.
+    # Une salle par ligne, comme SALLES_DEMO : build_annuaire.tableau() lit
+    # cette forme-la, et un diff reste lisible.
+    js.append('var SALLES = [')
+    for s in DE_LA_BASE:
+        js.append('  ' + json.dumps(s, ensure_ascii=False) + ',')
+    if DE_LA_BASE:
+        js[-1] = js[-1][:-1]
+    js.append('];')
+else:
+    js.append('var SALLES = ' + ('SALLES_DEMO.slice();' if PUBLIEES else '[];'))
 # le nom de la discipline tel qu'on l'ecrit dans une phrase : « de boxe anglaise »
 # et non « de Boxe anglaise », mais « de MMA » et « de Muay Thai » gardent leur casse
 js.append('/* le nom de la discipline tel qu\'on l\'ecrit au fil d\'une phrase */')
@@ -382,6 +438,7 @@ sortie = sortie.replace('%%VILLES%%', json.dumps(vitrine.VILLES, ensure_ascii=Fa
 PH = photos_exemple()
 sortie = sortie.replace('%%PHOTOS%%', json.dumps(PH, ensure_ascii=False))
 assert '%%VILLES%%' not in sortie and '%%PHOTOS%%' not in sortie
-open('_salles.js', 'w', encoding='utf-8').write(sortie)
-print('_salles.js', sum(len(l) for l in js), 'octets,', len(sorties),
-      'salles en demonstration,', sum(1 for x in PH if x), 'photos sur la fiche d\'exemple')
+if __name__ == '__main__':
+    open('_salles.js', 'w', encoding='utf-8').write(sortie)
+    print('_salles.js', sum(len(l) for l in js), 'octets,', len(sorties),
+          'salles en demonstration,', sum(1 for x in PH if x), 'photos sur la fiche d\'exemple')

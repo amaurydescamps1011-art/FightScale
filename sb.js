@@ -78,8 +78,146 @@ window.MCC = (function (){
     document.body.classList.add('fige');
   }
 
+
+  /* ---- les clubs publies, dans la forme que le site sait deja afficher ----
+     Toutes les pages lisent un tableau global SALLES, ecrit au build. Un club
+     valide, lui, arrive de la base. Plutot que de doubler chaque rendu, on met
+     le club dans exactement la meme forme, on le pousse dans SALLES, et on
+     previent la page par un evenement : elle refait son rendu, une seule fois.
+
+     Ce qu'un vrai club n'a pas, il ne l'a pas : ni note, ni avis, ni
+     equipements, ni nombre d'adherents. Ces champs restent vides et les blocs
+     correspondants disparaissent, plutot que d'etre remplis d'invente. */
+  var JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+  var LIBELLE = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+  function sansAccent(t){
+    return String(t || '').normalize
+      ? String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+      : String(t || '');
+  }
+
+  /* Le sigle sert de pastille quand la salle n'a pas de photo : les initiales
+     des mots du nom, trois au plus. « Team Ouragan Boxe » donne TOB. */
+  function sigleDe(nom){
+    var mots = sansAccent(nom).toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
+    if (!mots.length) return '??';
+    if (mots.length === 1) return mots[0].slice(0, 3);
+    return mots.slice(0, 3).map(function (m){ return m[0]; }).join('');
+  }
+
+  function hhmm(t){ return String(t || '').replace(':', 'h'); }
+
+  /* L'amplitude affichee sur la fiche : la plus tot des ouvertures, la plus
+     tard des fermetures. Sans horaires saisis, on n'affiche rien. */
+  function amplitude(h){
+    var tot = null, tard = null;
+    JOURS.forEach(function (j){
+      var p = h && h[j];
+      if (!p || !p[0] || !p[1]) return;
+      if (tot === null || p[0] < tot) tot = p[0];
+      if (tard === null || p[1] > tard) tard = p[1];
+    });
+    return tot ? hhmm(tot) + ' – ' + hhmm(tard) : '';
+  }
+
+  function lienPhoto(chemin){
+    return URL_BASE + '/storage/v1/object/public/photos-clubs/' + chemin;
+  }
+
+  function enSalle(c){
+    var h = c.horaires || {};
+    var jourJs = new Date().getDay();
+    var auj = JOURS[(jourJs + 6) % 7];
+    var coord = coordsVille(c.ville, c.lat, c.lon);
+    var detail = {
+      id: c.id,
+      reel: true,
+      slug: c.slug || c.id,
+      adresse: c.adresse || '',
+      cp: c.code_postal || '',
+      tel: c.tel || '',
+      mail: c.mail || '',
+      site: (c.site || '').replace(/^https?:\/\//, ''),
+      insta: (c.instagram || '').replace(/^@/, ''),
+      fb: c.facebook || '',
+      presentation: (c.presentation || '').split(/\n\s*\n/).filter(function (p){ return p.trim(); }),
+      photos: (c.photos || []).map(lienPhoto),
+      planning: LIBELLE.map(function (nom, i){
+        var p = h[JOURS[i]];
+        return { jour: nom, heures: (p && p[0] && p[1]) ? [hhmm(p[0]), hhmm(p[1])] : null, cours: [] };
+      }),
+      equipements: [],
+      avis: []
+    };
+    return [c.nom, sigleDe(c.nom), c.ville || '', coord[0], coord[1],
+            c.disciplines || [], null, 0, c.offre !== 'gratuit',
+            amplitude(h), !!(h[auj] && h[auj][0]), detail];
+  }
+
+  /* Un club saisit une adresse, pas des coordonnees. Faute de mieux on prend
+     celles de sa ville, ce qui suffit a situer la salle sur la carte ; sans
+     ville connue, le plan et l'itineraire se cachent. */
+  function coordsVille(ville, lat, lon){
+    if (typeof lat === 'number' && typeof lon === 'number') return [lat, lon];
+    var l = window.VILLES_FR || [];
+    var cle = sansAccent(ville).toLowerCase().replace(/[^a-z]/g, '');
+    for (var i = 0; i < l.length; i++)
+      if (sansAccent(l[i][0]).toLowerCase().replace(/[^a-z]/g, '') === cle)
+        return [l[i][1], l[i][2]];
+    return [null, null];
+  }
+
+  function clubsPublies(){
+    if (!client) return Promise.resolve([]);
+    return client.from('club').select('*').eq('statut', 'publie')
+      .then(function (r){ return (r.error || !r.data) ? [] : r.data; })
+      .catch(function (){ return []; });
+  }
+
+  /* Remplit le tableau SALLES de la page avec les clubs en ligne, puis previent.
+     On pousse dans le tableau existant au lieu de le remplacer : les fonctions
+     deja ecrites tiennent une reference dessus. */
+  function chargeSalles(){
+    if (!client) return Promise.resolve([]);
+    /* Les pages d'annuaire n'embarquent pas le jeu de demonstration : elles
+       n'ont pas de SALLES du tout, et c'est tres bien. On leur en donne un vide
+       plutot que de refuser de charger. */
+    if (!window.SALLES) window.SALLES = [];
+    return clubsPublies().then(function (lignes){
+      var ajoutees = lignes.map(enSalle);
+      var connus = {};
+      window.SALLES.forEach(function (s){ connus[s[11].slug] = true; });
+      ajoutees.forEach(function (s){
+        if (!connus[s[11].slug]) window.SALLES.push(s);
+      });
+      try {
+        document.dispatchEvent(new CustomEvent('mcc:salles', { detail: ajoutees }));
+      } catch (e) {
+        var ev = document.createEvent('Event');
+        ev.initEvent('mcc:salles', false, false);
+        document.dispatchEvent(ev);
+      }
+      return ajoutees;
+    });
+  }
+
+  /* Le depot d'une demande de seance d'essai. La politique d'acces n'accepte
+     que le statut « recue » et un club publie : c'est la le garde-fou, pas ici. */
+  function deposeDemande(clubId, champs){
+    if (!client) return Promise.reject(new Error('Hors ligne'));
+    return client.from('demande').insert({
+      club_id: clubId, statut: 'recue',
+      nom: champs.nom, mail: champs.mail, tel: champs.tel || null,
+      discipline: champs.discipline || null, creneau: champs.creneau || null,
+      message: champs.message || null
+    }).then(function (r){ if (r.error) throw r.error; return true; });
+  }
+
   return {
     client: client, prete: prete, session: session, monClub: monClub,
-    dire: dire, exigeCompte: exigeCompte, URL_BASE: URL_BASE
+    dire: dire, exigeCompte: exigeCompte, URL_BASE: URL_BASE,
+    enSalle: enSalle, clubsPublies: clubsPublies, chargeSalles: chargeSalles,
+    deposeDemande: deposeDemande, lienPhoto: lienPhoto
   };
 })();

@@ -1,0 +1,56 @@
+# Reconstruit les pages d'annuaire depuis la base.
+#
+# Les pages de ville et de discipline sont ecrites a l'avance, pour qu'un moteur
+# de recherche les lise sans JavaScript. Elles ne changent donc pas toutes
+# seules quand une fiche est publiee : il faut les refabriquer. Le site est
+# aussi complete cote navigateur (voir outils/_annuaire.js), ce qui couvre le
+# visiteur ; ceci couvre Google.
+#
+# Toutes les heures, et sur demande depuis l'onglet Actions.
+name: Reconstruire l'annuaire
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: annuaire
+  cancel-in-progress: false
+
+jobs:
+  batir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # L'adresse du projet et la cle publiable sont lues dans outils/sb.js :
+      # elles y sont deja en clair, et elles sont faites pour etre publiques.
+      - name: Relire les clubs publies et refabriquer les pages
+        run: MCC_BASE=1 ./outils/rebatir.sh
+
+      - name: Recopier le site a la racine
+        run: |
+          cp -a outils/site/. ./
+          rm -rf outils/site
+
+      - name: Publier si quelque chose a change
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Rien de neuf dans l'annuaire."
+            exit 0
+          fi
+          git config user.name  "Mon Club Combat"
+          git config user.email "noreply@users.noreply.github.com"
+          git add -A
+          git commit -m "Reconstruit l'annuaire depuis la base"
+          git push

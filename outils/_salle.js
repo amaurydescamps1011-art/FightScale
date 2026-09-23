@@ -93,34 +93,43 @@ function rendFiche(s){
     }).join('');
 
   document.getElementById('s-nom').textContent = s[0];
+  /* Un vrai club n'a ni note ni avis : on n'affiche pas une moyenne inventee,
+     on n'affiche rien. Meme chose plus bas pour le bloc des avis. */
+  var meta = [];
+  if (s[6]) meta.push('<span class="note">' + I.etoile + s[6] +
+                      ' <small>(' + s[7] + ' avis)</small></span>');
+  var ou = [d.adresse, [d.cp, s[2]].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  if (ou) meta.push('<span>' + I.epingle + ' ' + echappe(ou) + '</span>');
+  if (s[9]) meta.push('<span class="' + (s[10] ? 'ouvert' : 'ferme') + '">' +
+    (s[10] ? 'Ouvert aujourd’hui' : 'Fermé aujourd’hui') + '</span>');
   document.getElementById('s-meta').innerHTML =
-    '<span class="note">' + I.etoile + s[6] + ' <small>(' + s[7] + ' avis)</small></span>' +
-    '<span class="sep" aria-hidden="true">·</span>' +
-    '<span>' + I.epingle + ' ' + echappe(d.adresse + ', ' + d.cp + ' ' + s[2]) + '</span>' +
-    '<span class="sep" aria-hidden="true">·</span>' +
-    '<span class="' + (s[10] ? 'ouvert' : 'ferme') + '">' +
-      (s[10] ? 'Ouvert aujourd’hui' : 'Fermé aujourd’hui') + '</span>';
+    meta.join('<span class="sep" aria-hidden="true">·</span>');
 
   document.getElementById('s-disc').innerHTML =
     s[5].map(function (x){ return '<li>' + echappe(x) + '</li>'; }).join('');
 
   /* la fiche gratuite met en avant le contact direct : c'est là que naît le lead */
-  var actions = ['<a class="btn btn-rouge" href="tel:' + d.tel.replace(/\s/g, '') + '">' +
-                   I.tel + 'Appeler la salle</a>',
-                 '<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
-                   I.mail + 'Écrire un e-mail</a>'];
+  var actions = [];
+  if (d.reel) actions.push('<a class="btn btn-rouge" href="#essai">' + I.gant +
+                           'Réserver une séance d’essai</a>');
+  if (d.tel) actions.push('<a class="btn ' + (d.reel ? 'btn-ligne' : 'btn-rouge') +
+    '" href="tel:' + d.tel.replace(/\s/g, '') + '">' + I.tel + 'Appeler la salle</a>');
+  if (d.mail) actions.push('<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
+                           I.mail + 'Écrire un e-mail</a>');
   document.getElementById('s-actions').innerHTML = actions.join('');
 
   document.getElementById('s-presentation').innerHTML =
-    d.presentation.map(function (p){ return '<p>' + echappe(p) + '</p>'; }).join('');
+    (d.presentation || []).map(function (p){ return '<p>' + echappe(p) + '</p>'; }).join('');
 
-  document.getElementById('s-faits').innerHTML =
-    [['Ouverte depuis', d.depuis],
-     ['Adhérents', 'environ ' + d.adherents],
-     ['Disciplines', s[5].length],
-     ['Amplitude', s[9]]]
+  var faits = [];
+  if (d.depuis) faits.push(['Ouverte depuis', d.depuis]);
+  if (d.adherents) faits.push(['Adhérents', 'environ ' + d.adherents]);
+  if (s[5].length) faits.push(['Disciplines', s[5].length]);
+  if (s[9]) faits.push(['Amplitude', s[9]]);
+  document.getElementById('s-faits').innerHTML = faits
     .map(function (f){ return '<div><dt>' + f[0] + '</dt><dd>' + echappe(f[1]) + '</dd></div>'; })
     .join('');
+  montre('presentation', (d.presentation || []).length || faits.length);
 
   document.getElementById('s-grille-disc').innerHTML =
     s[5].map(function (x){ return '<li>' + I.gant + echappe(x) + '</li>'; }).join('');
@@ -132,6 +141,8 @@ function rendFiche(s){
     (d.equipements || []).map(function (e){
       return '<li>' + (I.equip[e[1]] || '') + '<span>' + echappe(e[0]) + '</span></li>';
     }).join('');
+  montre('equipements', (d.equipements || []).length);
+  montre('disciplines', s[5].length);
 
   /* Les avis, du plus recent au plus ancien. */
   var MOIS_O = ['janvier','février','mars','avril','mai','juin','juillet','août',
@@ -141,6 +152,7 @@ function rendFiche(s){
     return parseInt(p[1], 10) * 12 + MOIS_O.indexOf(p[0]);
   }
   var lesAvis = (d.avis || []).slice().sort(function (a, b){ return quand(b.date) - quand(a.date); });
+  montre('avis', lesAvis.length);
   document.getElementById('s-avis-note').innerHTML =
     I.etoile + ' <b>' + s[6] + '</b> sur ' + s[7] + ' avis';
   document.getElementById('s-avis').innerHTML = lesAvis.map(function (a){
@@ -158,37 +170,66 @@ function rendFiche(s){
   /* getDay() : 0 = dimanche, or notre semaine commence le lundi */
   var jourJs = new Date().getDay();
   var aujourdhui = (jourJs + 6) % 7;
-  document.getElementById('s-amplitude').textContent = 'La salle est ouverte ' + s[9] + '.';
-  document.getElementById('s-semaine').innerHTML = d.planning.map(function (j, n){
-    var corps = j.cours.length
-      ? '<div class="cours">' + j.cours.map(function (c){
+  /* La fiche gratuite porte les heures d'ouverture que le club a saisies. Le
+     planning des cours, lui, n'existe que dans le jeu de demonstration : on ne
+     l'invente pas pour un vrai club. */
+  var planning = d.planning || [];
+  var aDesHeures = planning.some(function (j){ return j.heures || j.cours.length; });
+  var titreHoraires = document.querySelector('#horaires .pan-titre');
+  if (titreHoraires) titreHoraires.textContent =
+    planning.some(function (j){ return j.cours.length; }) ? 'Planning de la semaine'
+                                                          : 'Horaires d’ouverture';
+  document.getElementById('s-amplitude').textContent =
+    s[9] ? 'La salle est ouverte ' + s[9] + '.' : '';
+  document.getElementById('s-semaine').innerHTML = planning.map(function (j, n){
+    var corps;
+    if (j.cours.length) {
+      corps = '<div class="cours">' + j.cours.map(function (c){
           return '<div class="c"><span class="h">' + c.de + ' – ' + c.a + '</span>' +
                  '<span class="q">' + echappe(c.quoi) + '</span>' +
                  '<span class="n">' + echappe(c.niveau) + '</span></div>';
-        }).join('') + '</div>'
-      : '<p class="repos">Fermé</p>';
+        }).join('') + '</div>';
+    } else if (j.heures) {
+      corps = '<div class="cours"><div class="c"><span class="h">' +
+              echappe(j.heures[0] + ' – ' + j.heures[1]) + '</span></div></div>';
+    } else {
+      corps = '<p class="repos">Fermé</p>';
+    }
     return '<li' + (n === aujourdhui ? ' class="aujourdhui"' : '') +
            '><span class="jour">' + j.jour + '</span>' + corps + '</li>';
   }).join('');
+  montre('horaires', aDesHeures);
 
   document.getElementById('s-adresse').innerHTML =
-    echappe(d.adresse) + '<br>' + echappe(d.cp + ' ' + s[2]);
-  document.getElementById('s-itineraire').href =
+    [echappe(d.adresse), echappe([d.cp, s[2]].filter(Boolean).join(' '))]
+      .filter(Boolean).join('<br>');
+  /* Sans coordonnees on ne peut ni placer la salle ni tracer un itineraire :
+     le plan disparait plutot que de montrer le golfe de Guinee. */
+  var aUnPoint = typeof s[3] === 'number' && typeof s[4] === 'number';
+  var itineraire = document.getElementById('s-itineraire');
+  itineraire.hidden = !aUnPoint;
+  if (aUnPoint) itineraire.href =
     'https://www.openstreetmap.org/directions?to=' + s[3] + '%2C' + s[4];
+  var boitePlan = document.querySelector('.mini-carte');
+  if (boitePlan) boitePlan.hidden = !aUnPoint;
 
-  var coord = [lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel),
-               lien('mailto:' + d.mail, I.mail, d.mail)];
+  var coord = [];
+  if (d.tel)  coord.push(lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel));
+  if (d.mail) coord.push(lien('mailto:' + d.mail, I.mail, d.mail));
   if (d.site)  coord.push(lien('https://' + d.site, I.web, d.site, true));
   if (d.insta) coord.push(lien('https://instagram.com/' + d.insta, I.insta, '@' + d.insta, true));
   if (d.fb)    coord.push(lien('https://facebook.com/' + d.fb, I.fb, d.fb, true));
   document.getElementById('s-coord').innerHTML = coord.join('');
+  var panCoord = document.getElementById('s-coord').closest('.pan');
+  if (panCoord) panCoord.hidden = !coord.length;
 
   /* Les salles voisines, par distance réelle plutôt que par nom de ville. Au-delà
      de 60 km on ne parle plus de voisinage : le titre change plutôt que d'annoncer
      « autour de Paris » une salle qui est à 400 km. */
   var autour = document.getElementById('autour');
   if (autour) autour.hidden = SALLES.length < 2;
-  var classees = SALLES.filter(function (o){ return o !== s; })
+  var classees = SALLES.filter(function (o){
+      return o !== s && typeof o[3] === 'number' && typeof s[3] === 'number'; })
     .map(function (o){ return [o, distanceKm(s[3], s[4], o[3], o[4])]; })
     .sort(function (a, b){ return a[1] - b[1]; });
   var voisines = classees.filter(function (p){ return p[1] <= 60; });
@@ -204,7 +245,73 @@ function rendFiche(s){
   }).join('');
 
   var cv = document.getElementById('mini');
-  if (cv && window.GEO) miniCarte(cv, s[3], s[4], 15);
+  if (cv && window.GEO && aUnPoint) miniCarte(cv, s[3], s[4], 15);
+
+  /* « Reclamer ma fiche » n'a pas de sens sur la fiche d'un club qui l'a deja
+     reclamee : c'est la demande de seance d'essai qui prend sa place. */
+  var bloc = document.querySelector('.pan-club');
+  if (bloc) bloc.hidden = !!d.reel;
+  if (d.reel) ouvreEssai(s);
+}
+
+/* Cache une section quand elle n'a rien a montrer. Un panneau vide avec son
+   titre fait croire a une page cassee. */
+function montre(id, oui){
+  var el = document.getElementById(id);
+  if (el) el.hidden = !oui;
+}
+
+/* ---- la demande de seance d'essai ----
+   Le formulaire ne s'ouvre que sur la fiche d'un vrai club. Il ecrit directement
+   dans la base ; la politique d'acces n'accepte qu'un club publie et le statut
+   « recue », donc rien ici ne peut donner plus que ca. */
+function ouvreEssai(s){
+  var bloc = document.getElementById('essai');
+  var SB = window.MCC;
+  if (!bloc || !SB || !SB.prete()) return;
+  bloc.hidden = false;
+
+  var choix = document.getElementById('e-disc');
+  choix.innerHTML = ['<option value="">Peu importe</option>'].concat(
+    s[5].map(function (x){ return '<option>' + echappe(x) + '</option>'; })).join('');
+
+  var form = document.getElementById('essai-form');
+  var erreur = document.getElementById('e-erreur');
+  var envoi = document.getElementById('e-envoi');
+
+  function rate(msg){ erreur.textContent = msg; erreur.hidden = false; }
+
+  form.addEventListener('submit', function (e){
+    e.preventDefault();
+    erreur.hidden = true;
+    var champs = {};
+    ['nom', 'mail', 'tel', 'disc', 'quand', 'mot'].forEach(function (k){
+      document.getElementById('e-' + k).classList.remove('manque');
+    });
+    var manque = false;
+    ['nom', 'mail'].forEach(function (k){
+      var c = document.getElementById('e-' + k);
+      if (!c.value.trim()){ c.classList.add('manque'); if (!manque){ c.focus(); manque = true; } }
+    });
+    if (manque) { rate('Votre nom et votre e-mail sont nécessaires pour que la salle vous réponde.'); return; }
+    champs.nom = document.getElementById('e-nom').value.trim();
+    champs.mail = document.getElementById('e-mail').value.trim();
+    champs.tel = document.getElementById('e-tel').value.trim();
+    champs.discipline = document.getElementById('e-disc').value;
+    champs.creneau = document.getElementById('e-quand').value.trim();
+    champs.message = document.getElementById('e-mot').value.trim();
+
+    envoi.disabled = true;
+    envoi.textContent = 'Envoi…';
+    SB.deposeDemande(s[11].id, champs).then(function (){
+      form.hidden = true;
+      document.getElementById('e-merci').hidden = false;
+    }).catch(function (err){
+      envoi.disabled = false;
+      envoi.textContent = 'Envoyer ma demande';
+      rate(SB.dire(err));
+    });
+  });
 }
 
 (function demarre(){
@@ -217,9 +324,41 @@ function rendFiche(s){
     document.title = 'Exemple de fiche club — Mon Club Combat';
     return;
   }
-  var s = salleParSlug(param('s'));
-  if (s) rendFiche(s);
-  else {
+  var demande = param('s');
+  var s = salleParSlug(demande);
+  if (s) { rendFiche(s); return; }
+
+  /* Les fiches construites a l'avance ne contiennent que les clubs connus au
+     dernier build. Un club valide depuis se trouve dans la base : on va l'y
+     chercher avant de dire que la salle n'existe pas. */
+  if (!demande) { introuvable(); return; }
+  /* sb.js est charge en fin de page, apres ce script : on attend que le
+     document soit pret plutot que de conclure trop tot que la salle n'existe pas */
+  quandPret(function (){
+    var SB = window.MCC;
+    if (!SB || !SB.prete()) { introuvable(); return; }
+    chercheEnBase(SB, demande);
+  });
+
+  function chercheEnBase(SB, demande){
+  SB.client.from('club').select('*').eq('statut', 'publie').eq('slug', demande).limit(1)
+    .then(function (r){
+      var l = (r && r.data) || [];
+      if (!l.length) { introuvable(); return; }
+      var neuve = SB.enSalle(l[0]);
+      SALLES.push(neuve);
+      rendFiche(neuve);
+    })
+    .catch(introuvable);
+  }
+
+  function quandPret(faire){
+    if (document.readyState === 'loading')
+      document.addEventListener('DOMContentLoaded', faire);
+    else faire();
+  }
+
+  function introuvable(){
     document.getElementById('introuvable').hidden = false;
     document.title = 'Salle introuvable — Mon Club Combat';
   }

@@ -77,7 +77,11 @@ var PAR_PAGE = 8;       /* 8 plutot que 25 : avec 20 salles fictives, la paginat
 
 function calcule(){
   var lat = etat.centre[0], lon = etat.centre[1];
-  var candidats = SALLES.map(function (s){
+  /* La recherche classe par distance : une salle sans coordonnees n'a pas de
+     place sur cette page. Elle reste accessible par sa fiche et par sa ville. */
+  var candidats = SALLES.filter(function (s){
+    return typeof s[3] === 'number' && typeof s[4] === 'number';
+  }).map(function (s){
     return {
       nom:s[0], init:s[1], ville:s[2], lat:s[3], lon:s[4], disc:s[5], note:s[6],
       avis:s[7], pro:s[8], horaires:s[9], ouvert:s[10], detail:s[11],
@@ -155,7 +159,8 @@ function carteResultat(r, i){
     '<div class="res-corps">' +
       '<div class="res-tete">' +
         '<h2 class="res-nom"><a href="' + r.fiche + '">' + r.nom + '</a></h2>' +
-        '<span class="note">' + ICONES.etoile + r.note + ' <small>(' + r.avis + ' avis)</small></span>' +
+        (r.note ? '<span class="note">' + ICONES.etoile + r.note +
+                  ' <small>(' + r.avis + ' avis)</small></span>' : '') +
       '</div>' +
       '<div class="res-chips">' + r.disc.map(function (x){
         return '<span class="mini-chip">' + x + '</span>'; }).join('') + '</div>' +
@@ -165,10 +170,11 @@ function carteResultat(r, i){
         (etat.ville ? ' du centre' : '') + '</span></p>' +
       (mot ? '<p class="res-mot">' + mot + '</p>' : '') +
       '<div class="res-bas">' +
-        (r.ouvert
+        (!r.horaires ? ''
+          : r.ouvert
           ? '<span class="paire res-ouvert">Ouvert aujourd\'hui · ' + r.horaires + '</span>'
           : '<span class="paire">Fermé aujourd\'hui</span>') +
-        '<a class="btn btn-rouge res-essai" href="' + r.fiche + '#contact">Séance d\'essai</a>' +
+        '<a class="btn btn-rouge res-essai" href="' + r.fiche + '#essai">Séance d\'essai</a>' +
       '</div>' +
     '</div>' +
   '</article>';
@@ -793,6 +799,21 @@ bCarte.addEventListener('click', function (){ ouvreCarte(!carteOuverte); });
 prepGeo();
 construisFiltres();
 rendu();
+
+/* Les salles publiees arrivent de la base, apres le premier rendu : on refait
+   la liste et les pastilles quand elles sont la. La page reste utilisable si
+   la base ne repond pas, elle montre simplement ce qu'elle avait au build. */
+document.addEventListener('mcc:salles', function (){
+  construisFiltres();
+  rendu();
+  fondSale = true;
+  if (carteOuverte) dessine(0);
+});
+(function chargeLaBase(){
+  function vas(){ if (window.MCC && window.MCC.prete()) window.MCC.chargeSalles(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', vas);
+  else vas();
+})();
 function reMesure(){
   if (!carteOuverte) return;
   var avant = W;

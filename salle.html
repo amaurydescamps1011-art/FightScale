@@ -415,6 +415,39 @@
     text-align:center}
   .bandeau-demo b{font-weight:800}
   .bandeau-demo a{color:#FFFFFF; text-underline-offset:3px}
+
+  /* ---------- demande de seance d'essai ----------
+     Le seul formulaire de la fiche. Il tient dans la colonne de cote, donc les
+     champs s'empilent : a cette largeur, deux par ligne ne tiendraient pas. */
+  .pan-essai .cote-note{margin-top:8px}
+  .essai-form{margin-top:16px; display:grid; gap:13px}
+  .essai-form .champ{display:flex; flex-direction:column; gap:6px; min-width:0}
+  .essai-form .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .essai-form input, .essai-form select, .essai-form textarea{
+    width:100%; min-height:46px; padding:11px 13px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600; line-height:1.4;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .essai-form textarea{min-height:86px; resize:vertical}
+  .essai-form input::placeholder, .essai-form textarea::placeholder{
+    color:var(--texte-4); font-weight:500}
+  .essai-form input:focus, .essai-form select:focus, .essai-form textarea:focus{
+    outline:none; border-color:rgba(236,22,46,.55); box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  .essai-form .manque{border-color:var(--rouge-500); box-shadow:0 0 0 4px rgba(236,22,46,.12)}
+  .essai-form .btn{width:100%; justify-content:center}
+  .essai-form .btn[disabled]{opacity:.6; pointer-events:none}
+  .form-erreur{margin:0; padding:10px 13px; border-radius:var(--r-m);
+    border:1px solid rgba(236,22,46,.35); background:rgba(236,22,46,.06);
+    color:var(--rouge-700); font-size:13.5px; font-weight:700; line-height:1.5}
+  .form-erreur[hidden]{display:none}
+  /* Le mot de confirmation remplace le formulaire : on ne laisse pas un bouton
+     qui pourrait renvoyer la meme demande une deuxieme fois. */
+  .essai-merci{margin-top:14px; padding:14px 15px; border-radius:var(--r-m);
+    border:1px solid rgba(29,138,74,.32); background:rgba(29,138,74,.06);
+    font-size:14px; line-height:1.6; color:var(--texte-2)}
+  .essai-merci b{color:var(--vert)}
+  .mini-carte[hidden]{display:none}
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -614,6 +647,38 @@
 
       <aside class="col-cote">
         <div class="cote-collant">
+
+          <!-- La demande de seance d'essai : c'est la que naît le lead, donc
+               elle passe avant le plan. Elle n'apparait que sur la fiche d'un
+               vrai club : une salle de demonstration ne recoit rien. -->
+          <section class="pan pan-essai" id="essai" hidden>
+            <h2 class="cote-titre">Réserver une séance d'essai</h2>
+            <p class="cote-note">La salle vous rappelle pour confirmer le créneau.
+              C'est gratuit et sans engagement.</p>
+            <form class="essai-form" id="essai-form" novalidate>
+              <label class="champ"><span>Votre nom</span>
+                <input type="text" id="e-nom" name="nom" autocomplete="name" required></label>
+              <label class="champ"><span>Votre e-mail</span>
+                <input type="email" id="e-mail" name="mail" autocomplete="email" required></label>
+              <label class="champ"><span>Votre téléphone</span>
+                <input type="tel" id="e-tel" name="tel" autocomplete="tel"></label>
+              <label class="champ"><span>La discipline</span>
+                <select id="e-disc" name="discipline"></select></label>
+              <label class="champ"><span>Quand vous arrange</span>
+                <input type="text" id="e-quand" name="creneau" placeholder="Mardi soir, samedi matin…"></label>
+              <label class="champ"><span>Un mot pour la salle</span>
+                <textarea id="e-mot" name="message" rows="3"
+                  placeholder="Votre niveau, vos questions…"></textarea></label>
+              <p class="form-erreur" id="e-erreur" hidden role="alert"></p>
+              <button class="btn btn-rouge" type="submit" id="e-envoi">Envoyer ma demande</button>
+              <p class="cote-note">Vos coordonnées ne servent qu'à cette salle, pour vous
+                répondre.</p>
+            </form>
+            <p class="essai-merci" id="e-merci" hidden>
+              <b>C'est envoyé.</b> La salle a reçu votre demande et vous répondra
+              directement. Gardez un œil sur vos e-mails.
+            </p>
+          </section>
 
           <section class="pan pan-carte">
             <div class="mini-carte">
@@ -873,6 +938,7 @@ function pageVille(v){ return 'sports-de-combat-' + ardoise(v) + '.html'; }
    la sienne. La liste est celle de build_annuaire.VILLES, ecrite au build. */
 var VILLES_AVEC_SALLE = ["Aix-en-Provence", "Angers", "Bordeaux", "Dijon", "Grenoble", "Lille", "Lyon", "Marseille", "Montpellier", "Nantes", "Nice", "Paris", "Rennes", "Strasbourg", "Toulon", "Toulouse"];
 
+var VILLES_FR = [["Agen",44.2004,0.6333],["Aix-en-Provence",43.52,5.45],["Ajaccio",41.9271,8.7283],["Albi",43.9396,2.1512],["Alençon",48.428,0.0896],["Amiens",49.9004,2.3],["Angers",47.48,-0.53],["Angoulême",45.6432,0.1487],["Annecy",45.9,6.1167],["Antibes",43.5801,7.0997],["Argenteuil",48.9482,2.2413],["Arles",43.7097,4.6374],["Arras",50.2833,2.7833],["Asnières-sur-Seine",48.9173,2.2873],["Aubagne",43.2907,5.5648],["Aulnay-sous-Bois",48.9432,2.4969],["Aurillac",44.9146,2.4406],["Auxerre",47.8004,3.5666],["Avignon",43.9451,4.8374],["Bar-le-Duc",48.7696,5.1748],["Bastia",42.7032,9.45],["Bayeux",49.278,-0.7051],["Bayonne",43.4856,-1.4679],["Beauvais",49.4317,2.0892],["Belfort",47.6432,6.8565],["Berck",50.4145,1.5823],["Bergerac",44.8501,0.4858],["Besançon",47.23,6.03],["Biarritz",43.4733,-1.5616],["Blois",47.5949,1.3194],["Bordeaux",44.852,-0.597],["Boulogne-Billancourt",48.8404,2.2401],["Boulogne-sur-Mer",50.7298,1.6075],["Bourg-en-Bresse",46.202,5.2395],["Bourges",47.0837,2.4],["Brest",48.3904,-4.495],["Brive-la-Gaillarde",45.1581,1.5193],["Béthune",50.5297,2.6423],["Béziers",43.3505,3.21],["Caen",49.1838,-0.35],["Cahors",44.4434,1.4361],["Calais",50.9504,1.8333],["Cambrai",50.1807,3.2458],["Cannes",43.5563,7.0042],["Carcassonne",43.2139,2.3409],["Chalon-sur-Saône",46.7883,4.8529],["Chambéry",45.585,5.904],["Charleville-Mézières",49.7688,4.7251],["Chartres",48.4489,1.5079],["Chaumont",48.1092,5.1337],["Cherbourg-en-Cotentin",49.6408,-1.6103],["Cholet",47.0547,-0.8714],["Châteauroux",46.808,1.7067],["Châtellerault",46.8086,0.5416],["Clermont-Ferrand",45.78,3.08],["Colmar",48.0791,7.3536],["Colombes",48.9237,2.2473],["Compiègne",49.4069,2.8241],["Concarneau",47.8966,-3.9083],["Courbevoie",48.897,2.2511],["Créteil",48.7814,2.4525],["Dieppe",49.9337,1.0833],["Dijon",47.3304,5.03],["Dole",47.0898,5.4955],["Douai",50.375,3.0767],["Dunkerque",51.0311,2.3488],["Fontainebleau",48.4172,2.7072],["Forbach",49.1924,6.8836],["Fréjus",43.4442,6.7406],["Granville",48.8338,-1.5595],["Grenoble",45.1804,5.72],["Haguenau",48.8143,7.8321],["Hyères",43.1213,6.1525],["Istres",43.5487,4.963],["La Roche-sur-Yon",46.6675,-1.4288],["La Rochelle",46.1667,-1.15],["Laon",49.5707,3.6267],["Laval",48.0727,-0.77],["Le Havre",49.505,0.105],["Le Mans",48.0044,0.2026],["Le Puy-en-Velay",45.0347,3.903],["Le Touquet-Paris-Plage",50.5098,1.5895],["Lens",50.4375,2.8195],["Lille",50.6519,3.0781],["Limoges",45.83,1.25],["Lisieux",49.148,0.2377],["Lorient",47.7504,-3.3666],["Lyon",45.772,4.8281],["Mantes-la-Jolie",48.9984,1.6912],["Marseille",43.2919,5.3731],["Martigues",43.375,5.0555],["Meaux",48.9564,2.9032],["Melun",48.5333,2.6666],["Metz",49.1203,6.18],["Mont-de-Marsan",43.8984,-0.4888],["Montargis",47.998,2.7353],["Montauban",44.0193,1.3588],["Montbéliard",47.5122,6.7985],["Montluçon",46.3468,2.595],["Montpellier",43.6104,3.87],["Montreuil",46.3961,-0.8434],["Morlaix",48.5996,-3.8198],["Moulins",48.009,-1.3632],["Mulhouse",47.7504,7.35],["Mâcon",46.3035,4.8241],["Mérignac",44.8309,-0.6786],["Nancy",48.6837,6.2],["Nanterre",48.8974,2.2024],["Nantes",47.2104,-1.59],["Narbonne",43.1777,3.0116],["Nevers",46.9837,3.1667],["Nice",43.717,7.2631],["Niort",46.3257,-0.4449],["Nîmes",43.8304,4.35],["Orléans",47.9004,1.9],["Paris",48.8581,2.353],["Pau",43.3231,-0.3406],["Perpignan",42.7,2.9],["Poitiers",46.582,0.3615],["Pontoise",49.0534,2.0947],["Périgueux",45.192,0.7183],["Quimper",47.9911,-4.087],["Reims",49.2504,4.03],["Rennes",48.1,-1.67],["Roanne",46.0333,4.0667],["Rodez",44.3592,2.5696],["Romans-sur-Isère",45.0525,5.0631],["Roubaix",50.6914,3.1822],["Rouen",49.4304,1.08],["Royan",45.6372,-1.0264],["Rueil-Malmaison",48.8725,2.1795],["Saint-Brieuc",48.51,-2.7625],["Saint-Denis",48.9288,2.3577],["Saint-Louis",47.602,7.5381],["Saint-Lô",49.1095,-1.078],["Saint-Malo",48.6498,-1.9868],["Saint-Nazaire",47.2767,-2.2321],["Saint-Quentin",49.8493,3.2814],["Saint-Étienne",45.4304,4.38],["Saintes",45.7451,-0.6307],["Salon-de-Provence",43.6476,5.1053],["Saumur",47.2687,-0.0693],["Sedan",49.6982,4.9406],["Sens",48.1945,3.2972],["Soissons",49.3775,3.3227],["Strasbourg",48.58,7.75],["Sète",43.4104,3.6999],["Sélestat",48.2758,7.4641],["Tarbes",43.2333,0.0833],["Thionville",49.3517,6.1596],["Toulon",43.1342,5.9188],["Toulouse",43.6219,1.448],["Tourcoing",50.7219,3.1532],["Tours",47.3804,0.6999],["Troyes",48.3404,4.0834],["Valence",44.9285,4.9127],["Valenciennes",50.3541,3.5117],["Vannes",47.6567,-2.7441],["Verdun",49.158,5.3883],["Versailles",48.8005,2.1333],["Vesoul",47.6233,6.1545],["Vichy",46.1171,3.4167],["Vierzon",47.2349,2.058],["Villeurbanne",45.7717,4.8813],["Vitrolles",43.4575,5.2595],["Vitry-sur-Seine",48.7899,2.3984],["Épinal",48.1746,6.4661],["Évreux",49.0222,1.1563],["Évry",48.6282,2.4451]];
 /* Vignette de carte de la fiche salle.
 
    Volontairement séparée du rendu de la page de résultats : ici la carte est
@@ -1069,34 +1135,43 @@ function rendFiche(s){
     }).join('');
 
   document.getElementById('s-nom').textContent = s[0];
+  /* Un vrai club n'a ni note ni avis : on n'affiche pas une moyenne inventee,
+     on n'affiche rien. Meme chose plus bas pour le bloc des avis. */
+  var meta = [];
+  if (s[6]) meta.push('<span class="note">' + I.etoile + s[6] +
+                      ' <small>(' + s[7] + ' avis)</small></span>');
+  var ou = [d.adresse, [d.cp, s[2]].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  if (ou) meta.push('<span>' + I.epingle + ' ' + echappe(ou) + '</span>');
+  if (s[9]) meta.push('<span class="' + (s[10] ? 'ouvert' : 'ferme') + '">' +
+    (s[10] ? 'Ouvert aujourd’hui' : 'Fermé aujourd’hui') + '</span>');
   document.getElementById('s-meta').innerHTML =
-    '<span class="note">' + I.etoile + s[6] + ' <small>(' + s[7] + ' avis)</small></span>' +
-    '<span class="sep" aria-hidden="true">·</span>' +
-    '<span>' + I.epingle + ' ' + echappe(d.adresse + ', ' + d.cp + ' ' + s[2]) + '</span>' +
-    '<span class="sep" aria-hidden="true">·</span>' +
-    '<span class="' + (s[10] ? 'ouvert' : 'ferme') + '">' +
-      (s[10] ? 'Ouvert aujourd’hui' : 'Fermé aujourd’hui') + '</span>';
+    meta.join('<span class="sep" aria-hidden="true">·</span>');
 
   document.getElementById('s-disc').innerHTML =
     s[5].map(function (x){ return '<li>' + echappe(x) + '</li>'; }).join('');
 
   /* la fiche gratuite met en avant le contact direct : c'est là que naît le lead */
-  var actions = ['<a class="btn btn-rouge" href="tel:' + d.tel.replace(/\s/g, '') + '">' +
-                   I.tel + 'Appeler la salle</a>',
-                 '<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
-                   I.mail + 'Écrire un e-mail</a>'];
+  var actions = [];
+  if (d.reel) actions.push('<a class="btn btn-rouge" href="#essai">' + I.gant +
+                           'Réserver une séance d’essai</a>');
+  if (d.tel) actions.push('<a class="btn ' + (d.reel ? 'btn-ligne' : 'btn-rouge') +
+    '" href="tel:' + d.tel.replace(/\s/g, '') + '">' + I.tel + 'Appeler la salle</a>');
+  if (d.mail) actions.push('<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
+                           I.mail + 'Écrire un e-mail</a>');
   document.getElementById('s-actions').innerHTML = actions.join('');
 
   document.getElementById('s-presentation').innerHTML =
-    d.presentation.map(function (p){ return '<p>' + echappe(p) + '</p>'; }).join('');
+    (d.presentation || []).map(function (p){ return '<p>' + echappe(p) + '</p>'; }).join('');
 
-  document.getElementById('s-faits').innerHTML =
-    [['Ouverte depuis', d.depuis],
-     ['Adhérents', 'environ ' + d.adherents],
-     ['Disciplines', s[5].length],
-     ['Amplitude', s[9]]]
+  var faits = [];
+  if (d.depuis) faits.push(['Ouverte depuis', d.depuis]);
+  if (d.adherents) faits.push(['Adhérents', 'environ ' + d.adherents]);
+  if (s[5].length) faits.push(['Disciplines', s[5].length]);
+  if (s[9]) faits.push(['Amplitude', s[9]]);
+  document.getElementById('s-faits').innerHTML = faits
     .map(function (f){ return '<div><dt>' + f[0] + '</dt><dd>' + echappe(f[1]) + '</dd></div>'; })
     .join('');
+  montre('presentation', (d.presentation || []).length || faits.length);
 
   document.getElementById('s-grille-disc').innerHTML =
     s[5].map(function (x){ return '<li>' + I.gant + echappe(x) + '</li>'; }).join('');
@@ -1108,6 +1183,8 @@ function rendFiche(s){
     (d.equipements || []).map(function (e){
       return '<li>' + (I.equip[e[1]] || '') + '<span>' + echappe(e[0]) + '</span></li>';
     }).join('');
+  montre('equipements', (d.equipements || []).length);
+  montre('disciplines', s[5].length);
 
   /* Les avis, du plus recent au plus ancien. */
   var MOIS_O = ['janvier','février','mars','avril','mai','juin','juillet','août',
@@ -1117,6 +1194,7 @@ function rendFiche(s){
     return parseInt(p[1], 10) * 12 + MOIS_O.indexOf(p[0]);
   }
   var lesAvis = (d.avis || []).slice().sort(function (a, b){ return quand(b.date) - quand(a.date); });
+  montre('avis', lesAvis.length);
   document.getElementById('s-avis-note').innerHTML =
     I.etoile + ' <b>' + s[6] + '</b> sur ' + s[7] + ' avis';
   document.getElementById('s-avis').innerHTML = lesAvis.map(function (a){
@@ -1134,37 +1212,66 @@ function rendFiche(s){
   /* getDay() : 0 = dimanche, or notre semaine commence le lundi */
   var jourJs = new Date().getDay();
   var aujourdhui = (jourJs + 6) % 7;
-  document.getElementById('s-amplitude').textContent = 'La salle est ouverte ' + s[9] + '.';
-  document.getElementById('s-semaine').innerHTML = d.planning.map(function (j, n){
-    var corps = j.cours.length
-      ? '<div class="cours">' + j.cours.map(function (c){
+  /* La fiche gratuite porte les heures d'ouverture que le club a saisies. Le
+     planning des cours, lui, n'existe que dans le jeu de demonstration : on ne
+     l'invente pas pour un vrai club. */
+  var planning = d.planning || [];
+  var aDesHeures = planning.some(function (j){ return j.heures || j.cours.length; });
+  var titreHoraires = document.querySelector('#horaires .pan-titre');
+  if (titreHoraires) titreHoraires.textContent =
+    planning.some(function (j){ return j.cours.length; }) ? 'Planning de la semaine'
+                                                          : 'Horaires d’ouverture';
+  document.getElementById('s-amplitude').textContent =
+    s[9] ? 'La salle est ouverte ' + s[9] + '.' : '';
+  document.getElementById('s-semaine').innerHTML = planning.map(function (j, n){
+    var corps;
+    if (j.cours.length) {
+      corps = '<div class="cours">' + j.cours.map(function (c){
           return '<div class="c"><span class="h">' + c.de + ' – ' + c.a + '</span>' +
                  '<span class="q">' + echappe(c.quoi) + '</span>' +
                  '<span class="n">' + echappe(c.niveau) + '</span></div>';
-        }).join('') + '</div>'
-      : '<p class="repos">Fermé</p>';
+        }).join('') + '</div>';
+    } else if (j.heures) {
+      corps = '<div class="cours"><div class="c"><span class="h">' +
+              echappe(j.heures[0] + ' – ' + j.heures[1]) + '</span></div></div>';
+    } else {
+      corps = '<p class="repos">Fermé</p>';
+    }
     return '<li' + (n === aujourdhui ? ' class="aujourdhui"' : '') +
            '><span class="jour">' + j.jour + '</span>' + corps + '</li>';
   }).join('');
+  montre('horaires', aDesHeures);
 
   document.getElementById('s-adresse').innerHTML =
-    echappe(d.adresse) + '<br>' + echappe(d.cp + ' ' + s[2]);
-  document.getElementById('s-itineraire').href =
+    [echappe(d.adresse), echappe([d.cp, s[2]].filter(Boolean).join(' '))]
+      .filter(Boolean).join('<br>');
+  /* Sans coordonnees on ne peut ni placer la salle ni tracer un itineraire :
+     le plan disparait plutot que de montrer le golfe de Guinee. */
+  var aUnPoint = typeof s[3] === 'number' && typeof s[4] === 'number';
+  var itineraire = document.getElementById('s-itineraire');
+  itineraire.hidden = !aUnPoint;
+  if (aUnPoint) itineraire.href =
     'https://www.openstreetmap.org/directions?to=' + s[3] + '%2C' + s[4];
+  var boitePlan = document.querySelector('.mini-carte');
+  if (boitePlan) boitePlan.hidden = !aUnPoint;
 
-  var coord = [lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel),
-               lien('mailto:' + d.mail, I.mail, d.mail)];
+  var coord = [];
+  if (d.tel)  coord.push(lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel));
+  if (d.mail) coord.push(lien('mailto:' + d.mail, I.mail, d.mail));
   if (d.site)  coord.push(lien('https://' + d.site, I.web, d.site, true));
   if (d.insta) coord.push(lien('https://instagram.com/' + d.insta, I.insta, '@' + d.insta, true));
   if (d.fb)    coord.push(lien('https://facebook.com/' + d.fb, I.fb, d.fb, true));
   document.getElementById('s-coord').innerHTML = coord.join('');
+  var panCoord = document.getElementById('s-coord').closest('.pan');
+  if (panCoord) panCoord.hidden = !coord.length;
 
   /* Les salles voisines, par distance réelle plutôt que par nom de ville. Au-delà
      de 60 km on ne parle plus de voisinage : le titre change plutôt que d'annoncer
      « autour de Paris » une salle qui est à 400 km. */
   var autour = document.getElementById('autour');
   if (autour) autour.hidden = SALLES.length < 2;
-  var classees = SALLES.filter(function (o){ return o !== s; })
+  var classees = SALLES.filter(function (o){
+      return o !== s && typeof o[3] === 'number' && typeof s[3] === 'number'; })
     .map(function (o){ return [o, distanceKm(s[3], s[4], o[3], o[4])]; })
     .sort(function (a, b){ return a[1] - b[1]; });
   var voisines = classees.filter(function (p){ return p[1] <= 60; });
@@ -1180,7 +1287,73 @@ function rendFiche(s){
   }).join('');
 
   var cv = document.getElementById('mini');
-  if (cv && window.GEO) miniCarte(cv, s[3], s[4], 15);
+  if (cv && window.GEO && aUnPoint) miniCarte(cv, s[3], s[4], 15);
+
+  /* « Reclamer ma fiche » n'a pas de sens sur la fiche d'un club qui l'a deja
+     reclamee : c'est la demande de seance d'essai qui prend sa place. */
+  var bloc = document.querySelector('.pan-club');
+  if (bloc) bloc.hidden = !!d.reel;
+  if (d.reel) ouvreEssai(s);
+}
+
+/* Cache une section quand elle n'a rien a montrer. Un panneau vide avec son
+   titre fait croire a une page cassee. */
+function montre(id, oui){
+  var el = document.getElementById(id);
+  if (el) el.hidden = !oui;
+}
+
+/* ---- la demande de seance d'essai ----
+   Le formulaire ne s'ouvre que sur la fiche d'un vrai club. Il ecrit directement
+   dans la base ; la politique d'acces n'accepte qu'un club publie et le statut
+   « recue », donc rien ici ne peut donner plus que ca. */
+function ouvreEssai(s){
+  var bloc = document.getElementById('essai');
+  var SB = window.MCC;
+  if (!bloc || !SB || !SB.prete()) return;
+  bloc.hidden = false;
+
+  var choix = document.getElementById('e-disc');
+  choix.innerHTML = ['<option value="">Peu importe</option>'].concat(
+    s[5].map(function (x){ return '<option>' + echappe(x) + '</option>'; })).join('');
+
+  var form = document.getElementById('essai-form');
+  var erreur = document.getElementById('e-erreur');
+  var envoi = document.getElementById('e-envoi');
+
+  function rate(msg){ erreur.textContent = msg; erreur.hidden = false; }
+
+  form.addEventListener('submit', function (e){
+    e.preventDefault();
+    erreur.hidden = true;
+    var champs = {};
+    ['nom', 'mail', 'tel', 'disc', 'quand', 'mot'].forEach(function (k){
+      document.getElementById('e-' + k).classList.remove('manque');
+    });
+    var manque = false;
+    ['nom', 'mail'].forEach(function (k){
+      var c = document.getElementById('e-' + k);
+      if (!c.value.trim()){ c.classList.add('manque'); if (!manque){ c.focus(); manque = true; } }
+    });
+    if (manque) { rate('Votre nom et votre e-mail sont nécessaires pour que la salle vous réponde.'); return; }
+    champs.nom = document.getElementById('e-nom').value.trim();
+    champs.mail = document.getElementById('e-mail').value.trim();
+    champs.tel = document.getElementById('e-tel').value.trim();
+    champs.discipline = document.getElementById('e-disc').value;
+    champs.creneau = document.getElementById('e-quand').value.trim();
+    champs.message = document.getElementById('e-mot').value.trim();
+
+    envoi.disabled = true;
+    envoi.textContent = 'Envoi…';
+    SB.deposeDemande(s[11].id, champs).then(function (){
+      form.hidden = true;
+      document.getElementById('e-merci').hidden = false;
+    }).catch(function (err){
+      envoi.disabled = false;
+      envoi.textContent = 'Envoyer ma demande';
+      rate(SB.dire(err));
+    });
+  });
 }
 
 (function demarre(){
@@ -1193,9 +1366,41 @@ function rendFiche(s){
     document.title = 'Exemple de fiche club — Mon Club Combat';
     return;
   }
-  var s = salleParSlug(param('s'));
-  if (s) rendFiche(s);
-  else {
+  var demande = param('s');
+  var s = salleParSlug(demande);
+  if (s) { rendFiche(s); return; }
+
+  /* Les fiches construites a l'avance ne contiennent que les clubs connus au
+     dernier build. Un club valide depuis se trouve dans la base : on va l'y
+     chercher avant de dire que la salle n'existe pas. */
+  if (!demande) { introuvable(); return; }
+  /* sb.js est charge en fin de page, apres ce script : on attend que le
+     document soit pret plutot que de conclure trop tot que la salle n'existe pas */
+  quandPret(function (){
+    var SB = window.MCC;
+    if (!SB || !SB.prete()) { introuvable(); return; }
+    chercheEnBase(SB, demande);
+  });
+
+  function chercheEnBase(SB, demande){
+  SB.client.from('club').select('*').eq('statut', 'publie').eq('slug', demande).limit(1)
+    .then(function (r){
+      var l = (r && r.data) || [];
+      if (!l.length) { introuvable(); return; }
+      var neuve = SB.enSalle(l[0]);
+      SALLES.push(neuve);
+      rendFiche(neuve);
+    })
+    .catch(introuvable);
+  }
+
+  function quandPret(faire){
+    if (document.readyState === 'loading')
+      document.addEventListener('DOMContentLoaded', faire);
+    else faire();
+  }
+
+  function introuvable(){
     document.getElementById('introuvable').hidden = false;
     document.title = 'Salle introuvable — Mon Club Combat';
   }
@@ -1237,6 +1442,11 @@ function rendFiche(s){
       <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
       <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
       <p class="fen-note" id="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+      <!-- Un gerant qui revient trois mois plus tard a oublie son mot de passe.
+           Sans ce lien, il n'a aucun moyen de rentrer dans son espace. -->
+      <p class="fen-bascule" data-mode="connexion" hidden>
+        <button type="button" class="lien-bouton" id="fen-oubli">Mot de passe oublié ?</button>
+      </p>
       <p class="fen-bascule">
         <span data-mode="creation">Vous avez déjà un espace club ?
           <button type="button" class="lien-bouton" id="fen-vers-connexion">Connectez-vous</button>.</span>
@@ -1247,6 +1457,12 @@ function rendFiche(s){
 
     <!-- quand la confirmation par e-mail est active cote Supabase, il n'y a pas de
          session a la sortie de l'inscription : on le dit au lieu de tourner en rond -->
+    <div id="fen-renvoi" hidden>
+      <p class="fen-mot">Si un compte existe avec <b id="fen-renvoi-mail"></b>, un lien de
+        réinitialisation vient d'y être envoyé. Ouvrez-le pour choisir un nouveau
+        mot de passe.</p>
+    </div>
+
     <div id="fen-verif" hidden>
       <p class="fen-mot">Nous venons d'envoyer un lien de confirmation à
         <b id="fen-verif-mail"></b>. Ouvrez-le, puis revenez vous connecter ici pour
@@ -1345,6 +1561,26 @@ function rendFiche(s){
   }
   document.getElementById('fen-vers-connexion').addEventListener('click', function (){ bascule('connexion'); });
   document.getElementById('fen-vers-creation').addEventListener('click',  function (){ bascule('creation'); });
+
+  /* Mot de passe oublie. On ne dit jamais si l'adresse existe : ce serait dire
+     a n'importe qui quels clubs ont un compte chez nous. */
+  document.getElementById('fen-oubli').addEventListener('click', function (){
+    var mail = document.getElementById('k-mail').value.trim();
+    if (!mail) {
+      document.getElementById('k-mail').focus();
+      montre('Écrivez votre e-mail, nous vous enverrons un lien.');
+      return;
+    }
+    if (!reel) { montre('La réinitialisation a besoin d’une connexion au serveur.'); return; }
+    occupe(true);
+    SB.client.auth.resetPasswordForEmail(mail, {
+      redirectTo: location.href.replace(/[^/]*$/, '') + 'motdepasse.html'
+    }).then(function (){
+      form.hidden = true;
+      document.getElementById('fen-renvoi-mail').textContent = mail;
+      document.getElementById('fen-renvoi').hidden = false;
+    }).catch(function (e){ occupe(false); montre(SB.dire(e)); });
+  });
 
   function montre(msg){
     erreur.textContent = msg || '';

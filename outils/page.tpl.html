@@ -979,15 +979,18 @@
      section des salles apparait d'elle-meme. */
   var ouverture = document.getElementById('ouverture');
   var sectionSalles = document.getElementById('salles');
-  var aDesSalles = SALLES.length > 0;
-  if (ouverture) ouverture.hidden = aDesSalles;
-  if (sectionSalles) sectionSalles.hidden = !aDesSalles;
 
   /* ---- salles mises en avant ----
-     Un seul jeu de salles pour tout le site (_salles.js). Règle produit : seules
-     les salles Pro sont mises en avant ici, et le pratiquant ne doit jamais
-     pouvoir deviner lesquelles le sont — donc aucun badge, juste la sélection. */
-  var VEDETTES = SALLES.filter(function (s){ return s[8]; }).slice(0, 8);
+     Un seul jeu de salles pour tout le site (_salles.js). Règle produit : les
+     salles Pro passent devant, et le pratiquant ne doit jamais pouvoir deviner
+     lesquelles le sont — donc aucun badge, juste l'ordre. Tant qu'aucun club
+     n'est Pro, la rangée montre simplement les salles référencées : une section
+     « Les salles référencées » vide serait pire que pas de section du tout. */
+  function vedettes(){
+    var pro = SALLES.filter(function (s){ return s[8]; });
+    var reste = SALLES.filter(function (s){ return !s[8]; });
+    return pro.concat(reste).slice(0, 8);
+  }
 
   var ETOILE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
     '<path d="m12 2 3 6.5 7 .9-5 4.8 1.3 7L12 17.8 5.7 21.2 7 14.2 2 9.4l7-.9L12 2z"/></svg>';
@@ -999,8 +1002,10 @@
     '<path d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/></svg>';
 
   var liste = document.getElementById('liste-salles');
-  if (liste) {
-    VEDETTES.forEach(function (s) {
+  function rangeeSalles(lot){
+    if (!liste) return;
+    liste.innerHTML = '';
+    lot.forEach(function (s) {
       var art = document.createElement('article');
       art.className = 'salle';
       art.innerHTML =
@@ -1012,14 +1017,16 @@
         '<div class="salle-corps">' +
           '<div class="salle-tete">' +
             '<a class="salle-nom" href="' + lienFiche(s) + '">' + s[0] + '</a>' +
-            '<span class="note">' + ETOILE + s[6] + ' <small>(' + s[7] + ')</small></span>' +
+            /* un vrai club n'a pas de note : on n'affiche pas une etoile vide */
+            (s[6] ? '<span class="note">' + ETOILE + s[6] +
+                    ' <small>(' + s[7] + ')</small></span>' : '') +
           '</div>' +
           '<div class="salle-chips">' +
             s[5].map(function (d) { return '<span class="mini-chip">' + d + '</span>'; }).join('') +
           '</div>' +
           '<p class="salle-meta">' + PIN + s[2] + '</p>' +
-          '<p class="salle-ouvert">' +
-            (s[10] ? 'Ouvert aujourd’hui · ' + s[9] : 'Fermé aujourd’hui') + '</p>' +
+          (s[9] ? '<p class="salle-ouvert">' +
+            (s[10] ? 'Ouvert aujourd’hui · ' + s[9] : 'Fermé aujourd’hui') + '</p>' : '') +
           '<a class="btn btn-rouge" href="' + lienFiche(s) + '">Voir la salle</a>' +
         '</div>';
       art.querySelector('.salle-fav').addEventListener('click', function () {
@@ -1029,6 +1036,23 @@
       liste.appendChild(art);
     });
   }
+
+  /* Le nombre de salles decide laquelle des deux sections s'affiche. Il change
+     quand la base repond, donc la bascule est une fonction, pas un calcul fait
+     une fois au chargement. */
+  function bascule(){
+    var aDesSalles = SALLES.length > 0;
+    if (ouverture) ouverture.hidden = aDesSalles;
+    if (sectionSalles) sectionSalles.hidden = !aDesSalles;
+    rangeeSalles(vedettes());
+  }
+  bascule();
+  document.addEventListener('mcc:salles', bascule);
+  (function chargeLaBase(){
+    function vas(){ if (window.MCC && window.MCC.prete()) window.MCC.chargeSalles(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', vas);
+    else vas();
+  })();
 
   /* ---- parcourir par discipline ---- */
   var grille = document.getElementById('grille-disc');

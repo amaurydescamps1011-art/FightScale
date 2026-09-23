@@ -1,0 +1,33 @@
+%%HEADER%%
+
+<main id="contenu">
+  <section class="section sous-bandeau">
+    <div class="wrap">
+      <div class="fil">
+        <p class="eyebrow">Espace club</p>
+        <h1 class="section-titre display">Choisissez un nouveau mot de passe</h1>
+      </div>
+
+      <p class="form-etat" id="mdp-charge">Vérification du lien…</p>
+      <p class="form-erreur" id="mdp-erreur" hidden role="alert"></p>
+
+      <form class="mdp-form" id="mdp-form" hidden novalidate>
+        <label class="champ"><span>Nouveau mot de passe</span>
+          <input type="password" id="mdp-1" autocomplete="new-password" minlength="8" required>
+        </label>
+        <label class="champ"><span>Répétez-le</span>
+          <input type="password" id="mdp-2" autocomplete="new-password" minlength="8" required>
+        </label>
+        <p class="champ-aide">Huit caractères au minimum.</p>
+        <button class="btn btn-rouge" type="submit" id="mdp-envoi">Enregistrer</button>
+      </form>
+
+      <p class="mdp-fait" id="mdp-fait" hidden>
+        <b>C'est fait.</b> Votre mot de passe est changé.
+        <a href="espace-club.html">Ouvrir mon espace club</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+%%FOOTER%%
