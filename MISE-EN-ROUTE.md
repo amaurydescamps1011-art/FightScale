@@ -26,32 +26,65 @@ Ces pages ne font rien tant que l'étape 1 n'est pas faite.
 
 ## 1. Supabase — quatre gestes, dix minutes
 
-Sur https://supabase.com/dashboard, projet `qhbutuhdmyajlgorbhxf`.
+Les menus du tableau de bord Supabase changent de nom d'une version à l'autre, et
+je ne peux pas les voir d'ici pour vérifier. Voici donc les **adresses directes**
+de chaque écran : elles ouvrent la bonne page sans avoir à chercher dans le menu.
+Si l'une tombe à côté, dis-le moi et on cherchera autrement.
 
-1. **Coller le schéma.** SQL Editor → nouvelle requête → coller tout le contenu de
-   `db/001_schema.sql` → Run. Le fichier est rejouable : on peut le recoller à
-   chaque changement sans rien casser. **Il a changé aujourd'hui, donc il faut le
-   recoller même s'il avait déjà été passé.**
-2. **Créer le bucket des photos.** Storage → New bucket → nom `photos-clubs` →
-   cocher **Public bucket** → Create.
-3. **Couper la confirmation d'e-mail, le temps des essais.** Authentication →
-   Sign In / Providers → **Email** → décocher **Confirm email** → Save.
-   Sans ça, Supabase crée bien le compte mais n'ouvre pas de session tant que le
-   lien reçu par e-mail n'est pas cliqué — et son expéditeur intégré est limité à
-   quelques messages par heure, donc le mail arrive en retard, en spam, ou pas du
-   tout. C'est ce qui donne l'impression que la création de compte ne marche pas.
-   À remettre avant d'ouvrir aux clubs, avec un vrai expéditeur (Resend, Brevo)
-   dans Authentication → Emails → SMTP Settings.
-4. **Se mettre dans l'équipe.** Il faut d'abord un compte : aller sur
-   https://fight-scale.vercel.app/clubs.html, cliquer « Référencer ma salle » et
-   créer le compte. Puis, dans le SQL Editor :
+### a. Coller le schéma
 
-   ```sql
-   insert into equipe (membre_id)
-   select id from auth.users where email = 'ton-adresse@exemple.fr';
-   ```
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/sql/new
 
-   Après ça, `admin.html` s'ouvre.
+Le fichier à coller en entier :
+https://raw.githubusercontent.com/amaurydescamps1011-art/FightScale/main/db/001_schema.sql
+(tout sélectionner, copier, coller dans l'éditeur, **Run**.)
+
+Il est rejouable : on peut le recoller à chaque changement sans rien casser.
+**Il a changé aujourd'hui, donc il faut le recoller même s'il était déjà passé.**
+
+### b. Créer le bucket des photos
+
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/storage/buckets
+
+**New bucket** → nom exactement `photos-clubs` → cocher **Public bucket** → Create.
+
+### c. Ne pas rester bloqué sur la confirmation d'e-mail
+
+Par défaut, Supabase crée bien le compte mais n'ouvre pas de session tant que le
+lien reçu par e-mail n'est pas cliqué. Son expéditeur intégré est limité à
+quelques messages par heure, donc le mail arrive en retard, en spam, ou jamais.
+C'est ce qui donne l'impression que la création de compte ne marche pas.
+
+**Le réglage**, si tu le trouves :
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/providers
+→ ouvrir **Email** dans la liste → décocher **Confirm email** → Save.
+Selon la version, la case s'appelle *Confirm email* ou *Enable email
+confirmations*, et elle peut être sous **Authentication → Sign In / Providers**
+ou sous **Authentication → Settings**.
+
+**Si tu ne le trouves pas**, tu peux t'en passer : crée le compte sur le site,
+puis colle ça dans le SQL Editor pour confirmer l'adresse à la main.
+
+```sql
+update auth.users
+   set email_confirmed_at = now()
+ where email_confirmed_at is null;
+```
+
+Puis retourne sur le site, ouvre la fenêtre et clique **Connectez-vous** au lieu
+de recréer un compte. Ça marche aussi bien, et c'est à refaire à chaque nouveau
+compte de test tant que la case n'est pas décochée.
+
+### d. Te mettre dans l'équipe
+
+Une fois ton compte créé et connecté, dans le SQL Editor :
+
+```sql
+insert into equipe (membre_id)
+select id from auth.users where email = 'ton-adresse@exemple.fr';
+```
+
+Après ça, https://fight-scale.vercel.app/admin.html s'ouvre.
 
 ---
 
