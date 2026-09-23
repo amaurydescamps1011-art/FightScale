@@ -19,31 +19,55 @@
 
       <div id="esp-corps" hidden>
         <p class="esp-mot" id="esp-mot"></p>
-        <!-- Une demande recue n'est pas un lead : c'est la reservation confirmee
-             qui en est un (regle d'Amaury). Le troisieme chiffre est la seule fin
-             qui compte vraiment pour un club : le prospect est devenu adherent. -->
-        <ul class="ouv-liste esp-chiffres">
-          <li><span class="ouv-nb display" id="esp-nb">0</span>
-              <span class="ouv-lb">Demandes reçues</span></li>
-          <li><span class="ouv-nb display" id="esp-nb-ok">0</span>
-              <span class="ouv-lb">Réservations confirmées</span></li>
-          <li><span class="ouv-nb display" id="esp-nb-adh">0</span>
-              <span class="ouv-lb">Devenus adhérents</span></li>
-        </ul>
         <div class="esp-actions">
           <a class="btn btn-rouge" href="referencer.html">Modifier ma fiche</a>
           <a class="btn btn-ligne" id="esp-voir" href="#" hidden>Voir ma fiche en ligne</a>
           <a class="btn btn-ligne" href="mon-compte.html">Mon compte</a>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- Ce qui rend cette page utile a un club gratuit, qui ne recoit aucune
-             demande : l'etat de sa fiche, poste par poste, et ce qu'il lui reste
-             a remplir. Chaque manque est un lien vers l'endroit ou le corriger. -->
-        <div class="esp-complet" id="esp-complet" hidden>
-          <p class="eyebrow">L'état de votre fiche</p>
-          <p class="esp-complet-mot" id="esp-complet-mot"></p>
-          <ul class="esp-check" id="esp-check"></ul>
+  <!-- Le tableau de bord : les chiffres du club, et rien d'invente. Un club qui
+       vient d'arriver voit des zeros honnetes et ce qu'il faut faire pour les
+       bouger, pas des courbes de demonstration. -->
+  <section class="section esp-bloc" id="esp-chiffres-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Tableau de bord</p>
+      <h2 class="section-titre display">Vos chiffres</h2>
+      <ul class="esp-kpi" id="esp-kpi"></ul>
+
+      <div class="esp-courbe-bloc" id="esp-courbe-bloc">
+        <div class="esp-courbe-tete">
+          <h3 class="esp-h3">Les visites de votre fiche</h3>
+          <div class="esp-periode" role="group" aria-label="Période">
+            <button type="button" class="esp-chip" data-jours="7" aria-pressed="false">7 jours</button>
+            <button type="button" class="esp-chip" data-jours="30" aria-pressed="true">30 jours</button>
+          </div>
         </div>
+        <div class="esp-courbe" id="esp-courbe" role="img" aria-label="Visites par jour"></div>
+        <p class="esp-legende" id="esp-legende"></p>
+      </div>
+
+      <!-- L'entonnoir dit ou ca coince : beaucoup de visites et aucune demande,
+           c'est la fiche ; beaucoup de demandes et peu de venues, c'est le
+           rappel. C'est la lecture que le gerant ne fait pas tout seul. -->
+      <div class="esp-entonnoir" id="esp-entonnoir" hidden>
+        <h3 class="esp-h3">Du visiteur à l'adhérent</h3>
+        <ul id="esp-etapes"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ce que le gratuit fait manquer, chiffre a l'appui : ce n'est pas un
+       argument de vente invente, c'est le nombre de gens qui sont passes. -->
+  <section class="section esp-manque-bloc" id="esp-manque-bloc" hidden>
+    <div class="wrap">
+      <div class="esp-manque">
+        <p class="eyebrow">Mon Club Combat Pro</p>
+        <h2 class="esp-manque-titre display" id="esp-manque-titre"></h2>
+        <p class="esp-manque-mot" id="esp-manque-mot"></p>
+        <a class="btn btn-rouge" href="clubs.html#pro">Voir ce que le Pro ajoute</a>
       </div>
     </div>
   </section>
@@ -71,6 +95,28 @@
 
       <ul class="demandes" id="esp-demandes"></ul>
       <p class="esp-rien" id="esp-rien" hidden>Aucun prospect ne correspond à cette recherche.</p>
+    </div>
+  </section>
+
+  <!-- L'etat de la fiche, poste par poste : la seule chose sur laquelle un club
+       peut avancer le jour ou il arrive. Chaque manque porte son lien. -->
+  <section class="section esp-bloc" id="esp-complet-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Votre fiche</p>
+      <h2 class="section-titre display" id="esp-complet-mot">L'état de votre fiche</h2>
+      <ul class="esp-check" id="esp-check"></ul>
+      <div class="esp-actions">
+        <a class="btn btn-ligne" href="referencer.html">Compléter ma fiche</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section esp-bloc esp-formule-bloc" id="esp-formule-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Votre formule</p>
+      <h2 class="section-titre display" id="esp-formule-titre">Fiche gratuite</h2>
+      <ul class="esp-formule" id="esp-formule"></ul>
+      <p class="esp-formule-note" id="esp-formule-note"></p>
     </div>
   </section>
 </main>

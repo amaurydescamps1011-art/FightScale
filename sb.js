@@ -291,6 +291,64 @@ window.MCC = (function (){
     });
   }
 
+  /* ---- les vues d'une fiche ----
+     Le chiffre que le gerant veut voir en premier, et celui qui vend le Pro :
+     tant de personnes ont regarde la salle, aucune n'a pu appeler.
+
+     On ne compte qu'une fois par navigateur et par jour : rafraichir sa propre
+     fiche dix fois ne doit pas gonfler le chiffre. Si le navigateur refuse le
+     stockage local (navigation privee stricte), on compte quand meme -- mieux
+     vaut un chiffre un peu haut que pas de chiffre. L'ecriture passe par
+     `compte_vue()`, qui n'accepte qu'un club publie et n'ajoute que un. */
+  function compteVue(clubId){
+    if (!client || !clubId) return Promise.resolve(false);
+    var cle = 'mcc-vu-' + clubId + '-' + new Date().toISOString().slice(0, 10);
+    try {
+      if (localStorage.getItem(cle)) return Promise.resolve(false);
+      localStorage.setItem(cle, '1');
+    } catch (e) { /* pas de stockage : on compte quand meme */ }
+    /* Compter une visite ne doit jamais abimer la fiche : si l'appel part mal,
+       on l'oublie. C'est un chiffre, pas la page. */
+    try {
+      return client.rpc('compte_vue', { cible: clubId })
+        .then(function (){ return true; })
+        .catch(function (){ return false; });
+    } catch (e) { return Promise.resolve(false); }
+  }
+
+  /* Les vues des `jours` derniers jours, du plus ancien au plus recent, avec les
+     jours sans visite remis a zero : un graphique troue mentirait sur la forme. */
+  function vuesDuClub(clubId, jours){
+    if (!client || !clubId) return Promise.resolve([]);
+    var depuis = new Date(Date.now() - (jours - 1) * 864e5).toISOString().slice(0, 10);
+    return client.from('vue_fiche').select('jour, n')
+      .eq('club_id', clubId).gte('jour', depuis)
+      .then(function (r){
+        var par = {};
+        (r.data || []).forEach(function (x){ par[x.jour] = x.n; });
+        var out = [];
+        for (var i = jours - 1; i >= 0; i--) {
+          var j = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10);
+          out.push({ jour: j, n: par[j] || 0 });
+        }
+        return out;
+      })
+      .catch(function (){ return []; });
+  }
+
+  /* ---- les demandes pas encore traitees ----
+     Une demande « recue » est une demande que le gerant n'a pas encore ouverte :
+     c'est ce que la pastille du bandeau compte. Des qu'il la fait avancer d'une
+     etape, elle sort du compte, donc la pastille se vide en travaillant, sans
+     qu'on ait besoin d'une colonne « lue » de plus. */
+  function nouvellesDemandes(clubId){
+    if (!client || !clubId) return Promise.resolve(0);
+    return client.from('demande').select('id')
+      .eq('club_id', clubId).eq('statut', 'recue')
+      .then(function (r){ return (r.data || []).length; })
+      .catch(function (){ return 0; });
+  }
+
   /* Le depot d'une demande de seance d'essai. La politique d'acces n'accepte
      que le statut « recue » et un club publie : c'est la le garde-fou, pas ici. */
   function deposeDemande(clubId, champs){
@@ -310,6 +368,8 @@ window.MCC = (function (){
     deconnexion: deconnexion,
     dire: dire, exigeCompte: exigeCompte, URL_BASE: URL_BASE,
     enSalle: enSalle, clubsPublies: clubsPublies, chargeSalles: chargeSalles,
-    deposeDemande: deposeDemande, lienPhoto: lienPhoto
+    deposeDemande: deposeDemande, lienPhoto: lienPhoto,
+    compteVue: compteVue, vuesDuClub: vuesDuClub,
+    nouvellesDemandes: nouvellesDemandes
   };
 })();

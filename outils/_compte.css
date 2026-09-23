@@ -86,10 +86,21 @@
     font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700;
     transition:border-color .15s ease, box-shadow .15s ease}
   .cpt-bouton:hover{border-color:var(--bord-3); box-shadow:var(--ombre-1)}
-  .cpt-rond{display:inline-flex; align-items:center; justify-content:center;
+  .cpt-rond{position:relative; display:inline-flex; align-items:center; justify-content:center;
     width:32px; height:32px; border-radius:999px; flex-shrink:0;
     background:var(--rouge-600); color:#fff; font-size:12px; font-weight:800;
     letter-spacing:.02em}
+  /* Le compteur de nouvelles demandes. Sur le rond il deborde legerement et porte
+     un lisere de la couleur du bandeau, pour se detacher du rouge du rond ;
+     dans le menu il se range a droite du lien. */
+  .cpt-pastille{display:inline-flex; align-items:center; justify-content:center;
+    min-width:18px; height:18px; padding:0 5px; border-radius:999px;
+    background:var(--texte); color:#fff; font-size:11px; font-weight:800;
+    line-height:1; letter-spacing:0}
+  .cpt-rond .cpt-pastille{position:absolute; top:-5px; right:-6px;
+    box-shadow:0 0 0 2px var(--surface)}
+  .cpt-liens a .cpt-pastille{float:right; margin-left:8px;
+    background:var(--rouge-600)}
   .cpt-nom{max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
   .cpt-menu{position:absolute; top:100%; right:0; translate:0 8px; z-index:50;
     width:min(86vw,268px); padding:8px; text-align:left;

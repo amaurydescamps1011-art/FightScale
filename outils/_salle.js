@@ -272,6 +272,12 @@ function rendFiche(s){
   var bloc = document.querySelector('.pan-club');
   if (bloc) bloc.hidden = !!d.reel;
   if (reserve) ouvreEssai(s);
+
+  /* On compte la visite, une fois par navigateur et par jour, et seulement sur
+     la fiche d'un vrai club : c'est le premier chiffre de son espace, et celui
+     qui lui dit combien de gens sont repartis sans pouvoir l'appeler. La fiche
+     d'exemple et les salles de demonstration ne comptent rien. */
+  if (d.reel && d.id && window.MCC && window.MCC.prete()) window.MCC.compteVue(d.id);
 }
 
 /* Cache une section quand elle n'a rien a montrer. Un panneau vide avec son

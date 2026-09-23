@@ -113,7 +113,18 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.waitForTimeout(500);
   ok('le nom du club s\'affiche', await pg.textContent('#esp-nom'), 'Team Ouragan Boxe');
   ok('le statut est lisible', await pg.textContent('#esp-statut'), 'En vérification');
-  ok('aucune demande pour l\'instant', await pg.textContent('#esp-nb'), '0');
+  /* Le tableau de bord parait meme a vide : quatre tuiles a zero, qui disent
+     pourquoi. Un espace qui ne montre rien avant la premiere demande ne sert
+     a rien -- c'est ce que reprochait Amaury le 23/09/2026. */
+  ok('le tableau de bord est la', await pg.isVisible('#esp-chiffres-bloc'), true);
+  ok('avec ses quatre tuiles', await pg.locator('#esp-kpi li').count(), 4);
+  ok('aucune demande pour l\'instant',
+     await pg.textContent('#esp-kpi li:nth-child(2) .esp-kpi-nb'), '0');
+  ok('et une fiche pas encore en ligne le dit',
+     /n’est pas encore en ligne/.test(
+       await pg.textContent('#esp-kpi li:nth-child(1) .esp-kpi-mot')), true);
+  ok('sans visite ni demande, il n\'y a pas d\'entonnoir a montrer',
+     await pg.isVisible('#esp-entonnoir'), false);
 
   // ---------- 4. le back-office ----------
   // on fait du compte un administrateur, comme on le ferait a la main dans Supabase
@@ -161,7 +172,10 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await aller('espace-club.html');
   await pg.waitForTimeout(500);
   ok('la fiche est en ligne', await pg.textContent('#esp-statut'), 'En ligne');
-  ok('une demande est arrivee', await pg.textContent('#esp-nb'), '1');
+  ok('une demande est arrivee',
+     await pg.textContent('#esp-kpi li:nth-child(2) .esp-kpi-nb'), '1');
+  ok('et le rappel dit qu\'elle attend',
+     await pg.textContent('#esp-rappel'), 'Une demande n’a pas encore été traitée.');
   ok('le nom du pratiquant s\'affiche', await pg.textContent('.demande b'), 'Léa Martin');
   ok('elle est a l\'etat recue', await pg.textContent('.dem-etat'), 'Reçue');
 
@@ -197,7 +211,8 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.click('.demande [data-suivi="adherent"]');
   await pg.waitForTimeout(400);
   ok('l\'adhesion se note', await pg.textContent('.dem-etat'), 'Adhérente');
-  ok('et le chiffre des adherents suit', await pg.textContent('#esp-nb-adh'), '1');
+  ok('et le chiffre des adherents suit',
+     await pg.textContent('#esp-kpi li:nth-child(4) .esp-kpi-nb'), '1');
   ok('un prospect adherent ne se relance plus', await pg.isVisible('#esp-rappel'), false);
 
   // la recherche filtre la liste sans toucher a la base
@@ -225,7 +240,7 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await garde();
 
   // ---------- 6. l'etat de la fiche, pour un club qui ne recoit rien ----------
-  ok('l\'etat de la fiche s\'affiche', await pg.isVisible('#esp-complet'), true);
+  ok('l\'etat de la fiche s\'affiche', await pg.isVisible('#esp-complet-bloc'), true);
   ok('il compte les postes remplis',
      /sur 7 sont remplis/.test(await pg.textContent('#esp-complet-mot')), true);
   const manques = await pg.evaluate(() =>
@@ -235,6 +250,56 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
      await pg.getAttribute('#esp-check .manque a', 'href'), 'referencer.html');
   ok('ce qui est rempli est marque comme tel',
      await pg.locator('#esp-check .ok').count() >= 4, true);
+
+  // ---------- 6 bis. les visites de la fiche, comptees pour de vrai ----------
+  /* Le chiffre que le gerant veut voir, et celui qui vend le Pro. Il est ecrit
+     par `compte_vue()` en base : la page n'ajoute jamais elle-meme une ligne. */
+  await aller('salle.html?s=team-ouragan-boxe-marseille');
+  await pg.waitForTimeout(700);
+  ok('la visite de la fiche est comptee',
+     await pg.evaluate(() => window.__FAUX__.vue_fiche.length), 1);
+  ok('une visite, une seule',
+     await pg.evaluate(() => window.__FAUX__.vue_fiche[0].n), 1);
+  /* rafraichir sa propre fiche ne doit pas gonfler le chiffre : le navigateur
+     retient qu'il a deja compte ce club aujourd'hui */
+  await aller('salle.html?s=team-ouragan-boxe-marseille');
+  await pg.waitForTimeout(700);
+  ok('la recharger ne la compte pas deux fois',
+     await pg.evaluate(() => window.__FAUX__.vue_fiche[0].n), 1);
+  await garde();
+
+  await aller('espace-club.html');
+  await pg.waitForTimeout(700);
+  ok('la visite remonte dans le tableau de bord',
+     await pg.textContent('#esp-kpi li:nth-child(1) .esp-kpi-nb'), '1');
+  ok('la courbe a un jour par barre', await pg.locator('#esp-courbe .esp-b').count(), 30);
+  await pg.click('.esp-periode [data-jours="7"]');
+  await pg.waitForTimeout(200);
+  ok('et se resserre sur sept jours', await pg.locator('#esp-courbe .esp-b').count(), 7);
+  ok('la legende dit le total', /1 visite/.test(await pg.textContent('#esp-legende')), true);
+
+  ok('l\'entonnoir parait des qu\'il y a de quoi le lire',
+     await pg.isVisible('#esp-entonnoir'), true);
+  const etapes = await pg.evaluate(() =>
+    Array.from(document.querySelectorAll('#esp-etapes li .esp-et-nb')).map(b => b.textContent));
+  ok('de la visite a l\'adhesion', etapes, ['1', '1', '1', '1', '1']);
+  ok('avec le taux d\'une etape a l\'autre',
+     /% de l’étape précédente/.test(await pg.textContent('#esp-etapes li:nth-child(2)')), true);
+
+  /* Ce que le gratuit fait manquer, avec le vrai chiffre et pas un argumentaire */
+  ok('le gratuit s\'entend dire ce qu\'il manque',
+     await pg.isVisible('#esp-manque-bloc'), true);
+  ok('avec le nombre de gens qui sont passes',
+     await pg.textContent('#esp-manque-titre'), 'Une personne a vu votre fiche ce mois-ci');
+  ok('et ce qu\'elle n\'a pas trouve',
+     /ni votre téléphone/.test(await pg.textContent('#esp-manque-mot')), true);
+
+  ok('la formule en cours est rappelee',
+     await pg.textContent('#esp-formule-titre'), 'Fiche gratuite');
+  ok('avec ce qu\'elle donne', await pg.locator('#esp-formule li.ok').count(), 2);
+  ok('et ce qu\'elle ne donne pas', await pg.locator('#esp-formule li.non').count(), 3);
+  ok('le prix est dit sans detour',
+     /39 € par mois/.test(await pg.textContent('#esp-formule-note')), true);
 
   // ---------- 7. le compte dans le bandeau ----------
   await aller('index.html');
@@ -258,6 +323,39 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.keyboard.press('Escape');
   await pg.waitForTimeout(150);
   ok('et se referme avec Echap', await pg.isVisible('#cpt-menu'), false);
+
+  // ---------- 7 bis. la pastille de nouvelles demandes ----------
+  /* Un gerant qui passe sur le site doit voir qu'on l'attend sans ouvrir
+     l'espace club. La pastille compte les demandes encore a l'etape « Recue »,
+     donc elle se vide en travaillant : pas de colonne « lue » de plus. */
+  await pg.evaluate(() => {
+    window.__FAUX__.demande.push({
+      id: 'd2', club_id: window.__FAUX__.club[0].id, statut: 'recue',
+      cree_le: new Date().toISOString(), nom: 'Yanis Ferhat',
+      mail: 'yanis@example.fr', discipline: 'Kickboxing'
+    });
+  });
+  await garde();
+  await aller('index.html');
+  await pg.waitForTimeout(600);
+  ok('la pastille parait sur le bandeau', await pg.isVisible('.cpt-rond .cpt-pastille'), true);
+  ok('et porte le compte', await pg.textContent('.cpt-rond .cpt-pastille'), '1');
+  ok('le bouton le dit a voix haute',
+     await pg.getAttribute('#cpt-bouton', 'aria-label'),
+     'Team Ouragan Boxe — 1 nouvelle demande');
+  await pg.click('#cpt-bouton');
+  await pg.waitForTimeout(200);
+  ok('le lien vers l\'espace club la porte aussi',
+     await pg.textContent('.cpt-liens li:first-child a'), 'Mon espace club1');
+  await pg.keyboard.press('Escape');
+
+  /* des qu'elle avance d'une etape, elle ne compte plus */
+  await pg.evaluate(() => { window.__FAUX__.demande[1].statut = 'contactee'; });
+  await garde();
+  await aller('index.html');
+  await pg.waitForTimeout(600);
+  ok('une demande traitee ne compte plus',
+     await pg.locator('.cpt-rond .cpt-pastille').count(), 0);
 
   // ---------- 8. la page « Mon compte » ----------
   await aller('mon-compte.html');

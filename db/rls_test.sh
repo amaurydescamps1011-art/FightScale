@@ -181,6 +181,24 @@ ok "ni ne renomme la ligne d'un autre" \
    "$(q "$(cnx $A) with u as (update profil set nom='pirate' where membre_id='$N' returning 1) select count(*) from u;")" "0 "
 ok "le visiteur anonyme ne voit aucun profil" \
    "$(q "set role anon; select count(*) from profil;")" "0 "
+# Les vues d'une fiche : un visiteur en ajoute une par la fonction, et ne lit
+# rien ; le club lit les siennes, personne d'autre. (Club C est reste en
+# attente ; les autres ont ete publies par les tests precedents.)
+q "set role anon; select compte_vue('bbbbbbbb-0000-0000-0000-000000000002');" >/dev/null
+ok "un visiteur compte une vue sur un club publie" \
+   "$(q "select n from vue_fiche where club_id='bbbbbbbb-0000-0000-0000-000000000002';")" "1 "
+q "set role anon; select compte_vue('cccccccc-0000-0000-0000-000000000003');" >/dev/null
+ok "il ne compte rien sur un club qui n'est pas publie" \
+   "$(q "select count(*) from vue_fiche where club_id='cccccccc-0000-0000-0000-000000000003';")" "0 "
+ok "il ne relit pas les chiffres" \
+   "$(q "set role anon; select count(*) from vue_fiche;")" "0 "
+ok "ni n'ecrit dans la table a la main" \
+   "$(q "set role anon; insert into vue_fiche (club_id, n) values ('bbbbbbbb-0000-0000-0000-000000000002', 9999);" | cut -c1-5)" "ERROR"
+ok "le club lit les siennes" \
+   "$(q "$(cnx $B) select n from vue_fiche where club_id='bbbbbbbb-0000-0000-0000-000000000002';")" "1 "
+ok "un autre gerant ne voit pas celles-la" \
+   "$(q "$(cnx $A) select count(*) from vue_fiche where club_id='bbbbbbbb-0000-0000-0000-000000000002';")" "0 "
+
 # l'identifiant Stripe d'un club vit dans `abonnement` et pas sur `club`, parce
 # que l'annuaire lit `club` en select * avec la cle publique
 ok "l'abonnement ne sort pas cote public" \

@@ -276,6 +276,44 @@ drop trigger if exists profil_modifie_le on profil;
 create trigger profil_modifie_le before update on profil
   for each row execute function touche_modifie_le();
 
+-- --------------------------------------------- les vues d'une fiche de club
+-- Amaury, 23/09/2026 : « dans l'espace club, il n'y a rien, donc faut le build.
+-- Faut mettre le max de data. » Le premier chiffre qu'un gerant veut voir, c'est
+-- combien de gens ont regarde sa salle -- et c'est aussi celui qui vend le Pro :
+-- tant de personnes ont vu la fiche, aucune n'a pu appeler.
+--
+-- Un compteur par club et par jour, pas une ligne par visite : on n'a besoin ni
+-- de qui a regarde ni de quand exactement, et ne pas le stocker est plus simple
+-- que de le proteger. Rien la-dedans ne designe une personne.
+create table if not exists vue_fiche (
+  club_id uuid not null references club (id) on delete cascade,
+  jour    date not null default current_date,
+  n       integer not null default 0,
+  primary key (club_id, jour)
+);
+
+-- Le comptage passe par une fonction, jamais par un insert direct : sans elle il
+-- faudrait une politique d'ecriture ouverte a tous sur la table, donc n'importe
+-- qui pourrait ecrire n'importe quel chiffre sur n'importe quel club. Ici le
+-- visiteur ne peut qu'ajouter un a un club publie, et ne relit rien.
+-- La page, de son cote, ne compte qu'une fois par navigateur et par jour : ca ne
+-- resiste pas a quelqu'un de determine, et ce n'est pas le but -- le but est un
+-- chiffre honnete pour le gerant, pas une mesure d'audience opposable.
+create or replace function compte_vue(cible uuid) returns void
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if not exists (select 1 from club where id = cible and statut = 'publie') then
+    return;
+  end if;
+  insert into vue_fiche (club_id, jour, n) values (cible, current_date, 1)
+  on conflict (club_id, jour) do update set n = vue_fiche.n + 1;
+end
+$$;
+
+revoke all on function compte_vue(uuid) from public;
+grant execute on function compte_vue(uuid) to anon, authenticated;
+
 -- ----------------------------------------------------- l'abonnement Stripe
 -- Une table a part, et pas des colonnes sur `club` : l'annuaire lit `club` en
 -- `select *` avec la cle publique, donc tout ce qui vit sur cette table est
@@ -315,6 +353,7 @@ alter table club        enable row level security;
 alter table club_membre enable row level security;
 alter table equipe      enable row level security;
 alter table profil      enable row level security;
+alter table vue_fiche   enable row level security;
 alter table demande     enable row level security;
 alter table abonnement  enable row level security;
 
@@ -463,6 +502,14 @@ create policy demande_suivi on demande
   for update to authenticated
   using (gere_le_club(club_id) or est_admin())
   with check (gere_le_club(club_id) or est_admin());
+
+-- --- vue_fiche ---
+-- Les chiffres d'un club ne regardent que lui. Aucune politique d'ecriture : on
+-- ecrit par `compte_vue()`, qui passe au-dessus du RLS et n'accepte qu'un club
+-- publie.
+drop policy if exists vue_lecture on vue_fiche;
+create policy vue_lecture on vue_fiche
+  for select to authenticated using (gere_le_club(club_id) or est_admin());
 
 -- --- abonnement ---
 -- Un gerant lit le sien, pour savoir jusqu'a quand il est Pro et rouvrir son

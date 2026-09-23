@@ -94,13 +94,16 @@
         : m[1];
 
     complet(club);
+    formule(club);
 
     if (club.statut === 'publie' && club.slug) {
       var voir = document.getElementById('esp-voir');
       voir.href = 'salle.html?s=' + encodeURIComponent(club.slug);
       voir.hidden = false;
     }
-    return prospects(club);
+    /* les demandes d'abord, les visites ensuite : les chiffres du tableau de
+       bord melangent les deux, autant les calculer une fois tout lu */
+    return prospects(club).then(function (){ return vues(club); });
   }).catch(function (e){ rate(SB.dire(e)); });
 
   /* ---------- l'etat de la fiche, poste par poste ----------
@@ -137,10 +140,10 @@
     ];
 
     var faits = lignes.filter(function (l){ return l[1]; }).length;
-    document.getElementById('esp-complet').hidden = false;
+    document.getElementById('esp-complet-bloc').hidden = false;
     document.getElementById('esp-complet-mot').textContent = faits === lignes.length
-      ? 'Votre fiche est complète.'
-      : faits + ' éléments sur ' + lignes.length + ' sont remplis. Voici ce qu’il reste.';
+      ? 'Votre fiche est complète'
+      : faits + ' éléments sur ' + lignes.length + ' sont remplis';
 
     document.getElementById('esp-check').innerHTML = lignes.map(function (l){
       return '<li class="' + (l[1] ? 'ok' : 'manque') + '">' +
@@ -170,16 +173,161 @@
     return tout.filter(function (d){ return etats.indexOf(d.statut) >= 0; }).length;
   }
 
+  /* ---------- le tableau de bord ----------
+     Amaury, 23/09/2026 : « dans l'espace club, il n'y a rien, donc faut le
+     build. Faut mettre le max de data. » Tout ce qui s'affiche ici sort de la
+     base : les visites de `vue_fiche`, le reste des demandes du club. Un club
+     qui vient d'arriver voit des zeros, pas une demonstration. */
+  var LESVUES = [];          /* [{jour, n}, ...] du plus ancien au plus recent */
+
+  function vues(club){
+    return SB.vuesDuClub(club.id, 30).then(function (l){
+      LESVUES = l;
+      document.getElementById('esp-chiffres-bloc').hidden = false;
+      chiffres();
+      courbe(30);
+      entonnoir();
+      manque();
+    });
+  }
+
+  function sommeVues(jours){
+    return LESVUES.slice(-jours).reduce(function (t, x){ return t + x.n; }, 0);
+  }
+
+  /* Un chiffre seul ne dit rien : chaque tuile porte sa phrase, qui dit d'ou il
+     vient ou ce qu'il faudrait pour le faire bouger. */
   function chiffres(){
-    /* Sur une fiche gratuite, annoncer des chiffres a zero ne dit rien : le bloc
-       sert alors a expliquer ce que le Pro apporterait. */
     var gratuit = (clubCourant.offre || 'gratuit') !== 'pro';
-    var compteurs = document.querySelector('.esp-chiffres');
-    if (compteurs) compteurs.hidden = gratuit && !tout.length;
-    document.getElementById('esp-nb').textContent = tout.length;
-    document.getElementById('esp-nb-ok').textContent =
-      compte(['confirmee', 'honoree', 'adherent']);
-    document.getElementById('esp-nb-adh').textContent = compte(['adherent']);
+    var publie = clubCourant.statut === 'publie';
+    var v30 = sommeVues(30), v7 = sommeVues(7);
+    var tuiles = [
+      [v30, v30 === 1 ? 'visite sur votre fiche' : 'visites sur votre fiche',
+       publie ? 'Sur les 30 derniers jours, dont ' + v7 + (v7 === 1 ? ' cette semaine.' : ' cette semaine.')
+              : 'Votre fiche n’est pas encore en ligne : personne ne peut la voir.'],
+      [tout.length, tout.length === 1 ? 'demande reçue' : 'demandes reçues',
+       gratuit ? 'La réservation de séance d’essai demande le Pro.'
+               : 'Depuis la mise en ligne de votre fiche.'],
+      [compte(['confirmee', 'honoree', 'adherent']), 'réservations confirmées',
+       'Une demande confirmée par vous, c’est un essai qui aura lieu.'],
+      [compte(['adherent']), 'devenus adhérents',
+       'La seule fin qui compte vraiment.']
+    ];
+    document.getElementById('esp-kpi').innerHTML = tuiles.map(function (t){
+      return '<li><span class="esp-kpi-nb display">' + t[0] + '</span>' +
+             '<span class="esp-kpi-lb">' + ech(t[1]) + '</span>' +
+             '<span class="esp-kpi-mot">' + ech(t[2]) + '</span></li>';
+    }).join('');
+  }
+
+  /* La courbe : une barre par jour, la plus haute donne l'echelle. Sans aucune
+     visite on garde les barres a zero plutot que de cacher le bloc -- une ligne
+     plate est une information, un bloc absent n'en est pas une. */
+  function courbe(jours){
+    var l = LESVUES.slice(-jours);
+    var haut = l.reduce(function (m, x){ return x.n > m ? x.n : m; }, 0);
+    document.getElementById('esp-courbe').innerHTML = l.map(function (x){
+      var h = haut ? Math.round(x.n / haut * 100) : 0;
+      return '<span class="esp-b" style="--h:' + h + '%" title="' +
+             ech(leJour(x.jour) + ' · ' + x.n + (x.n === 1 ? ' visite' : ' visites')) +
+             '"><i></i></span>';
+    }).join('');
+    var total = l.reduce(function (t, x){ return t + x.n; }, 0);
+    document.getElementById('esp-legende').textContent = total
+      ? 'Du ' + leJour(l[0].jour) + ' à aujourd’hui · ' + total +
+        (total === 1 ? ' visite' : ' visites') + ' · ' + haut + ' le meilleur jour'
+      : 'Aucune visite sur cette période.';
+    Array.prototype.forEach.call(document.querySelectorAll('.esp-periode [data-jours]'),
+      function (b){ b.setAttribute('aria-pressed', +b.dataset.jours === jours ? 'true' : 'false'); });
+  }
+
+  document.querySelector('.esp-periode').addEventListener('click', function (e){
+    var b = e.target.closest ? e.target.closest('[data-jours]') : null;
+    if (b) courbe(+b.dataset.jours);
+  });
+
+  function leJour(iso){
+    var d = new Date(iso + 'T12:00:00');
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+  }
+
+  /* L'entonnoir : chaque etape avec ce qu'elle garde de la precedente. C'est la
+     lecture qu'un gerant ne fait pas tout seul -- beaucoup de visites et aucune
+     demande, c'est la fiche ; beaucoup de demandes et peu de venues, c'est le
+     rappel qui manque. */
+  function entonnoir(){
+    var v = sommeVues(30);
+    var etapes = [
+      ['Visites de la fiche', v, null],
+      ['Demandes de séance d’essai', tout.length, v],
+      ['Réservations confirmées', compte(['confirmee', 'honoree', 'adherent']), tout.length],
+      ['Venues à la séance', compte(['honoree', 'adherent']), compte(['confirmee', 'honoree', 'adherent'])],
+      ['Devenus adhérents', compte(['adherent']), compte(['honoree', 'adherent'])]
+    ];
+    /* sans la moindre visite ni la moindre demande, il n'y a pas d'entonnoir a
+       montrer : ce serait cinq zeros et quatre pourcentages vides */
+    var bloc = document.getElementById('esp-entonnoir');
+    if (!v && !tout.length) { bloc.hidden = true; return; }
+    bloc.hidden = false;
+    var large = etapes[0][1] || 1;
+    document.getElementById('esp-etapes').innerHTML = etapes.map(function (e){
+      var part = Math.max(3, Math.round((e[1] / large) * 100));
+      var taux = (e[2] === null || !e[2]) ? '' :
+        Math.round(e[1] / e[2] * 100) + ' % de l’étape précédente';
+      return '<li><span class="esp-et-lb">' + ech(e[0]) + '</span>' +
+             '<span class="esp-et-bar"><i style="width:' + part + '%"></i></span>' +
+             '<b class="esp-et-nb">' + e[1] + '</b>' +
+             '<span class="esp-et-taux">' + ech(taux) + '</span></li>';
+    }).join('');
+  }
+
+  /* Ce que le gratuit fait manquer, avec le vrai chiffre. Pas d'argumentaire
+     invente : le nombre de gens qui sont passes et n'ont rien trouve pour
+     joindre la salle. Sans visite, on ne dit rien -- ce serait du vent. */
+  function manque(){
+    var gratuit = (clubCourant.offre || 'gratuit') !== 'pro';
+    var v = sommeVues(30);
+    var bloc = document.getElementById('esp-manque-bloc');
+    if (!gratuit || !v) { bloc.hidden = true; return; }
+    bloc.hidden = false;
+    document.getElementById('esp-manque-titre').textContent = v === 1
+      ? 'Une personne a vu votre fiche ce mois-ci'
+      : v + ' personnes ont vu votre fiche ce mois-ci';
+    document.getElementById('esp-manque-mot').textContent = v === 1
+      ? 'Elle n’a trouvé ni votre téléphone, ni votre e-mail, ni de quoi réserver : '
+        + 'votre fiche est gratuite, et c’est l’abonnement qui ouvre le contact.'
+      : 'Aucune n’a trouvé votre téléphone, votre e-mail, ni de quoi réserver une '
+        + 'séance d’essai : votre fiche est gratuite, et c’est l’abonnement qui '
+        + 'ouvre le contact.';
+  }
+
+  /* Le rappel de la formule : ce qu'il a, et ce qu'il n'a pas. Dit franchement,
+     y compris ce qui n'est pas encore construit. */
+  function formule(club){
+    var pro = (club.offre || 'gratuit') === 'pro';
+    document.getElementById('esp-formule-bloc').hidden = false;
+    document.getElementById('esp-formule-titre').textContent =
+      pro ? 'Mon Club Combat Pro' : 'Fiche gratuite';
+    var lignes = pro
+      ? [[1, 'Votre fiche, vos photos et votre planning dans l’annuaire'],
+         [1, 'Votre salle mise en avant dans les résultats'],
+         [1, 'Téléphone, e-mail, site et réseaux visibles'],
+         [1, 'Réservation de séance d’essai sur vos vrais cours'],
+         [1, 'Le suivi de vos prospects, de la demande à l’adhésion'],
+         [0, 'Les relances par e-mail et les statistiques d’acquisition, bientôt']]
+      : [[1, 'Votre fiche, vos photos et votre planning dans l’annuaire'],
+         [1, 'Les visites de votre fiche, comptées ici'],
+         [0, 'Téléphone, e-mail, site et réseaux : masqués'],
+         [0, 'Réservation de séance d’essai : fermée'],
+         [0, 'Mise en avant dans les résultats : non']];
+    document.getElementById('esp-formule').innerHTML = lignes.map(function (l){
+      return '<li class="' + (l[0] ? 'ok' : 'non') + '">' +
+        '<span class="esp-puce">' + (l[0] ? OUI : NON) + '</span>' + ech(l[1]) + '</li>';
+    }).join('');
+    document.getElementById('esp-formule-note').innerHTML = pro
+      ? 'Mon Club Combat Pro, 39 € par mois, sans engagement.'
+      : 'Mon Club Combat Pro, 39 € par mois, sans engagement. ' +
+        '<a href="clubs.html#pro">Voir ce qu’il ajoute</a>.';
   }
 
   function entetes(){
@@ -225,13 +373,25 @@
            ['adherent', 'annulee'].indexOf(d.statut) < 0;
   }
 
+  /* Deux choses demandent une action aujourd'hui : une demande a laquelle
+     personne n'a encore touche, et une relance arrivee a echeance. C'est la
+     meme phrase que la pastille du bandeau compte pour la premiere. */
   function rappel(){
+    var neuves = compte(['recue']);
     var n = tout.filter(duJour).length;
+    var bouts = [];
+    if (neuves) bouts.push(neuves === 1
+      ? 'Une demande n’a pas encore été traitée'
+      : neuves + ' demandes n’ont pas encore été traitées');
+    if (n) bouts.push(n === 1
+      ? 'un prospect est à relancer aujourd’hui'
+      : n + ' prospects sont à relancer aujourd’hui');
     var p = document.getElementById('esp-rappel');
-    p.hidden = !n;
-    if (n) p.textContent = n === 1
-      ? 'Un prospect est à relancer aujourd’hui.'
-      : n + ' prospects sont à relancer aujourd’hui.';
+    p.hidden = !bouts.length;
+    if (bouts.length) {
+      var t = bouts.join(', et ');
+      p.textContent = t.charAt(0).toUpperCase() + t.slice(1) + '.';
+    }
   }
 
   function visibles(){
@@ -312,7 +472,7 @@
     var li = b.closest('.demande');
     b.disabled = true;
     enregistre(li.dataset.id, { statut: b.dataset.suivi })
-      .then(function (){ chiffres(); rend(); })
+      .then(function (){ chiffres(); entonnoir(); rend(); })
       .catch(function (err){ b.disabled = false; rate(SB.dire(err)); });
   });
 

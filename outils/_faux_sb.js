@@ -18,17 +18,28 @@ window.supabase = {
       session: null, users: {}, club: [], club_membre: [], demande: [], equipe: [],
       /* une ligne par compte, posee a l'inscription par un trigger en base */
       profil: [],
+      /* une ligne par club et par jour, comptee par la fonction compte_vue */
+      vue_fiche: [],
       /* `annuaire` est une vue, pas une table : elle est calculee a la lecture */
       annuaire: [],
       fichiers: []
     };
+    /* Les jeux d'essai des tests posent leur propre etat dans sessionStorage, et
+       certains ont ete ecrits avant l'arrivee d'une table. Sans ces valeurs par
+       defaut, une lecture sur une table absente casse la page entiere -- c'est
+       ce qui est arrive a la fiche le jour ou `vue_fiche` est apparue. */
+    ['users', 'club', 'club_membre', 'demande', 'equipe', 'profil', 'vue_fiche',
+     'annuaire', 'fichiers'].forEach(function (t){
+      if (!S[t]) S[t] = (t === 'users') ? {} : [];
+    });
     var sauve = window.__FAUX_ECRIT__;
     var uid = function (){ return S.session && S.session.user.id; };
     var neuf = function (){ return 'id-' + Math.random().toString(36).slice(2, 10); };
 
     /* un constructeur de requete : select/update/eq/order/limit/single, thenable */
     function Req(table){
-      var f = { table: table, op: 'select', filtres: [], un: false, champs: null };
+      var f = { table: table, op: 'select', filtres: [], bornes: [], un: false,
+                champs: null };
       var api = {
         /* `select()` ne change pas l'operation : il dit seulement ce qu'on veut
            en retour. Il remettait `op` a 'select', ce qui annulait l'upsert de
@@ -39,6 +50,7 @@ window.supabase = {
         insert: function (c){ f.op = 'insert'; f.champs = c; return api; },
         upsert: function (c){ f.op = 'upsert'; f.champs = c; return api; },
         eq: function (k, v){ f.filtres.push([k, v]); return api; },
+        gte: function (k, v){ f.bornes.push([k, v]); return api; },
         order: function (){ return api; },
         limit: function (){ return api; },
         single: function (){ f.un = true; return api; },
@@ -47,7 +59,8 @@ window.supabase = {
       };
       function lignes(){
         return S[f.table].filter(function (r){
-          return f.filtres.every(function (p){ return r[p[0]] === p[1]; });
+          return f.filtres.every(function (p){ return r[p[0]] === p[1]; })
+            && f.bornes.every(function (p){ return r[p[0]] >= p[1]; });
         });
       }
       function execute(){
@@ -188,6 +201,22 @@ window.supabase = {
       },
       from: function (t){ return Req(t); },
       rpc: function (nom, args){
+        if (nom === 'compte_vue') {
+          /* Comme en base : seule la fiche d'un club publie est comptee, et une
+             seule ligne existe par club et par jour. Un club en attente ne doit
+             rien accumuler, sinon son tableau de bord mentirait le jour ou il
+             passe en ligne. */
+          var pub = S.club.filter(function (c){
+            return c.id === args.cible && c.statut === 'publie'; })[0];
+          if (!pub) return Promise.resolve({ data: null, error: null });
+          var jour = new Date().toISOString().slice(0, 10);
+          var ligne = S.vue_fiche.filter(function (v){
+            return v.club_id === args.cible && v.jour === jour; })[0];
+          if (ligne) ligne.n += 1;
+          else S.vue_fiche.push({ club_id: args.cible, jour: jour, n: 1 });
+          sauve();
+          return Promise.resolve({ data: null, error: null });
+        }
         if (nom !== 'creer_mon_club') return Promise.resolve({ error: { message: 'inconnu' } });
         if (!uid()) return Promise.resolve({ error: { message: 'Il faut etre connecte' } });
         if (S.club_membre.some(function (m){ return m.membre_id === uid(); }))

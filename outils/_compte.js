@@ -227,12 +227,21 @@
     'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" ' +
     'aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 
+  /* La pastille de nouvelles demandes : un gerant qui passe sur le site doit voir
+     qu'on l'attend sans avoir a ouvrir l'espace club. Elle compte les demandes
+     encore a l'etape « Recue », donc elle se vide en travaillant. Au-dela de neuf
+     on ecrit « 9+ », pour que le rond garde sa taille. */
+  function pastille(n){
+    return '<span class="cpt-pastille" aria-hidden="true">' + (n > 9 ? '9+' : n) + '</span>';
+  }
+
   function poseMenu(infos){
     if (!bandeau) return;
     var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon compte';
+    var neuves = infos.neuves || 0;
     var liens = [];
     if (infos.club) {
-      liens.push(['espace-club.html', 'Mon espace club']);
+      liens.push(['espace-club.html', 'Mon espace club', neuves]);
       liens.push(['referencer.html', 'Modifier ma fiche']);
       if (infos.club.statut === 'publie' && infos.club.slug)
         liens.push(['salle.html?s=' + encodeURIComponent(infos.club.slug), 'Voir ma fiche en ligne']);
@@ -246,12 +255,14 @@
     zone.className = 'nav-compte';
     zone.innerHTML =
       '<button class="cpt-bouton" type="button" id="cpt-bouton" aria-expanded="false" ' +
-        'aria-haspopup="true"><span class="cpt-rond">' + ech(initiales(nom)) + '</span>' +
+        'aria-haspopup="true"><span class="cpt-rond">' + ech(initiales(nom)) +
+        (neuves ? pastille(neuves) : '') + '</span>' +
         '<span class="cpt-nom">' + ech(nom) + '</span>' + CHEV + '</button>' +
       '<div class="cpt-menu" id="cpt-menu" hidden>' +
         '<p class="cpt-tete"><b>' + ech(nom) + '</b><span>' + ech(infos.mail) + '</span></p>' +
         '<ul class="cpt-liens">' + liens.map(function (l){
-            return '<li><a href="' + l[0] + '">' + ech(l[1]) + '</a></li>';
+            return '<li><a href="' + l[0] + '">' + ech(l[1]) +
+                   (l[2] ? pastille(l[2]) : '') + '</a></li>';
           }).join('') + '</ul>' +
         '<button type="button" class="cpt-sortie" id="cpt-sortie">Se déconnecter</button>' +
       '</div>';
@@ -260,6 +271,9 @@
 
     var b = zone.querySelector('#cpt-bouton');
     var m = zone.querySelector('#cpt-menu');
+    /* la pastille est un decor : c'est le bouton qui dit le chiffre a voix haute */
+    if (neuves) b.setAttribute('aria-label', nom + ' — ' + neuves +
+      (neuves === 1 ? ' nouvelle demande' : ' nouvelles demandes'));
     function ouvert(oui){
       m.hidden = !oui;
       b.setAttribute('aria-expanded', oui ? 'true' : 'false');
@@ -295,7 +309,12 @@
       var mail = (s.user && s.user.email) || '';
       return Promise.all([SB.monClub(), SB.monProfil(), SB.estAdmin()])
         .then(function (r){
-          poseMenu({ mail: mail, club: r[0], profil: r[1], admin: r[2] });
+          /* un club gratuit ne recoit aucune demande : on ne l'interroge que si
+             la fonction existe, pour qu'une vieille page mise en cache ne casse pas */
+          var n = (r[0] && SB.nouvellesDemandes) ? SB.nouvellesDemandes(r[0].id) : 0;
+          return Promise.resolve(n).then(function (neuves){
+            poseMenu({ mail: mail, club: r[0], profil: r[1], admin: r[2], neuves: neuves });
+          });
         });
     }).catch(function (){ /* le bandeau reste celui d'un visiteur */ });
   }
