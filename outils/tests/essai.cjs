@@ -152,20 +152,34 @@ const dit = (b, quoi) => { console.log((b ? '  ok    ' : '  RATE  ') + quoi); b 
   dit(!demo.essai, 'pas de formulaire de réservation');
   dit(demo.note && demo.reclamer && demo.bandeau, 'la fiche d’exemple n’a pas bougé');
 
-  console.log('\n5. la fiche gratuite ne prend pas de réservation');
+  console.log('\n5. la fiche gratuite ne donne ni coordonnées ni réservation');
   await p.goto(base + 'salle.html?s=boxing-club-lyon', { waitUntil: 'networkidle' });
   await p.waitForTimeout(600);
   const grat = await p.evaluate(() => ({
     visible: !document.getElementById('fiche').hidden,
     essai: !document.getElementById('essai').hidden,
     ancre: !!document.querySelector('#s-actions a[href="#essai"]'),
-    premier: (document.querySelector('#s-actions .btn') || {}).className || '',
-    tel: (document.getElementById('s-actions').textContent || '')
+    actions: document.querySelectorAll('#s-actions .btn').length,
+    coordVu: !document.getElementById('pan-coord').hidden,
+    fermeVu: !document.getElementById('pan-coord-ferme').hidden,
+    /* le telephone ne doit apparaitre nulle part dans la page, meme pas dans
+       un href : c'est ce qu'un curieux irait chercher */
+    telDansPage: /0478|04 78|bclyon/.test(document.body.innerHTML),
   }));
   dit(grat.visible, 'la fiche gratuite s’affiche quand même');
   dit(!grat.essai && !grat.ancre, 'ni formulaire ni bouton de réservation');
-  dit(/btn-rouge/.test(grat.premier) && /Appeler la salle/.test(grat.tel),
-      'c’est « Appeler la salle » qui prend la place');
+  dit(grat.actions === 0, 'et aucun bouton d’action : ni appel, ni e-mail');
+  dit(!grat.coordVu && grat.fermeVu, 'le bloc contact est remplacé par le bloc fermé');
+  dit(!grat.telDansPage, 'le téléphone du club n’est nulle part dans la page');
+
+  /* La page ne peut pas cacher ce que la base ne lui a pas donne : c'est la vue
+     `annuaire` qui remplace les coordonnees d'un club gratuit par null. */
+  const brut = await p.evaluate(() => window.MCC.client.from('annuaire')
+    .select('*').eq('slug', 'boxing-club-lyon').limit(1)
+    .then(r => r.data[0])
+    .then(c => [c.tel, c.mail, c.instagram, c.facebook, c.site].join('|')));
+  dit(brut === '||||' || /^(null|)\|/.test(brut),
+      'et la base elle-même ne les rend pas (' + JSON.stringify(brut) + ')');
 
   /* et pas seulement dans la page : la politique d'acces refuse le depot */
   const force = await p.evaluate(() => window.MCC.deposeDemande('c2', {

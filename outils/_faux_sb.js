@@ -16,6 +16,8 @@ window.supabase = {
   createClient: function (){
     var S = window.__FAUX__ = window.__FAUX__ || window.__FAUX_LIT__() || {
       session: null, users: {}, club: [], club_membre: [], demande: [], equipe: [],
+      /* `annuaire` est une vue, pas une table : elle est calculee a la lecture */
+      annuaire: [],
       fichiers: []
     };
     var sauve = window.__FAUX_ECRIT__;
@@ -63,13 +65,32 @@ window.supabase = {
             res({ data: f.un ? ligne : [ligne], error: null });
             return;
           }
-          if (f.table === 'club' && f.op === 'select' && !f.filtres.length) {
-            /* la politique de lecture : les publies, plus les siens ; l'equipe voit tout */
+          if (f.table === 'annuaire' && f.op === 'select') {
+            /* La vue publique : les clubs publies, et les coordonnees d'un club
+               gratuit remplacees par null. On la refait ici pour que les pages
+               soient eprouvees sur ce que la base rend vraiment -- si une page
+               affichait le telephone d'un club gratuit, le test le verrait. */
+            l = S.club.filter(function (c){ return c.statut === 'publie'; })
+              .map(function (c){
+                var v = {}, pro = c.offre === 'pro';
+                Object.keys(c).forEach(function (k){ v[k] = c[k]; });
+                delete v.contact_nom;
+                ['tel', 'mail', 'site', 'instagram', 'facebook'].forEach(function (k){
+                  if (!pro) v[k] = null;
+                });
+                return v;
+              })
+              .filter(function (r){
+                return f.filtres.every(function (q){ return r[q[0]] === q[1]; });
+              });
+          } else if (f.table === 'club' && f.op === 'select' && !f.filtres.length) {
+            /* la table, elle, n'est plus lisible publiquement : un gerant voit
+               son club, l'equipe voit tout, et personne d'autre ne voit rien */
             var admin = S.equipe.some(function (e){ return e.membre_id === uid(); });
             var miens = S.club_membre.filter(function (m){ return m.membre_id === uid(); })
                                      .map(function (m){ return m.club_id; });
             l = S.club.filter(function (c){
-              return admin || c.statut === 'publie' || miens.indexOf(c.id) >= 0; });
+              return admin || miens.indexOf(c.id) >= 0; });
           } else if (f.table === 'club_membre' && f.op === 'select') {
             l = S.club_membre.filter(function (m){ return m.membre_id === uid(); })
               .map(function (m){

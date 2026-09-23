@@ -246,7 +246,7 @@ ECRITS = {}
 # ---------- une page par discipline ----------
 for d in DISCIPLINES:
     lot = [s for s in SALLES if d in s[5]]
-    lot.sort(key=lambda s: (s[2], s[0]))
+    lot.sort(key=lambda s: (not s[8], s[2], s[0]))
     villes = sorted({s[2] for s in lot})
     n = len(lot)
     ou = ''
@@ -292,7 +292,7 @@ for d in DISCIPLINES:
 # ---------- une page par ville ----------
 for v in VILLES:
     lot = [s for s in SALLES if s[2] == v]
-    lot.sort(key=lambda s: s[0])
+    lot.sort(key=lambda s: (not s[8], s[0]))
     discs = []
     for s in lot:
         for x in s[5]:

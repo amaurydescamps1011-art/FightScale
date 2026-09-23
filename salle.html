@@ -341,6 +341,16 @@
   .pan-club p{ margin:0 0 14px; color:var(--texte-2); font-size:14.5px; line-height:1.55; }
   .pan-club .btn{ width:100%; }
 
+  /* Le bloc ferme d'une fiche sans abonnement. Il ne crie pas : le pratiquant
+     n'y peut rien, et c'est le gerant de la salle qu'on veut atteindre. Un fond
+     legerement creuse et le cadenas dans le titre suffisent a dire que quelque
+     chose manque, sans faux bouton grise ni texte floute. */
+  .pan-ferme{ background:var(--surface-2); }
+  .pan-ferme .cote-titre{ display:flex; align-items:center; gap:8px; color:var(--texte-2); }
+  .pan-ferme .cote-titre svg{ color:var(--texte-4); flex:none; }
+  .pan-ferme p{ margin:0; color:var(--texte-2); font-size:14.5px; line-height:1.55; }
+  .pan-ferme .btn{ width:100%; margin-top:14px; }
+
   /* ---------- autres salles ---------- */
   .autour{ border-top:1px solid var(--bord); padding-block:34px 44px; }
   .autour-liste{ list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px;
@@ -500,6 +510,26 @@
   .fen-bascule{margin:0; font-size:13px; color:var(--texte-4)}
   .fen-bascule [data-mode][hidden]{display:none}
   .champ[hidden]{display:none}
+
+  /* le monogramme en tete de fenetre */
+  .fen-logo{display:block; color:var(--texte)}
+
+  /* « Continuer avec Google » : blanc, cadre gris, logo a quatre couleurs. Les
+     regles de marque de Google veulent ce rendu-la et ce libelle-la, donc on ne
+     l'habille pas aux couleurs du site. */
+  .btn-google{margin-top:20px; width:100%; gap:11px;
+    background:var(--surface); color:var(--texte);
+    border:1px solid var(--bord-3); box-shadow:none;
+    font-size:15px; font-weight:700}
+  .btn-google:hover{background:var(--surface-2); border-color:var(--texte-4); color:var(--texte)}
+  .btn-google[hidden]{display:none}
+
+  /* le trait coupe par « ou » : deux filets qui remplissent ce qui reste */
+  .fen-ou{display:flex; align-items:center; gap:14px; margin:18px 0 0;
+    color:var(--texte-4); font-size:12.5px; font-weight:600}
+  .fen-ou::before,.fen-ou::after{content:""; flex:1; height:1px; background:var(--bord)}
+  .fen-ou[hidden]{display:none}
+  .fen-form{margin-top:16px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -578,8 +608,10 @@
          depuis « Referencer ma salle ». Aucun visiteur ne tombe dessus par
          l'annuaire : elle n'y est pas. -->
     <p class="bandeau-demo" id="bandeau-demo" hidden>
-      <b>Exemple</b> — ce club n'existe pas. Voici la fiche que votre salle
-      obtient gratuitement. <a href="clubs.html">Référencer la mienne</a>
+      <b>Exemple</b> — ce club n'existe pas. Voici une fiche complète, telle
+      qu'elle paraît avec Mon Club Combat Pro&nbsp;: coordonnées visibles et
+      réservation en ligne. Le référencement, lui, reste gratuit.
+      <a href="clubs.html">Référencer ma salle</a>
     </p>
 
     <nav class="fil" aria-label="Fil d'Ariane">
@@ -694,11 +726,34 @@
             </div>
           </section>
 
-          <section class="pan">
+          <section class="pan" id="pan-coord">
             <h2 class="cote-titre">Contacter la salle</h2>
             <ul class="coord" id="s-coord"></ul>
             <p class="cote-note">Dites que vous venez de Mon Club Combat, la salle saura d'où
               vous arrivez.</p>
+          </section>
+
+          <!-- Ce que voit une fiche sans abonnement : les coordonnees sont le
+               paywall (Amaury, 23/09/2026). Le texte ne s'adresse pas au
+               pratiquant, qui n'y peut rien, mais au gerant qui tombe sur sa
+               propre fiche. -->
+          <section class="pan pan-ferme" id="pan-coord-ferme" hidden>
+            <h2 class="cote-titre">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Coordonnées non communiquées
+            </h2>
+            <p>Cette salle n’a pas ouvert son téléphone, son e-mail ni ses réseaux sur
+              Mon Club Combat, et ne prend pas de réservation en ligne.</p>
+            <p class="cote-note">Vous gérez cette salle&nbsp;? Mon Club Combat Pro affiche vos
+              coordonnées, met votre fiche en avant et vous envoie les demandes de séance
+              d’essai.</p>
+            <!-- en trait, pas en plein : c'est la page d'une salle que le
+                 pratiquant est venu lire, pas une page de vente. Le bouton
+                 doit etre trouvable par le gerant, pas crier au visiteur. -->
+            <button class="btn btn-ligne" type="button" data-compte>Activer le Pro</button>
           </section>
 
           <section class="pan pan-club">
@@ -1042,10 +1097,14 @@ function miniCarte(cv, lat, lon, largeurKm){
 }
 /* Fiche salle.
    Ce que porte la fiche gratuite : adresse et localisation, horaires, disciplines,
-   présentation, coordonnées, site et réseaux. Le pratiquant appelle ou écrit,
-   et le club rappelle : rien ne passe par nous.
-   Ce que le palier Pro ajoute : la demande de séance d'essai en ligne, qui
-   arrive dans l'espace club et devient un lead une fois confirmée. */
+   présentation, photos. Le club y est trouvable, et c'est tout.
+   Ce que le palier Pro ajoute (Amaury, 23/09/2026) : le téléphone, l'e-mail, le
+   site et les réseaux, la demande de séance d'essai en ligne, et la mise en
+   avant dans les résultats. Sans abonnement, un pratiquant n'a aucun moyen de
+   joindre la salle depuis ici : c'est ce manque qui fait passer un club au Pro.
+   La base applique la même règle : la vue `annuaire` ne rend tout simplement
+   pas les coordonnées d'un club gratuit, donc refaire la requête à la main ne
+   les donne pas non plus. */
 
 var I = {
   etoile:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>',
@@ -1152,16 +1211,18 @@ function rendFiche(s){
   document.getElementById('s-disc').innerHTML =
     s[5].map(function (x){ return '<li>' + echappe(x) + '</li>'; }).join('');
 
-  /* La reservation en ligne appartient au palier Pro : sur une fiche gratuite,
-     le pratiquant appelle ou ecrit, et c'est au club de rappeler. Le lead passe
-     par nous uniquement quand le club paie pour ca. */
-  var reserve = d.reel && !!s[8];
+  /* Contacter et reserver sont ce que le club achete. Sur une fiche gratuite il
+     n'y a donc aucun bouton d'action : ni appel, ni e-mail, ni reservation.
+     `d.tel` et compagnie sont deja vides de toute facon, la base ne les a pas
+     rendus -- ce test-ci n'est que la version visible de la regle. */
+  var pro = !!s[8];
+  var reserve = d.reel && pro;
   var actions = [];
   if (reserve) actions.push('<a class="btn btn-rouge" href="#essai">' + I.gant +
                             'Réserver une séance d’essai</a>');
-  if (d.tel) actions.push('<a class="btn ' + (reserve ? 'btn-ligne' : 'btn-rouge') +
+  if (pro && d.tel) actions.push('<a class="btn ' + (reserve ? 'btn-ligne' : 'btn-rouge') +
     '" href="tel:' + d.tel.replace(/\s/g, '') + '">' + I.tel + 'Appeler la salle</a>');
-  if (d.mail) actions.push('<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
+  if (pro && d.mail) actions.push('<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
                            I.mail + 'Écrire un e-mail</a>');
   document.getElementById('s-actions').innerHTML = actions.join('');
 
@@ -1261,14 +1322,22 @@ function rendFiche(s){
   if (boitePlan) boitePlan.hidden = !aUnPoint;
 
   var coord = [];
-  if (d.tel)  coord.push(lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel));
-  if (d.mail) coord.push(lien('mailto:' + d.mail, I.mail, d.mail));
-  if (d.site)  coord.push(lien('https://' + d.site, I.web, d.site, true));
-  if (d.insta) coord.push(lien('https://instagram.com/' + d.insta, I.insta, '@' + d.insta, true));
-  if (d.fb)    coord.push(lien('https://facebook.com/' + d.fb, I.fb, d.fb, true));
+  if (pro) {
+    if (d.tel)  coord.push(lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel));
+    if (d.mail) coord.push(lien('mailto:' + d.mail, I.mail, d.mail));
+    if (d.site)  coord.push(lien('https://' + d.site, I.web, d.site, true));
+    if (d.insta) coord.push(lien('https://instagram.com/' + d.insta, I.insta, '@' + d.insta, true));
+    if (d.fb)    coord.push(lien('https://facebook.com/' + d.fb, I.fb, d.fb, true));
+  }
   document.getElementById('s-coord').innerHTML = coord.join('');
-  var panCoord = document.getElementById('s-coord').closest('.pan');
+  /* Un club sans abonnement ne laisse pas un trou a la place du bloc : il montre
+     le bloc ferme, qui dit pourquoi et s'adresse au gerant. La salle de
+     demonstration, elle, garde ses coordonnees d'exemple sans etre traitee de
+     gratuite : elle n'est pas un vrai club. */
+  var panCoord = document.getElementById('pan-coord');
+  var panFerme = document.getElementById('pan-coord-ferme');
   if (panCoord) panCoord.hidden = !coord.length;
+  if (panFerme) panFerme.hidden = !(d.reel && !pro);
 
   /* Les salles voisines, par distance réelle plutôt que par nom de ville. Au-delà
      de 60 km on ne parle plus de voisinage : le titre change plutôt que d'annoncer
@@ -1389,7 +1458,9 @@ function ouvreEssai(s){
   });
 
   function chercheEnBase(SB, demande){
-  SB.client.from('club').select('*').eq('statut', 'publie').eq('slug', demande).limit(1)
+  /* `annuaire` et pas `club` : la vue est la seule lecture publique, et
+     c'est elle qui masque les coordonnees d'un club gratuit. */
+  SB.client.from('annuaire').select('*').eq('slug', demande).limit(1)
     .then(function (r){
       var l = (r && r.data) || [];
       if (!l.length) { introuvable(); return; }
@@ -1425,10 +1496,32 @@ function ouvreEssai(s){
 <div class="voile" id="voile" hidden>
   <div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="fen-titre">
     <button class="fen-fermer" type="button" id="fermer-compte" aria-label="Fermer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
+    <!-- Amaury, 23/09/2026 : la creation de compte « ne donne pas trop de trust ».
+         Le monogramme dit chez qui on entre : une fenetre qui demande un mot de
+         passe sans jamais se nommer ressemble a n'importe quoi. -->
+    <svg class="fen-logo" viewBox="212 589 389 369" width="34" height="32" role="img"
+      aria-label="Mon Club Combat">
+      <use href="#mcc-mono-m" fill="currentColor"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+    </svg>
     <p class="eyebrow" id="fen-etape">Étape 1 sur 2</p>
     <h2 class="fen-titre display" id="fen-titre">Créez votre espace club</h2>
     <p class="fen-mot" id="fen-mot">Vous y modifierez votre fiche et vous y recevrez les demandes de séance
       d'essai. La fiche de votre salle se remplit juste après.</p>
+
+    <!-- Le chemin le plus court en premier : pas de mot de passe a inventer, pas
+         d'e-mail a confirmer, et une adresse dont on sait qu'elle existe.
+         Demande a Supabase le fournisseur Google active ; sans lui, le bouton
+         disparait plutot que de renvoyer une erreur. -->
+    <button class="btn btn-google" type="button" id="fen-google">
+      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.8c-.5 2.7-2 5-4.4 6.6v5.5h7.1c4.2-3.8 6.6-9.5 6.6-16.1z"/>
+        <path fill="#34A853" d="M24 46c6 0 11-2 14.6-5.4l-7.1-5.5c-2 1.3-4.5 2.1-7.5 2.1-5.8 0-10.7-3.9-12.4-9.1H4.3v5.7C7.9 41.1 15.4 46 24 46z"/>
+        <path fill="#FBBC05" d="M11.6 28.1c-.4-1.3-.7-2.7-.7-4.1s.3-2.8.7-4.1v-5.7H4.3A22 22 0 0 0 2 24c0 3.6.9 6.9 2.3 9.8l7.3-5.7z"/>
+        <path fill="#EA4335" d="M24 10.8c3.3 0 6.2 1.1 8.5 3.3l6.3-6.3C35 4.1 30 2 24 2 15.4 2 7.9 6.9 4.3 14.2l7.3 5.7c1.7-5.2 6.6-9.1 12.4-9.1z"/>
+      </svg>
+      <span id="fen-google-mot">Continuer avec Google</span>
+    </button>
+    <p class="fen-ou" id="fen-ou"><span>ou avec votre e-mail</span></p>
 
     <form class="fen-form" id="form-compte" novalidate>
       <div class="champ" id="champ-nom">
@@ -1447,7 +1540,8 @@ function ouvreEssai(s){
       <!-- l'erreur renvoyee par le serveur, en francais -->
       <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
       <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
-      <p class="fen-note" id="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+      <p class="fen-note" id="fen-note">Gratuit, sans carte bancaire. Nous vérifions chaque fiche
+        avant de la publier, et vos coordonnées ne servent qu'à votre salle.</p>
       <!-- Un gerant qui revient trois mois plus tard a oublie son mot de passe.
            Sans ce lien, il n'a aucun moyen de rentrer dans son espace. -->
       <p class="fen-bascule" data-mode="connexion" hidden>
@@ -1543,6 +1637,47 @@ function ouvreEssai(s){
       if (e.shiftKey && document.activeElement === premier) { e.preventDefault(); dernier.focus(); }
       else if (!e.shiftKey && document.activeElement === dernier) { e.preventDefault(); premier.focus(); }
     }
+  });
+
+  /* ---------- « Continuer avec Google » ----------
+     Supabase porte l'echange OAuth de bout en bout : on l'envoie sur Google, il
+     revient sur redirectTo avec une session ouverte. Il n'y a donc ni mot de
+     passe a stocker ni e-mail a confirmer, et l'adresse est verifiee par Google.
+     Le club, lui, est cree au premier passage sur referencer.html, comme apres
+     une inscription classique -- c'est le seul endroit qui sait s'il en existe
+     deja un.
+
+     Le fournisseur se regle dans Supabase (Authentication > Providers > Google).
+     Tant qu'il n'est pas active, le bouton n'a rien a offrir : il disparait, avec
+     le trait « ou », plutot que de mener a une page d'erreur Google. */
+  var google = document.getElementById('fen-google');
+  var ou = document.getElementById('fen-ou');
+  google.addEventListener('click', function (){
+      montre('');
+      /* sans serveur (la maquette en Artifact, ou une coupure), le bouton reste
+         affiche -- c'est le chemin principal, le cacher donnerait a voir une
+         fenetre qui n'est pas celle du site -- mais il dit pourquoi il ne part pas */
+      if (!reel) { montre('La connexion Google a besoin du serveur. Sur le site en ligne, ce bouton vous y emmène.'); return; }
+      google.disabled = true;
+      document.getElementById('fen-google-mot').textContent = 'Ouverture de Google…';
+      SB.client.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: location.href.replace(/[^/]*$/, '') + 'referencer.html',
+          /* on ne demande que l'identite : ni contacts, ni agenda, ni rien qui
+             ferait hesiter un gerant devant l'ecran d'autorisation */
+          scopes: 'email profile'
+        }
+      }).then(function (r){
+        if (r && r.error) throw r.error;
+        /* succes = le navigateur part chez Google, il n'y a rien a faire ici */
+      }).catch(function (e){
+        google.disabled = false;
+        document.getElementById('fen-google-mot').textContent = 'Continuer avec Google';
+        montre(/provider is not enabled/i.test(String(e && e.message))
+          ? 'La connexion Google n’est pas encore ouverte. Créez votre espace avec votre e-mail.'
+          : SB.dire(e));
+      });
   });
 
   /* ---------- creation ou connexion ---------- */

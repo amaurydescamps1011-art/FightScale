@@ -1,0 +1,11 @@
+# Les deux fonctions de paiement. Rien n'est deploye a ce jour (23/09/2026) :
+# il n'y a pas encore de compte Stripe, voir LISEZ-MOI.md.
+
+[functions.paiement]
+# appelee par le gerant depuis son espace : son jeton Supabase fait foi
+verify_jwt = true
+
+[functions.paiement-stripe]
+# Stripe n'a pas de jeton Supabase. C'est la signature Stripe, verifiee dans
+# la fonction, qui tient lieu de preuve -- d'ou ce false, qui n'est pas un oubli.
+verify_jwt = false

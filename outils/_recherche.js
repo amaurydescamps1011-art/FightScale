@@ -105,6 +105,14 @@ function calcule(){
                 (!etat.ouvert || o.ouvert) && (!etat.pro || o.pro);
     (garde ? res : autres).push(o);
   });
+  /* La mise en avant des clubs Pro (Amaury, 23/09/2026). Le tri de JavaScript
+     est stable, donc trier sur le seul drapeau Pro remonte les abonnes en
+     gardant la distance a l'interieur de chaque groupe. On ne le fait qu'ici,
+     sur une liste deja restreinte a un rayon autour de la ville cherchee :
+     remonter un abonne de l'autre bout de la France au-dessus de la salle d'a
+     cote serait mentir au pratiquant, et la distance reste ecrite sur chaque
+     carte. */
+  res.sort(function (a, b){ return (b.pro ? 1 : 0) - (a.pro ? 1 : 0); });
   etat.resultats = res;
   etat.autres = autres;
   etat.horsRayon = !!(etat.ville && res.length && res[res.length - 1].km > RAYON_KM);

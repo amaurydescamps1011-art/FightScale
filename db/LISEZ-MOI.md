@@ -22,8 +22,47 @@ et ce sont les politiques d'accès du schéma qui font la sécurité.
   la main depuis Supabase ; aucune règle ne permet de s'y ajouter soi-même.
 - **`demande`** — les demandes de séance d'essai. Le statut suit la règle métier :
   `recue` n'est pas un lead, seule une `confirmee` en est un.
+- **`abonnement`** — l'état Stripe d'un club : identifiants, statut, fin de période
+  payée. Une table à part, et pas des colonnes sur `club`, parce que `club` est lu
+  publiquement : un identifiant Stripe n'a rien à faire dans une page. Seul le
+  webhook y écrit, avec la clé `service_role` ; un gérant lit la sienne et rien d'autre.
 
 Les comptes eux-mêmes vivent dans `auth.users`, qui appartient à Supabase.
+
+## La vue `annuaire`, et pourquoi elle existe
+
+Amaury, 23/09/2026 : **sur une fiche gratuite, il n'y a aucun moyen de contacter
+la salle.** Les coordonnées sont le paywall, c'est ce qui fait passer un club au Pro.
+
+Les cacher dans la page ne suffirait pas : le site lit la base directement avec une
+clé publique, donc n'importe qui ouvre la console et refait la requête. Il faut que
+la base elle-même ne les rende pas. Une politique RLS ne sait pas protéger une seule
+colonne, et un `revoke select (tel)` serait absolu alors que la règle dépend de la
+ligne. D'où une vue :
+
+- `annuaire` ne rend que les clubs `publie`, et remplace par `null` le téléphone,
+  l'e-mail, le site, Instagram et Facebook d'un club qui n'est pas `offre = 'pro'` ;
+- la table `club` **n'a plus de politique de lecture publique** : un gérant voit son
+  club, l'équipe voit tout, personne d'autre ne voit rien ;
+- le site (`sb.js`, `_salle.js`) lit `annuaire`, jamais `club`.
+
+Deux conséquences à garder en tête :
+- la vue n'est pas en `security_invoker`, donc elle contourne le RLS de `club` : c'est
+  son `where statut = 'publie'` qui tient la limite de l'annuaire ;
+- une politique qui a besoin de lire `club` ne peut plus passer par un `exists`, qui
+  ne verrait plus rien. C'est pourquoi le dépôt d'une demande passe par la fonction
+  `club_ouvert_aux_essais()`, en `security definer`.
+
+## Ce qui donne le Pro
+
+Une seule chose : `club.offre`. Deux verrous autour d'elle.
+- Le trigger `club_offre_figee` remet l'ancienne valeur si un gérant essaie de se
+  l'accorder en modifiant sa fiche. Seuls l'équipe et la clé `service_role` passent.
+- La politique `demande_depot` exige `offre = 'pro'` : une demande de séance d'essai
+  forgée à la main sur un club gratuit est refusée par la base.
+
+Aujourd'hui, le Pro s'ouvre à la main depuis le back-office. Demain, c'est le webhook
+Stripe qui l'écrira — voir `../supabase/LISEZ-MOI.md`.
 
 ## La sécurité, en une phrase
 

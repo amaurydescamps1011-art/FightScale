@@ -1,9 +1,13 @@
 /* Fiche salle.
    Ce que porte la fiche gratuite : adresse et localisation, horaires, disciplines,
-   présentation, coordonnées, site et réseaux. Le pratiquant appelle ou écrit,
-   et le club rappelle : rien ne passe par nous.
-   Ce que le palier Pro ajoute : la demande de séance d'essai en ligne, qui
-   arrive dans l'espace club et devient un lead une fois confirmée. */
+   présentation, photos. Le club y est trouvable, et c'est tout.
+   Ce que le palier Pro ajoute (Amaury, 23/09/2026) : le téléphone, l'e-mail, le
+   site et les réseaux, la demande de séance d'essai en ligne, et la mise en
+   avant dans les résultats. Sans abonnement, un pratiquant n'a aucun moyen de
+   joindre la salle depuis ici : c'est ce manque qui fait passer un club au Pro.
+   La base applique la même règle : la vue `annuaire` ne rend tout simplement
+   pas les coordonnées d'un club gratuit, donc refaire la requête à la main ne
+   les donne pas non plus. */
 
 var I = {
   etoile:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3.6 2.5 5.4 5.9.7-4.4 4 1.2 5.8-5.2-3-5.2 3 1.2-5.8-4.4-4 5.9-.7Z"/></svg>',
@@ -110,16 +114,18 @@ function rendFiche(s){
   document.getElementById('s-disc').innerHTML =
     s[5].map(function (x){ return '<li>' + echappe(x) + '</li>'; }).join('');
 
-  /* La reservation en ligne appartient au palier Pro : sur une fiche gratuite,
-     le pratiquant appelle ou ecrit, et c'est au club de rappeler. Le lead passe
-     par nous uniquement quand le club paie pour ca. */
-  var reserve = d.reel && !!s[8];
+  /* Contacter et reserver sont ce que le club achete. Sur une fiche gratuite il
+     n'y a donc aucun bouton d'action : ni appel, ni e-mail, ni reservation.
+     `d.tel` et compagnie sont deja vides de toute facon, la base ne les a pas
+     rendus -- ce test-ci n'est que la version visible de la regle. */
+  var pro = !!s[8];
+  var reserve = d.reel && pro;
   var actions = [];
   if (reserve) actions.push('<a class="btn btn-rouge" href="#essai">' + I.gant +
                             'Réserver une séance d’essai</a>');
-  if (d.tel) actions.push('<a class="btn ' + (reserve ? 'btn-ligne' : 'btn-rouge') +
+  if (pro && d.tel) actions.push('<a class="btn ' + (reserve ? 'btn-ligne' : 'btn-rouge') +
     '" href="tel:' + d.tel.replace(/\s/g, '') + '">' + I.tel + 'Appeler la salle</a>');
-  if (d.mail) actions.push('<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
+  if (pro && d.mail) actions.push('<a class="btn btn-ligne" href="mailto:' + d.mail + '">' +
                            I.mail + 'Écrire un e-mail</a>');
   document.getElementById('s-actions').innerHTML = actions.join('');
 
@@ -219,14 +225,22 @@ function rendFiche(s){
   if (boitePlan) boitePlan.hidden = !aUnPoint;
 
   var coord = [];
-  if (d.tel)  coord.push(lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel));
-  if (d.mail) coord.push(lien('mailto:' + d.mail, I.mail, d.mail));
-  if (d.site)  coord.push(lien('https://' + d.site, I.web, d.site, true));
-  if (d.insta) coord.push(lien('https://instagram.com/' + d.insta, I.insta, '@' + d.insta, true));
-  if (d.fb)    coord.push(lien('https://facebook.com/' + d.fb, I.fb, d.fb, true));
+  if (pro) {
+    if (d.tel)  coord.push(lien('tel:' + d.tel.replace(/\s/g, ''), I.tel, d.tel));
+    if (d.mail) coord.push(lien('mailto:' + d.mail, I.mail, d.mail));
+    if (d.site)  coord.push(lien('https://' + d.site, I.web, d.site, true));
+    if (d.insta) coord.push(lien('https://instagram.com/' + d.insta, I.insta, '@' + d.insta, true));
+    if (d.fb)    coord.push(lien('https://facebook.com/' + d.fb, I.fb, d.fb, true));
+  }
   document.getElementById('s-coord').innerHTML = coord.join('');
-  var panCoord = document.getElementById('s-coord').closest('.pan');
+  /* Un club sans abonnement ne laisse pas un trou a la place du bloc : il montre
+     le bloc ferme, qui dit pourquoi et s'adresse au gerant. La salle de
+     demonstration, elle, garde ses coordonnees d'exemple sans etre traitee de
+     gratuite : elle n'est pas un vrai club. */
+  var panCoord = document.getElementById('pan-coord');
+  var panFerme = document.getElementById('pan-coord-ferme');
   if (panCoord) panCoord.hidden = !coord.length;
+  if (panFerme) panFerme.hidden = !(d.reel && !pro);
 
   /* Les salles voisines, par distance réelle plutôt que par nom de ville. Au-delà
      de 60 km on ne parle plus de voisinage : le titre change plutôt que d'annoncer
@@ -347,7 +361,9 @@ function ouvreEssai(s){
   });
 
   function chercheEnBase(SB, demande){
-  SB.client.from('club').select('*').eq('statut', 'publie').eq('slug', demande).limit(1)
+  /* `annuaire` et pas `club` : la vue est la seule lecture publique, et
+     c'est elle qui masque les coordonnees d'un club gratuit. */
+  SB.client.from('annuaire').select('*').eq('slug', demande).limit(1)
     .then(function (r){
       var l = (r && r.data) || [];
       if (!l.length) { introuvable(); return; }

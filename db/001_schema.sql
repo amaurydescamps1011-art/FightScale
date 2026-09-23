@@ -67,6 +67,15 @@ create table if not exists club (
                 check (offre in ('gratuit', 'pro'))
 );
 
+-- `create table if not exists` ne touche pas a une table deja creee : les
+-- colonnes arrivees apres le premier collage s'ajoutent ici, sinon le fichier
+-- ne serait rejouable qu'en apparence.
+alter table club add column if not exists offre text not null default 'gratuit';
+do $$ begin
+  alter table club add constraint club_offre_connue
+    check (offre in ('gratuit', 'pro'));
+exception when duplicate_object then null; end $$;
+
 create index if not exists club_statut_idx on club (statut);
 create index if not exists club_ville_idx  on club (lower(ville));
 create index if not exists club_disc_idx   on club using gin (disciplines);
@@ -165,6 +174,37 @@ drop trigger if exists club_modifie_le on club;
 create trigger club_modifie_le before update on club
   for each row execute function touche_modifie_le();
 
+-- ----------------------------------------------------- l'abonnement Stripe
+-- Une table a part, et pas des colonnes sur `club` : l'annuaire lit `club` en
+-- `select *` avec la cle publique, donc tout ce qui vit sur cette table est
+-- public. L'identifiant Stripe d'un club n'a rien a faire dans une page. Le
+-- public ne voit que `club.offre` ; le detail reste ici, ou seuls le gerant
+-- concerne, l'equipe et le webhook entrent.
+create table if not exists abonnement (
+  club_id           uuid primary key references club (id) on delete cascade,
+  cree_le           timestamptz not null default now(),
+  modifie_le        timestamptz not null default now(),
+
+  -- les identifiants que Stripe nous rend ; le client sert a rouvrir le
+  -- portail ou le gerant change sa carte et resilie
+  stripe_client     text unique,
+  stripe_abonnement text unique,
+
+  -- le mot de Stripe, recopie tel quel : trialing, active, past_due, canceled...
+  -- On ne le traduit pas, pour qu'un doute se tranche dans le tableau de bord
+  -- Stripe sans table de correspondance.
+  statut            text,
+  -- la fin de la periode payee. Un club qui resilie reste Pro jusque-la : c'est
+  -- Stripe qui nous previendra le jour ou elle tombe, on ne coupe rien nous-memes.
+  fin_periode       timestamptz,
+  -- vrai des que le gerant a demande l'arret ; l'abonnement court encore
+  arret_demande     boolean not null default false
+);
+
+drop trigger if exists abonnement_modifie_le on abonnement;
+create trigger abonnement_modifie_le before update on abonnement
+  for each row execute function touche_modifie_le();
+
 -- =====================================================================
 -- RLS. Rien n'est lisible ni modifiable par defaut : chaque acces est une
 -- politique nommee ci-dessous.
@@ -173,12 +213,15 @@ alter table club        enable row level security;
 alter table club_membre enable row level security;
 alter table equipe      enable row level security;
 alter table demande     enable row level security;
+alter table abonnement  enable row level security;
 
 -- --- club ---
--- Tout le monde, connecte ou non, lit les clubs publies. C'est l'annuaire.
+-- Il n'y a plus de lecture publique de la table. Elle rendait `select *`, donc
+-- le telephone et l'e-mail de tous les clubs, gratuits compris, a qui refaisait
+-- la requete depuis la console. Le public lit maintenant la vue `annuaire`
+-- (plus bas), qui masque les coordonnees d'un club non abonne.
+-- Cette politique existait depuis le premier jour : on la retire.
 drop policy if exists club_lecture_publique on club;
-create policy club_lecture_publique on club
-  for select using (statut = 'publie');
 
 -- Un gerant lit son club quel que soit son statut : il doit voir son brouillon
 -- et le motif d'un refus.
@@ -254,14 +297,22 @@ create policy equipe_lecture on equipe
 -- suffit pas, sinon une requete a la main donnerait le lead gratuitement. Le
 -- sous-select lit une ligne que tout le monde voit deja (club publie), donc il
 -- protege vraiment -- contrairement au piege decrit plus haut sur club_membre.
+-- Ce test passait par un `exists` sur `club`, qui tenait tant que le visiteur
+-- voyait les clubs publies. Depuis que la table n'est plus lisible publiquement,
+-- cette sous-requete ne verrait plus rien et refuserait tout. La garde est donc
+-- une fonction `security definer`, qui repond hors RLS -- et qui, au passage,
+-- ne depend plus de ce que l'appelant a le droit de voir.
+create or replace function club_ouvert_aux_essais(cible uuid) returns boolean
+  language sql stable security definer set search_path = public, auth as
+$$ select exists (
+     select 1 from club
+      where id = cible and statut = 'publie' and offre = 'pro'
+   ) $$;
+
 drop policy if exists demande_depot on demande;
 create policy demande_depot on demande
   for insert to anon, authenticated
-  with check (
-    statut = 'recue'
-    and exists (select 1 from club c
-                 where c.id = club_id and c.statut = 'publie' and c.offre = 'pro')
-  );
+  with check (statut = 'recue' and club_ouvert_aux_essais(club_id));
 
 -- Personne ne relit les demandes sauf le club concerne et l'equipe : ce sont des
 -- coordonnees personnelles.
@@ -274,3 +325,52 @@ create policy demande_suivi on demande
   for update to authenticated
   using (gere_le_club(club_id) or est_admin())
   with check (gere_le_club(club_id) or est_admin());
+
+-- --- abonnement ---
+-- Un gerant lit le sien, pour savoir jusqu'a quand il est Pro et rouvrir son
+-- portail Stripe. Personne n'ecrit ici depuis le site : ni insert, ni update,
+-- ni pour l'equipe. Seul le webhook ecrit, avec la cle `service_role`, qui
+-- passe a cote du RLS -- et cette cle ne quitte jamais le serveur de la
+-- fonction. Un gerant qui s'inventerait une ligne se donnerait le Pro.
+drop policy if exists abonnement_lecture on abonnement;
+create policy abonnement_lecture on abonnement
+  for select to authenticated
+  using (gere_le_club(club_id) or est_admin());
+
+-- =====================================================================
+-- L'annuaire public
+-- =====================================================================
+-- Amaury, 23/09/2026 : « sur le mode gratuit, il n'y a pas moyen de contacter
+-- la salle ni de reserver de seances ». Les coordonnees sont le paywall : c'est
+-- ce qui fait passer un club au Pro.
+--
+-- Les cacher dans la page ne suffirait pas. Le site lit la base directement
+-- avec une cle publique : n'importe qui ouvre la console et refait la requete.
+-- Il faut donc que la base elle-meme ne les rende pas. Une politique RLS ne
+-- sait pas proteger une colonne, et un `revoke select (tel)` serait absolu
+-- alors que la regle depend de la ligne (l'offre du club). C'est donc une vue.
+--
+-- Elle n'est pas en `security_invoker` : elle s'execute avec les droits de son
+-- proprietaire et contourne le RLS de `club`, d'ou le `where statut = 'publie'`
+-- ecrit ici -- c'est lui, desormais, qui tient la limite de l'annuaire.
+-- `contact_nom` n'y figure pas du tout : le nom de la personne a joindre n'est
+-- public a aucun palier.
+drop view if exists annuaire;
+create view annuaire as
+  select
+    c.id, c.cree_le, c.modifie_le, c.statut, c.publie_le,
+    c.nom, c.slug, c.presentation,
+    c.adresse, c.code_postal, c.ville, c.lat, c.lon,
+    c.disciplines, c.horaires, c.photos, c.offre,
+    -- le paywall, en six colonnes
+    case when c.offre = 'pro' then c.tel       end as tel,
+    case when c.offre = 'pro' then c.mail      end as mail,
+    case when c.offre = 'pro' then c.site      end as site,
+    case when c.offre = 'pro' then c.instagram end as instagram,
+    case when c.offre = 'pro' then c.facebook  end as facebook
+  from club c
+  where c.statut = 'publie';
+
+-- La vue est en lecture seule pour tout le monde : personne n'ecrit par la.
+revoke all on annuaire from anon, authenticated;
+grant select on annuaire to anon, authenticated;

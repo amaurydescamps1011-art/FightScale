@@ -63,6 +63,47 @@
     }
   });
 
+  /* ---------- « Continuer avec Google » ----------
+     Supabase porte l'echange OAuth de bout en bout : on l'envoie sur Google, il
+     revient sur redirectTo avec une session ouverte. Il n'y a donc ni mot de
+     passe a stocker ni e-mail a confirmer, et l'adresse est verifiee par Google.
+     Le club, lui, est cree au premier passage sur referencer.html, comme apres
+     une inscription classique -- c'est le seul endroit qui sait s'il en existe
+     deja un.
+
+     Le fournisseur se regle dans Supabase (Authentication > Providers > Google).
+     Tant qu'il n'est pas active, le bouton n'a rien a offrir : il disparait, avec
+     le trait « ou », plutot que de mener a une page d'erreur Google. */
+  var google = document.getElementById('fen-google');
+  var ou = document.getElementById('fen-ou');
+  google.addEventListener('click', function (){
+      montre('');
+      /* sans serveur (la maquette en Artifact, ou une coupure), le bouton reste
+         affiche -- c'est le chemin principal, le cacher donnerait a voir une
+         fenetre qui n'est pas celle du site -- mais il dit pourquoi il ne part pas */
+      if (!reel) { montre('La connexion Google a besoin du serveur. Sur le site en ligne, ce bouton vous y emmène.'); return; }
+      google.disabled = true;
+      document.getElementById('fen-google-mot').textContent = 'Ouverture de Google…';
+      SB.client.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: location.href.replace(/[^/]*$/, '') + 'referencer.html',
+          /* on ne demande que l'identite : ni contacts, ni agenda, ni rien qui
+             ferait hesiter un gerant devant l'ecran d'autorisation */
+          scopes: 'email profile'
+        }
+      }).then(function (r){
+        if (r && r.error) throw r.error;
+        /* succes = le navigateur part chez Google, il n'y a rien a faire ici */
+      }).catch(function (e){
+        google.disabled = false;
+        document.getElementById('fen-google-mot').textContent = 'Continuer avec Google';
+        montre(/provider is not enabled/i.test(String(e && e.message))
+          ? 'La connexion Google n’est pas encore ouverte. Créez votre espace avec votre e-mail.'
+          : SB.dire(e));
+      });
+  });
+
   /* ---------- creation ou connexion ---------- */
   function bascule(v){
     mode = v;

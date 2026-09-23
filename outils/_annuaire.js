@@ -77,7 +77,12 @@
       return ville ? s[2] === ville : s[5].indexOf(discipline) >= 0;
     });
     if (!lot.length) return;
-    lot.sort(function (a, b){ return a[0].localeCompare(b[0], 'fr'); });
+    /* Mise en avant des abonnes (Amaury, 23/09/2026) : les clubs Pro en tete,
+       chaque groupe restant classe par nom. Toutes ces salles sont dans la meme
+       ville ou la meme discipline, donc l'ordre n'enleve rien a personne. */
+    lot.sort(function (a, b){
+      return ((b[8] ? 1 : 0) - (a[8] ? 1 : 0)) || a[0].localeCompare(b[0], 'fr');
+    });
     liste.innerHTML = lot.map(function (s, i){ return carte(s, i + 1); }).join('');
     var intro = document.querySelector('.ann-intro');
     if (intro) intro.innerHTML = phrase(lot.length);

@@ -61,9 +61,14 @@ part. `annuaire.cjs` vérifie qu'un club publié apparaît partout où on le
 cherche — accueil, recherche, page de ville, page de discipline — sans attendre
 une reconstruction.
 
-La réservation en ligne appartient au palier Pro : `essai.cjs` vérifie aussi
-qu'une fiche gratuite n'affiche aucun formulaire, et que la base refuse une
-demande envoyée à la main sur un club gratuit.
+Le palier Pro est ce que `essai.cjs` éprouve à partir de sa cinquième section :
+une fiche gratuite n'affiche aucun formulaire de réservation, aucun bouton
+d'action, pas même le téléphone quelque part dans le HTML — et la base
+elle-même ne le rend pas, puisque la vue `annuaire` le remplace par `null`.
+Une demande envoyée à la main sur un club gratuit est refusée.
+
+Le faux Supabase de `_faux_sb.js` refait cette vue : si une page affichait les
+coordonnées d'un club gratuit, le test le verrait.
 
 `backend.cjs` est le seul à part : il sert `site/` sur un petit serveur local et
 remplace Supabase par `_faux_sb.js`, un faux serveur en mémoire. Il éprouve le

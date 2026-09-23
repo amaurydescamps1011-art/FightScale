@@ -141,6 +141,16 @@
   .pan-club p{ margin:0 0 14px; color:var(--texte-2); font-size:14.5px; line-height:1.55; }
   .pan-club .btn{ width:100%; }
 
+  /* Le bloc ferme d'une fiche sans abonnement. Il ne crie pas : le pratiquant
+     n'y peut rien, et c'est le gerant de la salle qu'on veut atteindre. Un fond
+     legerement creuse et le cadenas dans le titre suffisent a dire que quelque
+     chose manque, sans faux bouton grise ni texte floute. */
+  .pan-ferme{ background:var(--surface-2); }
+  .pan-ferme .cote-titre{ display:flex; align-items:center; gap:8px; color:var(--texte-2); }
+  .pan-ferme .cote-titre svg{ color:var(--texte-4); flex:none; }
+  .pan-ferme p{ margin:0; color:var(--texte-2); font-size:14.5px; line-height:1.55; }
+  .pan-ferme .btn{ width:100%; margin-top:14px; }
+
   /* ---------- autres salles ---------- */
   .autour{ border-top:1px solid var(--bord); padding-block:34px 44px; }
   .autour-liste{ list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px;

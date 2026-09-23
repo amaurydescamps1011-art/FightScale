@@ -9,8 +9,10 @@
          depuis « Referencer ma salle ». Aucun visiteur ne tombe dessus par
          l'annuaire : elle n'y est pas. -->
     <p class="bandeau-demo" id="bandeau-demo" hidden>
-      <b>Exemple</b> — ce club n'existe pas. Voici la fiche que votre salle
-      obtient gratuitement. <a href="clubs.html">Référencer la mienne</a>
+      <b>Exemple</b> — ce club n'existe pas. Voici une fiche complète, telle
+      qu'elle paraît avec Mon Club Combat Pro&nbsp;: coordonnées visibles et
+      réservation en ligne. Le référencement, lui, reste gratuit.
+      <a href="clubs.html">Référencer ma salle</a>
     </p>
 
     <nav class="fil" aria-label="Fil d'Ariane">
@@ -125,11 +127,34 @@
             </div>
           </section>
 
-          <section class="pan">
+          <section class="pan" id="pan-coord">
             <h2 class="cote-titre">Contacter la salle</h2>
             <ul class="coord" id="s-coord"></ul>
             <p class="cote-note">Dites que vous venez de Mon Club Combat, la salle saura d'où
               vous arrivez.</p>
+          </section>
+
+          <!-- Ce que voit une fiche sans abonnement : les coordonnees sont le
+               paywall (Amaury, 23/09/2026). Le texte ne s'adresse pas au
+               pratiquant, qui n'y peut rien, mais au gerant qui tombe sur sa
+               propre fiche. -->
+          <section class="pan pan-ferme" id="pan-coord-ferme" hidden>
+            <h2 class="cote-titre">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Coordonnées non communiquées
+            </h2>
+            <p>Cette salle n’a pas ouvert son téléphone, son e-mail ni ses réseaux sur
+              Mon Club Combat, et ne prend pas de réservation en ligne.</p>
+            <p class="cote-note">Vous gérez cette salle&nbsp;? Mon Club Combat Pro affiche vos
+              coordonnées, met votre fiche en avant et vous envoie les demandes de séance
+              d’essai.</p>
+            <!-- en trait, pas en plein : c'est la page d'une salle que le
+                 pratiquant est venu lire, pas une page de vente. Le bouton
+                 doit etre trouvable par le gerant, pas crier au visiteur. -->
+            <button class="btn btn-ligne" type="button" data-compte>Activer le Pro</button>
           </section>
 
           <section class="pan pan-club">

@@ -170,9 +170,14 @@ window.MCC = (function (){
     return [null, null];
   }
 
+  /* `annuaire` et pas `club` : c'est une vue, et la seule lecture publique qui
+     reste. Elle ne rend que les clubs publies, et elle remplace par null le
+     telephone, l'e-mail, le site et les reseaux d'un club sans abonnement --
+     les coordonnees sont ce que le Pro achete (Amaury, 23/09/2026), donc la
+     base ne les donne a personne, pas meme a qui refait la requete a la main. */
   function clubsPublies(){
     if (!client) return Promise.resolve([]);
-    return client.from('club').select('*').eq('statut', 'publie')
+    return client.from('annuaire').select('*')
       .then(function (r){ return (r.error || !r.data) ? [] : r.data; })
       .catch(function (){ return []; });
   }
