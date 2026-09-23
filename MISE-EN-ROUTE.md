@@ -34,7 +34,15 @@ Sur https://supabase.com/dashboard, projet `qhbutuhdmyajlgorbhxf`.
    recoller même s'il avait déjà été passé.**
 2. **Créer le bucket des photos.** Storage → New bucket → nom `photos-clubs` →
    cocher **Public bucket** → Create.
-3. **Se mettre dans l'équipe.** Il faut d'abord un compte : aller sur
+3. **Couper la confirmation d'e-mail, le temps des essais.** Authentication →
+   Sign In / Providers → **Email** → décocher **Confirm email** → Save.
+   Sans ça, Supabase crée bien le compte mais n'ouvre pas de session tant que le
+   lien reçu par e-mail n'est pas cliqué — et son expéditeur intégré est limité à
+   quelques messages par heure, donc le mail arrive en retard, en spam, ou pas du
+   tout. C'est ce qui donne l'impression que la création de compte ne marche pas.
+   À remettre avant d'ouvrir aux clubs, avec un vrai expéditeur (Resend, Brevo)
+   dans Authentication → Emails → SMTP Settings.
+4. **Se mettre dans l'équipe.** Il faut d'abord un compte : aller sur
    https://fight-scale.vercel.app/clubs.html, cliquer « Référencer ma salle » et
    créer le compte. Puis, dans le SQL Editor :
 
@@ -44,6 +52,26 @@ Sur https://supabase.com/dashboard, projet `qhbutuhdmyajlgorbhxf`.
    ```
 
    Après ça, `admin.html` s'ouvre.
+
+---
+
+## 1 bis. Ou bien : me laisser le faire
+
+Tout ce qui précède, je peux le faire moi-même, mais l'atelier où je tourne n'a
+pas le droit de joindre Supabase — il refuse la connexion. Pour me l'ouvrir, dans
+**Réglages du projet → Environnement** :
+
+- **Accès réseau** : autoriser `*.supabase.co` et `api.supabase.com`.
+- **Identifiants** : ajouter la clé `service_role` du projet Supabase
+  (Settings → API) sous le nom `SUPABASE_SERVICE_ROLE`, et un jeton d'accès
+  personnel (Account → Access Tokens) sous le nom `SUPABASE_ACCESS_TOKEN`.
+
+Ces deux clés ouvrent tout le projet Supabase : elles vont là et nulle part
+ailleurs — jamais dans le fil de discussion, jamais dans le dépôt. Elles sont
+révocables d'un clic depuis Supabase le jour où tu veux couper.
+
+Une fois posées, dis-le moi : je colle le schéma, je crée le bucket, je te mets
+dans l'équipe, et tu n'as plus qu'à tester.
 
 ---
 
