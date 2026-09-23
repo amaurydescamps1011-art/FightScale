@@ -387,28 +387,21 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.evaluate(() => { window.__FAUX__.club[0].offre = 'gratuit'; });
   await garde();
 
-  // ---------- 7. le compte dans le bandeau ----------
+  // ---------- 7. le bandeau public, une fois connecte ----------
+  /* Amaury, 23/09/2026 : « il faudrait qu'on ait qu'un clic et acceder a mon
+     espace club. Et il n'y a pas tous ces trucs -- mon compte, back-office,
+     modifier ma fiche -- quand on est dans l'espace B2C. » */
   await aller('index.html');
-  await pg.waitForTimeout(500);
+  await pg.waitForTimeout(600);
   ok('le bandeau porte le compte', await pg.isVisible('.nav-compte'), true);
-  ok('avec le nom de la salle', await pg.textContent('.cpt-nom'), 'Team Ouragan Boxe');
-  ok('et ses initiales', await pg.textContent('.cpt-rond'), 'TO');
+  ok('c\'est un lien, pas un menu', await pg.locator('.nav-compte a.cpt-bouton').count(), 1);
+  ok('il mene a l\'espace club en un clic',
+     await pg.getAttribute('.nav-compte .cpt-bouton', 'href'), 'espace-club.html');
+  ok('et le dit', await pg.textContent('.cpt-nom'), 'Mon espace club');
+  ok('avec les initiales de la salle', await pg.textContent('.cpt-rond'), 'TO');
+  ok('plus aucun panneau deroulant', await pg.locator('#cpt-menu').count(), 0);
   ok('« Referencer ma salle » n\'a plus lieu d\'etre',
      await pg.isVisible('.site-nav .btn-rouge'), false);
-  ok('le menu est ferme au depart', await pg.isVisible('#cpt-menu'), false);
-  await pg.click('#cpt-bouton');
-  await pg.waitForTimeout(200);
-  ok('il s\'ouvre au clic', await pg.isVisible('#cpt-menu'), true);
-  ok('l\'adresse du compte y figure',
-     /contact@ouragan\.fr/.test(await pg.textContent('.cpt-tete')), true);
-  ok('il mene a l\'espace club, a la fiche et au compte',
-     await pg.evaluate(() => Array.from(document.querySelectorAll('.cpt-liens a'))
-       .map(a => a.getAttribute('href'))),
-     ['espace-club.html', 'referencer.html', 'salle.html?s=team-ouragan-boxe-marseille',
-      'mon-compte.html', 'admin.html']);
-  await pg.keyboard.press('Escape');
-  await pg.waitForTimeout(150);
-  ok('et se referme avec Echap', await pg.isVisible('#cpt-menu'), false);
 
   // ---------- 7 bis. la pastille de nouvelles demandes ----------
   /* Un gerant qui passe sur le site doit voir qu'on l'attend sans ouvrir
@@ -426,14 +419,9 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.waitForTimeout(600);
   ok('la pastille parait sur le bandeau', await pg.isVisible('.cpt-rond .cpt-pastille'), true);
   ok('et porte le compte', await pg.textContent('.cpt-rond .cpt-pastille'), '1');
-  ok('le bouton le dit a voix haute',
-     await pg.getAttribute('#cpt-bouton', 'aria-label'),
-     'Team Ouragan Boxe — 1 nouvelle demande');
-  await pg.click('#cpt-bouton');
-  await pg.waitForTimeout(200);
-  ok('le lien vers l\'espace club la porte aussi',
-     await pg.textContent('.cpt-liens li:first-child a'), 'Mon espace club1');
-  await pg.keyboard.press('Escape');
+  ok('le lien le dit a voix haute',
+     await pg.getAttribute('.nav-compte .cpt-bouton', 'aria-label'),
+     'Mon espace club, 1 nouvelle demande');
 
   /* des qu'elle avance d'une etape, elle ne compte plus */
   await pg.evaluate(() => { window.__FAUX__.demande[1].statut = 'contactee'; });

@@ -80,12 +80,15 @@
      navigation : on ne se deconnecte pas en passant la souris. */
   .nav-compte{position:relative; flex-shrink:0}
   .nav-compte[hidden]{display:none}
-  .cpt-bouton{display:inline-flex; align-items:center; gap:9px; min-height:44px;
-    padding:6px 12px 6px 6px; border:1px solid var(--bord-2); border-radius:999px;
-    background:var(--surface); color:var(--texte); cursor:pointer;
-    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700;
+  /* Un lien, plus un bouton : il mene a l'espace pro et n'ouvre aucun panneau.
+     La fleche le dit, la ou le chevron annoncait un deroulant. */
+  .site-nav .cpt-bouton, .cpt-bouton{display:inline-flex; align-items:center; gap:9px;
+    min-height:44px; padding:6px 14px 6px 6px; border:1px solid var(--bord-2);
+    border-radius:999px; background:var(--surface); color:var(--texte);
+    text-decoration:none; font-size:14px; font-weight:700;
     transition:border-color .15s ease, box-shadow .15s ease}
-  .cpt-bouton:hover{border-color:var(--bord-3); box-shadow:var(--ombre-1)}
+  .cpt-bouton:hover{border-color:var(--bord-3); box-shadow:var(--ombre-1);
+    color:var(--rouge-700)}
   .cpt-rond{position:relative; display:inline-flex; align-items:center; justify-content:center;
     width:32px; height:32px; border-radius:999px; flex-shrink:0;
     background:var(--rouge-600); color:#fff; font-size:12px; font-weight:800;
@@ -99,29 +102,8 @@
     line-height:1; letter-spacing:0}
   .cpt-rond .cpt-pastille{position:absolute; top:-5px; right:-6px;
     box-shadow:0 0 0 2px var(--surface)}
-  .cpt-liens a .cpt-pastille{float:right; margin-left:8px;
-    background:var(--rouge-600)}
-  .cpt-nom{max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .cpt-menu{position:absolute; top:100%; right:0; translate:0 8px; z-index:50;
-    width:min(86vw,268px); padding:8px; text-align:left;
-    background:var(--surface); border:1px solid var(--bord); border-radius:var(--r-l);
-    box-shadow:var(--ombre-3)}
-  .cpt-menu[hidden]{display:none}
-  .cpt-tete{margin:0; padding:10px 11px 12px; display:grid; gap:3px;
-    border-bottom:1px solid var(--bord)}
-  .cpt-tete b{font-size:14px; color:var(--texte); overflow:hidden;
-    text-overflow:ellipsis; white-space:nowrap}
-  .cpt-tete span{font-size:12.5px; font-weight:600; color:var(--texte-4);
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .cpt-liens{margin:6px 0; padding:0; list-style:none; display:grid; gap:1px}
-  .site-nav .cpt-liens a, .cpt-liens a{display:block; padding:9px 11px; border-radius:6px;
-    font-size:14px; font-weight:600; color:var(--texte-2); text-decoration:none}
-  .cpt-liens a:hover{background:var(--surface-2); color:var(--rouge-700)}
-  .cpt-sortie{width:100%; padding:9px 11px; border:0; border-top:1px solid var(--bord);
-    border-radius:0 0 6px 6px; background:none; cursor:pointer; text-align:left;
-    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700;
-    color:var(--rouge-700)}
-  .cpt-sortie:hover{background:rgba(236,22,46,.06)}
+
+  .cpt-nom{max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
   /* A 620 px le nom de la salle prendrait la place du mot-symbole : il ne reste
      que la pastille, et le menu dit alors qui est connecte. */
   @media (max-width:620px){

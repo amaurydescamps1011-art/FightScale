@@ -16,7 +16,7 @@
      poses par _pro.js, une fois la session lue. -->
 <div class="pro">
   <header class="pro-tete">
-    <a class="pro-marque" href="index.html" aria-label="Mon Club Combat, accueil">
+    <a class="pro-marque" href="espace-club.html" aria-label="Espace pro, accueil">
       <svg viewBox="212 589 389 369" width="30" height="28" role="img" aria-label="Mon Club Combat">
         <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
       </svg>
@@ -32,8 +32,18 @@
         <b class="pro-pastille" id="pro-pastille" hidden></b></a></li>
       <li><a href="referencer.html" data-page="referencer">%%I_FICHE%%<span>Ma fiche</span></a></li>
       <li><a href="mon-compte.html" data-page="mon-compte">%%I_COMPTE%%<span>Mon compte</span></a></li>
-      <li id="pro-admin" hidden><a href="admin.html" data-page="admin">%%I_ADMIN%%<span>Back-office</span></a></li>
     </ul>
+
+    <!-- Le back-office n'appartient pas au gerant : c'est l'outil de l'equipe Mon
+         Club Combat, qui verifie et publie les fiches de TOUS les clubs. Un
+         gerant ordinaire ne le voit jamais. Il se detache donc du rail sous son
+         propre titre, pour qu'on ne le lise pas comme un espace de plus. -->
+    <div class="pro-equipe" id="pro-admin" hidden>
+      <p class="pro-groupe">Équipe Mon Club Combat</p>
+      <ul class="pro-liens">
+        <li><a href="admin.html" data-page="admin">%%I_ADMIN%%<span>Back-office</span></a></li>
+      </ul>
+    </div>
 
     <!-- Le rappel du palier, au pied du rail : il suit le gerant de page en page
          sans jamais couper ce qu'il est en train de faire. -->

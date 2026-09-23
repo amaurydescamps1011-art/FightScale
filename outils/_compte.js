@@ -223,9 +223,9 @@
     return mots.slice(0, 2).map(function (m){ return m[0]; }).join('');
   }
 
-  var CHEV = '<svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" ' +
+  var FLECHE = '<svg class="nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" ' +
     'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" ' +
-    'aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    'aria-hidden="true"><path d="M5 12h13M12.4 5.6 18.8 12l-6.4 6.4"/></svg>';
 
   /* La pastille de nouvelles demandes : un gerant qui passe sur le site doit voir
      qu'on l'attend sans avoir a ouvrir l'espace club. Elle compte les demandes
@@ -235,67 +235,34 @@
     return '<span class="cpt-pastille" aria-hidden="true">' + (n > 9 ? '9+' : n) + '</span>';
   }
 
+  /* Amaury, 23/09/2026 : « une fois connecte (...) il faudrait qu'on ait qu'un
+     clic et acceder a mon espace club. Et il n'y a pas tous ces trucs -- mon
+     compte, back-office, modifier ma fiche -- quand on est dans l'espace B2C. »
+
+     Donc pas de menu deroulant ici : le bandeau public porte un seul bouton, qui
+     mene a l'espace pro. Tout le reste (la fiche, le compte, le back-office, la
+     deconnexion) vit dans le rail de cet espace, ou c'est a sa place. */
   function poseMenu(infos){
     if (!bandeau) return;
-    var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon compte';
+    var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon espace';
     var neuves = infos.neuves || 0;
-    var liens = [];
-    if (infos.club) {
-      liens.push(['espace-club.html', 'Mon espace club', neuves]);
-      liens.push(['referencer.html', 'Modifier ma fiche']);
-      if (infos.club.statut === 'publie' && infos.club.slug)
-        liens.push(['salle.html?s=' + encodeURIComponent(infos.club.slug), 'Voir ma fiche en ligne']);
-    } else {
-      liens.push(['referencer.html', 'Créer la fiche de ma salle']);
-    }
-    liens.push(['mon-compte.html', 'Mon compte']);
-    if (infos.admin) liens.push(['admin.html', 'Back-office']);
+    /* sans club, il n'y a pas encore d'espace club : le bouton mene a la fiche a
+       remplir, qui est la premiere chose a faire */
+    var ou = infos.club ? 'espace-club.html' : 'referencer.html';
+    var quoi = infos.club ? 'Mon espace club' : 'Créer la fiche de ma salle';
 
     var zone = document.createElement('div');
     zone.className = 'nav-compte';
     zone.innerHTML =
-      '<button class="cpt-bouton" type="button" id="cpt-bouton" aria-expanded="false" ' +
-        'aria-haspopup="true"><span class="cpt-rond">' + ech(initiales(nom)) +
+      '<a class="cpt-bouton" href="' + ou + '">' +
+        '<span class="cpt-rond">' + ech(initiales(nom)) +
         (neuves ? pastille(neuves) : '') + '</span>' +
-        '<span class="cpt-nom">' + ech(nom) + '</span>' + CHEV + '</button>' +
-      '<div class="cpt-menu" id="cpt-menu" hidden>' +
-        '<p class="cpt-tete"><b>' + ech(nom) + '</b><span>' + ech(infos.mail) + '</span></p>' +
-        '<ul class="cpt-liens">' + liens.map(function (l){
-            return '<li><a href="' + l[0] + '">' + ech(l[1]) +
-                   (l[2] ? pastille(l[2]) : '') + '</a></li>';
-          }).join('') + '</ul>' +
-        '<button type="button" class="cpt-sortie" id="cpt-sortie">Se déconnecter</button>' +
-      '</div>';
+        '<span class="cpt-nom">' + ech(quoi) + '</span>' + FLECHE + '</a>';
     bandeau.parentNode.insertBefore(zone, bandeau);
     bandeau.hidden = true;
 
-    var b = zone.querySelector('#cpt-bouton');
-    var m = zone.querySelector('#cpt-menu');
-    /* la pastille est un decor : c'est le bouton qui dit le chiffre a voix haute */
-    if (neuves) b.setAttribute('aria-label', nom + ' — ' + neuves +
-      (neuves === 1 ? ' nouvelle demande' : ' nouvelles demandes'));
-    function ouvert(oui){
-      m.hidden = !oui;
-      b.setAttribute('aria-expanded', oui ? 'true' : 'false');
-    }
-    b.addEventListener('click', function (e){
-      e.stopPropagation();
-      ouvert(m.hidden);
-    });
-    document.addEventListener('click', function (e){
-      if (!m.hidden && !zone.contains(e.target)) ouvert(false);
-    });
-    document.addEventListener('keydown', function (e){
-      if (e.key === 'Escape' && !m.hidden) { ouvert(false); b.focus(); }
-    });
-    /* On quitte la page apres la deconnexion : l'espace club et la fiche
-       n'auraient plus rien a montrer, et l'accueil est la page d'un visiteur. */
-    zone.querySelector('#cpt-sortie').addEventListener('click', function (){
-      var s = zone.querySelector('#cpt-sortie');
-      s.disabled = true;
-      s.textContent = 'Déconnexion…';
-      SB.deconnexion().then(function (){ location.href = 'index.html'; });
-    });
+    if (neuves) zone.querySelector('.cpt-bouton').setAttribute('aria-label',
+      quoi + ', ' + neuves + (neuves === 1 ? ' nouvelle demande' : ' nouvelles demandes'));
   }
 
   function ech(t){
