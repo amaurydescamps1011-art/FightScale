@@ -20,11 +20,11 @@ Le back-office ne s'ouvre qu'aux comptes inscrits dans la table `equipe` : un
 gérant qui tombe dessus ne voit rien. L'espace club ne montre que le club dont on
 est gérant.
 
-Ces pages sont vides tant que les trois gestes de l'étape 1 ne sont pas faits.
+Ces pages ne font rien tant que l'étape 1 n'est pas faite.
 
 ---
 
-## 1. Supabase — trois gestes, dix minutes
+## 1. Supabase — quatre gestes, dix minutes
 
 Sur https://supabase.com/dashboard, projet `qhbutuhdmyajlgorbhxf`.
 
