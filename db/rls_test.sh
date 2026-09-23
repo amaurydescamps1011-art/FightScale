@@ -124,10 +124,29 @@ ok "ni sur une fiche gratuite" \
    "$(q "set role anon; insert into demande (club_id,nom,mail) values ('dddddddd-0000-0000-0000-000000000004','P','p@ex.fr');" | cut -c1-5)" "ERROR"
 ok "l'equipe ouvre le Pro" \
    "$(q "$(cnx $AD) with u as (update club set offre='pro' where id='dddddddd-0000-0000-0000-000000000004' returning offre) select * from u;")" "pro "
+# Le formulaire demande « quand vous arrange » en toutes lettres : la colonne
+# etait un timestamptz, et ce depot-la echouait sur la vraie base.
+# Le visiteur depose sans rien relire -- il n'a aucune politique de lecture sur
+# `demande`, donc un `returning` sur une colonne echouerait ici comme il
+# echouerait dans le navigateur. C'est le club qui verifie.
+q "set role anon; insert into demande (club_id,nom,mail,creneau) values ('bbbbbbbb-0000-0000-0000-000000000002','Nadia','n@ex.fr','Mardi soir');" >/dev/null
+ok "un creneau en toutes lettres est accepte" \
+   "$(q "$(cnx $B) select creneau from demande where nom='Nadia';")" "Mardi soir "
+# un visiteur ne relit jamais ce qu'il vient de deposer : `returning` sur une
+# colonne passe par la politique de lecture, qu'anon n'a pas
+ok "le visiteur ne relit pas son propre depot" \
+   "$(q "set role anon; insert into demande (club_id,nom,mail) values ('bbbbbbbb-0000-0000-0000-000000000002','Zoe','z@ex.fr') returning nom;" | cut -c1-5)" "ERROR"
 ok "et la demande passe alors" \
    "$(q "set role anon; with i as (insert into demande (club_id,nom,mail) values ('dddddddd-0000-0000-0000-000000000004','P','p@ex.fr') returning 1) select count(*) from i;")" "1 "
 ok "le visiteur ne relit pas les demandes" \
    "$(q "set role anon; select count(*) from demande;")" "0 "
+# le suivi de prospect : le club annote et reclasse les siens, personne d'autre
+ok "le club suit son prospect" \
+   "$(q "$(cnx $B) with u as (update demande set statut='contactee', notes='rappele jeudi', relance='2026-10-01' where club_id='bbbbbbbb-0000-0000-0000-000000000002' and nom='Jean' returning 1) select count(*) from u;")" "1 "
+ok "les notes ne sortent pas cote public" \
+   "$(q "set role anon; select coalesce(string_agg(notes,','),'(rien)') from demande;")" "(rien) "
+ok "un autre gerant n'y touche pas" \
+   "$(q "$(cnx $A) with u as (update demande set notes='pirate' returning 1) select count(*) from u;")" "0 "
 # l'identifiant Stripe d'un club vit dans `abonnement` et pas sur `club`, parce
 # que l'annuaire lit `club` en select * avec la cle publique
 ok "l'abonnement ne sort pas cote public" \

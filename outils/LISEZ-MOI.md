@@ -70,6 +70,11 @@ Une demande envoyée à la main sur un club gratuit est refusée.
 Le faux Supabase de `_faux_sb.js` refait cette vue : si une page affichait les
 coordonnées d'un club gratuit, le test le verrait.
 
+`backend.cjs` suit le gérant de bout en bout, y compris le suivi de ses
+prospects : changer d'étape, écrire une note, poser une date de rappel, filtrer,
+chercher, et exporter le CSV (le téléchargement est intercepté dans la page,
+rien n'est écrit sur le disque).
+
 `backend.cjs` est le seul à part : il sert `site/` sur un petit serveur local et
 remplace Supabase par `_faux_sb.js`, un faux serveur en mémoire. Il éprouve le
 vrai code des pages — noms de champs, ordre des gestionnaires, enchaînement des

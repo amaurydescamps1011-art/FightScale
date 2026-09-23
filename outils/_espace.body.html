@@ -19,13 +19,16 @@
 
       <div id="esp-corps" hidden>
         <p class="esp-mot" id="esp-mot"></p>
-        <!-- une demande recue n'est pas un lead : c'est la reservation confirmee
-             qui en est un (regle d'Amaury), donc les deux chiffres sont montres -->
+        <!-- Une demande recue n'est pas un lead : c'est la reservation confirmee
+             qui en est un (regle d'Amaury). Le troisieme chiffre est la seule fin
+             qui compte vraiment pour un club : le prospect est devenu adherent. -->
         <ul class="ouv-liste esp-chiffres">
           <li><span class="ouv-nb display" id="esp-nb">0</span>
-              <span class="ouv-lb">Demandes de séance d'essai</span></li>
+              <span class="ouv-lb">Demandes reçues</span></li>
           <li><span class="ouv-nb display" id="esp-nb-ok">0</span>
               <span class="ouv-lb">Réservations confirmées</span></li>
+          <li><span class="ouv-nb display" id="esp-nb-adh">0</span>
+              <span class="ouv-lb">Devenus adhérents</span></li>
         </ul>
         <div class="esp-actions">
           <a class="btn btn-rouge" href="referencer.html">Modifier ma fiche</a>
@@ -38,10 +41,26 @@
   <section class="section esp-demandes-bloc" id="esp-demandes-bloc" hidden>
     <div class="wrap">
       <p class="eyebrow" id="esp-oeil">Ce que vous avez reçu</p>
-      <h2 class="section-titre display" id="esp-titre">Les demandes de séance d'essai</h2>
+      <h2 class="section-titre display" id="esp-titre">Vos prospects</h2>
       <p class="section-chapo" id="esp-vide" hidden>Aucune demande pour l'instant. Elles
         arriveront ici dès que votre fiche sera en ligne.</p>
+
+      <!-- Le rappel du jour passe avant la liste : c'est la seule chose de cette
+           page qui demande une action aujourd'hui. -->
+      <p class="esp-rappel" id="esp-rappel" hidden></p>
+
+      <div class="esp-barre" id="esp-barre" hidden>
+        <div class="esp-filtres" id="esp-filtres" role="group" aria-label="Filtrer par étape"></div>
+        <div class="esp-outils">
+          <label class="skip" for="esp-cherche">Chercher un prospect</label>
+          <input type="search" id="esp-cherche" placeholder="Nom, e-mail, téléphone…"
+            autocomplete="off">
+          <button type="button" class="btn btn-ligne btn-mini" id="esp-csv">Exporter (CSV)</button>
+        </div>
+      </div>
+
       <ul class="demandes" id="esp-demandes"></ul>
+      <p class="esp-rien" id="esp-rien" hidden>Aucun prospect ne correspond à cette recherche.</p>
     </div>
   </section>
 </main>

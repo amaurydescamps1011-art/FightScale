@@ -156,6 +156,55 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.click('.demande [data-suivi="honoree"]');
   await pg.waitForTimeout(400);
   ok('la venue se note', await pg.textContent('.dem-etat'), 'Venue');
+
+  // le suivi de prospect : note libre, date de rappel, etape suivante, export
+  await pg.fill('.demande [data-champ="notes"]', 'A rappeler, hesite sur le creneau.');
+  await pg.click('#esp-nom');                     // le champ perd le focus : ca enregistre
+  await pg.waitForTimeout(400);
+  ok('la note est enregistree',
+     await pg.evaluate(() => window.__FAUX__.demande[0].notes),
+     'A rappeler, hesite sur le creneau.');
+
+  // une relance datee d'hier doit remonter comme due aujourd'hui
+  const hier = await pg.evaluate(() => {
+    const d = new Date(Date.now() - 864e5);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) +
+           '-' + ('0' + d.getDate()).slice(-2);
+  });
+  await pg.fill('.demande [data-champ="relance"]', hier);
+  await pg.waitForTimeout(500);
+  ok('la relance est enregistree',
+     await pg.evaluate(() => window.__FAUX__.demande[0].relance), hier);
+  ok('et le rappel du jour s\'affiche', await pg.isVisible('#esp-rappel'), true);
+
+  await pg.click('.demande [data-suivi="adherent"]');
+  await pg.waitForTimeout(400);
+  ok('l\'adhesion se note', await pg.textContent('.dem-etat'), 'Adhérente');
+  ok('et le chiffre des adherents suit', await pg.textContent('#esp-nb-adh'), '1');
+  ok('un prospect adherent ne se relance plus', await pg.isVisible('#esp-rappel'), false);
+
+  // la recherche filtre la liste sans toucher a la base
+  await pg.fill('#esp-cherche', 'personne-de-ce-nom');
+  await pg.waitForTimeout(200);
+  ok('une recherche vide se dit', await pg.isVisible('#esp-rien'), true);
+  await pg.fill('#esp-cherche', 'Léa');
+  await pg.waitForTimeout(200);
+  ok('et le nom cherche revient', await pg.locator('.demande').count(), 1);
+
+  // l'export se fait dans le navigateur : on intercepte le telechargement
+  const csv = await pg.evaluate(() => new Promise((res) => {
+    const vrai = URL.createObjectURL;
+    /* on laisse la vraie URL se creer -- sinon l'ancre tente de naviguer vers
+       une adresse inventee -- et on lit le contenu au passage */
+    URL.createObjectURL = (blob) => { blob.text().then(res); return vrai(blob); };
+    document.getElementById('esp-csv').click();
+    URL.createObjectURL = vrai;
+  }));
+  const lignes = csv.replace(/^\ufeff/, '').split('\r\n');
+  ok('l\'export porte l\'en-tete attendu', lignes[0],
+     'Nom;E-mail;Téléphone;Discipline;Créneau souhaité;Message;Étape;Notes;Relance;Reçue le');
+  ok('et la ligne du prospect', /^Léa Martin;lea@example\.fr/.test(lignes[1]), true);
+  ok('avec son etape et sa note', /Adhérente;A rappeler/.test(lignes[1]), true);
   await garde();
 
   // ---------- 6. se reconnecter ----------

@@ -148,6 +148,17 @@ do $$ begin
   create type statut_demande as enum ('recue', 'confirmee', 'honoree', 'absente', 'annulee');
 exception when duplicate_object then null; end $$;
 
+-- Les deux etapes que le cahier des charges ajoute au suivi : « contacte »,
+-- entre la demande et la reservation, et « adherent », qui est la seule fin
+-- heureuse. Elles arrivent apres coup, d'ou l'alter plutot que l'enum ci-dessus
+-- -- et `if not exists` pour que le fichier reste rejouable.
+-- Postgres refuse d'utiliser une valeur d'enum dans la transaction qui la cree :
+-- aucune de ces deux-la n'est employee plus bas, et il ne faut pas en ajouter.
+do $$ begin
+  alter type statut_demande add value if not exists 'contactee' after 'recue';
+  alter type statut_demande add value if not exists 'adherent'  after 'honoree';
+exception when others then null; end $$;
+
 create table if not exists demande (
   id        uuid primary key default gen_random_uuid(),
   cree_le   timestamptz not null default now(),
@@ -160,8 +171,31 @@ create table if not exists demande (
   tel       text,
   message   text,
   discipline text,
-  creneau   timestamptz
+  -- Du texte, pas une date. Le formulaire demande « quand vous arrange » et le
+  -- pratiquant ecrit « mardi soir » ou « samedi matin » : c'est ce qu'un club
+  -- veut lire. La colonne etait un timestamptz, et tout depot aurait echoue sur
+  -- la vraie base -- le faux serveur des tests, lui, l'acceptait.
+  creneau   text,
+
+  -- Ce que le club ajoute ensuite, et que le pratiquant ne voit jamais. C'est
+  -- le minimum d'un suivi de prospect : d'ou il vient, ce qu'on s'est dit, et
+  -- quand rappeler. Le reste du CRM du cahier des charges (campagnes, tags,
+  -- fusion de doublons, historique des changements) attend.
+  origine   text not null default 'annuaire'
+            check (origine in ('annuaire', 'acquisition', 'autre')),
+  notes     text,
+  -- la date de la prochaine action, pas une heure : un gerant rappelle « jeudi »
+  relance   date
 );
+
+-- rejouable : ces colonnes sont arrivees apres la premiere version du fichier
+do $$ begin
+  alter table demande alter column creneau type text using creneau::text;
+exception when others then null; end $$;
+alter table demande add column if not exists origine text not null default 'annuaire';
+alter table demande add column if not exists notes   text;
+alter table demande add column if not exists relance date;
+alter table demande add column if not exists modifie_le timestamptz not null default now();
 
 create index if not exists demande_club_idx on demande (club_id, cree_le desc);
 
@@ -172,6 +206,10 @@ $$ begin new.modifie_le = now(); return new; end $$;
 
 drop trigger if exists club_modifie_le on club;
 create trigger club_modifie_le before update on club
+  for each row execute function touche_modifie_le();
+
+drop trigger if exists demande_modifie_le on demande;
+create trigger demande_modifie_le before update on demande
   for each row execute function touche_modifie_le();
 
 -- ----------------------------------------------------- l'abonnement Stripe

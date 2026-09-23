@@ -20,8 +20,16 @@ et ce sont les politiques d'accès du schéma qui font la sécurité.
   colonne, pour qu'un club puisse avoir deux gérants plus tard sans rien changer.
 - **`equipe`** — être dans cette table, c'est être administrateur. On n'y entre qu'à
   la main depuis Supabase ; aucune règle ne permet de s'y ajouter soi-même.
-- **`demande`** — les demandes de séance d'essai. Le statut suit la règle métier :
-  `recue` n'est pas un lead, seule une `confirmee` en est un.
+- **`demande`** — les demandes de séance d'essai, et le suivi que le club en fait.
+  Le statut suit la règle métier : `recue` n'est pas un lead, seule une `confirmee`
+  en est un. Le parcours complet est `recue → contactee → confirmee → honoree →
+  adherent`, plus `absente` et `annulee` comme fins. S'y ajoutent `notes` (libre),
+  `relance` (la date du prochain rappel) et `origine`. Tout cela n'est lisible que
+  par le club concerné et par l'équipe.
+  **`creneau` est du texte, pas une date** : le formulaire demande « quand vous
+  arrange » et le pratiquant écrit « mardi soir ». La colonne était un `timestamptz`,
+  et tout dépôt aurait échoué sur la vraie base — le faux serveur des tests, lui,
+  l'acceptait.
 - **`abonnement`** — l'état Stripe d'un club : identifiants, statut, fin de période
   payée. Une table à part, et pas des colonnes sur `club`, parce que `club` est lu
   publiquement : un identifiant Stripe n'a rien à faire dans une page. Seul le
@@ -63,6 +71,15 @@ Une seule chose : `club.offre`. Deux verrous autour d'elle.
 
 Aujourd'hui, le Pro s'ouvre à la main depuis le back-office. Demain, c'est le webhook
 Stripe qui l'écrira — voir `../supabase/LISEZ-MOI.md`.
+
+## Un piège de `returning`
+
+Un visiteur dépose une demande sans avoir aucune politique de **lecture** sur
+`demande` — ses coordonnées ne regardent que le club. Conséquence :
+`insert … returning <une colonne>` échoue avec « new row violates row-level
+security policy », alors que le même insert sans `returning` passe. Postgres
+applique la politique de SELECT dès que le `returning` touche une colonne de la
+table. `sb.js` n'en fait pas, et `rls_test.sh` vérifie les deux cas.
 
 ## La sécurité, en une phrase
 
