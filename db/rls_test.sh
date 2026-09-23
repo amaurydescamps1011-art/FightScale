@@ -25,7 +25,7 @@ q(){ psql -h "$D" -p 5433 -U postgres -tAq -c "$1" 2>&1 | tr '\n' ' ' | sed 's/ 
 $P -c "drop schema if exists public cascade; create schema public; drop schema if exists auth cascade;" >/dev/null
 $P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
 create schema auth;
-create table auth.users (id uuid primary key);
+create table auth.users (id uuid primary key, raw_user_meta_data jsonb);
 create or replace function auth.uid() returns uuid language sql stable as
 $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 do $$ begin create role anon; exception when duplicate_object then null; end $$;
@@ -39,11 +39,11 @@ $P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
 grant usage on schema public to anon, authenticated;
 grant select, insert, update on all tables in schema public to anon, authenticated;
 grant execute on all functions in schema public to anon, authenticated;
-insert into auth.users (id) values
-  ('11111111-1111-1111-1111-111111111111'),
-  ('22222222-2222-2222-2222-222222222222'),
-  ('33333333-3333-3333-3333-333333333333'),
-  ('44444444-4444-4444-4444-444444444444');
+insert into auth.users (id, raw_user_meta_data) values
+  ('11111111-1111-1111-1111-111111111111', '{"full_name":"Alain"}'::jsonb),
+  ('22222222-2222-2222-2222-222222222222', '{}'::jsonb),
+  ('33333333-3333-3333-3333-333333333333', '{}'::jsonb),
+  ('44444444-4444-4444-4444-444444444444', '{}'::jsonb);
 insert into equipe (membre_id) values ('33333333-3333-3333-3333-333333333333');
 insert into club (id, nom, ville, statut, offre, tel, mail, instagram) values
   ('aaaaaaaa-0000-0000-0000-000000000001', 'Club A', 'Marseille', 'en_attente', 'gratuit', '0491000001', 'a@ex.fr', 'club_a'),
@@ -162,6 +162,25 @@ ok "les notes ne sortent pas cote public" \
    "$(q "set role anon; select coalesce(string_agg(notes,','),'(rien)') from demande;")" "(rien) "
 ok "un autre gerant n'y touche pas" \
    "$(q "$(cnx $A) with u as (update demande set notes='pirate' returning 1) select count(*) from u;")" "0 "
+# Le profil du compte (Amaury, 23/09/2026 : « au moins qu'il ait un profil de
+# compte et qu'il soit enregistre quelque part »). Il existe des l'inscription,
+# meme sans club, et chacun ne voit que le sien.
+ok "le profil nait avec le compte" \
+   "$(q "select count(*) from profil;")" "4 "
+ok "et il porte le nom donne a l'inscription" \
+   "$(q "select nom from profil where membre_id='$A';")" "Alain "
+ok "un compte ecrit son profil" \
+   "$(q "$(cnx $N) with i as (insert into profil (membre_id, nom, tel, fonction) values ('$N','Nadia','0600000000','Coach') on conflict (membre_id) do update set nom=excluded.nom, tel=excluded.tel, fonction=excluded.fonction returning 1) select count(*) from i;")" "1 "
+ok "il le relit" \
+   "$(q "$(cnx $N) select nom||' / '||fonction from profil;")" "Nadia / Coach "
+ok "il ne lit que le sien" \
+   "$(q "$(cnx $A) select count(*) from profil;")" "1 "
+ok "il n'ecrit pas celui d'un autre" \
+   "$(q "$(cnx $A) insert into profil (membre_id, nom) values ('$N','pirate');" | cut -c1-5)" "ERROR"
+ok "ni ne renomme la ligne d'un autre" \
+   "$(q "$(cnx $A) with u as (update profil set nom='pirate' where membre_id='$N' returning 1) select count(*) from u;")" "0 "
+ok "le visiteur anonyme ne voit aucun profil" \
+   "$(q "set role anon; select count(*) from profil;")" "0 "
 # l'identifiant Stripe d'un club vit dans `abonnement` et pas sur `club`, parce
 # que l'annuaire lit `club` en select * avec la cle publique
 ok "l'abonnement ne sort pas cote public" \

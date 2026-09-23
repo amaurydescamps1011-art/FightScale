@@ -13,6 +13,7 @@ tes comptes : Supabase, Google et Vercel. Dans l'ordre.
 | **Notre back-office** (publier ou refuser une fiche, ouvrir le Pro) | https://fight-scale.vercel.app/admin.html |
 | L'espace d'un club (ses demandes, son suivi de prospects) | https://fight-scale.vercel.app/espace-club.html |
 | La fiche d'un club, à remplir ou à modifier | https://fight-scale.vercel.app/referencer.html |
+| La page « Mon compte » d'un gérant | https://fight-scale.vercel.app/mon-compte.html |
 | La page de vente, avec les deux formules | https://fight-scale.vercel.app/clubs.html |
 | À quoi ressemble une fiche complète | https://fight-scale.vercel.app/salle.html?demo=1 |
 
@@ -24,7 +25,7 @@ Ces pages ne font rien tant que l'étape 1 n'est pas faite.
 
 ---
 
-## 1. Supabase — quatre gestes, dix minutes
+## 1. Supabase — cinq gestes, dix minutes
 
 Les menus du tableau de bord Supabase changent de nom d'une version à l'autre, et
 je ne peux pas les voir d'ici pour vérifier. Voici donc les **adresses directes**
@@ -48,58 +49,60 @@ https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/storage/buckets
 
 **New bucket** → nom exactement `photos-clubs` → cocher **Public bucket** → Create.
 
-### c. Créer ton compte, puis te donner les droits
+### c. Couper la confirmation d'e-mail
 
-Ces deux points n'en font qu'un, il faut juste les faire dans l'ordre.
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/providers
 
-**c.1 — Crée ton compte sur le site.**
+Dans la liste des fournisseurs, **cliquer sur la ligne `Email`** pour la déplier
+(ce n'est pas un menu à part : c'est le premier de la liste, et il s'ouvre en
+accordéon). Dedans, **désactiver `Confirm email`**, puis **Save**.
+
+Selon la version, la case s'appelle *Confirm email* ou *Enable email
+confirmations* ; si elle n'est pas là, elle est sur
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/settings/auth
+
+**Pourquoi.** Par défaut, Supabase crée le compte mais n'ouvre pas de session tant
+que le lien reçu par e-mail n'est pas cliqué — et son expéditeur intégré est limité
+à quelques messages par heure sur un domaine partagé : le mail arrive en retard, en
+spam, ou jamais. Tant que cette case est cochée, **personne** ne peut créer de
+compte, pas seulement toi. On la remet dès qu'on a notre propre expéditeur
+(section 3 bis) : c'est le bon réglage, mais il lui faut un vrai facteur derrière.
+
+### d. Dire à Supabase quelles adresses de retour sont permises
+
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/url-configuration
+
+- *Site URL* : `https://fight-scale.vercel.app`
+- *Redirect URLs* : ajouter `https://fight-scale.vercel.app/referencer.html`
+  et `https://fight-scale.vercel.app/motdepasse.html`
+
+Sans ça, le lien « mot de passe oublié » et le retour de Google renvoient sur
+`localhost`, c'est-à-dire nulle part.
+
+### e. Créer ton compte, puis te donner les droits d'administrateur
+
+**e.1 — Crée ton compte sur le site**, comme n'importe quel gérant.
 https://fight-scale.vercel.app/clubs.html → bouton **Référencer ma salle** → nom
 de ta salle, ton e-mail, un mot de passe d'au moins huit caractères → Continuer.
+Après le point c, ça t'emmène directement sur le formulaire de fiche.
 
-Deux cas possibles :
-- ça t'emmène directement sur le formulaire de fiche → saute à **c.3** ;
-- ça affiche « vérifiez votre boîte mail » → le mail de Supabase n'arrivera
-  probablement pas, passe à **c.2**.
-
-**c.2 — Colle ce bloc dans le SQL Editor**, en remplaçant l'adresse par la tienne.
+**e.2 — Une seule fois, donne-toi les droits du back-office.**
 https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/sql/new
 
 ```sql
-update auth.users
-   set email_confirmed_at = now()
- where email_confirmed_at is null;
-
 insert into equipe (membre_id)
 select id from auth.users where email = 'ton-adresse@exemple.fr'
 on conflict do nothing;
 ```
 
-La première instruction fait à la main ce que le mail de confirmation aurait
-fait. La seconde te met dans `equipe`, la table des administrateurs : on n'y
-entre qu'à la main depuis Supabase, et c'est ce qui empêche un gérant de club de
-s'y ajouter tout seul.
+Ce n'est pas un bricolage de démarrage : c'est **volontairement** la seule façon
+d'entrer dans `equipe`, la table des administrateurs. Aucune page, aucune
+politique ne permet de s'y ajouter — sinon n'importe quel gérant de club se
+donnerait accès au back-office. À refaire pour Antoine le jour où il aura son
+compte, et pour personne d'autre.
 
-**c.3 — Retourne sur le site**, rouvre la fenêtre et clique **Connectez-vous**
-plutôt que de recréer un compte. Même adresse, même mot de passe.
-
-Après ça, https://fight-scale.vercel.app/admin.html s'ouvre pour toi.
-
-### d. Pourquoi le mail de confirmation ne part pas
-
-Par défaut Supabase crée le compte mais n'ouvre pas de session tant que le lien
-reçu par e-mail n'est pas cliqué, et son expéditeur intégré est limité à quelques
-messages par heure sur un domaine partagé : le mail arrive en retard, en spam, ou
-jamais. Le bloc SQL du point c.2 est à rejouer à chaque nouveau compte de test.
-
-Le réglage qui supprime l'étape, si tu le trouves :
-https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/providers
-→ ouvrir **Email** dans la liste → décocher **Confirm email** → Save. Selon la
-version, la case s'appelle *Confirm email* ou *Enable email confirmations*.
-
-**La vraie réponse est ailleurs** : garder la confirmation, mais avec un vrai
-expéditeur. Voir la section « L'expéditeur d'e-mails » plus bas — c'est le même
-chaînon qui manque pour prévenir un gérant qu'une demande est arrivée et pour les
-relances du Pro.
+Après ça, https://fight-scale.vercel.app/admin.html s'ouvre pour toi, et le menu
+de ton compte, en haut à droite du site, porte un lien « Back-office ».
 
 ---
 
@@ -145,12 +148,8 @@ Deux endroits : Google, puis Supabase.
 
 5. **Authentication → Sign In / Providers → Google** : activer, coller le Client ID
    et le Client secret, Save.
-6. **Authentication → URL Configuration** :
-   - *Site URL* : `https://fight-scale.vercel.app`
-   - *Redirect URLs* : ajouter `https://fight-scale.vercel.app/referencer.html`
-     et `https://fight-scale.vercel.app/motdepasse.html`
-
-Sans le point 6, Google renvoie sur la mauvaise page après la connexion.
+6. Vérifier que le point **1.d** est fait (Authentication → URL Configuration) :
+   sans lui, Google renvoie sur la mauvaise page après la connexion.
 
 Ne me donne jamais le Client secret : il n'a rien à faire dans le dépôt ni dans une
 page, et le site n'en a pas besoin — c'est Supabase qui porte l'échange.
@@ -211,7 +210,17 @@ Dis-moi quand tu veux t'y mettre et je te fais la marche à suivre.
    → l'aperçu à droite compte les cours.
 6. Envoyer. → « Votre fiche part en vérification ».
 7. Aller sur `espace-club.html` : le nom du club, l'état « En vérification »,
-   aucune demande.
+   aucune demande, et **l'état de la fiche** poste par poste — ce qui est rempli
+   en vert, ce qui manque en rouge avec le lien pour le corriger.
+7 bis. En haut à droite de n'importe quelle page du site, **le bandeau porte
+   maintenant ton compte** (les initiales de ta salle) et non plus le bouton
+   « Référencer ma salle ». Le menu mène à l'espace club, à la fiche, à
+   « Mon compte » et à la déconnexion.
+7 ter. Sur `mon-compte.html` : écrire ton nom, ton téléphone, ton rôle,
+   **Enregistrer**, puis recharger la page — tout doit être encore là. C'est la
+   preuve que le compte existe vraiment en base et pas seulement à l'écran.
+   Changer le mot de passe depuis cette page, se déconnecter, se reconnecter
+   avec le nouveau.
 
 ### Nous
 

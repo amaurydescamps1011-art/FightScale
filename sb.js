@@ -45,6 +45,67 @@ window.MCC = (function (){
       .catch(function (){ return null; });
   }
 
+  /* ---- le profil du compte ----
+     Amaury, 23/09/2026 : un compte doit etre un vrai compte, « au moins qu'il
+     ait un profil de compte et qu'il soit enregistre quelque part », meme en
+     gratuit et meme sans club. La ligne vit dans la table `profil`, une par
+     compte, que chacun est seul a lire et a ecrire (politiques profil_*).
+
+     Elle nait avec le compte, par un trigger sur auth.users. Si ce trigger n'a
+     pas pu etre pose (un projet ou Supabase refuse d'y toucher), on la cree au
+     premier passage : d'ou l'upsert plutot qu'un simple select. */
+  function monProfil(){
+    if (!client) return Promise.resolve(null);
+    return client.auth.getUser().then(function (u){
+      var moi = u && u.data && u.data.user;
+      if (!moi) return null;
+      return client.from('profil').select('*').eq('membre_id', moi.id).maybeSingle()
+        .then(function (r){
+          if (r.error) throw r.error;
+          if (r.data) return r.data;
+          /* pas de ligne : on la cree, avec ce que l'inscription nous a laisse */
+          var meta = moi.user_metadata || {};
+          return client.from('profil')
+            .insert({ membre_id: moi.id,
+                      nom: meta.full_name || meta.name || null })
+            .select().single()
+            .then(function (r2){ return r2.error ? null : r2.data; });
+        });
+    }).catch(function (){ return null; });
+  }
+
+  /* Ce que le gerant modifie sur sa page « Mon compte ». On renvoie la ligne
+     enregistree, pas ce qui a ete envoye : ce qui s'affiche apres coup est ce
+     que la base a vraiment garde. */
+  function poseProfil(champs){
+    if (!client) return Promise.reject(new Error('Hors ligne'));
+    return client.auth.getUser().then(function (u){
+      var moi = u && u.data && u.data.user;
+      if (!moi) throw new Error('Il faut etre connecte.');
+      champs.membre_id = moi.id;
+      return client.from('profil').upsert(champs, { onConflict: 'membre_id' })
+        .select().single();
+    }).then(function (r){ if (r.error) throw r.error; return r.data; });
+  }
+
+  /* Membre de l'equipe Mon Club Combat ? La politique equipe_lecture ne rend que
+     sa propre ligne : si elle sort, c'est qu'on en est. Sert a montrer le lien
+     du back-office dans le menu, et seulement a ca -- c'est le RLS qui garde
+     le back-office, pas ce menu. */
+  function estAdmin(){
+    if (!client) return Promise.resolve(false);
+    return client.from('equipe').select('membre_id').limit(1)
+      .then(function (r){ return !!(!r.error && r.data && r.data.length); })
+      .catch(function (){ return false; });
+  }
+
+  /* Se deconnecter, puis revenir a l'accueil : rester sur une page d'espace club
+     apres la deconnexion ne montrerait qu'une erreur. */
+  function deconnexion(){
+    if (!client) return Promise.resolve();
+    return client.auth.signOut().catch(function (){});
+  }
+
   /* Les messages de Supabase sont en anglais et parlent de tables : on les
      traduit, parce qu'ils arrivent tels quels sous les yeux d'un gerant. */
   function dire(err){
@@ -238,6 +299,8 @@ window.MCC = (function (){
 
   return {
     client: client, prete: prete, session: session, monClub: monClub,
+    monProfil: monProfil, poseProfil: poseProfil, estAdmin: estAdmin,
+    deconnexion: deconnexion,
     dire: dire, exigeCompte: exigeCompte, URL_BASE: URL_BASE,
     enSalle: enSalle, clubsPublies: clubsPublies, chargeSalles: chargeSalles,
     deposeDemande: deposeDemande, lienPhoto: lienPhoto

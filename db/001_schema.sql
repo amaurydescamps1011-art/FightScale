@@ -102,6 +102,24 @@ create table if not exists club_membre (
 
 create index if not exists club_membre_membre_idx on club_membre (membre_id);
 
+-- --------------------------------------------------------- le profil du compte
+-- Amaury, 23/09/2026 : « meme le mec gratuit qui a cree un compte, il y ait un
+-- minimum de data, au moins qu'il ait un profil de compte et qu'il soit
+-- enregistre quelque part ». `auth.users` appartient a Supabase et ne garde
+-- qu'une adresse et un mot de passe ; ce que la personne ecrit sur elle-meme
+-- tient ici. Une ligne par compte, qui existe des l'inscription, meme sans
+-- club et meme en gratuit.
+create table if not exists profil (
+  membre_id  uuid primary key references auth.users (id) on delete cascade,
+  cree_le    timestamptz not null default now(),
+  modifie_le timestamptz not null default now(),
+  -- le nom de la personne, pas celui de la salle : c'est elle qui se connecte
+  nom        text,
+  tel        text,
+  -- « gerant », « coach », « proprietaire »... : libre, c'est elle qui se decrit
+  fonction   text
+);
+
 -- ------------------------------------------------------ l'equipe Mon Club Combat
 -- Etre dans cette table, c'est etre admin. On n'y entre qu'a la main depuis
 -- Supabase : aucune politique ne permet de s'y ajouter soi-meme.
@@ -109,6 +127,35 @@ create table if not exists equipe (
   membre_id uuid primary key references auth.users (id) on delete cascade,
   cree_le   timestamptz not null default now()
 );
+
+-- Le profil nait avec le compte : un compte cree et jamais revenu a quand meme
+-- sa ligne. `auth.users` appartient a Supabase, donc ce trigger est le seul
+-- endroit ou on s'y accroche -- et seulement en lecture de ce que l'inscription
+-- a mis dans les metadonnees (le nom saisi dans la fenetre, ou celui que Google
+-- renvoie). Si le projet refuse un trigger sur ce schema, on n'echoue pas : les
+-- pages creent la ligne au premier passage (upsert), et le schema reste
+-- rejouable.
+create or replace function profil_du_nouveau_compte() returns trigger
+  language plpgsql security definer set search_path = public as
+$$
+declare meta jsonb;
+begin
+  -- `to_jsonb(new)->` et pas `new.raw_user_meta_data` : la colonne appartient a
+  -- Supabase et peut manquer ailleurs (un Postgres de test, une version
+  -- future). Ainsi la fonction ne casse pas l'inscription pour autant.
+  meta := coalesce(to_jsonb(new) -> 'raw_user_meta_data', '{}'::jsonb);
+  insert into profil (membre_id, nom)
+  values (new.id, nullif(trim(coalesce(meta->>'full_name', meta->>'name', '')), ''))
+  on conflict (membre_id) do nothing;
+  return new;
+end
+$$;
+
+do $$ begin
+  drop trigger if exists profil_a_l_inscription on auth.users;
+  create trigger profil_a_l_inscription after insert on auth.users
+    for each row execute function profil_du_nouveau_compte();
+exception when insufficient_privilege or undefined_table then null; end $$;
 
 create or replace function est_admin() returns boolean
   language sql stable security definer set search_path = public, auth as
@@ -225,6 +272,10 @@ drop trigger if exists demande_modifie_le on demande;
 create trigger demande_modifie_le before update on demande
   for each row execute function touche_modifie_le();
 
+drop trigger if exists profil_modifie_le on profil;
+create trigger profil_modifie_le before update on profil
+  for each row execute function touche_modifie_le();
+
 -- ----------------------------------------------------- l'abonnement Stripe
 -- Une table a part, et pas des colonnes sur `club` : l'annuaire lit `club` en
 -- `select *` avec la cle publique, donc tout ce qui vit sur cette table est
@@ -263,6 +314,7 @@ create trigger abonnement_modifie_le before update on abonnement
 alter table club        enable row level security;
 alter table club_membre enable row level security;
 alter table equipe      enable row level security;
+alter table profil      enable row level security;
 alter table demande     enable row level security;
 alter table abonnement  enable row level security;
 
@@ -335,6 +387,23 @@ create policy membre_lecture on club_membre
 drop policy if exists membre_admin on club_membre;
 create policy membre_admin on club_membre
   for all to authenticated using (est_admin()) with check (est_admin());
+
+-- --- profil ---
+-- Chacun ne voit et n'ecrit que le sien. Le `membre_id = auth.uid()` en
+-- `with check` est ce qui empeche d'ecrire la ligne de quelqu'un d'autre : sans
+-- lui, la politique de lecture ne protegerait rien a l'ecriture.
+drop policy if exists profil_lecture on profil;
+create policy profil_lecture on profil
+  for select to authenticated using (membre_id = auth.uid());
+
+drop policy if exists profil_creation on profil;
+create policy profil_creation on profil
+  for insert to authenticated with check (membre_id = auth.uid());
+
+drop policy if exists profil_edition on profil;
+create policy profil_edition on profil
+  for update to authenticated
+  using (membre_id = auth.uid()) with check (membre_id = auth.uid());
 
 -- --- equipe ---
 -- Lisible par soi seulement, et jamais modifiable depuis le site.

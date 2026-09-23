@@ -1,0 +1,104 @@
+<a class="skip" href="#mc-form">Aller à mes informations</a>
+
+%%HEADER%%
+
+<main id="contenu">
+  <section class="section sous-bandeau">
+    <div class="wrap">
+      <div class="fil">
+        <p class="eyebrow">Mon compte</p>
+        <h1 class="fil-titre display">Mon compte</h1>
+        <!-- Ce que le gerant vient y faire : corriger ce qui le concerne, retrouver
+             sa salle, changer son mot de passe, partir. Rien d'autre. -->
+        <p class="fil-mot">Vos informations, votre salle et votre mot de passe. Tout ce
+          que vous écrivez ici est enregistré sur votre compte.</p>
+      </div>
+    </div>
+
+    <div class="wrap grille-form">
+      <div class="mc-colonne">
+        <!-- tant que la session n'est pas lue, on n'affiche aucun champ : un
+             formulaire vide qui se remplit ensuite se lit comme un bug -->
+        <p class="form-etat" id="mc-charge">Chargement…</p>
+        <p class="form-erreur" id="mc-erreur" hidden role="alert"></p>
+
+        <form class="carte-form" id="mc-form" hidden novalidate>
+          <div class="bloc">
+            <h2 class="bloc-titre">Vous</h2>
+            <div class="champs">
+              <div class="champ">
+                <label for="mc-nom">Votre nom</label>
+                <input id="mc-nom" name="nom" autocomplete="name" placeholder="Karim Bentaleb">
+              </div>
+              <div class="champ">
+                <label for="mc-tel">Votre téléphone <span class="opt">(facultatif)</span></label>
+                <input id="mc-tel" name="tel" type="tel" autocomplete="tel" placeholder="06 12 34 56 78">
+                <span class="champ-aide">Pour que nous puissions vous joindre. Il n'est
+                  jamais affiché sur votre fiche.</span>
+              </div>
+              <div class="champ large">
+                <label for="mc-fonction">Votre rôle dans la salle <span class="opt">(facultatif)</span></label>
+                <input id="mc-fonction" name="fonction" placeholder="Gérant, coach, président de l'association…">
+              </div>
+              <div class="champ large">
+                <label for="mc-mail">Votre e-mail de connexion</label>
+                <input id="mc-mail" name="mail" type="email" readonly>
+                <span class="champ-aide">C'est avec cette adresse que vous vous connectez.
+                  Écrivez-nous pour la changer.</span>
+              </div>
+            </div>
+            <div class="form-pied">
+              <button class="btn btn-rouge" type="submit" id="mc-envoi">Enregistrer</button>
+              <p class="form-note" id="mc-fait" hidden>Enregistré.</p>
+            </div>
+          </div>
+        </form>
+
+        <form class="carte-form mc-suite" id="mc-mdp-form" hidden novalidate>
+          <div class="bloc">
+            <h2 class="bloc-titre">Mot de passe</h2>
+            <div class="champs">
+              <div class="champ">
+                <label for="mc-mdp">Nouveau mot de passe</label>
+                <input id="mc-mdp" type="password" minlength="8" autocomplete="new-password">
+                <span class="champ-aide">Huit caractères au minimum.</span>
+              </div>
+              <div class="champ">
+                <label for="mc-mdp2">Répétez-le</label>
+                <input id="mc-mdp2" type="password" minlength="8" autocomplete="new-password">
+              </div>
+            </div>
+            <p class="fen-erreur" id="mc-mdp-err" hidden role="alert"></p>
+            <div class="form-pied">
+              <button class="btn btn-ligne" type="submit" id="mc-mdp-envoi">Changer mon mot de passe</button>
+              <p class="form-note" id="mc-mdp-fait" hidden>Votre mot de passe est changé.</p>
+            </div>
+          </div>
+        </form>
+
+        <div class="carte-form mc-suite" id="mc-sortie-bloc" hidden>
+          <div class="bloc">
+            <h2 class="bloc-titre">Cette session</h2>
+            <p class="mc-ligne" id="mc-depuis"></p>
+            <div class="form-pied">
+              <button class="btn btn-ligne" type="button" id="mc-sortie">Se déconnecter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Le rappel de la salle, meme en gratuit : un compte qui ne montre rien de
+           ce qu'on a rempli ne ressemble pas a un compte. -->
+      <aside class="panneau" id="mc-panneau" hidden>
+        <p class="eyebrow">Ma salle</p>
+        <h2 id="mc-club">Votre salle</h2>
+        <p class="esp-etat" id="mc-etat" hidden><span id="mc-statut"></span></p>
+        <ul class="mc-faits" id="mc-faits"></ul>
+        <div class="esp-actions" id="mc-liens"></div>
+        <p class="pro-note" id="mc-offre" hidden></p>
+      </aside>
+    </div>
+  </section>
+</main>
+
+%%FOOTER%%

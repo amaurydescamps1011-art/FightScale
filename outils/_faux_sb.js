@@ -16,6 +16,8 @@ window.supabase = {
   createClient: function (){
     var S = window.__FAUX__ = window.__FAUX__ || window.__FAUX_LIT__() || {
       session: null, users: {}, club: [], club_membre: [], demande: [], equipe: [],
+      /* une ligne par compte, posee a l'inscription par un trigger en base */
+      profil: [],
       /* `annuaire` est une vue, pas une table : elle est calculee a la lecture */
       annuaire: [],
       fichiers: []
@@ -28,13 +30,19 @@ window.supabase = {
     function Req(table){
       var f = { table: table, op: 'select', filtres: [], un: false, champs: null };
       var api = {
-        select: function (){ if (f.op !== 'update') f.op = 'select'; return api; },
+        /* `select()` ne change pas l'operation : il dit seulement ce qu'on veut
+           en retour. Il remettait `op` a 'select', ce qui annulait l'upsert de
+           `.upsert(...).select().single()` -- la ligne n'etait alors jamais
+           ecrite, et le profil semblait s'enregistrer sans rien garder. */
+        select: function (){ return api; },
         update: function (c){ f.op = 'update'; f.champs = c; return api; },
         insert: function (c){ f.op = 'insert'; f.champs = c; return api; },
+        upsert: function (c){ f.op = 'upsert'; f.champs = c; return api; },
         eq: function (k, v){ f.filtres.push([k, v]); return api; },
         order: function (){ return api; },
         limit: function (){ return api; },
         single: function (){ f.un = true; return api; },
+        maybeSingle: function (){ f.un = true; return api; },
         then: function (ok, ko){ return execute().then(ok, ko); }
       };
       function lignes(){
@@ -45,6 +53,24 @@ window.supabase = {
       function execute(){
         return new Promise(function (res){
           var l;
+          if (f.op === 'upsert') {
+            /* Le profil du compte : une ligne par membre, ecrasee sur place. La
+               vraie base le fait par `on conflict (membre_id)`, avec des
+               politiques qui interdisent d'ecrire celle d'un autre -- c'est
+               db/rls_test.sh qui l'eprouve, pas ce faux serveur. */
+            var u = f.champs;
+            var deja = S[f.table].filter(function (r){ return r.membre_id === u.membre_id; })[0];
+            if (deja) {
+              Object.keys(u).forEach(function (k){ deja[k] = u[k]; });
+            } else {
+              deja = {};
+              Object.keys(u).forEach(function (k){ deja[k] = u[k]; });
+              S[f.table].push(deja);
+            }
+            sauve();
+            res({ data: f.un ? deja : [deja], error: null });
+            return;
+          }
           if (f.op === 'insert') {
             /* le depot d'une demande : la vraie politique n'accepte qu'un club
                publie, abonne Pro, et le statut « recue ». On refait ce controle
@@ -124,6 +150,9 @@ window.supabase = {
         signUp: function (o){
           if (S.users[o.email]) return Promise.resolve({ error: { message: 'User already registered' } });
           S.users[o.email] = { id: neuf(), mdp: o.password, meta: (o.options || {}).data || {} };
+          /* ce que fait le trigger `profil_a_l_inscription` en base */
+          S.profil.push({ membre_id: S.users[o.email].id, nom: null, tel: null, fonction: null,
+                          cree_le: new Date().toISOString() });
           if (window.__CONFIRME_MAIL__) return Promise.resolve({ data: { session: null, user: {} }, error: null });
           S.session = { user: { id: S.users[o.email].id, email: o.email,
                                 user_metadata: S.users[o.email].meta } };
@@ -138,7 +167,24 @@ window.supabase = {
           sauve();
           return Promise.resolve({ data: { session: S.session }, error: null });
         },
-        getSession: function (){ return Promise.resolve({ data: { session: S.session } }); }
+        getSession: function (){ return Promise.resolve({ data: { session: S.session } }); },
+        getUser: function (){
+          return Promise.resolve({ data: { user: S.session ? S.session.user : null } });
+        },
+        /* la session est deja ouverte : Supabase change le mot de passe sans
+           passer par un e-mail, et c'est ce que fait la page « Mon compte » */
+        updateUser: function (o){
+          if (!S.session) return Promise.resolve({ error: { message: 'Il faut etre connecte' } });
+          if (o && o.password) {
+            if (o.password.length < 8)
+              return Promise.resolve({ error: { message: 'Password should be at least 8 characters' } });
+            var mail = S.session.user.email;
+            if (S.users[mail]) S.users[mail].mdp = o.password;
+            sauve();
+          }
+          return Promise.resolve({ data: { user: S.session.user }, error: null });
+        },
+        signOut: function (){ S.session = null; sauve(); return Promise.resolve({ error: null }); }
       },
       from: function (t){ return Req(t); },
       rpc: function (nom, args){

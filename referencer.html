@@ -797,6 +797,54 @@
     border-radius:var(--r-m); border:1px solid rgba(29,138,74,.32);
     background:rgba(29,138,74,.06); font-size:15px; line-height:1.65; color:var(--texte-2)}
   .mdp-fait b{color:var(--vert)}
+
+  /* ---------- Mon compte ---------- */
+  /* La page du compte reprend la carte du formulaire de fiche : meme cadre, memes
+     champs, pour qu'un gerant qui a rempli sa fiche reconnaisse l'endroit. Trois
+     cartes empilees plutot qu'une seule tres longue : ses informations, son mot
+     de passe, sa session. */
+  .mc-colonne{min-width:0}
+  .mc-suite{margin-top:clamp(18px,2vw,26px)}
+  .mc-ligne{margin-top:14px; font-size:14.5px; line-height:1.6; color:var(--texte-2)}
+  /* Les faits de la salle, au rappel : ce que le compte a deja enregistre. Un
+     point rouge en tete, pas une puce grise : c'est du contenu, pas une liste
+     d'options. */
+  .mc-faits{margin-top:16px; padding:0; list-style:none; display:grid; gap:9px}
+  .mc-faits li{position:relative; padding-left:15px; font-size:14px; font-weight:600;
+    line-height:1.5; color:var(--texte-2)}
+  .mc-faits li::before{content:""; position:absolute; left:0; top:8px;
+    width:5px; height:5px; border-radius:50%; background:var(--rouge-500)}
+  #mc-panneau .esp-etat{margin-top:12px}
+  #mc-liens{margin-top:20px}
+  #mc-liens .btn{flex:0 0 auto}
+  /* Le palier, en rappel : un mot et une phrase. Le grand chiffre d'Anton est
+     fait pour un prix sur la page de vente, pas pour ce coin de page. */
+  #mc-offre{margin-top:22px}
+  #mc-offre b{display:block; font-size:15px; color:var(--texte)}
+  #mc-offre span{display:block; margin-top:8px; font-size:14px; line-height:1.6;
+    color:var(--texte-3)}
+  #mc-offre a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+
+  /* ---------- l'etat de la fiche, dans l'espace club ---------- */
+  /* Un club gratuit ne recoit aucune demande : c'est ce bloc qui fait que sa page
+     lui sert a quelque chose. Les postes remplis se lisent d'un coup d'oeil en
+     vert, les manques sont en rouge et portent le lien qui les corrige. */
+  .esp-complet{margin-top:clamp(30px,3.4vw,44px); padding-top:clamp(24px,2.6vw,32px);
+    border-top:1px solid var(--bord); max-width:70ch}
+  .esp-complet[hidden]{display:none}
+  .esp-complet-mot{margin-top:10px; font-size:15px; line-height:1.6; color:var(--texte-2)}
+  .esp-check{margin-top:18px; padding:0; list-style:none; display:grid; gap:12px}
+  .esp-check li{display:flex; gap:11px; align-items:flex-start}
+  .esp-puce{display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+    width:22px; height:22px; margin-top:1px; border-radius:999px}
+  .esp-puce svg{width:13px; height:13px}
+  .esp-check .ok .esp-puce{background:rgba(14,122,80,.12); color:var(--vert)}
+  .esp-check .manque .esp-puce{background:rgba(236,22,46,.10); color:var(--rouge-700)}
+  .esp-check-mot{display:grid; gap:3px; min-width:0}
+  .esp-check-mot b{font-size:14.5px; color:var(--texte)}
+  .esp-check .manque .esp-check-mot b{color:var(--texte)}
+  .esp-check-mot span{font-size:13.5px; line-height:1.55; color:var(--texte-3)}
+  .esp-check-mot a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -869,6 +917,54 @@
   .fen-ou::before,.fen-ou::after{content:""; flex:1; height:1px; background:var(--bord)}
   .fen-ou[hidden]{display:none}
   .fen-form{margin-top:16px}
+
+  /* ---------- le menu de compte, dans le bandeau ----------
+     Amaury, 23/09/2026 : « je veux que ca cree un vrai compte (...) l'impression
+     d'un vrai compte ». Des qu'une session est ouverte, le bouton « Referencer
+     ma salle » n'a plus de sens : a sa place, le bandeau porte le compte, d'ou
+     l'on atteint l'espace club, la fiche, la page du compte et la deconnexion.
+     Le menu s'ouvre au clic et pas au survol, contrairement aux menus de
+     navigation : on ne se deconnecte pas en passant la souris. */
+  .nav-compte{position:relative; flex-shrink:0}
+  .nav-compte[hidden]{display:none}
+  .cpt-bouton{display:inline-flex; align-items:center; gap:9px; min-height:44px;
+    padding:6px 12px 6px 6px; border:1px solid var(--bord-2); border-radius:999px;
+    background:var(--surface); color:var(--texte); cursor:pointer;
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .cpt-bouton:hover{border-color:var(--bord-3); box-shadow:var(--ombre-1)}
+  .cpt-rond{display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:999px; flex-shrink:0;
+    background:var(--rouge-600); color:#fff; font-size:12px; font-weight:800;
+    letter-spacing:.02em}
+  .cpt-nom{max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .cpt-menu{position:absolute; top:100%; right:0; translate:0 8px; z-index:50;
+    width:min(86vw,268px); padding:8px; text-align:left;
+    background:var(--surface); border:1px solid var(--bord); border-radius:var(--r-l);
+    box-shadow:var(--ombre-3)}
+  .cpt-menu[hidden]{display:none}
+  .cpt-tete{margin:0; padding:10px 11px 12px; display:grid; gap:3px;
+    border-bottom:1px solid var(--bord)}
+  .cpt-tete b{font-size:14px; color:var(--texte); overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap}
+  .cpt-tete span{font-size:12.5px; font-weight:600; color:var(--texte-4);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .cpt-liens{margin:6px 0; padding:0; list-style:none; display:grid; gap:1px}
+  .site-nav .cpt-liens a, .cpt-liens a{display:block; padding:9px 11px; border-radius:6px;
+    font-size:14px; font-weight:600; color:var(--texte-2); text-decoration:none}
+  .cpt-liens a:hover{background:var(--surface-2); color:var(--rouge-700)}
+  .cpt-sortie{width:100%; padding:9px 11px; border:0; border-top:1px solid var(--bord);
+    border-radius:0 0 6px 6px; background:none; cursor:pointer; text-align:left;
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700;
+    color:var(--rouge-700)}
+  .cpt-sortie:hover{background:rgba(236,22,46,.06)}
+  /* A 620 px le nom de la salle prendrait la place du mot-symbole : il ne reste
+     que la pastille, et le menu dit alors qui est connecte. */
+  @media (max-width:620px){
+    .cpt-nom{display:none}
+    .cpt-bouton{padding:5px; gap:0; min-height:40px}
+    .cpt-bouton .nav-chev{display:none}
+  }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -1748,6 +1844,104 @@
       montre(SB.dire(err));
     });
   });
+
+  /* ---------- le compte dans le bandeau ----------
+     Amaury, 23/09/2026 : « je veux que ca cree un vrai compte. Ca ouvre une
+     nouvelle page ou il y a un vrai profil de compte (...) pas que ca ouvre une
+     page fichue sale et qu'apres il ne puisse plus rien faire ». Un compte qui
+     n'apparait nulle part n'est pas un compte : des qu'une session est ouverte,
+     le bouton « Referencer ma salle » du bandeau cede la place au compte, sur
+     toutes les pages du site puisque ce script est pose partout.
+
+     Tant qu'on ne sait pas encore s'il y a une session, on ne touche a rien :
+     remplacer le bouton puis le remettre ferait clignoter le bandeau. */
+  var bandeau = document.querySelector('.site-nav .btn-rouge')
+             || document.querySelector('.site-header .btn-rouge');
+
+  function initiales(t){
+    var mots = String(t || '').normalize ? String(t).normalize('NFD').replace(/[̀-ͯ]/g, '') : String(t || '');
+    mots = mots.toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
+    if (!mots.length) return '?';
+    if (mots.length === 1) return mots[0].slice(0, 2);
+    return mots.slice(0, 2).map(function (m){ return m[0]; }).join('');
+  }
+
+  var CHEV = '<svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" ' +
+    'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" ' +
+    'aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+  function poseMenu(infos){
+    if (!bandeau) return;
+    var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon compte';
+    var liens = [];
+    if (infos.club) {
+      liens.push(['espace-club.html', 'Mon espace club']);
+      liens.push(['referencer.html', 'Modifier ma fiche']);
+      if (infos.club.statut === 'publie' && infos.club.slug)
+        liens.push(['salle.html?s=' + encodeURIComponent(infos.club.slug), 'Voir ma fiche en ligne']);
+    } else {
+      liens.push(['referencer.html', 'Créer la fiche de ma salle']);
+    }
+    liens.push(['mon-compte.html', 'Mon compte']);
+    if (infos.admin) liens.push(['admin.html', 'Back-office']);
+
+    var zone = document.createElement('div');
+    zone.className = 'nav-compte';
+    zone.innerHTML =
+      '<button class="cpt-bouton" type="button" id="cpt-bouton" aria-expanded="false" ' +
+        'aria-haspopup="true"><span class="cpt-rond">' + ech(initiales(nom)) + '</span>' +
+        '<span class="cpt-nom">' + ech(nom) + '</span>' + CHEV + '</button>' +
+      '<div class="cpt-menu" id="cpt-menu" hidden>' +
+        '<p class="cpt-tete"><b>' + ech(nom) + '</b><span>' + ech(infos.mail) + '</span></p>' +
+        '<ul class="cpt-liens">' + liens.map(function (l){
+            return '<li><a href="' + l[0] + '">' + ech(l[1]) + '</a></li>';
+          }).join('') + '</ul>' +
+        '<button type="button" class="cpt-sortie" id="cpt-sortie">Se déconnecter</button>' +
+      '</div>';
+    bandeau.parentNode.insertBefore(zone, bandeau);
+    bandeau.hidden = true;
+
+    var b = zone.querySelector('#cpt-bouton');
+    var m = zone.querySelector('#cpt-menu');
+    function ouvert(oui){
+      m.hidden = !oui;
+      b.setAttribute('aria-expanded', oui ? 'true' : 'false');
+    }
+    b.addEventListener('click', function (e){
+      e.stopPropagation();
+      ouvert(m.hidden);
+    });
+    document.addEventListener('click', function (e){
+      if (!m.hidden && !zone.contains(e.target)) ouvert(false);
+    });
+    document.addEventListener('keydown', function (e){
+      if (e.key === 'Escape' && !m.hidden) { ouvert(false); b.focus(); }
+    });
+    /* On quitte la page apres la deconnexion : l'espace club et la fiche
+       n'auraient plus rien a montrer, et l'accueil est la page d'un visiteur. */
+    zone.querySelector('#cpt-sortie').addEventListener('click', function (){
+      var s = zone.querySelector('#cpt-sortie');
+      s.disabled = true;
+      s.textContent = 'Déconnexion…';
+      SB.deconnexion().then(function (){ location.href = 'index.html'; });
+    });
+  }
+
+  function ech(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  if (reel && bandeau) {
+    SB.session().then(function (s){
+      if (!s) return;
+      var mail = (s.user && s.user.email) || '';
+      return Promise.all([SB.monClub(), SB.monProfil(), SB.estAdmin()])
+        .then(function (r){
+          poseMenu({ mail: mail, club: r[0], profil: r[1], admin: r[2] });
+        });
+    }).catch(function (){ /* le bandeau reste celui d'un visiteur */ });
+  }
 })();
 </script>
 

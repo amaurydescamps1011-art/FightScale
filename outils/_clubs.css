@@ -587,3 +587,51 @@
     border-radius:var(--r-m); border:1px solid rgba(29,138,74,.32);
     background:rgba(29,138,74,.06); font-size:15px; line-height:1.65; color:var(--texte-2)}
   .mdp-fait b{color:var(--vert)}
+
+  /* ---------- Mon compte ---------- */
+  /* La page du compte reprend la carte du formulaire de fiche : meme cadre, memes
+     champs, pour qu'un gerant qui a rempli sa fiche reconnaisse l'endroit. Trois
+     cartes empilees plutot qu'une seule tres longue : ses informations, son mot
+     de passe, sa session. */
+  .mc-colonne{min-width:0}
+  .mc-suite{margin-top:clamp(18px,2vw,26px)}
+  .mc-ligne{margin-top:14px; font-size:14.5px; line-height:1.6; color:var(--texte-2)}
+  /* Les faits de la salle, au rappel : ce que le compte a deja enregistre. Un
+     point rouge en tete, pas une puce grise : c'est du contenu, pas une liste
+     d'options. */
+  .mc-faits{margin-top:16px; padding:0; list-style:none; display:grid; gap:9px}
+  .mc-faits li{position:relative; padding-left:15px; font-size:14px; font-weight:600;
+    line-height:1.5; color:var(--texte-2)}
+  .mc-faits li::before{content:""; position:absolute; left:0; top:8px;
+    width:5px; height:5px; border-radius:50%; background:var(--rouge-500)}
+  #mc-panneau .esp-etat{margin-top:12px}
+  #mc-liens{margin-top:20px}
+  #mc-liens .btn{flex:0 0 auto}
+  /* Le palier, en rappel : un mot et une phrase. Le grand chiffre d'Anton est
+     fait pour un prix sur la page de vente, pas pour ce coin de page. */
+  #mc-offre{margin-top:22px}
+  #mc-offre b{display:block; font-size:15px; color:var(--texte)}
+  #mc-offre span{display:block; margin-top:8px; font-size:14px; line-height:1.6;
+    color:var(--texte-3)}
+  #mc-offre a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+
+  /* ---------- l'etat de la fiche, dans l'espace club ---------- */
+  /* Un club gratuit ne recoit aucune demande : c'est ce bloc qui fait que sa page
+     lui sert a quelque chose. Les postes remplis se lisent d'un coup d'oeil en
+     vert, les manques sont en rouge et portent le lien qui les corrige. */
+  .esp-complet{margin-top:clamp(30px,3.4vw,44px); padding-top:clamp(24px,2.6vw,32px);
+    border-top:1px solid var(--bord); max-width:70ch}
+  .esp-complet[hidden]{display:none}
+  .esp-complet-mot{margin-top:10px; font-size:15px; line-height:1.6; color:var(--texte-2)}
+  .esp-check{margin-top:18px; padding:0; list-style:none; display:grid; gap:12px}
+  .esp-check li{display:flex; gap:11px; align-items:flex-start}
+  .esp-puce{display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+    width:22px; height:22px; margin-top:1px; border-radius:999px}
+  .esp-puce svg{width:13px; height:13px}
+  .esp-check .ok .esp-puce{background:rgba(14,122,80,.12); color:var(--vert)}
+  .esp-check .manque .esp-puce{background:rgba(236,22,46,.10); color:var(--rouge-700)}
+  .esp-check-mot{display:grid; gap:3px; min-width:0}
+  .esp-check-mot b{font-size:14.5px; color:var(--texte)}
+  .esp-check .manque .esp-check-mot b{color:var(--texte)}
+  .esp-check-mot span{font-size:13.5px; line-height:1.55; color:var(--texte-3)}
+  .esp-check-mot a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}

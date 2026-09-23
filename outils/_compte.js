@@ -201,4 +201,102 @@
       montre(SB.dire(err));
     });
   });
+
+  /* ---------- le compte dans le bandeau ----------
+     Amaury, 23/09/2026 : « je veux que ca cree un vrai compte. Ca ouvre une
+     nouvelle page ou il y a un vrai profil de compte (...) pas que ca ouvre une
+     page fichue sale et qu'apres il ne puisse plus rien faire ». Un compte qui
+     n'apparait nulle part n'est pas un compte : des qu'une session est ouverte,
+     le bouton « Referencer ma salle » du bandeau cede la place au compte, sur
+     toutes les pages du site puisque ce script est pose partout.
+
+     Tant qu'on ne sait pas encore s'il y a une session, on ne touche a rien :
+     remplacer le bouton puis le remettre ferait clignoter le bandeau. */
+  var bandeau = document.querySelector('.site-nav .btn-rouge')
+             || document.querySelector('.site-header .btn-rouge');
+
+  function initiales(t){
+    var mots = String(t || '').normalize ? String(t).normalize('NFD').replace(/[̀-ͯ]/g, '') : String(t || '');
+    mots = mots.toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
+    if (!mots.length) return '?';
+    if (mots.length === 1) return mots[0].slice(0, 2);
+    return mots.slice(0, 2).map(function (m){ return m[0]; }).join('');
+  }
+
+  var CHEV = '<svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" ' +
+    'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" ' +
+    'aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+  function poseMenu(infos){
+    if (!bandeau) return;
+    var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon compte';
+    var liens = [];
+    if (infos.club) {
+      liens.push(['espace-club.html', 'Mon espace club']);
+      liens.push(['referencer.html', 'Modifier ma fiche']);
+      if (infos.club.statut === 'publie' && infos.club.slug)
+        liens.push(['salle.html?s=' + encodeURIComponent(infos.club.slug), 'Voir ma fiche en ligne']);
+    } else {
+      liens.push(['referencer.html', 'Créer la fiche de ma salle']);
+    }
+    liens.push(['mon-compte.html', 'Mon compte']);
+    if (infos.admin) liens.push(['admin.html', 'Back-office']);
+
+    var zone = document.createElement('div');
+    zone.className = 'nav-compte';
+    zone.innerHTML =
+      '<button class="cpt-bouton" type="button" id="cpt-bouton" aria-expanded="false" ' +
+        'aria-haspopup="true"><span class="cpt-rond">' + ech(initiales(nom)) + '</span>' +
+        '<span class="cpt-nom">' + ech(nom) + '</span>' + CHEV + '</button>' +
+      '<div class="cpt-menu" id="cpt-menu" hidden>' +
+        '<p class="cpt-tete"><b>' + ech(nom) + '</b><span>' + ech(infos.mail) + '</span></p>' +
+        '<ul class="cpt-liens">' + liens.map(function (l){
+            return '<li><a href="' + l[0] + '">' + ech(l[1]) + '</a></li>';
+          }).join('') + '</ul>' +
+        '<button type="button" class="cpt-sortie" id="cpt-sortie">Se déconnecter</button>' +
+      '</div>';
+    bandeau.parentNode.insertBefore(zone, bandeau);
+    bandeau.hidden = true;
+
+    var b = zone.querySelector('#cpt-bouton');
+    var m = zone.querySelector('#cpt-menu');
+    function ouvert(oui){
+      m.hidden = !oui;
+      b.setAttribute('aria-expanded', oui ? 'true' : 'false');
+    }
+    b.addEventListener('click', function (e){
+      e.stopPropagation();
+      ouvert(m.hidden);
+    });
+    document.addEventListener('click', function (e){
+      if (!m.hidden && !zone.contains(e.target)) ouvert(false);
+    });
+    document.addEventListener('keydown', function (e){
+      if (e.key === 'Escape' && !m.hidden) { ouvert(false); b.focus(); }
+    });
+    /* On quitte la page apres la deconnexion : l'espace club et la fiche
+       n'auraient plus rien a montrer, et l'accueil est la page d'un visiteur. */
+    zone.querySelector('#cpt-sortie').addEventListener('click', function (){
+      var s = zone.querySelector('#cpt-sortie');
+      s.disabled = true;
+      s.textContent = 'Déconnexion…';
+      SB.deconnexion().then(function (){ location.href = 'index.html'; });
+    });
+  }
+
+  function ech(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  if (reel && bandeau) {
+    SB.session().then(function (s){
+      if (!s) return;
+      var mail = (s.user && s.user.email) || '';
+      return Promise.all([SB.monClub(), SB.monProfil(), SB.estAdmin()])
+        .then(function (r){
+          poseMenu({ mail: mail, club: r[0], profil: r[1], admin: r[2] });
+        });
+    }).catch(function (){ /* le bandeau reste celui d'un visiteur */ });
+  }
 })();

@@ -8,7 +8,7 @@
 set -e
 cd "$(dirname "$0")"
 python3 gen_salles.py
-for p in clubs referencer espace-club admin motdepasse; do python3 build_clubs.py --"$p"; done
+for p in clubs referencer espace-club admin motdepasse mon-compte; do python3 build_clubs.py --"$p"; done
 python3 build_recherche.py
 python3 build_salle.py
 python3 build.py

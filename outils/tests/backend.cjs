@@ -224,7 +224,95 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('avec son etape et sa note', /Adhérente;A rappeler/.test(lignes[1]), true);
   await garde();
 
-  // ---------- 6. se reconnecter ----------
+  // ---------- 6. l'etat de la fiche, pour un club qui ne recoit rien ----------
+  ok('l\'etat de la fiche s\'affiche', await pg.isVisible('#esp-complet'), true);
+  ok('il compte les postes remplis',
+     /sur 7 sont remplis/.test(await pg.textContent('#esp-complet-mot')), true);
+  const manques = await pg.evaluate(() =>
+    Array.from(document.querySelectorAll('#esp-check .manque b')).map(b => b.textContent));
+  ok('les photos manquent, et ca se voit', manques.indexOf('Photos') >= 0, true);
+  ok('chaque manque porte son lien vers le formulaire',
+     await pg.getAttribute('#esp-check .manque a', 'href'), 'referencer.html');
+  ok('ce qui est rempli est marque comme tel',
+     await pg.locator('#esp-check .ok').count() >= 4, true);
+
+  // ---------- 7. le compte dans le bandeau ----------
+  await aller('index.html');
+  await pg.waitForTimeout(500);
+  ok('le bandeau porte le compte', await pg.isVisible('.nav-compte'), true);
+  ok('avec le nom de la salle', await pg.textContent('.cpt-nom'), 'Team Ouragan Boxe');
+  ok('et ses initiales', await pg.textContent('.cpt-rond'), 'TO');
+  ok('« Referencer ma salle » n\'a plus lieu d\'etre',
+     await pg.isVisible('.site-nav .btn-rouge'), false);
+  ok('le menu est ferme au depart', await pg.isVisible('#cpt-menu'), false);
+  await pg.click('#cpt-bouton');
+  await pg.waitForTimeout(200);
+  ok('il s\'ouvre au clic', await pg.isVisible('#cpt-menu'), true);
+  ok('l\'adresse du compte y figure',
+     /contact@ouragan\.fr/.test(await pg.textContent('.cpt-tete')), true);
+  ok('il mene a l\'espace club, a la fiche et au compte',
+     await pg.evaluate(() => Array.from(document.querySelectorAll('.cpt-liens a'))
+       .map(a => a.getAttribute('href'))),
+     ['espace-club.html', 'referencer.html', 'salle.html?s=team-ouragan-boxe-marseille',
+      'mon-compte.html', 'admin.html']);
+  await pg.keyboard.press('Escape');
+  await pg.waitForTimeout(150);
+  ok('et se referme avec Echap', await pg.isVisible('#cpt-menu'), false);
+
+  // ---------- 8. la page « Mon compte » ----------
+  await aller('mon-compte.html');
+  await pg.waitForTimeout(600);
+  ok('l\'adresse de connexion s\'affiche', await pg.inputValue('#mc-mail'), 'contact@ouragan.fr');
+  ok('la salle est rappelee', await pg.textContent('#mc-club'), 'Team Ouragan Boxe');
+  ok('avec son etat', await pg.textContent('#mc-statut'), 'En ligne');
+  const faits = await pg.evaluate(() =>
+    Array.from(document.querySelectorAll('#mc-faits li')).map(l => l.textContent));
+  ok('et de vraies donnees, pas une page vide', faits.length >= 4, true);
+  ok('la ville en fait partie', faits.some(f => /Marseille/.test(f)), true);
+  ok('le planning aussi', faits.some(f => /2 cours au planning/.test(f)), true);
+  ok('le palier est dit', /Formule gratuite/.test(await pg.textContent('#mc-offre')), true);
+
+  await pg.fill('#mc-nom', 'Amaury Descamps');
+  await pg.fill('#mc-tel', '06 11 22 33 44');
+  await pg.fill('#mc-fonction', 'Gérant');
+  await pg.click('#mc-envoi');
+  await pg.waitForTimeout(500);
+  ok('le profil est enregistre', await pg.isVisible('#mc-fait'), true);
+  const prof = await pg.evaluate(() => window.__FAUX__.profil[0]);
+  ok('et il l\'est en base', [prof.nom, prof.tel, prof.fonction],
+     ['Amaury Descamps', '06 11 22 33 44', 'Gérant']);
+
+  // il survit a la navigation : c'est tout l'objet de la table
+  await aller('mon-compte.html');
+  await pg.waitForTimeout(600);
+  ok('il est relu au retour sur la page', await pg.inputValue('#mc-nom'), 'Amaury Descamps');
+  ok('et le bandeau porte le nom de la salle', await pg.textContent('.cpt-nom'), 'Team Ouragan Boxe');
+
+  // le mot de passe : deux fois le meme, huit caracteres au minimum
+  await pg.fill('#mc-mdp', 'nouveau-mot');
+  await pg.fill('#mc-mdp2', 'pas-le-meme');
+  await pg.click('#mc-mdp-envoi');
+  await pg.waitForTimeout(300);
+  ok('deux mots de passe differents sont refuses',
+     await pg.textContent('#mc-mdp-err'), 'Les deux mots de passe ne sont pas les mêmes.');
+  await pg.fill('#mc-mdp2', 'nouveau-mot');
+  await pg.click('#mc-mdp-envoi');
+  await pg.waitForTimeout(500);
+  ok('le mot de passe change', await pg.isVisible('#mc-mdp-fait'), true);
+  ok('et c\'est le nouveau qui est garde',
+     await pg.evaluate(() => window.__FAUX__.users['contact@ouragan.fr'].mdp), 'nouveau-mot');
+
+  // la deconnexion ramene a l'accueil et ferme la session
+  await pg.click('#mc-sortie');
+  await pg.waitForURL(/index\.html/, { timeout: 5000 });
+  await pg.waitForTimeout(400);
+  ok('la deconnexion ramene a l\'accueil', /index\.html/.test(pg.url()), true);
+  ok('la session est fermee', await pg.evaluate(() => window.__FAUX__.session), null);
+  ok('et le bandeau redevient celui d\'un visiteur',
+     await pg.isVisible('.nav-compte'), false);
+
+  // ---------- 9. se reconnecter ----------
+
   await pg.evaluate(() => { window.__FAUX__.session = null; });
   await garde();
   await aller('espace-club.html');

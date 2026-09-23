@@ -93,6 +93,8 @@
         ? m[1] + ' Motif : ' + club.motif_refus
         : m[1];
 
+    complet(club);
+
     if (club.statut === 'publie' && club.slug) {
       var voir = document.getElementById('esp-voir');
       voir.href = 'salle.html?s=' + encodeURIComponent(club.slug);
@@ -100,6 +102,55 @@
     }
     return prospects(club);
   }).catch(function (e){ rate(SB.dire(e)); });
+
+  /* ---------- l'etat de la fiche, poste par poste ----------
+     Un club gratuit ne recoit pas de demande : sans ce bloc, son espace ne lui
+     dit rien du tout. La fiche, elle, est a lui quel que soit le palier, et
+     c'est la seule chose sur laquelle il peut avancer aujourd'hui. Chaque ligne
+     manquante renvoie au formulaire, a l'endroit qui la remplit. */
+  var OUI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>';
+  var NON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" ' +
+    'stroke-linecap="round" aria-hidden="true"><path d="M12 7v7M12 17.4v.2"/></svg>';
+
+  function complet(club){
+    var h = club.horaires || {};
+    var jours = 0;
+    for (var k in h) if (Object.prototype.hasOwnProperty.call(h, k)) jours++;
+    var gratuit = (club.offre || 'gratuit') !== 'pro';
+
+    var lignes = [
+      ['Adresse et ville', !!(club.adresse && club.ville), 'Sans elles, votre salle ne sort dans aucune recherche de ville.'],
+      ['Disciplines', (club.disciplines || []).length > 0, 'Ce sont elles qui vous font apparaître dans les pages de discipline.'],
+      ['Présentation', !!(club.presentation && club.presentation.trim().length > 60),
+       'Trois ou quatre phrases sur votre salle : c’est ce qu’on lit avant de venir.'],
+      ['Photos', (club.photos || []).length > 0,
+       'Une salle avec photos est nettement plus contactée qu’une salle sans.'],
+      ['Horaires d’ouverture', jours > 0, 'Ils affichent « ouvert aujourd’hui » sur votre fiche.'],
+      ['Planning des cours', (club.cours || []).length > 0,
+       gratuit ? 'Le planning se voit sur votre fiche, et c’est sur ces cours que se réservent les séances d’essai en Pro.'
+               : 'C’est sur ces cours que se réservent les séances d’essai.'],
+      ['Téléphone ou e-mail', !!(club.tel || club.mail),
+       gratuit ? 'Ils ne sont pas affichés sans abonnement, mais il nous faut un moyen de vous joindre.'
+               : 'Ils sont affichés sur votre fiche, c’est par là qu’on vous contacte.']
+    ];
+
+    var faits = lignes.filter(function (l){ return l[1]; }).length;
+    document.getElementById('esp-complet').hidden = false;
+    document.getElementById('esp-complet-mot').textContent = faits === lignes.length
+      ? 'Votre fiche est complète.'
+      : faits + ' éléments sur ' + lignes.length + ' sont remplis. Voici ce qu’il reste.';
+
+    document.getElementById('esp-check').innerHTML = lignes.map(function (l){
+      return '<li class="' + (l[1] ? 'ok' : 'manque') + '">' +
+        '<span class="esp-puce">' + (l[1] ? OUI : NON) + '</span>' +
+        '<span class="esp-check-mot"><b>' + ech(l[0]) + '</b>' +
+        (l[1] ? '' : '<span>' + ech(l[2]) +
+           ' <a href="referencer.html">Le remplir</a></span>') +
+        '</span></li>';
+    }).join('');
+  }
 
   /* ---------- lecture ---------- */
   function prospects(club){

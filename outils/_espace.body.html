@@ -33,6 +33,16 @@
         <div class="esp-actions">
           <a class="btn btn-rouge" href="referencer.html">Modifier ma fiche</a>
           <a class="btn btn-ligne" id="esp-voir" href="#" hidden>Voir ma fiche en ligne</a>
+          <a class="btn btn-ligne" href="mon-compte.html">Mon compte</a>
+        </div>
+
+        <!-- Ce qui rend cette page utile a un club gratuit, qui ne recoit aucune
+             demande : l'etat de sa fiche, poste par poste, et ce qu'il lui reste
+             a remplir. Chaque manque est un lien vers l'endroit ou le corriger. -->
+        <div class="esp-complet" id="esp-complet" hidden>
+          <p class="eyebrow">L'état de votre fiche</p>
+          <p class="esp-complet-mot" id="esp-complet-mot"></p>
+          <ul class="esp-check" id="esp-check"></ul>
         </div>
       </div>
     </div>

@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Toutes les salles de MMA référencées sur Mon Club Combat : horaires, planning des cours, adresse et contact direct.">
+<meta name="robots" content="noindex, follow">
+<meta name="description" content="Vos informations, votre salle et votre mot de passe.">
 <meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mon Club Combat">
-<meta property="og:title" content="MMA — salles et clubs en France | Mon Club Combat">
-<meta property="og:description" content="Toutes les salles de MMA référencées sur Mon Club Combat : horaires, planning des cours, adresse et contact direct.">
+<meta property="og:title" content="Mon compte — Mon Club Combat">
+<meta property="og:description" content="Vos informations, votre salle et votre mot de passe.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
@@ -19,7 +20,7 @@
   img{max-width:100%}
   [hidden]{display:none !important}
 </style>
-<title>MMA — salles et clubs en France | Mon Club Combat</title>
+<title>Mon compte — Mon Club Combat</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
 <style>
@@ -141,6 +142,15 @@
     .site-nav .btn{padding-inline:13px; font-size:13px}
   }
 
+  .eyebrow{display:inline-flex; align-items:center; gap:10px;
+    font-size:11.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--texte-3)}
+  .eyebrow::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--rouge-500)}
+
+  /* Trois lignes d'Anton de meme corps font un pave noir sur fond clair. La
+     derniere passe donc au demi-corps, espacee : le titre garde son poids sans
+     etre un bloc. */
   /* ---------- pied de page ---------- */
   .site-footer{border-top:1px solid var(--bord); background:var(--fond)}
   .footer-haut{padding-block:clamp(44px,5vw,64px);
@@ -199,243 +209,642 @@
   }
 
 
-  /* ---------- barre applicative ---------- */
-  .barre-appli{position:sticky; top:env(safe-area-inset-top,0px); z-index:40;
-    border-bottom:1px solid var(--bord); background:rgba(255,255,255,.92);
-    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px)}
-  .barre-in{display:flex; align-items:center; gap:clamp(14px,2vw,28px); padding-block:14px}
-  .barre-in .brand{flex-shrink:0}
-  .champ-ville{position:relative; flex:1 1 auto; min-width:0; max-width:520px;
-    display:flex; align-items:center; gap:8px; padding:6px 6px 6px 16px;
-    border:1px solid var(--bord-2); border-radius:999px; background:var(--surface);
-    transition:border-color .16s ease, box-shadow .16s ease}
-  .champ-ville:focus-within{border-color:rgba(236,22,46,.55);
-    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
-  .champ-ville > svg{flex-shrink:0; color:var(--rouge-lien)}
-  .champ-ville input{flex:1 1 auto; min-width:0; border:0; background:transparent; outline:none;
-    padding:8px 0; font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:700;
-    color:var(--texte)}
-  .champ-ville input::placeholder{color:var(--texte-4); font-weight:600}
-  .champ-ville .btn{flex:0 0 auto; min-height:40px; padding:10px 20px; border-radius:999px;
-    font-size:14px}
-  .barre-nav{margin-left:auto; display:flex; align-items:center; gap:22px}
-  .barre-nav a:not(.btn){font-size:14.5px; font-weight:700; color:var(--texte-2);
-    text-decoration:none; white-space:nowrap}
-  .barre-nav a:not(.btn):hover{color:var(--texte)}
-  /* le bandeau de recherche porte ses menus dans .barre-nav, pas .site-nav :
-     sans cette ligne les panneaux restaient en place sous 1100 px et
-     debordaient la page a 390. */
-  @media (max-width:1100px){ .barre-nav .nav-link, .barre-nav .nav-item{display:none} }
-  @media (max-width:720px){
-    .barre-in{flex-wrap:wrap; gap:12px}
-    .champ-ville{order:3; flex:1 1 100%; max-width:none}
-    .barre-nav{margin-left:auto}
-  }
-
-  /* ---------- barre de filtres ---------- */
-  .filtres-bloc{border-bottom:1px solid var(--bord); background:var(--fond)}
-  .compte{padding-top:22px; font-size:clamp(17px,2vw,21px); font-weight:800; letter-spacing:-.01em;
-    color:var(--texte)}
-  .compte b{color:var(--rouge-lien)}
-  .rangee-filtres{display:flex; flex-wrap:wrap; gap:10px; padding-block:16px 18px;
-    margin-inline:0; padding-inline:0}
-  @media (max-width:900px){
-  .rangee-filtres{flex-wrap:nowrap; overflow-x:auto;
-    scrollbar-width:none; -ms-overflow-style:none;
-    margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter)}
-  .rangee-filtres::-webkit-scrollbar{display:none} }
-  .puce{flex:0 0 auto; display:inline-flex; align-items:center; gap:8px; min-height:40px;
-    padding:9px 16px; border:1px solid var(--bord-2); border-radius:999px;
-    background:var(--surface); font-family:Manrope,system-ui,sans-serif;
-    font-size:13.5px; font-weight:700; color:var(--texte-2); white-space:nowrap;
-    text-decoration:none; cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .puce:hover{border-color:rgba(220,18,41,.45); color:var(--texte)}
-  .puce[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--texte);
-    background:rgba(220,18,41,.08); color:var(--rouge-700)}
-  .puce-sep{flex:0 0 1px; align-self:center; width:1px; height:24px; background:var(--bord)}
-
-  /* ---------- une seule colonne ----------
-     Modele annuaire : la liste occupe la page, la carte se deplie au-dessus.
-     On borne la colonne, sinon les lignes de texte deviennent illisibles. */
-  .colonne-liste{padding-block:clamp(22px,2.6vw,32px) clamp(30px,4vw,44px)}
-  .colonne-liste .wrap, .fond-seo .wrap, .filtres-bloc .wrap, .carte-zone .wrap{max-width:1040px}
-
-  /* ---------- fil d'Ariane ---------- */
-  .fil{display:flex; flex-wrap:wrap; align-items:center; gap:7px; padding-top:18px;
-    font-size:12.5px; font-weight:700; color:var(--texte-4)}
-  .fil a{color:var(--texte-3); text-decoration:none}
-  .fil a:hover{color:var(--rouge-lien)}
-  .fil i{font-style:normal; color:var(--bord-3)}
-  .fil [aria-current]{color:var(--texte-2)}
-
-  /* ---------- liste de résultats ---------- */
-  .liste{display:flex; flex-direction:column; gap:14px}
-  .res-corps{gap:9px}
-  .res{position:relative; display:grid; grid-template-columns:186px minmax(0,1fr); gap:0;
-    border:1px solid var(--bord-2); border-radius:var(--r-l); background:var(--surface);
-    overflow:hidden; transition:border-color .16s ease, box-shadow .16s ease}
-  .res:hover, .res.actif{border-color:rgba(220,18,41,.45);
-    box-shadow:0 0 0 1px rgba(220,18,41,.18), var(--ombre-2)}
-  .res-vignette{position:relative; display:grid; place-items:center;
-    border-right:1px solid var(--bord);
-    background:
-      radial-gradient(120% 90% at 50% 118%, rgba(220,18,41,.13) 0%, rgba(220,18,41,0) 62%),
-      linear-gradient(145deg,#F2F0EB 0%,#E7E4DD 55%,#DCD8D0 100%)}
-  .res-vignette::after{content:""; position:absolute; inset:0;
-    background:repeating-linear-gradient(115deg, rgba(22,22,15,.035) 0 1px, transparent 1px 13px)}
-  .res-num{position:absolute; top:9px; left:9px; z-index:2; display:grid; place-items:center;
-    width:24px; height:24px; border-radius:50%; background:var(--rouge-600); color:#fff;
-    font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
-    box-shadow:0 2px 6px -1px rgba(220,18,41,.5)}
-  .res-init{position:relative; z-index:1; font-family:Anton,"Arial Narrow",sans-serif;
-    font-size:42px; line-height:1; letter-spacing:.04em; color:rgba(22,22,15,.17)}
-  .res-corps{display:flex; flex-direction:column; gap:9px; padding:15px 16px}
-  .res-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
-  .res-nom{font-size:16px; font-weight:800; line-height:1.25; letter-spacing:-.01em;
-    color:var(--texte)}
-  .res-nom a{color:inherit; text-decoration:none}
-  .res-chips{display:flex; flex-wrap:wrap; gap:6px}
-  .note{display:inline-flex; align-items:center; gap:5px; flex-shrink:0;
-    font-size:13px; font-weight:800; color:var(--texte); font-variant-numeric:tabular-nums}
-  .note svg{color:var(--texte)}
-  .note small{font-size:11.5px; font-weight:600; color:var(--texte-4)}
-  .mini-chip{padding:4px 9px; border:1px solid var(--bord-2); border-radius:999px;
-    font-size:11px; font-weight:700; color:var(--texte-3)}
-  .res-meta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px;
-    font-size:12.5px; color:var(--texte-3)}
-  .res-meta svg{flex-shrink:0; color:var(--texte-4)}
-  .res-meta .paire{display:inline-flex; align-items:center; gap:6px}
-  .res-ouvert{color:var(--vert); font-weight:700}
-  .res-ouvert::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--vert);
-}
-  .res-adresse{display:flex; align-items:flex-start; gap:7px;
-    font-size:13px; line-height:1.5; color:var(--texte-3)}
-  .res-adresse svg{flex-shrink:0; margin-top:2px; color:var(--texte-4)}
-  .res-km{color:var(--texte-4); white-space:nowrap}
-  .res-mot{max-width:74ch; font-size:13.5px; line-height:1.6; color:var(--texte-2)}
-  .res-bas{margin-top:2px; display:flex; flex-wrap:wrap; align-items:center;
-    justify-content:space-between; gap:10px 16px; font-size:12.5px; color:var(--texte-3)}
-  .res-bas .paire{display:inline-flex; align-items:center; gap:6px}
-  .res-essai{min-height:40px; padding:10px 18px; font-size:13.5px; border-radius:999px}
-
-  .res-etiq{position:absolute; top:9px; right:9px; z-index:2; padding:4px 9px; border-radius:999px;
-    font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
-    background:rgba(220,18,41,.9); color:#fff}
-  @media (max-width:760px){
-    .res{grid-template-columns:104px minmax(0,1fr)}
-    .res-init{font-size:26px}
-    .res-corps{padding:13px 14px}
-    .res-nom{font-size:15px}
-    .res-bas{justify-content:flex-start}
-    .res-essai{flex:1 1 100%}
-  }
-  @media (max-width:440px){
-    .res{grid-template-columns:1fr}
-    .res-vignette{aspect-ratio:16/7; border-right:0; border-bottom:1px solid var(--bord)}
-  }
-
-  /* rien trouvé */
-  .vide{padding:clamp(34px,5vw,56px) clamp(22px,3vw,36px); text-align:center;
-    border:1px dashed var(--bord-2); border-radius:var(--r-l); background:var(--surface)}
-  .vide h2{font-size:clamp(20px,2.4vw,26px); line-height:1.1; color:var(--texte)}
-  .vide p{margin-top:12px; margin-inline:auto; max-width:44ch; font-size:14.5px; line-height:1.6;
-    color:var(--texte-3)}
-  .vide-villes{margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:9px}
-
-  /* ---------- le bouton qui deplie la carte ---------- */
-  .btn-carte{display:inline-flex; align-items:center; gap:9px; min-height:42px;
-    margin-bottom:18px; padding:10px 18px; border:1px solid var(--bord-2);
-    border-radius:999px; background:var(--surface);
-    font-family:Manrope,system-ui,sans-serif; font-size:13.5px; font-weight:800;
-    color:var(--texte); cursor:pointer;
-    transition:border-color .15s ease, background-color .15s ease}
-  .btn-carte:hover{border-color:rgba(220,18,41,.45); background:rgba(220,18,41,.05)}
-  .btn-carte svg{color:var(--rouge-lien)}
-  .btn-carte[aria-expanded="true"]{border-color:var(--rouge-600); background:rgba(220,18,41,.08);
-    color:var(--rouge-700)}
-
-  /* ---------- carte ---------- */
-  .carte-zone{padding-block:clamp(18px,2.4vw,26px); background:var(--fond);
+  /* ---------- héros club ---------- */
+  .hero-club{position:relative; isolation:isolate; overflow:hidden; background:var(--fond);
     border-bottom:1px solid var(--bord)}
-  .carte-boite{position:relative; height:min(66svh,560px); overflow:hidden;
-    border:1px solid var(--bord-2); border-radius:var(--r-l); background:var(--surface)}
-  #plan{display:block; width:100%; height:100%; cursor:grab; touch-action:none}
-  #plan.tire{cursor:grabbing}
-  .carte-haut{position:absolute; z-index:2; top:12px; left:12px; right:12px;
-    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-    pointer-events:none}
-  .carte-etiq{padding:7px 13px; border-radius:999px; border:1px solid var(--bord-2);
-    background:rgba(255,255,255,.9); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-    font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
-    color:var(--texte-2)}
-  .carte-nord{display:grid; place-items:center; width:34px; height:34px; border-radius:50%;
-    border:1px solid var(--bord-2); background:rgba(255,255,255,.9);
-    font-size:11px; font-weight:800; color:var(--texte-3)}
-  .carte-bas{position:absolute; z-index:2; left:12px; bottom:12px; right:12px;
-    display:flex; align-items:center; gap:12px; pointer-events:none}
-  .echelle{display:inline-flex; align-items:center; gap:8px; padding:5px 10px; border-radius:6px;
-    background:rgba(255,255,255,.85); font-size:11px; font-weight:700; color:var(--texte-3);
-    font-variant-numeric:tabular-nums}
-  .echelle i{display:block; height:7px; width:60px; border:1px solid var(--texte-4);
-    border-top:0}
-  .carte-zoom{position:absolute; z-index:3; right:12px; bottom:12px;
-    display:flex; flex-direction:column; align-items:flex-end; gap:6px}
-  .carte-zoom button{display:grid; place-items:center; width:34px; height:34px; padding:0;
-    border:1px solid var(--bord-2); border-radius:8px; background:rgba(255,255,255,.94);
-    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-    font-family:Manrope,system-ui,sans-serif; font-size:17px; font-weight:800;
-    color:var(--texte-2); cursor:pointer;
-    transition:border-color .15s ease, color .15s ease}
-  .carte-zoom button:hover{border-color:rgba(220,18,41,.45); color:var(--rouge-600)}
-  .carte-zoom .z-large{width:auto; height:32px; padding:0 13px; font-size:12px; font-weight:800}
+  .hero-club::before{content:""; position:absolute; z-index:-2; left:50%; top:-10%;
+    translate:-50% 0; width:min(1100px,140%); aspect-ratio:2/1; pointer-events:none;
+    background:radial-gradient(50% 50% at 50% 50%,
+      rgba(236,22,46,.06) 0%, rgba(236,22,46,.025) 40%, rgba(236,22,46,0) 72%)}
+  .hero-club::after{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:repeating-linear-gradient(115deg, rgba(22,22,15,.028) 0 1px, transparent 1px 15px)}
+  .hero-club-in{padding-block:clamp(122px,14vw,158px) clamp(46px,6vw,74px);
+    display:flex; flex-direction:column; align-items:center; text-align:center}
+  .hero-club h1{margin-top:24px; font-size:clamp(30px,5vw,62px); line-height:.98;
+    letter-spacing:.014em; color:var(--texte)}
+  .hero-club h1 span{display:block}
+  .hero-club h1 .ligne-logo{display:flex; flex-wrap:wrap; justify-content:center;
+    align-items:baseline; gap:.02em .3em}
+  /* le mot-symbole est calé sur la hauteur de capitale d'Anton et sur la ligne de base */
+  /* « MON CLUB COMBAT » est bien plus long que l'ancien mot-symbole (rapport
+     17,6 contre 11,3) : a la hauteur de capitale il depasserait la ligne. On le
+     pose plus bas, et sous 760 px il prend sa propre ligne. Le « sur » descend
+     avec lui : la capitale d'Anton vaut ~0,73 em, donc 0,46 / 0,73 = 0,63 em
+     donne deux mots de meme hauteur. */
+  .h1-logo{flex-shrink:0; height:.46em; width:auto; translate:0 -.02em;
+    filter:drop-shadow(0 2px 8px rgba(22,22,15,.12))}
+  .h1-sur{font-size:.63em; letter-spacing:.02em; color:var(--texte-2)}
+  @media (max-width:760px){
+    /* en colonne, l'axe transversal devient l'horizontale : `baseline` se lit
+       alors comme `flex-start` et colle le « sur » a gauche. On recentre. */
+    .hero-club h1 .ligne-logo{flex-direction:column; align-items:center; gap:.16em}
+    /* le logo retrecit, le « sur » suit : 0,4 / 0,73 = 0,55 em */
+    .h1-logo{height:.4em}
+    .h1-sur{font-size:.55em}
+  }
+  .hero-sous{margin-top:20px; max-width:52ch; font-size:clamp(15px,1.35vw,17.5px);
+    line-height:1.62; color:var(--texte-2)}
+  .rassure{margin-top:26px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px}
+  .rassure li{display:inline-flex; align-items:center; gap:8px; padding:9px 16px;
+    border:1px solid var(--bord); border-radius:999px; background:var(--surface);
+    font-size:13.5px; font-weight:700; color:var(--texte-2)}
+  .rassure svg{color:var(--rouge-lien); flex-shrink:0}
+  /* Le premier bouton tombait a 2126 px sur un telephone : deux ecrans et demi avant
+     de pouvoir agir. Il y en a un ici aussi, celui du bloc « Comment ca se passe »
+     reste en place (Amaury, 22/09/2026). */
+  .hero-club-actions{margin-top:28px}
 
-  /* ---------- pagination ---------- */
-  .pagination{margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:8px}
-  .pg{display:grid; place-items:center; min-width:42px; min-height:42px; padding:0 12px;
-    border:1px solid var(--bord-2); border-radius:10px; background:var(--surface);
-    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:800;
-    color:var(--texte-2); cursor:pointer; font-variant-numeric:tabular-nums;
-    transition:border-color .15s ease, color .15s ease, background-color .15s ease}
-  .pg:hover:not(:disabled){border-color:rgba(220,18,41,.45); color:var(--texte)}
-  .pg[aria-current="page"]{border-color:var(--rouge-600); background:rgba(220,18,41,.08);
-    color:var(--rouge-700)}
-  .pg:disabled{opacity:.35; cursor:default}
-  .pg-fl{font-size:18px; line-height:1}
+  /* Le heros faisait 602 px sur un telephone pour un titre de deux lignes : on ne
+     garde au-dessus que la hauteur du bandeau. */
+  @media (max-width:620px){
+    .hero-club-in{padding-block:86px 30px}
+    .hero-club h1{margin-top:18px}
+    .hero-sous{margin-top:15px}
+    .rassure{margin-top:18px; gap:8px}
+    .rassure li{padding:7px 13px; font-size:13px}
+    .hero-club-actions{margin-top:22px}
+    .hero-exemple{margin-top:14px}
+  }
 
-  /* ---------- le texte de fond, sous la liste ----------
-     Il est sous les salles, jamais avant : on montre le stock d'abord. */
-  .fond-seo{border-top:1px solid var(--bord); background:var(--surface);
-    padding-block:clamp(38px,5vw,60px)}
-  .seo-titre{font-size:clamp(21px,2.6vw,30px); line-height:1.05; color:var(--texte)}
-  .seo-texte{margin-top:16px; max-width:76ch; font-size:14.5px; line-height:1.7;
+  /* ---------- sections ---------- */
+  .section{padding-block:clamp(44px,5.4vw,72px)}
+  @media (max-width:620px){ .section{padding-block:34px} }
+  .grille-form{display:grid; gap:clamp(22px,2.6vw,32px);
+    grid-template-columns:minmax(0,1.45fr) minmax(280px,.95fr); align-items:start}
+  @media (max-width:940px){ .grille-form{grid-template-columns:1fr} }
+
+  /* ---------- formulaire ---------- */
+  .carte-form{padding:clamp(22px,2.6vw,34px); border:1px solid var(--bord-2);
+    border-radius:var(--r-l); background:var(--surface)}
+  .bloc + .bloc{margin-top:30px; padding-top:28px; border-top:1px solid var(--bord)}
+  .bloc-titre{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--texte-4)}
+  .champs{margin-top:18px; display:grid; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .champ{display:flex; flex-direction:column; gap:7px; min-width:0}
+  .champ.large{grid-column:1 / -1}
+  @media (max-width:560px){ .champs{grid-template-columns:1fr} }
+  .champ label{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .champ label .opt{font-weight:600; color:var(--texte-4)}
+  .champ input, .champ textarea{
+    width:100%; min-height:48px; padding:12px 14px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600; line-height:1.4;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .champ textarea{min-height:104px; resize:vertical}
+  .champ input::placeholder, .champ textarea::placeholder{color:var(--texte-4); font-weight:500}
+  .champ input:focus, .champ textarea:focus{outline:none; border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+
+  .choix{margin-top:18px; display:flex; flex-wrap:wrap; gap:9px}
+  .choix label{position:relative; display:inline-flex; align-items:center; gap:8px;
+    min-height:44px; padding:10px 17px; border:1px solid var(--bord-2); border-radius:999px;
+    background:var(--fond); font-size:14px; font-weight:700; color:var(--texte-2);
+    cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .choix label:hover{border-color:rgba(220,18,41,.45); color:var(--texte)}
+  .choix input{position:absolute; opacity:0; width:1px; height:1px}
+  .choix input:focus-visible + span{outline:2px solid var(--rouge-lien); outline-offset:6px;
+    border-radius:4px}
+  .choix label:has(input:checked){border-color:var(--rouge-600); color:var(--texte);
+    background:rgba(220,18,41,.08); color:var(--rouge-700)}
+
+  .form-pied{margin-top:28px; display:flex; flex-wrap:wrap; align-items:center; gap:14px 20px}
+  .form-pied .btn{min-height:52px; padding:14px 28px; font-size:15px}
+  .form-note{flex:1 1 220px; min-width:0; font-size:12.5px; line-height:1.55; color:var(--texte-4)}
+  .form-note a{color:var(--texte-3)}
+
+  /* confirmation */
+  .merci{display:none; padding:clamp(26px,3vw,40px); text-align:center}
+  .merci.on{display:block}
+  .carte-form.envoye .form-corps{display:none}
+  .merci-rond{width:56px; height:56px; margin-inline:auto; display:grid; place-items:center;
+    border-radius:50%; background:rgba(220,18,41,.09); color:var(--rouge-600)}
+  .merci h2{margin-top:18px; font-size:clamp(22px,2.6vw,30px); line-height:1.05}
+  .merci p{margin-top:12px; margin-inline:auto; max-width:46ch; font-size:15px; line-height:1.62;
     color:var(--texte-3)}
-  .seo-texte b{color:var(--texte); font-weight:800}
-  .seo-texte a{color:var(--rouge-lien)}
-  .seo-sous{margin-top:34px; font-size:11.5px; font-weight:800; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--texte-4)}
-  .seo-liens{margin-top:14px; display:flex; flex-wrap:wrap; gap:9px}
+
+  /* ---------- panneau latéral ---------- */
+  .panneau{padding:clamp(22px,2.4vw,28px); border:1px solid var(--bord-2);
+    border-radius:var(--r-l); background:var(--surface)}
+  /* Le panneau colle au defilement, mais depuis qu'il porte l'apercu il est plus
+     haut que bien des ecrans : sans plafond, son bas devenait inatteignable. */
+  @media (min-width:941px){
+    .panneau{position:sticky; top:26px; max-height:calc(100vh - 52px); overflow:auto;
+      overscroll-behavior:contain; scrollbar-width:thin;
+      scrollbar-color:var(--bord-3) transparent}
+    .panneau::-webkit-scrollbar{width:8px}
+    .panneau::-webkit-scrollbar-thumb{background:var(--bord-3); border-radius:999px}
+  }
+  .panneau h2{font-size:clamp(19px,2vw,23px); line-height:1.1; color:var(--texte)}
+  .avantages{margin-top:20px; display:flex; flex-direction:column; gap:14px}
+  .avantages li{display:flex; align-items:flex-start; gap:11px; font-size:14.5px; line-height:1.5;
+    color:var(--texte-2)}
+  .avantages svg{flex-shrink:0; margin-top:3px; color:var(--rouge-lien)}
+  .pro-note{margin-top:24px; padding-top:22px; border-top:1px solid var(--bord)}
+  .pro-note .prix{display:flex; align-items:baseline; gap:8px}
+  .pro-note .prix b{font-family:Anton,"Arial Narrow",sans-serif; font-weight:400;
+    font-size:30px; line-height:1; color:var(--texte)}
+  .pro-note .prix span{font-size:13.5px; font-weight:700; color:var(--texte-4)}
+  .pro-note p{margin-top:11px; font-size:14px; line-height:1.6; color:var(--texte-3)}
+  .pro-note .btn{margin-top:18px; width:100%}
+  .btn-ligne{background:transparent; color:var(--texte); border:1px solid var(--bord-3);
+    box-shadow:none}
+  .btn-ligne:hover{border-color:var(--texte-3); color:var(--texte); background:transparent}
 
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
 
-  /* la barre collante ne doit pas recouvrir la carte qu'on vient de sélectionner
-     depuis la carte : on réserve sa hauteur au défilement */
-  .res{ scroll-margin-top:112px; }
+  /* ---------- aide et blocs incomplets ---------- */
+  .bloc-aide{ margin:0 0 14px; color:var(--texte-3); font-size:13.5px; line-height:1.55; }
+  .champ-aide{ margin:7px 0 0; color:var(--texte-4); font-size:12.5px; }
+  .bloc-manque{ animation:secousse .4s; }
+  .bloc-manque .bloc-titre{ color:var(--rouge-lien); }
+  @keyframes secousse{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)}
+                       75%{transform:translateX(5px)} }
+  @media (prefers-reduced-motion: reduce){ .bloc-manque{ animation:none } }
 
-  .site-header{position:relative; inset:auto; background:var(--fond);
-    border-bottom:1px solid var(--bord)}
-  .ann-tete{padding-block:clamp(26px,3.4vw,40px) 0}
-  .ann-h1{margin-top:14px; font-size:clamp(25px,3.6vw,42px); line-height:1.03;
+  /* ---------- photos ---------- */
+  .photos{ display:grid; gap:12px; }
+  .photo-ajout{ display:flex; flex-direction:column; align-items:center; justify-content:center;
+                gap:5px; min-height:118px; padding:18px; cursor:pointer; text-align:center;
+                border:1.5px dashed var(--bord-3); border-radius:var(--r-l);
+                background:var(--surface); color:var(--texte-2);
+                font-weight:700; font-size:14.5px; transition:border-color .15s, background .15s; }
+  .photo-ajout:hover{ border-color:var(--rouge-lien); background:var(--surface-2); }
+  .photo-ajout svg{ color:var(--texte-3); }
+  .photo-ajout small{ font-weight:600; font-size:12px; color:var(--texte-4); }
+  .photo-ajout[hidden]{ display:none; }
+  .photo-liste{ list-style:none; margin:0; padding:0; display:grid; gap:10px;
+                grid-template-columns:repeat(auto-fill, minmax(104px, 1fr)); }
+  .photo-liste li{ position:relative; aspect-ratio:4/3; border-radius:var(--r-m);
+                   overflow:hidden; background:var(--surface-2); }
+  .photo-liste img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-tag{ position:absolute; left:6px; bottom:6px; font-size:10px; font-weight:800;
+              letter-spacing:.05em; text-transform:uppercase; padding:3px 7px;
+              border-radius:999px; background:var(--rouge-600); color:#fff; }
+  .photo-x{ position:absolute; top:5px; right:5px; width:26px; height:26px; border:0;
+            border-radius:50%; background:rgba(255,255,255,.92);
+            border:1px solid var(--bord-2); color:var(--texte);
+            font-size:17px; line-height:1; cursor:pointer; }
+  .photo-x:hover{ background:var(--rouge-600); color:#fff; }
+
+  /* ---------- horaires ---------- */
+  .horaires{ list-style:none; margin:0; padding:0; display:grid; gap:2px; }
+  .jour-ligne{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center;
+               padding:9px 10px; margin-inline:-10px; border-radius:var(--r-m); }
+  .jour-ligne:hover{ background:var(--surface); }
+  .jour-bascule{ display:flex; gap:10px; align-items:center; cursor:pointer;
+                 font-weight:700; font-size:14.5px; }
+  .jour-bascule input{ width:18px; height:18px; accent-color:var(--rouge-600); cursor:pointer; }
+  .jour-creneau{ display:flex; gap:8px; align-items:center; color:var(--texte-3); }
+  .jour-creneau input{ font:inherit; font-size:14px; padding:7px 9px; color:var(--texte);
+                       background:var(--surface-2); border:1px solid var(--bord-2);
+                       border-radius:var(--r-m); }
+  .jour-ferme{ display:none; color:var(--texte-4); font-size:14px; font-weight:600; }
+  .jour-ligne.ferme .jour-creneau{ display:none; }
+  .jour-ligne.ferme .jour-ferme{ display:inline; }
+  .jour-ligne.ferme .jour-bascule{ color:var(--texte-4); }
+
+  /* ---------- les cours ----------
+     Un cours = une petite carte de deux lignes : le jour et la plage horaire
+     dessus, la discipline et le niveau dessous. Les quatre champs plus la croix
+     tenaient sur une seule ligne a l'ecran, mais de justesse : un navigateur qui
+     ecrit l'heure en AM/PM elargit les deux champs d'heure d'une trentaine de
+     pixels chacun, et tout le reste se retrouvait coupe. Deux lignes ne coupent
+     rien, quel que soit le format de l'heure. */
+  .cours-liste{ list-style:none; margin:0 0 14px; padding:0; display:grid; gap:10px; }
+  .cours-ligne{ display:grid; gap:8px 10px; align-items:center;
+                grid-template-columns:minmax(104px,.9fr) minmax(0,1.4fr) auto;
+                padding:12px; border:1px solid var(--bord-2); border-radius:var(--r-m);
+                background:var(--surface);
+                transition:border-color .15s ease; }
+  .cours-ligne:focus-within{ border-color:var(--bord-3); }
+  .cours-ligne select, .cours-ligne input{
+    font:inherit; font-size:14px; font-weight:600; min-width:0; width:100%;
+    padding:8px 9px; color:var(--texte); background:var(--surface-2);
+    border:1px solid var(--bord-2); border-radius:var(--r-m); }
+  .cours-ligne select:focus, .cours-ligne input:focus{
+    outline:none; border-color:rgba(236,22,46,.55); box-shadow:0 0 0 4px rgba(236,22,46,.10); }
+  .cours-ligne .c-jour  { grid-column:1; grid-row:1; }
+  .cours-h              { grid-column:2; grid-row:1; }
+  .cours-x              { grid-column:3; grid-row:1; }
+  .cours-ligne .c-quoi  { grid-column:1; grid-row:2; }
+  .cours-ligne .c-niveau{ grid-column:2 / 4; grid-row:2; }
+  .cours-h{ display:flex; gap:6px; align-items:center; min-width:0; color:var(--texte-3); }
+  .cours-h input{ width:auto; min-width:0; flex:1 1 auto; }
+  .cours-x{ display:inline-flex; align-items:center; justify-content:center;
+            width:34px; height:34px; flex:0 0 34px; padding:0; border:0; border-radius:999px;
+            background:transparent; color:var(--texte-4); font-size:21px; line-height:1;
+            cursor:pointer; transition:background-color .15s ease, color .15s ease; }
+  .cours-x:hover{ background:rgba(236,22,46,.08); color:var(--rouge-700); }
+  .cours-vide{ margin:0 0 14px; font-size:13.5px; line-height:1.6; color:var(--texte-4); }
+  .cours-vide[hidden]{ display:none; }
+  /* Au telephone meme la premiere ligne est trop etroite pour le jour et les
+     deux heures : tout s'empile, la croix restant en face du jour. */
+  @media (max-width: 620px){
+    .cours-ligne{ grid-template-columns:1fr auto; gap:7px; padding:10px; }
+    .cours-h              { grid-column:1 / -1; grid-row:auto; }
+    .cours-ligne .c-quoi  { grid-column:1 / -1; grid-row:auto; }
+    .cours-ligne .c-niveau{ grid-column:1 / -1; grid-row:auto; }
+    /* les deux champs d'heure se partagent la ligne a parts egales, et se
+       serrent : en AM/PM le champ natif est plus large qu'en 24 h */
+    .cours-h input{ flex:1 1 0; padding-inline:6px; }
+  }
+
+  /* ---------- aperçu en direct ---------- */
+  .apercu{ margin-bottom:26px; padding-bottom:26px; border-bottom:1px solid var(--bord); }
+  /* l'apercu est desormais seul dans le panneau : le filet ne separe plus rien */
+  .apercu:last-child{ margin-bottom:0; padding-bottom:0; border-bottom:0; }
+  .apercu-titre{ margin:0 0 12px; font-size:13px; font-weight:800; letter-spacing:.06em;
+                 text-transform:uppercase; color:var(--texte-3); }
+  .apercu-cadre{ border:1px solid var(--bord-2); border-radius:var(--r-l);
+                 overflow:hidden; background:var(--surface); }
+  .apercu-visuel{ height:124px; background:var(--surface-2); }
+  .apercu-visuel img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .apercu-visuel.vide{ display:grid; place-items:center; color:var(--texte-4);
+                       font-size:12.5px; font-weight:600;
+                       border-bottom:1px solid var(--bord); }
+  .apercu-corps{ padding:15px; }
+  .apercu-nom{ display:block; font-size:16px; font-weight:800; line-height:1.25; }
+  .apercu-lieu{ display:block; margin-top:3px; font-size:13px; color:var(--texte-3); }
+  .apercu-chips{ list-style:none; display:flex; flex-wrap:wrap; gap:5px; margin:11px 0 0;
+                 padding:0; }
+  .apercu-chips li{ font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px;
+                    border:1px solid var(--bord-2); color:var(--texte-3); }
+  .apercu-mot{ margin:11px 0 0; font-size:13px; line-height:1.55; color:var(--texte-2);
+               display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+               overflow:hidden; }
+  .apercu-coord{ list-style:none; margin:11px 0 0; padding:0; display:grid; gap:3px;
+                 font-size:12.5px; color:var(--texte-2); }
+  .apercu-jours{ margin:11px 0 0; font-size:12px; color:var(--texte-3); }
+  .apercu .creux{ color:var(--texte-4); font-style:italic; }
+  .apercu-note{ margin:10px 0 0; font-size:12px; color:var(--texte-4); line-height:1.5; }
+
+  .merci-recap{ margin-top:14px; padding-top:14px; border-top:1px solid var(--bord);
+                font-size:13.5px; color:var(--texte-3); }
+
+  /* Les deux champs d'heure ne se compriment pas : a l'etroit ils poussaient la
+     ligne, et donc tout le formulaire, au-dela de l'ecran. On passe la plage
+     horaire sous le nom du jour. */
+  @media (max-width: 560px){
+    .jour-ligne{ grid-template-columns:1fr; gap:7px; }
+    .jour-creneau{ padding-left:28px; }
+    .jour-creneau input{ flex:1 1 0; min-width:0; }
+    .jour-ligne.ferme .jour-ferme{ padding-left:28px; }
+  }
+
+  /* ---------- les chiffres de la page de referencement ---------- */
+  /* Meme decoupe que les avantages de l'accueil : des filets et un segment
+     rouge en tete de colonne, aucune boite. */
+  .chiffres-club-bloc{background:var(--surface); border-block:1px solid var(--bord);
+    padding-block:clamp(30px,3.6vw,46px)}
+  .chiffres-club{display:grid; gap:0; grid-template-columns:repeat(4,minmax(0,1fr))}
+  .chiffres-club li{position:relative; border-top:1px solid var(--bord);
+    padding:22px 20px 22px 0}
+  .chiffres-club li + li{padding-left:24px; border-left:1px solid var(--bord)}
+  .chiffres-club li::before{content:""; position:absolute; top:-1px; left:0;
+    width:30px; height:2px; background:var(--rouge-500)}
+  .chiffres-club li + li::before{left:24px}
+  .cc-nb{display:block; font-size:clamp(26px,3.2vw,42px); line-height:1;
+    letter-spacing:.008em; color:var(--rouge-500); white-space:nowrap}
+  .cc-lb{display:block; margin-top:10px; font-size:13px; font-weight:700;
+    line-height:1.45; color:var(--texte-3)}
+  .chiffres-mot{margin-top:clamp(24px,2.6vw,32px); max-width:74ch;
+    font-size:15px; line-height:1.72; color:var(--texte-2)}
+  /* Le filet vertical ne separe que des colonnes voisines : des qu'un element
+     passe en tete de rangee, il perd son bord gauche et son retrait, sinon la
+     colonne entiere se retrouve decalee. */
+  @media (max-width:820px){
+    .chiffres-club{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .chiffres-club li{padding-right:14px}
+    .chiffres-club li:nth-child(odd), .chiffres-club li + li:nth-child(odd){
+      padding-left:0; border-left:0}
+    .chiffres-club li:nth-child(odd)::before{left:0}
+  }
+  /* « 100+ », « 30 000 », « 500 », « 0 € » tiennent a deux par ligne jusqu'a 320 px :
+     les empiler faisait quatre rangees pour quatre mots (Amaury, 22/09/2026). */
+  @media (max-width:420px){
+    .chiffres-club li{padding-right:10px}
+    .chiffres-club li + li:not(:nth-child(odd)){padding-left:14px}
+    .chiffres-club li + li:not(:nth-child(odd))::before{left:14px}
+  }
+  @media (max-width:620px){
+    .chiffres-club-bloc .chiffres-mot{margin-top:20px; font-size:14.5px}
+  }
+
+  .hero-exemple{margin-top:18px; font-size:14px}
+  .hero-exemple a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+
+  /* ---------- page de vente : etapes, ce qu'on obtient, creation ---------- */
+  /* Meme parti pris que le reste du site : des filets et un segment rouge en tete
+     de colonne, aucune boite. Le gerant lit trois etapes, il ne remplit rien ici. */
+  .etapes-bloc{background:var(--surface); border-bottom:1px solid var(--bord)}
+  /* un <ol> pour le sens, mais les puces natives doubleraient les chiffres dessines */
+  .etapes{margin-top:clamp(28px,3.4vw,44px); padding:0; list-style:none; display:grid; gap:0;
+    grid-template-columns:repeat(3,minmax(0,1fr))}
+  .etapes li{position:relative; border-top:1px solid var(--bord);
+    padding:26px 26px 6px 0}
+  .etapes li + li{padding-left:clamp(24px,2.6vw,40px); border-left:1px solid var(--bord)}
+  .etapes li::before{content:""; position:absolute; top:-1px; left:0;
+    width:30px; height:2px; background:var(--rouge-500)}
+  .etapes li + li::before{left:clamp(24px,2.6vw,40px)}
+  .et-nb{display:block; font-size:clamp(24px,2.6vw,32px); line-height:1;
+    color:var(--rouge-500)}
+  .et-titre{margin-top:12px; font-size:17px; font-weight:800; letter-spacing:-.005em;
+    color:var(--texte)}
+  .etapes p{margin-top:9px; font-size:14.5px; line-height:1.62; color:var(--texte-2)}
+  @media (max-width:820px){
+    .etapes{grid-template-columns:1fr}
+    .etapes li, .etapes li + li{padding-left:0; padding-right:0; border-left:0}
+    .etapes li + li::before{left:0}
+  }
+  @media (max-width:620px){
+    .etapes{margin-top:24px}
+    .etapes li{padding-block:20px}
+    .et-titre{margin-top:9px}
+    .etapes p{margin-top:7px}
+    .creer{margin-top:30px; padding-top:26px}
+    .btn-grand{margin-top:20px}
+  }
+
+  .obtenez{display:grid; gap:clamp(28px,3.4vw,54px);
+    grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr); align-items:center}
+  @media (max-width:860px){ .obtenez{grid-template-columns:1fr} }
+  .ob-lien{margin-top:24px; font-size:14.5px}
+  .ob-lien a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+  /* une fiche muette, juste pour montrer la forme : pas un vrai club */
+  .ob-cadre{border:1px solid var(--bord-2); border-radius:var(--r-l); overflow:hidden;
+    background:var(--surface); box-shadow:0 18px 44px -32px rgba(22,22,15,.5)}
+  /* une plage grise nue se lirait comme une image cassee : l'appareil photo dit
+     que c'est la place de la photo du club */
+  .ob-bande{display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden;
+    gap:8px; height:128px; border-bottom:1px solid var(--bord);
+    background:var(--surface-2); color:var(--texte-4);
+    font-size:12.5px; font-weight:700}
+  /* Une vraie photo au lieu de la bande grise : le gerant voit la fiche qu'il aura,
+     et non un rectangle vide qui se lit comme une image cassee. */
+  .ob-photo{display:block; width:100%; height:100%; object-fit:cover}
+  .ob-corps{padding:18px 20px 22px}
+  .ob-nom{display:block; font-size:16.5px; font-weight:800; color:var(--texte)}
+  .ob-lieu{display:block; margin-top:4px; font-size:13.5px; font-weight:700;
+    color:var(--texte-4)}
+  .ob-chips{margin-top:13px; display:flex; flex-wrap:wrap; gap:7px}
+  .ob-chips li{padding:6px 12px; border:1px solid var(--bord); border-radius:999px;
+    font-size:12.5px; font-weight:700; color:var(--texte-3)}
+  .ob-mot{margin-top:14px; font-size:14px; line-height:1.6; color:var(--texte-3)}
+  .ob-vue figcaption{margin-top:14px; text-align:center; font-size:13px;
+    color:var(--texte-4)}
+
+  /* Le bouton est au pied des trois etapes, pas en bas de page : le gerant vient de
+     lire ce qu'on attend de lui, c'est la qu'il decide. Centre sous la grille. */
+  .creer{max-width:56ch; margin:clamp(38px,4.2vw,56px) auto 0; padding-top:clamp(30px,3.4vw,42px);
+    border-top:1px solid var(--bord); text-align:center}
+  .creer-mot{font-size:15.5px; line-height:1.68; color:var(--texte-2)}
+  .btn-grand{margin-top:24px; min-height:58px; padding-inline:38px; font-size:16.5px}
+  .creer-note{margin-top:16px; font-size:13.5px; color:var(--texte-4)}
+  .creer-note a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+
+  /* ---------- les deux formules ---------- */
+  /* Deux colonnes, pas de troisieme palier fictif pour faire joli. Le Pro se
+     distingue par un cadre plus marque et un liseré rouge en tete : le meme
+     geste que le segment rouge des blocs d'avantages, pas un fond colore. */
+  .grille-paliers{margin-top:clamp(28px,3.2vw,40px); display:grid; gap:18px;
+    grid-template-columns:repeat(2,minmax(0,1fr)); align-items:stretch}
+  @media (max-width:820px){ .grille-paliers{grid-template-columns:1fr} }
+  .palier{position:relative; display:flex; flex-direction:column;
+    padding:clamp(24px,2.6vw,32px);
+    background:var(--surface); border:1px solid var(--bord-2); border-radius:var(--r-l)}
+  .palier-pro{border-color:var(--bord-3); box-shadow:var(--ombre-2)}
+  .palier-pro::before{content:""; position:absolute; top:-1px; left:clamp(24px,2.6vw,32px);
+    width:44px; height:3px; background:var(--rouge-500); border-radius:0 0 2px 2px}
+  .palier-nom{margin:0; font-size:12px; font-weight:800; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--texte-3)}
+  .palier-prix{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; margin:14px 0 0}
+  .palier-prix b{font-family:Anton,"Arial Narrow",sans-serif; font-weight:400;
+    font-size:clamp(34px,4vw,46px); line-height:1; letter-spacing:.01em; color:var(--texte)}
+  .palier-pro .palier-prix b{color:var(--rouge-500)}
+  .palier-prix span{font-size:13.5px; font-weight:600; color:var(--texte-4)}
+  .palier-mot{margin:14px 0 0; font-size:15px; line-height:1.62; color:var(--texte-2)}
+  .palier-liste{margin:20px 0 0; padding:0; list-style:none; display:grid; gap:11px;
+    padding-top:20px; border-top:1px solid var(--bord)}
+  .palier-liste li{display:flex; gap:11px; align-items:flex-start;
+    font-size:14.5px; line-height:1.5; color:var(--texte-2)}
+  .palier-liste svg{flex:none; margin-top:3px; color:var(--vert)}
+  .palier .btn{margin-top:auto; width:100%; margin-block-start:24px}
+  .palier-note{margin:14px 0 0; font-size:12.5px; line-height:1.55; color:var(--texte-4)}
+
+  /* ---------- page de la fiche : le fil de l'etape 2 ---------- */
+  /* le bandeau est en position absolue : la premiere section lui laisse la place */
+  .sous-bandeau{padding-top:clamp(112px,11vw,136px)}
+  .fil{max-width:72ch; margin-bottom:clamp(24px,2.8vw,36px)}
+  .fil-titre{margin-top:12px; font-size:clamp(26px,3.4vw,40px); line-height:1;
     letter-spacing:.012em; color:var(--texte)}
-  .ann-h1 b{color:var(--rouge-500)}
-  .ann-intro{margin-top:16px; max-width:70ch; font-size:15px; line-height:1.7;
+  .fil-mot{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
+
+  /* ---------- messages de la fiche branchee sur la base ---------- */
+  .form-etat{margin-bottom:14px; padding:11px 13px; border-radius:var(--r-m);
+    background:var(--surface-2); border:1px solid var(--bord);
+    font-size:13.5px; line-height:1.55; font-weight:600; color:var(--texte-2)}
+  .form-erreur{margin-bottom:14px; padding:11px 13px; border-radius:var(--r-m);
+    background:rgba(236,22,46,.07); border:1px solid rgba(236,22,46,.28);
+    font-size:13.5px; line-height:1.55; font-weight:600; color:var(--rouge-700)}
+  .form-etat[hidden], .form-erreur[hidden]{display:none}
+
+  /* ---------- espace club et back-office ---------- */
+  /* Meme parti pris que le reste du site : des filets et un segment rouge, aucune
+     boite. Une ligne par demande ou par fiche, separee par un filet. */
+  /* La colonne de chiffres de l'accueil : ces regles vivent dans page.tpl.html,
+     que ces pages-ci n'utilisent pas. Meme dessin, pour que ce soit le meme site. */
+  .ouv-liste{display:grid; gap:0; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ouv-liste li{position:relative; border-top:1px solid var(--bord);
+    padding:22px 18px 22px 0}
+  .ouv-liste li + li{padding-left:22px; border-left:1px solid var(--bord)}
+  .ouv-liste li::before{content:""; position:absolute; top:-1px; left:0;
+    width:30px; height:2px; background:var(--rouge-500)}
+  .ouv-liste li + li::before{left:22px}
+  .ouv-nb{display:block; font-size:clamp(26px,3vw,38px); line-height:1;
+    letter-spacing:.008em; color:var(--rouge-500); white-space:nowrap}
+  .ouv-lb{display:block; margin-top:10px; font-size:13px; font-weight:700;
+    line-height:1.45; color:var(--texte-3)}
+  @media (max-width:420px){
+    .ouv-liste li{padding-right:12px}
+    .ouv-liste li + li{padding-left:12px}
+    .ouv-liste li + li::before{left:12px}
+  }
+
+  /* l'etat de la fiche, meme pastille que le suivi des demandes */
+  .esp-etat{margin-top:16px; display:inline-flex; align-items:center; gap:7px;
+    padding:6px 13px; border-radius:999px; border:1px solid var(--bord);
+    font-size:12.5px; font-weight:800; color:var(--texte-3)}
+  .esp-etat::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--texte-4)}
+  .esp-publie{border-color:rgba(29,138,74,.35); color:var(--vert)}
+  .esp-publie::before{background:var(--vert)}
+  .esp-en_attente{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .esp-en_attente::before{background:var(--rouge-500)}
+  .esp-refuse, .esp-suspendu{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .esp-refuse::before, .esp-suspendu::before{background:var(--rouge-500)}
+
+  .esp-chiffres, .ad-chiffres{margin-top:clamp(26px,3vw,36px); max-width:52ch}
+  /* Trois chiffres depuis le suivi des prospects : `.ouv-liste` en pose deux
+     par ligne, ce qui laissait le troisieme seul sous les deux autres. */
+  .esp-chiffres{grid-template-columns:repeat(3,minmax(0,1fr)); max-width:64ch}
+  @media (max-width:560px){ .esp-chiffres{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  .esp-mot{margin-top:clamp(22px,2.4vw,30px); max-width:64ch;
+    font-size:15.5px; line-height:1.68; color:var(--texte-2)}
+  .esp-actions{margin-top:26px; display:flex; flex-wrap:wrap; gap:12px}
+  .esp-actions .btn[hidden]{display:none}
+
+  .demandes, .fiches{margin-top:clamp(24px,2.8vw,34px); display:grid; gap:0}
+  .demande, .fiche{position:relative; border-top:1px solid var(--bord);
+    padding:clamp(22px,2.4vw,28px) 0}
+  .demande::before, .fiche::before{content:""; position:absolute; top:-1px; left:0;
+    width:34px; height:2px; background:var(--rouge-500)}
+
+  .dem-qui, .fiche-tete{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px}
+  .dem-qui b, .fiche-tete b{font-size:17px; color:var(--texte)}
+  .dem-quand, .fiche-lieu{font-size:13px; font-weight:700; color:var(--texte-4)}
+
+  .dem-coord, .fiche-faits{margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 20px;
+    font-size:14px; color:var(--texte-2)}
+  .dem-coord a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+  .dem-mot, .fiche-mot{margin-top:12px; max-width:68ch; font-size:14.5px; line-height:1.62;
     color:var(--texte-3)}
-  .ann-intro b{color:var(--texte); font-weight:800}
-  .ann-actions{margin-top:22px; padding-bottom:26px; display:flex; flex-wrap:wrap; gap:10px}
-  /* le bouton secondaire vit dans la bande club de l'accueil, qu'on n'extrait pas */
-  .btn-ligne{background:transparent; color:var(--texte);
-    border:1px solid var(--bord-3); box-shadow:none}
-  .btn-ligne:hover{border-color:var(--texte-3); color:var(--texte); background:transparent}
-  .fond-seo .seo-sous:first-of-type{margin-top:0}
+
+  .dem-suivi, .fiche-actions{margin-top:16px; display:flex; flex-wrap:wrap;
+    align-items:center; gap:10px}
+  .btn-mini{min-height:38px; padding:9px 16px; font-size:13.5px}
+  /* l'etat se lit a la couleur : recue est en attente, confirmee est le lead */
+  .dem-etat{display:inline-flex; align-items:center; gap:7px; padding:6px 13px;
+    border-radius:999px; border:1px solid var(--bord);
+    font-size:12.5px; font-weight:800; color:var(--texte-3)}
+  .dem-etat::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--texte-4)}
+  .dem-confirmee{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .dem-confirmee::before{background:var(--rouge-500)}
+  .dem-honoree{border-color:rgba(29,138,74,.35); color:var(--vert)}
+  .dem-honoree::before{background:var(--vert)}
+  .dem-absente, .dem-annulee{color:var(--texte-4)}
+  .dem-contactee{border-color:var(--bord-3); color:var(--texte-2)}
+  .dem-contactee::before{background:var(--texte-3)}
+  /* la seule fin heureuse du parcours : elle se voit */
+  .dem-adherent{border-color:rgba(14,122,80,.5); color:var(--vert); font-weight:800}
+  .dem-adherent::before{background:var(--vert)}
+
+  /* ---------- le suivi des prospects ---------- */
+  /* Un rappel du jour, en tete : c'est la seule chose de la page qui demande
+     une action aujourd'hui, le reste peut attendre. */
+  .esp-rappel{margin-top:18px; padding:12px 15px; border-radius:var(--r-m);
+    background:rgba(236,22,46,.07); border:1px solid rgba(236,22,46,.26);
+    color:var(--rouge-700); font-size:14px; font-weight:700}
+  .esp-rappel[hidden]{display:none}
+
+  .esp-barre{margin-top:clamp(20px,2.4vw,28px); display:flex; flex-wrap:wrap;
+    align-items:center; justify-content:space-between; gap:14px 24px}
+  .esp-barre[hidden]{display:none}
+  .esp-filtres{display:flex; flex-wrap:wrap; gap:8px}
+  .esp-chip{display:inline-flex; align-items:center; gap:8px; min-height:38px;
+    padding:8px 15px; border:1px solid var(--bord-2); border-radius:999px;
+    background:var(--surface); cursor:pointer;
+    font-family:Manrope,system-ui,sans-serif; font-size:13.5px; font-weight:700;
+    color:var(--texte-2);
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .esp-chip:hover{border-color:rgba(220,18,41,.45); color:var(--texte)}
+  .esp-chip span{font-size:12px; font-weight:800; color:var(--texte-4);
+    font-variant-numeric:tabular-nums}
+  .esp-chip[aria-pressed="true"]{border-color:var(--rouge-600); color:var(--rouge-700);
+    background:rgba(220,18,41,.08)}
+  .esp-chip[aria-pressed="true"] span{color:var(--rouge-700)}
+
+  .esp-outils{display:flex; flex-wrap:wrap; align-items:center; gap:10px}
+  .esp-outils input[type="search"]{min-width:min(240px,100%); min-height:40px;
+    padding:9px 14px; border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--surface); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:600}
+  .esp-outils input[type="search"]:focus{outline:none; border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  .esp-rien{margin-top:24px; color:var(--texte-3); font-size:14.5px}
+  .esp-rien[hidden]{display:none}
+
+  /* Le segment en tete de chaque ligne passe au rouge quand la relance est due :
+     c'est le meme trait que partout ailleurs, il change juste de couleur. */
+  .dem-urgent::before{background:var(--rouge-500) !important; width:64px !important}
+
+  /* La note et la date de rappel : deux champs discrets, sous le suivi. Ils ne
+     doivent pas peser autant que les coordonnees du prospect. */
+  .dem-fiche{margin-top:16px; padding-top:16px; border-top:1px dashed var(--bord);
+    display:grid; gap:14px; grid-template-columns:minmax(0,180px) minmax(0,1fr);
+    align-items:start}
+  @media (max-width:640px){ .dem-fiche{grid-template-columns:1fr} }
+  .dem-fiche label{display:flex; flex-direction:column; gap:6px;
+    font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--texte-4)}
+  .dem-fiche input, .dem-fiche textarea{
+    width:100%; min-height:42px; padding:10px 12px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:600;
+    line-height:1.45; letter-spacing:normal; text-transform:none}
+  .dem-fiche textarea{min-height:62px; resize:vertical}
+  .dem-fiche input:focus, .dem-fiche textarea:focus{outline:none;
+    border-color:rgba(236,22,46,.55); box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+
+  /* ---------- nouveau mot de passe ---------- */
+  .mdp-form{margin-top:clamp(22px,2.6vw,30px); display:grid; gap:14px; max-width:380px}
+  .mdp-form .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .mdp-form .champ-aide{margin:0}
+  .mdp-fait{margin-top:clamp(22px,2.6vw,30px); padding:15px 16px; max-width:52ch;
+    border-radius:var(--r-m); border:1px solid rgba(29,138,74,.32);
+    background:rgba(29,138,74,.06); font-size:15px; line-height:1.65; color:var(--texte-2)}
+  .mdp-fait b{color:var(--vert)}
+
+  /* ---------- Mon compte ---------- */
+  /* La page du compte reprend la carte du formulaire de fiche : meme cadre, memes
+     champs, pour qu'un gerant qui a rempli sa fiche reconnaisse l'endroit. Trois
+     cartes empilees plutot qu'une seule tres longue : ses informations, son mot
+     de passe, sa session. */
+  .mc-colonne{min-width:0}
+  .mc-suite{margin-top:clamp(18px,2vw,26px)}
+  .mc-ligne{margin-top:14px; font-size:14.5px; line-height:1.6; color:var(--texte-2)}
+  /* Les faits de la salle, au rappel : ce que le compte a deja enregistre. Un
+     point rouge en tete, pas une puce grise : c'est du contenu, pas une liste
+     d'options. */
+  .mc-faits{margin-top:16px; padding:0; list-style:none; display:grid; gap:9px}
+  .mc-faits li{position:relative; padding-left:15px; font-size:14px; font-weight:600;
+    line-height:1.5; color:var(--texte-2)}
+  .mc-faits li::before{content:""; position:absolute; left:0; top:8px;
+    width:5px; height:5px; border-radius:50%; background:var(--rouge-500)}
+  #mc-panneau .esp-etat{margin-top:12px}
+  #mc-liens{margin-top:20px}
+  #mc-liens .btn{flex:0 0 auto}
+  /* Le palier, en rappel : un mot et une phrase. Le grand chiffre d'Anton est
+     fait pour un prix sur la page de vente, pas pour ce coin de page. */
+  #mc-offre{margin-top:22px}
+  #mc-offre b{display:block; font-size:15px; color:var(--texte)}
+  #mc-offre span{display:block; margin-top:8px; font-size:14px; line-height:1.6;
+    color:var(--texte-3)}
+  #mc-offre a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+
+  /* ---------- l'etat de la fiche, dans l'espace club ---------- */
+  /* Un club gratuit ne recoit aucune demande : c'est ce bloc qui fait que sa page
+     lui sert a quelque chose. Les postes remplis se lisent d'un coup d'oeil en
+     vert, les manques sont en rouge et portent le lien qui les corrige. */
+  .esp-complet{margin-top:clamp(30px,3.4vw,44px); padding-top:clamp(24px,2.6vw,32px);
+    border-top:1px solid var(--bord); max-width:70ch}
+  .esp-complet[hidden]{display:none}
+  .esp-complet-mot{margin-top:10px; font-size:15px; line-height:1.6; color:var(--texte-2)}
+  .esp-check{margin-top:18px; padding:0; list-style:none; display:grid; gap:12px}
+  .esp-check li{display:flex; gap:11px; align-items:flex-start}
+  .esp-puce{display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+    width:22px; height:22px; margin-top:1px; border-radius:999px}
+  .esp-puce svg{width:13px; height:13px}
+  .esp-check .ok .esp-puce{background:rgba(14,122,80,.12); color:var(--vert)}
+  .esp-check .manque .esp-puce{background:rgba(236,22,46,.10); color:var(--rouge-700)}
+  .esp-check-mot{display:grid; gap:3px; min-width:0}
+  .esp-check-mot b{font-size:14.5px; color:var(--texte)}
+  .esp-check .manque .esp-check-mot b{color:var(--texte)}
+  .esp-check-mot span{font-size:13.5px; line-height:1.55; color:var(--texte-3)}
+  .esp-check-mot a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -564,8 +973,8 @@
 <path id="mcc-mot-mon" fill-rule="evenodd" d="M656.2 827.7L683.6 722.3L726.8 722.4L746.6 767.1L791.3 722.4L836.2 722.4L809.3 828.0L772.0 828.0L770.7 827.0L786.5 769.3L745.0 811.5L730.0 811.5L727.6 809.0L709.5 769.1L694.6 827.8L656.2 827.7ZM973.5 734.1L976.4 741.8L976.2 751.4L963.9 801.9L957.7 814.0L947.9 822.1L936.3 826.4L924.2 828.2L858.7 828.2L843.8 824.7L834.9 816.9L831.7 807.2L831.9 797.9L843.1 751.9L848.9 739.4L858.1 730.6L868.0 725.5L881.0 722.2L949.7 722.2L961.4 724.9L968.2 728.5L973.5 734.1ZM1126.6 722.5L1099.0 828.0L1056.5 828.0L1024.6 768.5L1009.9 828.0L971.2 828.0L998.7 722.5L1041.4 722.4L1072.8 781.1L1088.8 722.4L1126.6 722.5ZM1291.6 722.1L1283.8 752.6L1219.1 752.7L1213.0 753.7L1208.2 756.8L1205.6 760.8L1198.6 788.9L1198.6 794.2L1202.4 797.2L1273.4 797.1L1265.7 827.5L1182.2 827.5L1169.1 823.7L1161.1 817.6L1157.6 810.0C1157.0 807.9 1157.0 807.8 1157.0 805.0L1158.0 792.9L1169.3 749.9L1175.4 738.3L1182.0 731.6L1191.4 726.3L1206.2 722.2L1291.6 722.1ZM1376.1 827.4L1278.1 827.4L1305.8 722.2L1343.9 722.3L1324.1 797.4L1383.5 797.4L1376.1 827.4ZM1534.6 722.2L1513.3 804.7L1509.3 812.3L1502.1 819.4L1492.0 824.5L1479.0 827.4L1423.7 827.4L1409.0 824.9L1400.1 820.5L1395.6 815.7L1392.3 807.9L1392.7 794.8L1411.6 722.2L1450.1 722.3L1432.7 790.3L1434.8 796.3L1439.1 797.6L1469.0 797.6C1474.7 797.3 1471.6 797.2 1473.0 796.2L1477.4 791.8L1495.2 722.2L1534.6 722.2ZM1521.4 827.5L1549.0 722.2L1634.2 722.2L1647.2 725.6L1655.5 732.2L1658.1 741.9L1655.4 753.9L1649.1 763.4L1639.2 770.0L1648.7 775.9L1652.3 781.9L1653.6 788.3L1652.5 798.0L1648.6 808.7L1640.6 818.2L1628.3 824.5L1613.4 827.5L1521.4 827.5ZM1574.9 761.7L1611.2 761.7L1615.7 759.0L1617.6 753.0L1614.1 749.4L1578.4 749.2L1574.9 761.7ZM934.3 756.0L932.0 753.7C930.9 753.1 935.1 752.9 928.0 752.7L889.5 752.7L883.5 754.9L879.8 759.8L873.0 787.0L872.4 792.0L873.9 796.0L878.0 798.3C879.3 798.7 875.4 798.4 882.0 798.4L917.9 798.4L923.1 796.4L926.1 793.0L928.4 787.0L934.6 761.8L934.3 756.0ZM1565.1 800.3L1607.7 800.0L1611.8 796.1L1612.8 788.7L1607.9 785.7L1570.0 785.7L1568.5 787.0L1565.1 800.3Z"/>
 <path id="mcc-mot-combat" fill-rule="evenodd" d="M1832.0 722.1L1831.3 729.0L1825.3 752.3L1755.1 752.3L1748.1 754.2L1743.5 758.4L1741.3 765.0L1735.2 789.9L1736.5 795.0L1739.0 796.9L1813.7 797.4L1805.6 827.4L1718.8 827.4L1704.4 823.6L1697.5 817.8L1693.5 807.2L1694.4 796.6L1705.9 750.9L1711.6 739.3L1718.3 731.4L1730.1 725.2L1748.3 722.0L1832.0 722.1ZM1830.7 816.8L1827.5 809.8L1827.5 798.3L1840.1 749.2L1847.5 736.2L1858.0 728.1L1869.4 723.8L1881.5 722.2L1948.1 722.3L1960.9 725.2L1968.8 730.5L1973.2 737.2L1974.2 744.7L1973.2 753.6L1960.5 802.4L1955.0 812.8L1945.7 820.8L1935.5 825.0L1923.8 827.4L1853.1 827.4L1838.1 823.5L1830.7 816.8ZM2149.6 722.2L2146.4 737.2L2122.0 827.4L2087.0 827.4L2084.0 826.2L2099.7 769.0L2057.7 811.5L2048.8 811.8L2038.8 811.4L2021.7 768.7L2005.6 827.5L1968.3 827.5L1996.7 722.5L2039.1 722.5L2058.5 768.3L2104.5 722.3L2149.6 722.2ZM2138.5 827.4L2166.3 725.0L2167.9 722.3L2257.3 722.2L2272.1 725.3L2279.4 731.9L2281.9 741.9L2279.4 752.9L2273.3 761.9L2262.2 769.7L2270.5 774.0L2275.1 780.6L2276.2 788.2L2275.2 798.9L2270.7 809.7L2261.6 819.1L2248.8 824.8L2235.7 827.4L2138.5 827.4ZM2270.4 827.4L2351.0 723.4L2355.0 722.3L2400.3 722.3L2425.9 827.4L2382.6 827.4L2368.6 760.0L2367.0 757.4L2314.4 827.4L2270.4 827.4ZM2539.4 722.3L2537.0 733.9L2532.0 751.7L2503.0 751.8L2500.4 753.0L2480.4 827.5L2442.6 827.5L2463.5 753.0L2462.0 751.8L2428.6 751.7L2437.4 722.2L2539.4 722.3ZM2194.6 761.6L2234.2 761.7L2239.1 758.1L2239.7 752.0L2237.0 749.4L2233.0 748.8L2198.2 748.6L2194.6 761.6ZM1869.6 794.9L1873.0 797.6C1874.2 798.1 1870.2 797.9 1877.0 798.0L1913.6 798.0L1919.4 796.8L1924.3 790.5L1931.9 761.0L1931.2 754.8L1927.2 752.3L1921.4 752.0L1886.9 752.0L1881.0 754.3L1877.5 758.1L1875.7 763.8L1869.1 789.0L1869.6 794.9ZM2184.4 799.0L2187.0 800.0L2229.2 799.8L2233.9 796.3L2234.6 789.0L2233.0 786.8L2229.0 785.4L2187.7 785.3L2184.4 799.0ZM2328.4 827.4L2350.6 797.9L2361.8 797.8L2369.5 827.3L2328.4 827.4Z"/>
 </defs></svg>
+<a class="skip" href="#mc-form">Aller à mes informations</a>
 
-<a class="skip" href="#resultats">Aller aux salles</a>
 <header class="site-header">
   <div class="wrap header-in">
     <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
@@ -626,29 +1035,106 @@
     </nav>
   </div>
 </header>
+
 <main id="contenu">
-  <div class="filtres-bloc">
-    <div class="wrap ann-tete">
-      <nav class="fil" aria-label="Fil d'Ariane"><a href="index.html">Accueil</a><i aria-hidden="true">›</i><a href="recherche.html">Salles de sports de combat</a><i aria-hidden="true">›</i><span aria-current="page">MMA</span></nav>
-      <h1 class="ann-h1 display">Salles de <b>MMA</b> en France</h1>
-      <p class="ann-intro">Aucune salle de MMA n’est encore référencée sur Mon Club Combat. Nous ouvrons l’annuaire aux clubs en ce moment : si vous en dirigez une, la fiche est gratuite et prend cinq minutes.</p>
-      <div class="ann-actions"><button class="btn btn-rouge" type="button" data-compte>Référencer ma salle</button><a class="btn btn-ligne" href="index.html#villes">Voir les villes couvertes</a></div>
-    </div>
-  </div>
-
-  <section class="colonne-liste" id="resultats" aria-label="Salles" data-discipline="MMA">
-    <div class="wrap"><div class="liste"><div class="vide"><h2 class="display">Pas encore de salle de MMA</h2><p>Il n’y a pas encore de salle de MMA référencée sur Mon Club Combat. Vous en dirigez une&nbsp;? Soyez le premier, c’est gratuit.</p><button class="btn btn-rouge vide-cta" type="button" data-compte>Référencer ma salle</button><p class="vide-sous">Ou regardez par ville&nbsp;:</p><div class="vide-villes"><a class="puce" href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a><a class="puce" href="sports-de-combat-angers.html">Angers</a><a class="puce" href="sports-de-combat-bordeaux.html">Bordeaux</a><a class="puce" href="sports-de-combat-dijon.html">Dijon</a><a class="puce" href="sports-de-combat-grenoble.html">Grenoble</a><a class="puce" href="sports-de-combat-lille.html">Lille</a><a class="puce" href="sports-de-combat-lyon.html">Lyon</a><a class="puce" href="sports-de-combat-marseille.html">Marseille</a></div></div></div></div>
-  </section>
-
-  <section class="fond-seo">
+  <section class="section sous-bandeau">
     <div class="wrap">
-      <h2 class="seo-sous">MMA par ville</h2>
-      <div class="seo-liens"><a class="puce" href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a><a class="puce" href="sports-de-combat-angers.html">Sports de combat à Angers</a><a class="puce" href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a><a class="puce" href="sports-de-combat-dijon.html">Sports de combat à Dijon</a><a class="puce" href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a><a class="puce" href="sports-de-combat-lille.html">Sports de combat à Lille</a><a class="puce" href="sports-de-combat-lyon.html">Sports de combat à Lyon</a><a class="puce" href="sports-de-combat-marseille.html">Sports de combat à Marseille</a><a class="puce" href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a><a class="puce" href="sports-de-combat-nantes.html">Sports de combat à Nantes</a><a class="puce" href="sports-de-combat-nice.html">Sports de combat à Nice</a><a class="puce" href="sports-de-combat-paris.html">Sports de combat à Paris</a><a class="puce" href="sports-de-combat-rennes.html">Sports de combat à Rennes</a><a class="puce" href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a><a class="puce" href="sports-de-combat-toulon.html">Sports de combat à Toulon</a><a class="puce" href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></div>
-      <h2 class="seo-sous">Les autres disciplines</h2>
-      <div class="seo-liens"><a class="puce" href="boxe-anglaise.html">Boxe anglaise</a><a class="puce" href="kickboxing.html">Kickboxing</a><a class="puce" href="muay-thai.html">Muay Thaï</a><a class="puce" href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a><a class="puce" href="grappling.html">Grappling</a><a class="puce" href="karate.html">Karaté</a><a class="puce" href="judo.html">Judo</a><a class="puce" href="lutte.html">Lutte</a><a class="puce" href="self-defense.html">Self-défense</a></div>
+      <div class="fil">
+        <p class="eyebrow">Mon compte</p>
+        <h1 class="fil-titre display">Mon compte</h1>
+        <!-- Ce que le gerant vient y faire : corriger ce qui le concerne, retrouver
+             sa salle, changer son mot de passe, partir. Rien d'autre. -->
+        <p class="fil-mot">Vos informations, votre salle et votre mot de passe. Tout ce
+          que vous écrivez ici est enregistré sur votre compte.</p>
+      </div>
+    </div>
+
+    <div class="wrap grille-form">
+      <div class="mc-colonne">
+        <!-- tant que la session n'est pas lue, on n'affiche aucun champ : un
+             formulaire vide qui se remplit ensuite se lit comme un bug -->
+        <p class="form-etat" id="mc-charge">Chargement…</p>
+        <p class="form-erreur" id="mc-erreur" hidden role="alert"></p>
+
+        <form class="carte-form" id="mc-form" hidden novalidate>
+          <div class="bloc">
+            <h2 class="bloc-titre">Vous</h2>
+            <div class="champs">
+              <div class="champ">
+                <label for="mc-nom">Votre nom</label>
+                <input id="mc-nom" name="nom" autocomplete="name" placeholder="Karim Bentaleb">
+              </div>
+              <div class="champ">
+                <label for="mc-tel">Votre téléphone <span class="opt">(facultatif)</span></label>
+                <input id="mc-tel" name="tel" type="tel" autocomplete="tel" placeholder="06 12 34 56 78">
+                <span class="champ-aide">Pour que nous puissions vous joindre. Il n'est
+                  jamais affiché sur votre fiche.</span>
+              </div>
+              <div class="champ large">
+                <label for="mc-fonction">Votre rôle dans la salle <span class="opt">(facultatif)</span></label>
+                <input id="mc-fonction" name="fonction" placeholder="Gérant, coach, président de l'association…">
+              </div>
+              <div class="champ large">
+                <label for="mc-mail">Votre e-mail de connexion</label>
+                <input id="mc-mail" name="mail" type="email" readonly>
+                <span class="champ-aide">C'est avec cette adresse que vous vous connectez.
+                  Écrivez-nous pour la changer.</span>
+              </div>
+            </div>
+            <div class="form-pied">
+              <button class="btn btn-rouge" type="submit" id="mc-envoi">Enregistrer</button>
+              <p class="form-note" id="mc-fait" hidden>Enregistré.</p>
+            </div>
+          </div>
+        </form>
+
+        <form class="carte-form mc-suite" id="mc-mdp-form" hidden novalidate>
+          <div class="bloc">
+            <h2 class="bloc-titre">Mot de passe</h2>
+            <div class="champs">
+              <div class="champ">
+                <label for="mc-mdp">Nouveau mot de passe</label>
+                <input id="mc-mdp" type="password" minlength="8" autocomplete="new-password">
+                <span class="champ-aide">Huit caractères au minimum.</span>
+              </div>
+              <div class="champ">
+                <label for="mc-mdp2">Répétez-le</label>
+                <input id="mc-mdp2" type="password" minlength="8" autocomplete="new-password">
+              </div>
+            </div>
+            <p class="fen-erreur" id="mc-mdp-err" hidden role="alert"></p>
+            <div class="form-pied">
+              <button class="btn btn-ligne" type="submit" id="mc-mdp-envoi">Changer mon mot de passe</button>
+              <p class="form-note" id="mc-mdp-fait" hidden>Votre mot de passe est changé.</p>
+            </div>
+          </div>
+        </form>
+
+        <div class="carte-form mc-suite" id="mc-sortie-bloc" hidden>
+          <div class="bloc">
+            <h2 class="bloc-titre">Cette session</h2>
+            <p class="mc-ligne" id="mc-depuis"></p>
+            <div class="form-pied">
+              <button class="btn btn-ligne" type="button" id="mc-sortie">Se déconnecter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Le rappel de la salle, meme en gratuit : un compte qui ne montre rien de
+           ce qu'on a rempli ne ressemble pas a un compte. -->
+      <aside class="panneau" id="mc-panneau" hidden>
+        <p class="eyebrow">Ma salle</p>
+        <h2 id="mc-club">Votre salle</h2>
+        <p class="esp-etat" id="mc-etat" hidden><span id="mc-statut"></span></p>
+        <ul class="mc-faits" id="mc-faits"></ul>
+        <div class="esp-actions" id="mc-liens"></div>
+        <p class="pro-note" id="mc-offre" hidden></p>
+      </aside>
     </div>
   </section>
 </main>
+
 <footer class="site-footer">
   <div class="wrap footer-haut">
     <div class="footer-marque">
@@ -1123,109 +1609,204 @@
 </script>
 
 <script>
-/* ---- les pages d'annuaire se completent depuis la base ----
-   Ces pages sont ecrites a l'avance, pour que Google les lise sans JavaScript.
-   Elles portent donc les clubs connus au dernier build. Un club valide depuis
-   n'y est pas encore : on va le chercher dans la base et on l'ajoute, plutot
-   que de laisser un visiteur lire « aucune salle » alors qu'il y en a une.
+/* ---- Mon compte ----
+   Amaury, 23/09/2026 : « je veux que ca cree un vrai compte. Ca ouvre une
+   nouvelle page ou il y a un vrai profil de compte, etc. Genre, l'impression
+   d'un vrai compte, pas que ca ouvre une page fichue sale et qu'apres il ne
+   puisse plus rien faire, plus avoir aucune data. Je veux quand meme que, meme
+   le mec gratuit qui a cree un compte, il y ait un minimum de data, au moins
+   qu'il ait un profil de compte et qu'il soit enregistre quelque part. »
 
-   Le rendu du serveur reste intact tant que rien n'arrive : si la base est
-   injoignable, la page ne bouge pas et ne casse rien. */
+   D'ou cette page : ce que la personne ecrit sur elle-meme va dans la table
+   `profil` (une ligne par compte, que seul son proprietaire lit et ecrit), le
+   rappel de sa salle vient de `club`, et le mot de passe passe par Supabase.
+   Rien n'est decoratif : tout ce qui s'affiche ici sort de la base, et tout ce
+   qu'on y tape y retourne. */
 (function (){
-  var zone = document.getElementById('resultats');
   var SB = window.MCC;
-  if (!zone || !SB || !SB.prete()) return;
+  var charge = document.getElementById('mc-charge');
+  var erreur = document.getElementById('mc-erreur');
 
-  var ville = zone.dataset.ville || '';
-  var discipline = zone.dataset.discipline || '';
-  var liste = zone.querySelector('.liste');
-  if (!liste) return;
+  function dit(m){ charge.textContent = m; charge.hidden = false; }
+  function rate(m){ charge.hidden = true; erreur.textContent = m; erreur.hidden = false; }
 
-  var PIN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-    'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+  if (!SB || !SB.prete()) {
+    rate('Cette page a besoin d’une connexion au serveur, qui n’est pas disponible ici. ' +
+         'Ouvrez le site en ligne pour y accéder.');
+    return;
+  }
 
-  function ech(t){
+  var ech = function (t){
     return String(t == null ? '' : t)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  };
+  var MOT = {
+    brouillon:  'Brouillon',
+    en_attente: 'En vérification',
+    publie:     'En ligne',
+    refuse:     'À corriger',
+    suspendu:   'Suspendue'
+  };
+  function leJour(t){
+    if (!t) return '';
+    return new Date(t).toLocaleDateString('fr-FR',
+      { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
-  /* La meme carte que celle du serveur (build_annuaire.carte_salle), sans la
-     note : un vrai club n'en a pas, et on n'en invente pas. */
-  function carte(s, i){
-    var d = s[11];
-    var mot = (d.presentation || [''])[0] || '';
-    if (mot.length > 190) mot = mot.slice(0, 188).replace(/\s+\S*$/, '') + '…';
-    var ou = [d.adresse, [d.cp, s[2]].filter(Boolean).join(' ')].filter(Boolean).join(', ');
-    return '<article class="res">' +
-      '<div class="res-vignette"><span class="res-num">' + i + '</span>' +
-        '<span class="res-init" aria-hidden="true">' + ech(s[1]) + '</span></div>' +
-      '<div class="res-corps">' +
-        '<div class="res-tete"><h2 class="res-nom">' +
-          '<a href="salle.html?s=' + encodeURIComponent(d.slug) + '">' + ech(s[0]) + '</a>' +
-        '</h2></div>' +
-        '<div class="res-chips">' +
-          s[5].map(function (x){ return '<span class="mini-chip">' + ech(x) + '</span>'; }).join('') +
-        '</div>' +
-        (ou ? '<p class="res-adresse">' + PIN + ech(ou) + '</p>' : '') +
-        (mot ? '<p class="res-mot">' + ech(mot) + '</p>' : '') +
-        '<div class="res-bas">' +
-          (s[9] ? '<span class="paire' + (s[10] ? ' res-ouvert' : '') + '">' +
-                  (s[10] ? 'Ouvert aujourd’hui · ' + ech(s[9]) : 'Fermé aujourd’hui') + '</span>' : '') +
-          (s[8]
-            ? '<a class="btn btn-rouge res-essai" href="salle.html?s=' +
-              encodeURIComponent(d.slug) + '#essai">Séance d’essai</a>'
-            : '<a class="btn btn-ligne res-essai" href="salle.html?s=' +
-              encodeURIComponent(d.slug) + '">Voir la salle</a>') +
-        '</div>' +
-      '</div></article>';
-  }
+  var moi = null;
 
-  /* « ou pratiquer Boxe anglaise » ne se dit pas : meme table d'articles que
-     build_annuaire.ART, pour que la phrase soit la meme des deux cotes. */
-  var ART = { 'MMA': 'le MMA', 'Boxe anglaise': 'la boxe anglaise',
-    'Kickboxing': 'le kickboxing', 'Muay Thaï': 'le Muay Thaï',
-    'Jiu-jitsu brésilien': 'le jiu-jitsu brésilien', 'Grappling': 'le grappling',
-    'Karaté': 'le karaté', 'Judo': 'le judo', 'Lutte': 'la lutte',
-    'Self-défense': 'la self-défense' };
-
-  function phrase(n){
-    var pluriel = n > 1 ? 's' : '';
-    if (ville)
-      return 'Mon Club Combat référence <b>' + n + ' salle' + pluriel +
-             '</b> de sports de combat à ' + ech(ville) + '.';
-    return 'Mon Club Combat référence <b>' + n + ' salle' + pluriel +
-           '</b> où pratiquer ' + ech(ART[discipline] || discipline) + ' en France.';
-  }
-
-  document.addEventListener('mcc:salles', function (){
-    var lot = window.SALLES.filter(function (s){
-      return ville ? s[2] === ville : s[5].indexOf(discipline) >= 0;
-    });
-    if (!lot.length) return;
-    /* Mise en avant des abonnes (Amaury, 23/09/2026) : les clubs Pro en tete,
-       chaque groupe restant classe par nom. Toutes ces salles sont dans la meme
-       ville ou la meme discipline, donc l'ordre n'enleve rien a personne. */
-    lot.sort(function (a, b){
-      return ((b[8] ? 1 : 0) - (a[8] ? 1 : 0)) || a[0].localeCompare(b[0], 'fr');
-    });
-    liste.innerHTML = lot.map(function (s, i){ return carte(s, i + 1); }).join('');
-    var intro = document.querySelector('.ann-intro');
-    if (intro) intro.innerHTML = phrase(lot.length);
-
-    /* Les boutons du haut etaient ceux de la page vide (« Voir les villes
-       couvertes ») : maintenant qu'il y a des salles, on propose la carte. */
-    var actions = document.querySelector('.ann-actions');
-    if (actions) {
-      var vers = ville ? 'recherche.html?ville=' + encodeURIComponent(ville)
-                       : 'recherche.html?discipline=' + encodeURIComponent(discipline);
-      actions.innerHTML =
-        '<a class="btn btn-rouge" href="' + vers + '">Voir sur la carte</a>' +
-        '<button class="btn btn-ligne" type="button" data-compte>Référencer ma salle</button>';
+  SB.session().then(function (s){
+    if (!s) {
+      SB.exigeCompte();
+      dit('Connectez-vous pour voir votre compte.');
+      return null;
     }
+    moi = s.user || null;
+    return Promise.all([SB.monProfil(), SB.monClub()]);
+  }).then(function (r){
+    if (!r) return;
+    charge.hidden = true;
+    remplit(r[0] || {}, r[1]);
+  }).catch(function (e){ rate(SB.dire(e)); });
+
+  /* ---------- l'affichage ---------- */
+  function remplit(profil, club){
+    document.getElementById('mc-form').hidden = false;
+    document.getElementById('mc-mdp-form').hidden = false;
+    document.getElementById('mc-sortie-bloc').hidden = false;
+
+    document.getElementById('mc-nom').value      = profil.nom || '';
+    document.getElementById('mc-tel').value      = profil.tel || '';
+    document.getElementById('mc-fonction').value = profil.fonction || '';
+    document.getElementById('mc-mail').value     = (moi && moi.email) || '';
+
+    var depuis = document.getElementById('mc-depuis');
+    var ne = leJour(moi && moi.created_at);
+    depuis.textContent = ne
+      ? 'Vous êtes connecté avec ' + (moi.email || 'ce compte') + ', créé le ' + ne + '.'
+      : 'Vous êtes connecté avec ' + ((moi && moi.email) || 'ce compte') + '.';
+
+    panneau(club);
+  }
+
+  function panneau(club){
+    var p = document.getElementById('mc-panneau');
+    p.hidden = false;
+    var faits = document.getElementById('mc-faits');
+    var liens = document.getElementById('mc-liens');
+    var offre = document.getElementById('mc-offre');
+
+    if (!club) {
+      /* Un compte sans salle n'est pas une erreur : c'est quelqu'un qui s'est
+         inscrit et n'a pas fini. On lui dit ou reprendre. */
+      document.getElementById('mc-club').textContent = 'Pas encore de salle';
+      faits.innerHTML = '<li>Votre compte existe, votre fiche reste à remplir.</li>';
+      liens.innerHTML = '<a class="btn btn-rouge" href="referencer.html">Créer la fiche de ma salle</a>';
+      return;
+    }
+
+    document.getElementById('mc-club').textContent = club.nom || 'Votre salle';
+    var pastille = document.getElementById('mc-etat');
+    document.getElementById('mc-statut').textContent = MOT[club.statut] || '—';
+    pastille.className = 'esp-etat esp-' + club.statut;
+    pastille.hidden = false;
+
+    var l = [];
+    if (club.ville) l.push('À ' + club.ville);
+    var d = club.disciplines || [];
+    if (d.length) l.push(d.length === 1 ? d[0] : d.length + ' disciplines');
+    var ph = club.photos || [];
+    l.push(ph.length ? (ph.length === 1 ? 'Une photo' : ph.length + ' photos') : 'Aucune photo');
+    var co = club.cours || [];
+    l.push(co.length ? (co.length === 1 ? 'Un cours au planning' : co.length + ' cours au planning')
+                     : 'Planning à remplir');
+    if (club.cree_le) l.push('Fiche créée le ' + leJour(club.cree_le));
+    faits.innerHTML = l.map(function (x){ return '<li>' + ech(x) + '</li>'; }).join('');
+
+    var boutons = ['<a class="btn btn-rouge" href="espace-club.html">Mon espace club</a>',
+                   '<a class="btn btn-ligne" href="referencer.html">Modifier ma fiche</a>'];
+    if (club.statut === 'publie' && club.slug)
+      boutons.push('<a class="btn btn-ligne" href="salle.html?s=' +
+        encodeURIComponent(club.slug) + '">Voir ma fiche en ligne</a>');
+    liens.innerHTML = boutons.join('');
+
+    offre.hidden = false;
+    offre.innerHTML = (club.offre === 'pro')
+      ? '<b>Mon Club Combat Pro</b><span>Votre fiche est mise en avant, vos coordonnées ' +
+        'sont visibles et vous recevez les réservations de séance d’essai.</span>'
+      : '<b>Formule gratuite</b><span>Votre fiche est visible, mais elle ne montre ni votre ' +
+        'téléphone ni votre e-mail et ne prend pas de réservation. ' +
+        '<a href="clubs.html#pro">Voir ce que le Pro ajoute</a>.</span>';
+  }
+
+  /* ---------- enregistrer le profil ---------- */
+  document.getElementById('mc-form').addEventListener('submit', function (e){
+    e.preventDefault();
+    erreur.hidden = true;
+    var bouton = document.getElementById('mc-envoi');
+    var fait = document.getElementById('mc-fait');
+    fait.hidden = true;
+    bouton.disabled = true;
+    bouton.textContent = 'Enregistrement…';
+    SB.poseProfil({
+      nom:      document.getElementById('mc-nom').value.trim() || null,
+      tel:      document.getElementById('mc-tel').value.trim() || null,
+      fonction: document.getElementById('mc-fonction').value.trim() || null
+    }).then(function (ligne){
+      bouton.disabled = false;
+      bouton.textContent = 'Enregistrer';
+      /* on reaffiche ce que la base a garde, pas ce qui a ete tape */
+      document.getElementById('mc-nom').value      = ligne.nom || '';
+      document.getElementById('mc-tel').value      = ligne.tel || '';
+      document.getElementById('mc-fonction').value = ligne.fonction || '';
+      fait.hidden = false;
+    }).catch(function (err){
+      bouton.disabled = false;
+      bouton.textContent = 'Enregistrer';
+      rate(SB.dire(err));
+    });
   });
 
-  SB.chargeSalles();
+  /* ---------- changer le mot de passe ----------
+     Il n'y a pas d'e-mail a envoyer ici : la session est deja ouverte, donc
+     Supabase accepte le changement directement. C'est le seul chemin qui marche
+     tant que nous n'avons pas d'expediteur d'e-mails a nous. */
+  var mdpForm = document.getElementById('mc-mdp-form');
+  mdpForm.addEventListener('submit', function (e){
+    e.preventDefault();
+    var err = document.getElementById('mc-mdp-err');
+    var fait = document.getElementById('mc-mdp-fait');
+    var bouton = document.getElementById('mc-mdp-envoi');
+    var a = document.getElementById('mc-mdp').value;
+    var b = document.getElementById('mc-mdp2').value;
+    fait.hidden = true;
+    function dis(m){ err.textContent = m; err.hidden = !m; }
+    if (a.length < 8) { dis('Huit caractères au minimum.'); document.getElementById('mc-mdp').focus(); return; }
+    if (a !== b) { dis('Les deux mots de passe ne sont pas les mêmes.'); document.getElementById('mc-mdp2').focus(); return; }
+    dis('');
+    bouton.disabled = true;
+    bouton.textContent = 'Un instant…';
+    SB.client.auth.updateUser({ password: a }).then(function (r){
+      bouton.disabled = false;
+      bouton.textContent = 'Changer mon mot de passe';
+      if (r.error) { dis(SB.dire(r.error)); return; }
+      document.getElementById('mc-mdp').value = '';
+      document.getElementById('mc-mdp2').value = '';
+      fait.hidden = false;
+    }).catch(function (e2){
+      bouton.disabled = false;
+      bouton.textContent = 'Changer mon mot de passe';
+      dis(SB.dire(e2));
+    });
+  });
+
+  /* ---------- se deconnecter ---------- */
+  document.getElementById('mc-sortie').addEventListener('click', function (){
+    var b = document.getElementById('mc-sortie');
+    b.disabled = true;
+    b.textContent = 'Déconnexion…';
+    SB.deconnexion().then(function (){ location.href = 'index.html'; });
+  });
 })();
 </script>
 
