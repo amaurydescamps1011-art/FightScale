@@ -571,6 +571,87 @@
   .fil-titre{margin-top:12px; font-size:clamp(26px,3.4vw,40px); line-height:1;
     letter-spacing:.012em; color:var(--texte)}
   .fil-mot{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
+
+  /* ---------- messages de la fiche branchee sur la base ---------- */
+  .form-etat{margin-bottom:14px; padding:11px 13px; border-radius:var(--r-m);
+    background:var(--surface-2); border:1px solid var(--bord);
+    font-size:13.5px; line-height:1.55; font-weight:600; color:var(--texte-2)}
+  .form-erreur{margin-bottom:14px; padding:11px 13px; border-radius:var(--r-m);
+    background:rgba(236,22,46,.07); border:1px solid rgba(236,22,46,.28);
+    font-size:13.5px; line-height:1.55; font-weight:600; color:var(--rouge-700)}
+  .form-etat[hidden], .form-erreur[hidden]{display:none}
+
+  /* ---------- espace club et back-office ---------- */
+  /* Meme parti pris que le reste du site : des filets et un segment rouge, aucune
+     boite. Une ligne par demande ou par fiche, separee par un filet. */
+  /* La colonne de chiffres de l'accueil : ces regles vivent dans page.tpl.html,
+     que ces pages-ci n'utilisent pas. Meme dessin, pour que ce soit le meme site. */
+  .ouv-liste{display:grid; gap:0; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ouv-liste li{position:relative; border-top:1px solid var(--bord);
+    padding:22px 18px 22px 0}
+  .ouv-liste li + li{padding-left:22px; border-left:1px solid var(--bord)}
+  .ouv-liste li::before{content:""; position:absolute; top:-1px; left:0;
+    width:30px; height:2px; background:var(--rouge-500)}
+  .ouv-liste li + li::before{left:22px}
+  .ouv-nb{display:block; font-size:clamp(26px,3vw,38px); line-height:1;
+    letter-spacing:.008em; color:var(--rouge-500); white-space:nowrap}
+  .ouv-lb{display:block; margin-top:10px; font-size:13px; font-weight:700;
+    line-height:1.45; color:var(--texte-3)}
+  @media (max-width:420px){
+    .ouv-liste li{padding-right:12px}
+    .ouv-liste li + li{padding-left:12px}
+    .ouv-liste li + li::before{left:12px}
+  }
+
+  /* l'etat de la fiche, meme pastille que le suivi des demandes */
+  .esp-etat{margin-top:16px; display:inline-flex; align-items:center; gap:7px;
+    padding:6px 13px; border-radius:999px; border:1px solid var(--bord);
+    font-size:12.5px; font-weight:800; color:var(--texte-3)}
+  .esp-etat::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--texte-4)}
+  .esp-publie{border-color:rgba(29,138,74,.35); color:var(--vert)}
+  .esp-publie::before{background:var(--vert)}
+  .esp-en_attente{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .esp-en_attente::before{background:var(--rouge-500)}
+  .esp-refuse, .esp-suspendu{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .esp-refuse::before, .esp-suspendu::before{background:var(--rouge-500)}
+
+  .esp-chiffres, .ad-chiffres{margin-top:clamp(26px,3vw,36px); max-width:52ch}
+  .esp-mot{margin-top:clamp(22px,2.4vw,30px); max-width:64ch;
+    font-size:15.5px; line-height:1.68; color:var(--texte-2)}
+  .esp-actions{margin-top:26px; display:flex; flex-wrap:wrap; gap:12px}
+  .esp-actions .btn[hidden]{display:none}
+
+  .demandes, .fiches{margin-top:clamp(24px,2.8vw,34px); display:grid; gap:0}
+  .demande, .fiche{position:relative; border-top:1px solid var(--bord);
+    padding:clamp(22px,2.4vw,28px) 0}
+  .demande::before, .fiche::before{content:""; position:absolute; top:-1px; left:0;
+    width:34px; height:2px; background:var(--rouge-500)}
+
+  .dem-qui, .fiche-tete{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px}
+  .dem-qui b, .fiche-tete b{font-size:17px; color:var(--texte)}
+  .dem-quand, .fiche-lieu{font-size:13px; font-weight:700; color:var(--texte-4)}
+
+  .dem-coord, .fiche-faits{margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 20px;
+    font-size:14px; color:var(--texte-2)}
+  .dem-coord a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+  .dem-mot, .fiche-mot{margin-top:12px; max-width:68ch; font-size:14.5px; line-height:1.62;
+    color:var(--texte-3)}
+
+  .dem-suivi, .fiche-actions{margin-top:16px; display:flex; flex-wrap:wrap;
+    align-items:center; gap:10px}
+  .btn-mini{min-height:38px; padding:9px 16px; font-size:13.5px}
+  /* l'etat se lit a la couleur : recue est en attente, confirmee est le lead */
+  .dem-etat{display:inline-flex; align-items:center; gap:7px; padding:6px 13px;
+    border-radius:999px; border:1px solid var(--bord);
+    font-size:12.5px; font-weight:800; color:var(--texte-3)}
+  .dem-etat::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--texte-4)}
+  .dem-confirmee{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .dem-confirmee::before{background:var(--rouge-500)}
+  .dem-honoree{border-color:rgba(29,138,74,.35); color:var(--vert)}
+  .dem-honoree::before{background:var(--vert)}
+  .dem-absente, .dem-annulee{color:var(--texte-4)}
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -611,6 +692,18 @@
   .fen-note{font-size:12.5px; line-height:1.55; color:var(--texte-4)}
   .champ.manque input{border-color:var(--rouge-500);
     box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  /* l'erreur que renvoie le serveur, traduite par MCC.dire() */
+  .fen-erreur{margin:0; padding:11px 13px; border-radius:var(--r-m);
+    background:rgba(236,22,46,.07); border:1px solid rgba(236,22,46,.28);
+    color:var(--rouge-700); font-size:13.5px; line-height:1.5; font-weight:600}
+  .fen-erreur[hidden]{display:none}
+  /* un bouton qui se lit comme un lien : bascule creation <-> connexion */
+  .lien-bouton{padding:0; border:0; background:none; cursor:pointer;
+    font:inherit; font-weight:700; color:var(--rouge-lien);
+    text-decoration:underline; text-underline-offset:3px}
+  .fen-bascule{margin:0; font-size:13px; color:var(--texte-4)}
+  .fen-bascule [data-mode][hidden]{display:none}
+  .champ[hidden]{display:none}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -799,6 +892,9 @@
           </div>
 
           <div class="form-pied">
+            <!-- l'etat de la fiche telle que la base la connait, et l'erreur du serveur -->
+            <p class="form-etat" id="c-etat" hidden></p>
+            <p class="form-erreur" id="c-erreur" hidden role="alert"></p>
             <button class="btn btn-rouge" type="submit">Référencer ma salle</button>
             <p class="form-note">Gratuit et sans engagement. Nous vérifions la fiche avant
               publication et nous vous répondons sous 48&nbsp;heures.</p>
@@ -881,7 +977,7 @@
         <li><a href="clubs.html">Référencer ma salle</a></li>
         <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
         <li><a href="index.html#acquisition">Acquisition de leads</a></li>
-        <li><a href="index.html#connexion">Espace club</a></li>
+        <li><a href="espace-club.html">Espace club</a></li>
       </ul>
     </nav>
 
@@ -977,7 +1073,7 @@
   champPhotos.addEventListener('change', function (){
     Array.prototype.forEach.call(champPhotos.files, function (f){
       if (photos.length >= MAX || !/^image\//.test(f.type)) return;
-      photos.push({ nom: f.name, url: URL.createObjectURL(f) });
+      photos.push({ nom: f.name, url: URL.createObjectURL(f), fichier: f });
     });
     champPhotos.value = '';          /* pour pouvoir reprendre le meme fichier */
     dessinePhotos();
@@ -1044,6 +1140,11 @@
     document.getElementById('c-mot-n').textContent = mot.length;
   }
 
+  /* les fichiers choisis, pour le script qui les televerse */
+  window.MCC_PHOTOS = function (){
+    return photos.map(function (p){ return p.fichier; }).filter(Boolean);
+  };
+
   form.addEventListener('input', apercu);
   form.addEventListener('change', apercu);
   apercu();
@@ -1081,6 +1182,369 @@
     champNom.value = nomRecu;
     champNom.dispatchEvent(new Event('input', { bubbles: true }));
   }
+</script>
+
+<!-- La creation de l'espace club se fait dans une fenetre, pas dans la page : le gerant
+     voit ce qu'on lui demande avant de s'engager, et le formulaire de la fiche l'attend
+     sur referencer.html. Elle est posee sur TOUTES les pages, parce que seul le bouton
+     du bandeau mene a la page de vente : partout ailleurs, « Referencer ma salle »
+     ouvre directement la creation de compte (Amaury, 22/09/2026).
+     Depuis le 23/09/2026 elle cree un vrai compte, sauf quand la base n'est pas
+     joignable (dans un Artifact le CSP interdit toute requete) : la maquette retombe
+     alors sur son ancien comportement de demonstration. -->
+<div class="voile" id="voile" hidden>
+  <div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="fen-titre">
+    <button class="fen-fermer" type="button" id="fermer-compte" aria-label="Fermer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
+    <p class="eyebrow" id="fen-etape">Étape 1 sur 2</p>
+    <h2 class="fen-titre display" id="fen-titre">Créez votre espace club</h2>
+    <p class="fen-mot" id="fen-mot">Vous y modifierez votre fiche et vous y recevrez les demandes de séance
+      d'essai. La fiche de votre salle se remplit juste après.</p>
+
+    <form class="fen-form" id="form-compte" novalidate>
+      <div class="champ" id="champ-nom">
+        <label for="k-nom">Nom de la salle</label>
+        <input id="k-nom" name="nom" required autocomplete="organization" placeholder="Fight Club Marseille">
+      </div>
+      <div class="champ">
+        <label for="k-mail">Votre e-mail</label>
+        <input id="k-mail" name="mail" type="email" required autocomplete="email" placeholder="contact@votre-salle.fr">
+      </div>
+      <div class="champ">
+        <label for="k-mdp">Mot de passe</label>
+        <input id="k-mdp" name="mdp" type="password" required autocomplete="new-password" minlength="8">
+        <span class="champ-aide" id="k-mdp-aide">Huit caractères au minimum.</span>
+      </div>
+      <!-- l'erreur renvoyee par le serveur, en francais -->
+      <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
+      <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
+      <p class="fen-note" id="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+      <p class="fen-bascule">
+        <span data-mode="creation">Vous avez déjà un espace club ?
+          <button type="button" class="lien-bouton" id="fen-vers-connexion">Connectez-vous</button>.</span>
+        <span data-mode="connexion" hidden>Pas encore d'espace club ?
+          <button type="button" class="lien-bouton" id="fen-vers-creation">Créez-le</button>.</span>
+      </p>
+    </form>
+
+    <!-- quand la confirmation par e-mail est active cote Supabase, il n'y a pas de
+         session a la sortie de l'inscription : on le dit au lieu de tourner en rond -->
+    <div id="fen-verif" hidden>
+      <p class="fen-mot">Nous venons d'envoyer un lien de confirmation à
+        <b id="fen-verif-mail"></b>. Ouvrez-le, puis revenez vous connecter ici pour
+        remplir la fiche de votre salle.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="sb.js"></script>
+<script>
+/* ---- la fenetre de creation de l'espace club ----
+   Presente sur toutes les pages. Tout element portant data-compte l'ouvre :
+   boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
+   Seul le bouton du bandeau reste un lien vers la page de vente.
+
+   Depuis le 23/09/2026 elle cree un vrai compte. Deux chemins possibles selon
+   le reglage de Supabase :
+     - confirmation par e-mail desactivee : l'inscription ouvre une session, on
+       enchaine directement sur la fiche ;
+     - confirmation activee : il n'y a pas de session, donc pas de club creable
+       tout de suite. On le dit, et c'est referencer.html qui creera le club au
+       premier passage une fois le compte confirme.
+   Quand la base n'est pas joignable (CSP d'un Artifact), on retombe sur
+   l'ancien comportement de demonstration : la maquette reste consultable. */
+(function (){
+  var voile = document.getElementById('voile');
+  if (!voile) return;
+  var form     = document.getElementById('form-compte');
+  var erreur   = document.getElementById('fen-erreur');
+  var envoi    = document.getElementById('fen-envoi');
+  var champNom = document.getElementById('champ-nom');
+  var rendu = null;
+  var mode = 'creation';
+
+  var SB = window.MCC || null;
+  var reel = !!(SB && SB.prete());
+
+  /* ---------- ouverture et fermeture ---------- */
+  function ouvre(){
+    rendu = document.activeElement;
+    voile.hidden = false;
+    document.body.classList.add('fige');
+    (mode === 'creation' ? document.getElementById('k-nom')
+                         : document.getElementById('k-mail')).focus();
+  }
+  function ferme(){
+    voile.hidden = true;
+    document.body.classList.remove('fige');
+    if (rendu) rendu.focus();
+  }
+  /* la recherche et l'annuaire reecrivent leurs resultats : on ecoute le document
+     plutot que chaque bouton, pour que ceux crees plus tard marchent aussi */
+  document.addEventListener('click', function (e){
+    var d = e.target.closest ? e.target.closest('[data-compte]') : null;
+    if (!d) return;
+    e.preventDefault();
+    bascule(d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation');
+    ouvre();
+  });
+
+  document.getElementById('fermer-compte').addEventListener('click', ferme);
+  voile.addEventListener('mousedown', function (e){ if (e.target === voile) ferme(); });
+  document.addEventListener('keydown', function (e){
+    if (e.key === 'Escape' && !voile.hidden) ferme();
+    /* la fenetre garde le focus tant qu'elle est ouverte */
+    if (e.key === 'Tab' && !voile.hidden) {
+      var f = voile.querySelectorAll('button, input, a[href]');
+      f = Array.prototype.filter.call(f, function (x){ return x.offsetParent !== null; });
+      if (!f.length) return;
+      var premier = f[0], dernier = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === premier) { e.preventDefault(); dernier.focus(); }
+      else if (!e.shiftKey && document.activeElement === dernier) { e.preventDefault(); premier.focus(); }
+    }
+  });
+
+  /* ---------- creation ou connexion ---------- */
+  function bascule(v){
+    mode = v;
+    var creation = mode === 'creation';
+    champNom.hidden = !creation;
+    document.getElementById('k-nom').required = creation;
+    document.getElementById('fen-etape').textContent = creation ? 'Étape 1 sur 2' : 'Espace club';
+    document.getElementById('fen-titre').textContent = creation ? 'Créez votre espace club' : 'Connectez-vous';
+    document.getElementById('fen-mot').textContent = creation
+      ? 'Vous y modifierez votre fiche et vous y recevrez les demandes de séance d’essai. La fiche de votre salle se remplit juste après.'
+      : 'Retrouvez votre fiche et les demandes de séance d’essai reçues.';
+    document.getElementById('fen-envoi').textContent = creation ? 'Continuer vers ma fiche' : 'Se connecter';
+    document.getElementById('k-mdp').setAttribute('autocomplete', creation ? 'new-password' : 'current-password');
+    document.getElementById('k-mdp-aide').hidden = !creation;
+    document.getElementById('fen-note').hidden = !creation;
+    Array.prototype.forEach.call(voile.querySelectorAll('[data-mode]'), function (s){
+      s.hidden = s.getAttribute('data-mode') !== mode;
+    });
+    montre('');
+  }
+  document.getElementById('fen-vers-connexion').addEventListener('click', function (){ bascule('connexion'); });
+  document.getElementById('fen-vers-creation').addEventListener('click',  function (){ bascule('creation'); });
+
+  function montre(msg){
+    erreur.textContent = msg || '';
+    erreur.hidden = !msg;
+  }
+  function occupe(oui){
+    envoi.disabled = oui;
+    envoi.textContent = oui ? 'Un instant…'
+      : (mode === 'creation' ? 'Continuer vers ma fiche' : 'Se connecter');
+  }
+
+  form.addEventListener('submit', function (e){
+    e.preventDefault();
+    montre('');
+    var manque = false;
+    Array.prototype.forEach.call(form.querySelectorAll('input[required]'), function (c){
+      if (c.closest('.champ').hidden) { c.closest('.champ').classList.remove('manque'); return; }
+      var vide = !c.value.trim() || (c.type === 'email' && c.value.indexOf('@') < 1)
+                 || (mode === 'creation' && c.minLength > 0 && c.value.length < c.minLength);
+      c.closest('.champ').classList.toggle('manque', vide);
+      if (vide && !manque) { c.focus(); manque = true; }
+    });
+    if (manque) return;
+
+    var nom  = document.getElementById('k-nom').value.trim();
+    var mail = document.getElementById('k-mail').value.trim();
+    var mdp  = document.getElementById('k-mdp').value;
+
+    /* pas de base joignable : la maquette garde son comportement d'avant */
+    if (!reel) { location.href = 'referencer.html?nom=' + encodeURIComponent(nom); return; }
+
+    occupe(true);
+    var sb = SB.client;
+    var p = mode === 'creation'
+      ? sb.auth.signUp({ email: mail, password: mdp, options: { data: { nom_salle: nom } } })
+      : sb.auth.signInWithPassword({ email: mail, password: mdp });
+
+    p.then(function (r){
+      if (r.error) { occupe(false); montre(SB.dire(r.error)); return; }
+
+      /* inscription sans session : Supabase attend la confirmation de l'adresse */
+      if (mode === 'creation' && !(r.data && r.data.session)) {
+        form.hidden = true;
+        document.getElementById('fen-verif-mail').textContent = mail;
+        document.getElementById('fen-verif').hidden = false;
+        return;
+      }
+      /* le nom saisi amorce la fiche ; le club lui-meme est cree par referencer.html,
+         qui est le seul endroit ou l'on sait s'il en existe deja un */
+      location.href = 'referencer.html' + (nom ? '?nom=' + encodeURIComponent(nom) : '');
+    }).catch(function (err){
+      occupe(false);
+      montre(SB.dire(err));
+    });
+  });
+})();
+</script>
+
+<script>
+/* ---- la fiche, branchee sur la base ----
+   Charge le club du compte connecte, remplit le formulaire avec, et enregistre
+   pour de bon a l'envoi. Sans base joignable (CSP d'un Artifact), ce script ne
+   fait rien : le formulaire garde son comportement de demonstration. */
+(function (){
+  var SB = window.MCC;
+  if (!SB || !SB.prete()) return;
+  var sb = SB.client;
+  var form = document.getElementById('form-club');
+  if (!form) return;
+
+  var clubId = null;
+  var JOURS = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
+  var val = function (id){ return (document.getElementById(id).value || '').trim(); };
+  var pose = function (id, v){
+    var c = document.getElementById(id);
+    if (c && v != null) c.value = v;
+  };
+
+  /* ---------- au chargement : session, puis club ---------- */
+  SB.session().then(function (s){
+    if (!s) { SB.exigeCompte('referencer.html'); return; }
+    return SB.monClub().then(function (club){
+      if (club) return club;
+      /* pas encore de club : on le cree ici, et seulement ici. Le nom vient du
+         ?nom= laisse par la fenetre d'inscription, ou du nom saisi a l'instant. */
+      var nom = new URLSearchParams(location.search).get('nom')
+             || (s.user && s.user.user_metadata && s.user.user_metadata.nom_salle)
+             || 'Ma salle';
+      return sb.rpc('creer_mon_club', { nom_salle: nom })
+        .then(function (r){
+          if (r.error) throw r.error;
+          return SB.monClub();
+        });
+    });
+  }).then(function (club){
+    if (!club) return;
+    clubId = club.id;
+    remplit(club);
+  }).catch(function (e){ avertit(SB.dire(e)); });
+
+  /* ---------- du club vers le formulaire ---------- */
+  function remplit(c){
+    pose('c-nom', c.nom);           pose('c-adresse', c.adresse);
+    pose('c-ville', c.ville);       pose('c-cp', c.code_postal);
+    pose('c-mot', c.presentation);  pose('c-contact', c.contact_nom);
+    pose('c-tel', c.tel);           pose('c-mail', c.mail);
+    pose('c-web', c.site);          pose('c-insta', c.instagram);
+    pose('c-fb', c.facebook);
+
+    var disc = c.disciplines || [];
+    Array.prototype.forEach.call(form.querySelectorAll('[name="disciplines"]'), function (ch){
+      ch.checked = disc.indexOf(ch.value) >= 0;
+    });
+    var h = c.horaires || {};
+    /* horaires vides = fiche neuve : on laisse la semaine par defaut du formulaire */
+    if (Object.keys(h).length) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-jour]'), function (ch){
+        ch.checked = !!h[JOURS[+ch.dataset.jour]];
+        ch.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+    /* une fiche deja envoyee le dit, plutot que de faire croire a un brouillon */
+    if (c.statut === 'en_attente') etat('Votre fiche est en cours de vérification.');
+    if (c.statut === 'publie')     etat('Votre fiche est en ligne. Vos modifications repasseront par une vérification.');
+    if (c.statut === 'refuse')     etat('Votre fiche n’a pas été retenue : ' + (c.motif_refus || 'motif non précisé') + '. Corrigez-la et renvoyez-la.');
+    form.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function etat(msg){
+    var z = document.getElementById('c-etat');
+    if (!z) return;
+    z.textContent = msg; z.hidden = false;
+  }
+  function avertit(msg){
+    var z = document.getElementById('c-erreur');
+    if (!z) return;
+    z.textContent = msg; z.hidden = !msg;
+  }
+
+  /* ---------- du formulaire vers le club ---------- */
+  function horaires(){
+    var h = {};
+    Array.prototype.forEach.call(document.querySelectorAll('[data-jour]'), function (ch){
+      if (ch.checked) h[JOURS[+ch.dataset.jour]] = ['09:00', '21:00'];
+    });
+    return h;
+  }
+  function disciplines(){
+    return Array.prototype.map.call(
+      form.querySelectorAll('[name="disciplines"]:checked'), function (c){ return c.value; });
+  }
+
+  /* Les photos partent dans le bucket « photos-clubs », rangees par club. Le nom
+     porte l'horodatage : deux envois ne s'ecrasent pas, et l'ordre est celui de
+     la galerie. */
+  function envoiePhotos(fichiers){
+    if (!fichiers.length) return Promise.resolve([]);
+    var base = Date.now();
+    return Promise.all(fichiers.map(function (f, i){
+      var ext = (f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+      var chemin = clubId + '/' + base + '-' + i + '.' + ext;
+      return sb.storage.from('photos-clubs').upload(chemin, f, { upsert: true })
+        .then(function (r){ if (r.error) throw r.error; return chemin; });
+    }));
+  }
+
+  /* On remplace le gestionnaire d'envoi de la maquette. Il faut ecouter sur un
+     ANCETRE en capture : sur l'element cible lui-meme, capture et bouillonnement
+     partent dans l'ordre d'enregistrement, et celui de la maquette est pose en
+     premier, donc il passerait avant. */
+  document.addEventListener('submit', function (e){
+    if (e.target !== form || !clubId) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    avertit('');
+
+    var manque = null;
+    Array.prototype.forEach.call(form.querySelectorAll('[required]'), function (ch){
+      if (!ch.value.trim() && !manque) manque = ch;
+    });
+    if (!manque && !disciplines().length) manque = form.querySelector('[name="disciplines"]');
+    if (manque){
+      manque.focus();
+      manque.closest('.bloc').classList.add('bloc-manque');
+      setTimeout(function (){ manque.closest('.bloc').classList.remove('bloc-manque'); }, 1600);
+      return;
+    }
+
+    var bouton = form.querySelector('button[type="submit"]');
+    var texte = bouton ? bouton.textContent : '';
+    if (bouton) { bouton.disabled = true; bouton.textContent = 'Envoi…'; }
+
+    var fichiers = (window.MCC_PHOTOS && window.MCC_PHOTOS()) || [];
+    envoiePhotos(fichiers).then(function (chemins){
+      var champs = {
+        nom: val('c-nom'), adresse: val('c-adresse'), ville: val('c-ville'),
+        code_postal: val('c-cp'), presentation: val('c-mot'),
+        contact_nom: val('c-contact'), tel: val('c-tel'), mail: val('c-mail'),
+        site: val('c-web'), instagram: val('c-insta'), facebook: val('c-fb'),
+        disciplines: disciplines(), horaires: horaires(),
+        statut: 'en_attente'
+      };
+      if (chemins.length) champs.photos = chemins;
+      return sb.from('club').update(champs).eq('id', clubId);
+    }).then(function (r){
+      if (r && r.error) throw r.error;
+      document.getElementById('merci-recap').textContent =
+        val('c-nom') + ' · ' + disciplines().length + ' discipline' +
+        (disciplines().length > 1 ? 's' : '') + ' · ' +
+        Object.keys(horaires()).length + ' jours d’ouverture';
+      form.classList.add('envoye');
+      document.getElementById('merci').classList.add('on');
+      form.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }).catch(function (err){
+      if (bouton) { bouton.disabled = false; bouton.textContent = texte; }
+      avertit(SB.dire(err));
+    });
+  }, true);
+})();
 </script>
 
 </body>

@@ -1,0 +1,334 @@
+<a class="skip" href="#formulaire">Aller au formulaire</a>
+
+%%HEADER%%
+
+<main id="contenu">
+
+  <section class="section sous-bandeau" id="formulaire">
+    <div class="wrap">
+      <div class="fil">
+        <p class="eyebrow">Étape 2 sur 2</p>
+        <h1 class="fil-titre display">La fiche de votre salle</h1>
+        <p class="fil-mot">Votre espace club est créé. Remplissez votre fiche : elle se
+          construit à côté au fur et à mesure. Vous pourrez tout modifier ensuite.</p>
+      </div>
+    </div>
+    <div class="wrap grille-form">
+
+      <form class="carte-form" id="form-club" novalidate>
+        <div class="form-corps">
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Votre salle</h2>
+            <div class="champs">
+              <div class="champ large">
+                <label for="c-nom">Nom de la salle</label>
+                <input id="c-nom" name="nom" required autocomplete="organization"
+                  placeholder="Fight Club Marseille">
+              </div>
+              <div class="champ large">
+                <label for="c-adresse">Adresse</label>
+                <input id="c-adresse" name="adresse" required autocomplete="street-address"
+                  placeholder="12 rue des Sports">
+              </div>
+              <div class="champ">
+                <label for="c-ville">Ville</label>
+                <input id="c-ville" name="ville" required autocomplete="address-level2"
+                  placeholder="Marseille">
+              </div>
+              <div class="champ">
+                <label for="c-cp">Code postal</label>
+                <input id="c-cp" name="cp" required inputmode="numeric" autocomplete="postal-code"
+                  placeholder="13008">
+              </div>
+            </div>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Disciplines enseignées</h2>
+            <div class="choix" id="choix-disc"></div>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Présentation de votre club</h2>
+            <div class="champs">
+              <div class="champ large">
+                <label for="c-mot">Ce qui fait votre salle</label>
+                <textarea id="c-mot" name="mot" required
+                  placeholder="Depuis quand vous existez, vos coachs, votre ambiance, ce que vit quelqu'un qui pousse la porte pour la première fois."></textarea>
+                <p class="champ-aide"><span id="c-mot-n">0</span> caractères. Visez trois ou
+                  quatre phrases.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Vos photos</h2>
+            <p class="bloc-aide">Les salles avec photos sont nettement plus contactées.
+              Ajoutez-en jusqu'à six, la première sert de visuel principal.</p>
+            <div class="photos">
+              <label class="photo-ajout" for="c-photos">
+                %%APPAREIL%%
+                <span>Ajouter des photos</span>
+                <small>JPEG ou PNG</small>
+              </label>
+              <input id="c-photos" name="photos" type="file" accept="image/*" multiple hidden>
+              <ul class="photo-liste" id="photo-liste"></ul>
+            </div>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Horaires d'ouverture</h2>
+            <p class="bloc-aide">Décochez les jours de fermeture. Vous pourrez détailler
+              vos créneaux de cours depuis l'espace club.</p>
+            <ul class="horaires" id="horaires-jours"></ul>
+          </div>
+
+          <div class="bloc">
+            <h2 class="bloc-titre">Pour vous contacter</h2>
+            <div class="champs">
+              <div class="champ">
+                <label for="c-contact">Votre nom</label>
+                <input id="c-contact" name="contact" required autocomplete="name"
+                  placeholder="Antoine Bonnet">
+              </div>
+              <div class="champ">
+                <label for="c-tel">Téléphone</label>
+                <input id="c-tel" name="tel" type="tel" required autocomplete="tel"
+                  placeholder="06 12 34 56 78">
+              </div>
+              <div class="champ large">
+                <label for="c-mail">Adresse e-mail</label>
+                <input id="c-mail" name="mail" type="email" required autocomplete="email"
+                  placeholder="contact@votresalle.fr">
+              </div>
+              <div class="champ large">
+                <label for="c-web">Site web <span class="opt">(facultatif)</span></label>
+                <input id="c-web" name="web" autocomplete="url"
+                  placeholder="votresalle.fr">
+              </div>
+              <div class="champ">
+                <label for="c-insta">Instagram <span class="opt">(facultatif)</span></label>
+                <input id="c-insta" name="insta" placeholder="votresalle">
+              </div>
+              <div class="champ">
+                <label for="c-fb">Facebook <span class="opt">(facultatif)</span></label>
+                <input id="c-fb" name="fb" placeholder="VotreSalle">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-pied">
+            <!-- l'etat de la fiche telle que la base la connait, et l'erreur du serveur -->
+            <p class="form-etat" id="c-etat" hidden></p>
+            <p class="form-erreur" id="c-erreur" hidden role="alert"></p>
+            <button class="btn btn-rouge" type="submit">Référencer ma salle</button>
+            <p class="form-note">Gratuit et sans engagement. Nous vérifions la fiche avant
+              publication et nous vous répondons sous 48&nbsp;heures.</p>
+          </div>
+
+        </div>
+
+        <div class="merci" id="merci" role="status">
+          <div class="merci-rond">%%CHECKBIG%%</div>
+          <h2 class="display">Demande envoyée</h2>
+          <p>Nous vérifions les informations de votre salle, puis votre fiche est publiée dans
+            l'annuaire. Vous recevez un e-mail avec vos accès à l'espace club.</p>
+          <p class="merci-recap" id="merci-recap"></p>
+        </div>
+      </form>
+
+      <aside class="panneau">
+        <section class="apercu" id="apercu">
+          <h2 class="apercu-titre">Votre fiche, en direct</h2>
+          <div class="apercu-cadre">
+            <div class="apercu-visuel" id="ap-visuel"></div>
+            <div class="apercu-corps">
+              <b class="apercu-nom" id="ap-nom">Le nom de votre salle</b>
+              <span class="apercu-lieu" id="ap-lieu">Votre ville</span>
+              <ul class="apercu-chips" id="ap-chips"></ul>
+              <p class="apercu-mot" id="ap-mot">Votre présentation apparaîtra ici.</p>
+              <ul class="apercu-coord" id="ap-coord"></ul>
+              <p class="apercu-jours" id="ap-jours"></p>
+            </div>
+          </div>
+          <p class="apercu-note">C'est ce que verra un pratiquant qui tombe sur votre salle.</p>
+        </section>
+
+      </aside>
+
+    </div>
+  </section>
+
+</main>
+
+%%FOOTER%%
+
+<script>
+  var DISC = ['MMA','Boxe anglaise','Kickboxing','Muay Thaï','Jiu-jitsu brésilien','Grappling',
+              'Karaté','Judo','Lutte','Self-défense'];
+  var JOURS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  var form = document.getElementById('form-club');
+
+  function ech(t){
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function val(id){ return (document.getElementById(id).value || '').trim(); }
+
+  /* ---------- disciplines ---------- */
+  document.getElementById('choix-disc').innerHTML = DISC.map(function (d){
+    return '<label><input type="checkbox" name="disciplines" value="' + d + '"><span>' +
+           d + '</span></label>';
+  }).join('');
+
+  /* ---------- horaires : ouvert du lundi au samedi par defaut ---------- */
+  document.getElementById('horaires-jours').innerHTML = JOURS.map(function (j, n){
+    var ouvert = n < 6;
+    return '<li class="jour-ligne' + (ouvert ? '' : ' ferme') + '">' +
+      '<label class="jour-bascule"><input type="checkbox" data-jour="' + n + '"' +
+        (ouvert ? ' checked' : '') + '><span>' + j + '</span></label>' +
+      '<span class="jour-creneau">' +
+        '<input type="time" value="09:00" aria-label="Ouverture le ' + j + '">' +
+        '<span aria-hidden="true">–</span>' +
+        '<input type="time" value="21:00" aria-label="Fermeture le ' + j + '">' +
+      '</span>' +
+      '<span class="jour-ferme">Fermé</span></li>';
+  }).join('');
+
+  document.getElementById('horaires-jours').addEventListener('change', function (e){
+    if (!e.target.matches('[data-jour]')) return;
+    e.target.closest('.jour-ligne').classList.toggle('ferme', !e.target.checked);
+    apercu();
+  });
+
+  /* ---------- photos ---------- */
+  /* Les fichiers restent dans le navigateur : on en fait une URL locale pour
+     l'apercu, rien n'est televerse tant qu'il n'y a pas de serveur. */
+  var photos = [];
+  var MAX = 6;
+  var champPhotos = document.getElementById('c-photos');
+  var listePhotos = document.getElementById('photo-liste');
+
+  function dessinePhotos(){
+    listePhotos.innerHTML = photos.map(function (p, i){
+      return '<li><img src="' + p.url + '" alt="' + ech(p.nom) + '">' +
+             (i === 0 ? '<span class="photo-tag">Principale</span>' : '') +
+             '<button type="button" class="photo-x" data-i="' + i +
+             '" aria-label="Retirer ' + ech(p.nom) + '">&times;</button></li>';
+    }).join('');
+    document.querySelector('.photo-ajout').hidden = photos.length >= MAX;
+    apercu();
+  }
+  champPhotos.addEventListener('change', function (){
+    Array.prototype.forEach.call(champPhotos.files, function (f){
+      if (photos.length >= MAX || !/^image\//.test(f.type)) return;
+      photos.push({ nom: f.name, url: URL.createObjectURL(f), fichier: f });
+    });
+    champPhotos.value = '';          /* pour pouvoir reprendre le meme fichier */
+    dessinePhotos();
+  });
+  listePhotos.addEventListener('click', function (e){
+    var b = e.target.closest('.photo-x');
+    if (!b) return;
+    URL.revokeObjectURL(photos[+b.dataset.i].url);
+    photos.splice(+b.dataset.i, 1);
+    dessinePhotos();
+  });
+
+  /* ---------- apercu en direct ---------- */
+  function choisies(){
+    return Array.prototype.map.call(
+      form.querySelectorAll('[name="disciplines"]:checked'), function (c){ return c.value; });
+  }
+  function joursOuverts(){
+    return Array.prototype.filter.call(
+      document.querySelectorAll('[data-jour]'), function (c){ return c.checked; })
+      .map(function (c){ return JOURS[+c.dataset.jour]; });
+  }
+
+  function apercu(){
+    var nom = val('c-nom'), ville = val('c-ville'), mot = val('c-mot');
+    var disc = choisies(), jours = joursOuverts();
+
+    document.getElementById('ap-nom').textContent = nom || 'Le nom de votre salle';
+    document.getElementById('ap-lieu').textContent =
+      [val('c-adresse'), [val('c-cp'), ville].filter(Boolean).join(' ')]
+        .filter(Boolean).join(', ') || 'Votre adresse';
+
+    var vis = document.getElementById('ap-visuel');
+    if (photos.length){
+      vis.innerHTML = '<img src="' + photos[0].url + '" alt="">';
+      vis.classList.remove('vide');
+    } else {
+      vis.innerHTML = '<span>Aucune photo</span>';
+      vis.classList.add('vide');
+    }
+
+    document.getElementById('ap-chips').innerHTML =
+      disc.slice(0, 4).map(function (d){ return '<li>' + ech(d) + '</li>'; }).join('') ||
+      '<li class="creux">Vos disciplines</li>';
+
+    document.getElementById('ap-mot').textContent =
+      mot || 'Votre présentation apparaîtra ici.';
+    document.getElementById('ap-mot').classList.toggle('creux', !mot);
+
+    var coord = [];
+    if (val('c-tel'))   coord.push(val('c-tel'));
+    if (val('c-mail'))  coord.push(val('c-mail'));
+    if (val('c-web'))   coord.push(val('c-web'));
+    if (val('c-insta')) coord.push('@' + val('c-insta'));
+    document.getElementById('ap-coord').innerHTML =
+      coord.map(function (c){ return '<li>' + ech(c) + '</li>'; }).join('') ||
+      '<li class="creux">Vos coordonnées</li>';
+
+    document.getElementById('ap-jours').textContent =
+      jours.length === 7 ? 'Ouvert tous les jours'
+      : jours.length ? 'Ouvert ' + jours.length + ' jours sur 7'
+      : 'Aucun jour d’ouverture';
+
+    document.getElementById('c-mot-n').textContent = mot.length;
+  }
+
+  /* les fichiers choisis, pour le script qui les televerse */
+  window.MCC_PHOTOS = function (){
+    return photos.map(function (p){ return p.fichier; }).filter(Boolean);
+  };
+
+  form.addEventListener('input', apercu);
+  form.addEventListener('change', apercu);
+  apercu();
+
+  /* ---------- envoi ---------- */
+  form.addEventListener('submit', function (e){
+    e.preventDefault();
+    var manque = null;
+    Array.prototype.forEach.call(form.querySelectorAll('[required]'), function (ch){
+      if (!ch.value.trim() && !manque) manque = ch;
+    });
+    if (!manque && !choisies().length) manque = form.querySelector('[name="disciplines"]');
+    if (manque){
+      manque.focus();
+      manque.closest('.bloc').classList.add('bloc-manque');
+      setTimeout(function (){
+        manque.closest('.bloc').classList.remove('bloc-manque'); }, 1600);
+      return;
+    }
+    document.getElementById('merci-recap').textContent =
+      val('c-nom') + ' · ' + choisies().length + ' discipline' +
+      (choisies().length > 1 ? 's' : '') + ' · ' + photos.length + ' photo' +
+      (photos.length > 1 ? 's' : '') + ' · ' + joursOuverts().length + ' jours d’ouverture';
+    form.classList.add('envoye');
+    document.getElementById('merci').classList.add('on');
+    form.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+</script>
+
+<script>
+  /* le nom saisi a la creation du compte amorce la fiche */
+  var nomRecu = new URLSearchParams(location.search).get('nom');
+  if (nomRecu) {
+    var champNom = document.getElementById('c-nom');
+    champNom.value = nomRecu;
+    champNom.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+</script>

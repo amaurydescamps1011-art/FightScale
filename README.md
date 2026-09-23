@@ -1,22 +1,29 @@
-# Site FightScale — maquette
+# Mon Club Combat
 
-Site statique, aucune dépendance et aucun build : cinq fichiers servis tels quels.
+L'annuaire des salles de sports de combat en France, et les outils qui vont
+avec pour les clubs qui veulent remplir leurs séances d'essai.
 
-- `index.html` — accueil
-- `recherche.html` — résultats et carte
-- `clubs.html` — référencer ma salle
-- `carte.js` — la carte de France en semis de points du héros
-- `geo.js` — la géographie embarquée de la carte de recherche (1,6 Mo)
-- `vercel.json` — URL sans `.html`, cache long sur `geo.js`, en-tête `noindex`
-- `robots.txt` — indexation bloquée : les salles, les notes et les chiffres sont fictifs
+En ligne : https://fight-scale.vercel.app (déploiement automatique à chaque
+push sur `main`, site en `noindex` tant que l'annuaire n'est pas ouvert).
 
-## Déployer
+## Ce qu'il y a dans ce dépôt
 
-Depuis ce dossier :
+- **la racine** — le site tel que Vercel le sert : des pages HTML complètes,
+  sans build et sans dépendance, plus `carte.js`, `geo.js` (la géographie de la
+  carte de recherche, 1,6 Mo) et `sb.js` (la configuration Supabase).
+- **`outils/`** — les scripts qui fabriquent ces pages, et les tests.
+  Voir `outils/LISEZ-MOI.md`. Hors déploiement grâce à `.vercelignore`.
+- **`db/`** — le schéma de la base et ses règles de sécurité.
+  Voir `db/LISEZ-MOI.md`.
+- `vercel.json` — URL sans `.html`, cache long sur `geo.js`, en-tête `noindex`.
 
-    npx vercel deploy --prod
+## Le backend
 
-ou déposer le dossier sur https://vercel.com/new (import d'un dossier).
+Supabase : Postgres, comptes, stockage des photos. Les pages lui parlent
+directement depuis le navigateur, il n'y a pas de serveur à nous. La clé
+publiable qui se trouve dans `sb.js` est faite pour être publique ; ce qui
+protège les données, ce sont les politiques RLS de `db/001_schema.sql`.
 
-Rien à configurer : framework « Other », pas de commande de build,
-répertoire de sortie = la racine.
+Trois pages en dépendent : `referencer.html` (le gérant remplit sa fiche),
+`espace-club.html` (il suit sa fiche et ses demandes de séance d'essai) et
+`admin.html` (notre back-office, où une fiche est publiée ou refusée).

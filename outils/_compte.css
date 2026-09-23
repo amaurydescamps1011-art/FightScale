@@ -1,0 +1,52 @@
+  /* ---------- la fenetre de creation de l'espace club ---------- */
+  /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
+     ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
+     sont portes ici, scopes a .fen-form, pour que la fenetre tienne toute seule
+     sur une page qui n'a pas le CSS du formulaire. */
+  .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:center;
+    justify-content:center; padding:20px; overflow:auto;
+    background:rgba(22,22,15,.52); backdrop-filter:blur(2px)}
+  .voile[hidden]{display:none}
+  body.fige{overflow:hidden}
+  .fenetre{position:relative; width:min(100%,440px); padding:clamp(24px,3vw,34px);
+    border-radius:var(--r-l); background:var(--surface);
+    box-shadow:0 36px 90px -30px rgba(22,22,15,.6);
+    animation:monte .24s cubic-bezier(.2,.7,.2,1)}
+  @keyframes monte{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){ .fenetre{animation:none} }
+  .fen-fermer{position:absolute; top:12px; right:12px; display:inline-flex;
+    align-items:center; justify-content:center; width:38px; height:38px;
+    border:0; border-radius:999px; background:transparent; color:var(--texte-4);
+    cursor:pointer; transition:background-color .15s ease, color .15s ease}
+  .fen-fermer:hover{background:var(--fond); color:var(--texte)}
+  .fen-titre{margin-top:10px; font-size:clamp(23px,3vw,29px); line-height:1.02;
+    color:var(--texte)}
+  .fen-mot{margin-top:12px; font-size:14.5px; line-height:1.6; color:var(--texte-2)}
+  .fen-form{margin-top:22px; display:flex; flex-direction:column; gap:15px}
+  .fen-form .champ{display:flex; flex-direction:column; gap:7px; min-width:0}
+  .fen-form label{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .fen-form input{width:100%; min-height:48px; padding:12px 14px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600; line-height:1.4;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .fen-form input::placeholder{color:var(--texte-4); font-weight:500}
+  .fen-form input:focus{outline:none; border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  .fen-form .champ-aide{margin:0; color:var(--texte-4); font-size:12.5px}
+  .fen-form .btn{margin-top:5px; width:100%}
+  .fen-note{font-size:12.5px; line-height:1.55; color:var(--texte-4)}
+  .champ.manque input{border-color:var(--rouge-500);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  /* l'erreur que renvoie le serveur, traduite par MCC.dire() */
+  .fen-erreur{margin:0; padding:11px 13px; border-radius:var(--r-m);
+    background:rgba(236,22,46,.07); border:1px solid rgba(236,22,46,.28);
+    color:var(--rouge-700); font-size:13.5px; line-height:1.5; font-weight:600}
+  .fen-erreur[hidden]{display:none}
+  /* un bouton qui se lit comme un lien : bascule creation <-> connexion */
+  .lien-bouton{padding:0; border:0; background:none; cursor:pointer;
+    font:inherit; font-weight:700; color:var(--rouge-lien);
+    text-decoration:underline; text-underline-offset:3px}
+  .fen-bascule{margin:0; font-size:13px; color:var(--texte-4)}
+  .fen-bascule [data-mode][hidden]{display:none}
+  .champ[hidden]{display:none}

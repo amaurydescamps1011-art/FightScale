@@ -1,0 +1,51 @@
+<!-- La creation de l'espace club se fait dans une fenetre, pas dans la page : le gerant
+     voit ce qu'on lui demande avant de s'engager, et le formulaire de la fiche l'attend
+     sur referencer.html. Elle est posee sur TOUTES les pages, parce que seul le bouton
+     du bandeau mene a la page de vente : partout ailleurs, « Referencer ma salle »
+     ouvre directement la creation de compte (Amaury, 22/09/2026).
+     Depuis le 23/09/2026 elle cree un vrai compte, sauf quand la base n'est pas
+     joignable (dans un Artifact le CSP interdit toute requete) : la maquette retombe
+     alors sur son ancien comportement de demonstration. -->
+<div class="voile" id="voile" hidden>
+  <div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="fen-titre">
+    <button class="fen-fermer" type="button" id="fermer-compte" aria-label="Fermer">%%CROIX%%</button>
+    <p class="eyebrow" id="fen-etape">Étape 1 sur 2</p>
+    <h2 class="fen-titre display" id="fen-titre">Créez votre espace club</h2>
+    <p class="fen-mot" id="fen-mot">Vous y modifierez votre fiche et vous y recevrez les demandes de séance
+      d'essai. La fiche de votre salle se remplit juste après.</p>
+
+    <form class="fen-form" id="form-compte" novalidate>
+      <div class="champ" id="champ-nom">
+        <label for="k-nom">Nom de la salle</label>
+        <input id="k-nom" name="nom" required autocomplete="organization" placeholder="Fight Club Marseille">
+      </div>
+      <div class="champ">
+        <label for="k-mail">Votre e-mail</label>
+        <input id="k-mail" name="mail" type="email" required autocomplete="email" placeholder="contact@votre-salle.fr">
+      </div>
+      <div class="champ">
+        <label for="k-mdp">Mot de passe</label>
+        <input id="k-mdp" name="mdp" type="password" required autocomplete="new-password" minlength="8">
+        <span class="champ-aide" id="k-mdp-aide">Huit caractères au minimum.</span>
+      </div>
+      <!-- l'erreur renvoyee par le serveur, en francais -->
+      <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
+      <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
+      <p class="fen-note" id="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+      <p class="fen-bascule">
+        <span data-mode="creation">Vous avez déjà un espace club ?
+          <button type="button" class="lien-bouton" id="fen-vers-connexion">Connectez-vous</button>.</span>
+        <span data-mode="connexion" hidden>Pas encore d'espace club ?
+          <button type="button" class="lien-bouton" id="fen-vers-creation">Créez-le</button>.</span>
+      </p>
+    </form>
+
+    <!-- quand la confirmation par e-mail est active cote Supabase, il n'y a pas de
+         session a la sortie de l'inscription : on le dit au lieu de tourner en rond -->
+    <div id="fen-verif" hidden>
+      <p class="fen-mot">Nous venons d'envoyer un lien de confirmation à
+        <b id="fen-verif-mail"></b>. Ouvrez-le, puis revenez vous connecter ici pour
+        remplir la fiche de votre salle.</p>
+    </div>
+  </div>
+</div>

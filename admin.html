@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, follow">
+<meta name="description" content="Vérification des fiches de club.">
+<meta name="theme-color" content="#FFFFFF">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mon Club Combat">
+<meta property="og:title" content="Back-office — Mon Club Combat">
+<meta property="og:description" content="Vérification des fiches de club.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+  :root{color-scheme:light; padding-top:env(safe-area-inset-top,0px);
+        padding-bottom:env(safe-area-inset-bottom,0px)}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{margin:0; background:#F7F6F3}
+  img{max-width:100%}
+  [hidden]{display:none !important}
+</style>
+<title>Back-office — Mon Club Combat</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+  :root{
+    /* Palette claire. Le fond sombre convertissait mal : on passe sur du papier,
+       et le rouge de la marque devient l'accent au lieu d'etre une lueur.
+       Les noms disent le role, plus la couleur, pour qu'un futur changement de
+       teinte ne rende pas les variables mensongeres. */
+    --fond:#F7F6F3; --surface:#FFFFFF; --surface-2:#FCFBF9; --bord:#E8E5DF;
+    --bord-2:#DCD8D1; --bord-3:#C2BDB4;
+    --texte:#16160F; --texte-2:#3D3B34; --texte-3:#6B675E; --texte-4:#7E7A70;
+    --rouge-lien:#BB0F22; --rouge-500:#EC162E; --rouge-600:#DC1229; --rouge-700:#B10E21;
+    --vert:#0E7A50;
+    /* ombres : douces et chaudes, jamais du noir pur sur du papier */
+    --ombre-1:0 1px 2px rgba(22,22,15,.05), 0 1px 1px rgba(22,22,15,.04);
+    --ombre-2:0 2px 4px rgba(22,22,15,.05), 0 8px 24px -12px rgba(22,22,15,.16);
+    --ombre-3:0 4px 10px rgba(22,22,15,.07), 0 24px 48px -20px rgba(22,22,15,.22);
+    --max:1240px;
+    --gutter:clamp(20px, 4.5vw, 52px);
+    --r-m:8px; --r-l:12px;
+    color-scheme:light;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    margin:0; background:var(--fond); color:var(--texte);
+    font-family:Manrope,"Segoe UI",system-ui,sans-serif; font-weight:500;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+  h1,h2{margin:0}
+  p{margin:0}
+  ul{margin:0; padding:0; list-style:none}
+  a{color:var(--rouge-lien)}
+  :focus-visible{outline:2px solid var(--rouge-lien); outline-offset:3px; border-radius:6px}
+
+  .wrap{width:100%; max-width:var(--max); margin-inline:auto; padding-inline:var(--gutter)}
+  .display{font-family:Anton,"Haettenschweiler","Arial Narrow",sans-serif; font-weight:400;
+    text-transform:uppercase}
+
+  .skip{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
+  .skip:focus{position:fixed; width:auto; height:auto; overflow:visible; clip-path:none;
+    left:8px; top:8px; z-index:99; background:var(--rouge-600); color:#fff;
+    padding:12px 16px; border-radius:var(--r-m); text-decoration:none}
+
+  /* ---------- en-tête ---------- */
+  .site-header{position:absolute; inset:env(safe-area-inset-top,0px) 0 auto 0; z-index:30}
+  .header-in{display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding-block:22px}
+  .brand{display:inline-flex; align-items:center; gap:7px; flex-shrink:0}
+  .site-nav{display:flex; align-items:center; gap:30px}
+  .site-nav a{font-size:14.5px; font-weight:700; color:var(--texte-2); text-decoration:none;
+    white-space:nowrap; transition:color .15s ease}
+  .site-nav a:hover{color:var(--texte)}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:9px;
+    min-height:44px; padding:11px 22px; border:0; border-radius:var(--r-m);
+    font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:800; line-height:1.2;
+    text-decoration:none; cursor:pointer; transition:background-color .15s ease, box-shadow .15s ease}
+  .btn-rouge{background:var(--rouge-600); color:#fff;
+    box-shadow:0 1px 2px rgba(22,22,15,.08), 0 8px 18px -10px rgba(220,18,41,.5)}
+  .btn-rouge:hover{background:var(--rouge-700); color:#fff;
+    box-shadow:0 1px 2px rgba(22,22,15,.10), 0 10px 22px -10px rgba(220,18,41,.6)}
+  .site-nav .btn-rouge{color:#fff}
+  /* Les menus deroulants du bandeau, comme chez masalledesport : deux colonnes
+     titrees qui s'ouvrent au survol. Tout en CSS, sans une ligne de script : la
+     page clubs et les 15 pages d'annuaire n'embarquent aucun JS, et l'en-tete
+     est extrait tel quel pour toutes les pages. :focus-within fait le clavier,
+     et le doigt sur un ecran tactile. */
+  .nav-item{position:relative}
+  .nav-chev{margin-left:5px; translate:0 1px; color:var(--texte-4);
+    transition:rotate .18s ease, color .15s ease}
+  .nav-item:hover .nav-chev, .nav-item:focus-within .nav-chev{rotate:180deg; color:var(--texte-2)}
+  .nav-menu{position:absolute; top:100%; left:50%; translate:-50% 6px;
+    z-index:40; display:flex; gap:34px; padding:22px 26px;
+    background:var(--surface); border:1px solid var(--bord); border-radius:var(--r-l);
+    box-shadow:var(--ombre-3);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .16s ease, translate .16s ease, visibility .16s}
+  /* le pont invisible : sans lui, le menu se referme en traversant l'espace
+     qui le separe du lien */
+  .nav-menu::before{content:""; position:absolute; left:0; right:0; top:-12px; height:12px}
+  .nav-item:hover .nav-menu, .nav-item:focus-within .nav-menu{
+    opacity:1; visibility:visible; pointer-events:auto; translate:-50% 0}
+  .nav-menu-1{gap:0}
+  .nav-col{min-width:150px}
+  .nav-col-t{margin-bottom:11px; font-size:10.5px; font-weight:800; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--texte-4); white-space:nowrap}
+  .nav-col ul{display:grid; gap:2px}
+  /* Sept villes sur une colonne laissaient un grand vide a cote : on les
+     repartit sur deux. En grille, « Aix-en-Provence » debordait de sa cellule
+     et se superposait a la colonne voisine ; le multi-colonnes equilibre tout
+     seul, quel que soit le nombre de villes, et la largeur mini garantit que
+     le plus long nom tienne sur une ligne. */
+  /* `.nav-col ul` l'emportait en specificite et gardait display:grid, ou
+     `columns` ne fait rien : il faut viser la liste aussi precisement. */
+  .nav-col ul.nav-2col{display:block; columns:2; column-gap:22px; min-width:300px}
+  .nav-2col li{break-inside:avoid}
+  .nav-2col a{white-space:nowrap}
+  .nav-menu a{display:block; padding:7px 10px; margin-inline:-10px; border-radius:6px;
+    font-size:14px; font-weight:600; color:var(--texte-2)}
+  .nav-menu a:hover{background:var(--surface-2); color:var(--rouge-700)}
+  @media (max-width:1040px){ .site-nav .nav-link, .site-nav .nav-item{display:none} }
+
+  @media (max-width:1040px){ .site-nav .nav-link{display:none} }
+  .l-court{display:none}
+  /* Amaury, 22/09/2026 : « j'aimerais bien que Mon Club Combat soit visible sur le
+     mode telephone aussi ». Le mot-symbole reste donc affiche, reduit, et c'est le
+     bouton qui se resserre pour lui faire de la place : a 390 px les deux tiennent
+     sur la ligne du bandeau sans que rien ne passe a la ligne. */
+  @media (max-width:620px){
+    .l-long{display:none}
+    .l-court{display:inline}
+    .header-in{gap:12px; padding-block:18px}
+    .brand-mot{width:142px; height:8.1px}
+    .site-nav .btn{min-height:40px; padding-inline:15px; font-size:13.5px}
+  }
+  @media (max-width:360px){
+    .brand{gap:6px}
+    .brand-mot{width:116px; height:6.6px}
+    .site-nav .btn{padding-inline:13px; font-size:13px}
+  }
+
+  .eyebrow{display:inline-flex; align-items:center; gap:10px;
+    font-size:11.5px; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--texte-3)}
+  .eyebrow::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--rouge-500)}
+
+  /* Trois lignes d'Anton de meme corps font un pave noir sur fond clair. La
+     derniere passe donc au demi-corps, espacee : le titre garde son poids sans
+     etre un bloc. */
+  /* ---------- pied de page ---------- */
+  .site-footer{border-top:1px solid var(--bord); background:var(--fond)}
+  .footer-haut{padding-block:clamp(44px,5vw,64px);
+    display:grid; gap:clamp(30px,4vw,44px);
+    grid-template-columns:minmax(240px,1.35fr) repeat(3,minmax(140px,1fr))}
+  .footer-marque p{margin-top:18px; max-width:34ch; font-size:14px; line-height:1.62;
+    color:var(--texte-3)}
+  .reseaux{margin-top:22px; display:flex; gap:10px}
+  .reseaux a{display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px; border:1px solid var(--bord-2);
+    color:var(--texte-2); transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .reseaux a:hover{border-color:rgba(220,18,41,.45); color:var(--rouge-600);
+    background:rgba(220,18,41,.05)}
+  .footer-col h2{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--texte-4)}
+  .footer-col ul{margin-top:16px; display:flex; flex-direction:column; gap:11px}
+  .footer-col a{font-size:14.5px; font-weight:600; color:var(--texte-2); text-decoration:none;
+    transition:color .15s ease}
+  .footer-col a:hover{color:var(--rouge-lien)}
+  .footer-bas{border-top:1px solid var(--bord); padding-block:22px;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 26px}
+  .footer-bas p{font-size:13px; color:var(--texte-4)}
+  .footer-legal{display:flex; flex-wrap:wrap; gap:10px 22px}
+  .footer-legal a{font-size:13px; font-weight:600; color:var(--texte-4); text-decoration:none}
+  .footer-legal a:hover{color:var(--texte-2)}
+  @media (max-width:860px){
+    .footer-haut{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .footer-marque{grid-column:1 / -1}
+  }
+  /* A une seule colonne, les trois listes de liens s'empilaient sur 877 px. Elles
+     tiennent a deux jusqu'a 320 px : « Referencer ma salle » est le plus long lien
+     et il passe. (Amaury, 22/09/2026 : trop de defilement sur telephone.) */
+  @media (max-width:620px){
+    .footer-haut{padding-block:34px; gap:26px}
+    .footer-marque p{margin-top:14px; font-size:13.5px}
+    .reseaux{margin-top:16px}
+    .footer-col ul{margin-top:12px; gap:9px}
+    .footer-col a{font-size:14px}
+  }
+
+  .footer-reseau{padding-top:clamp(28px,3vw,38px); display:grid; gap:clamp(22px,2.6vw,32px);
+    grid-template-columns:1.6fr 1fr}
+  .footer-reseau h2{font-size:11.5px; font-weight:800; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--texte-4)}
+  /* Pas de separateur entre les liens : quand la liste passe a la ligne, la puce
+     se retrouve en tete de ligne. L'espacement suffit a les separer. */
+  .f-liens{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px 20px}
+  .f-liens a{display:inline-block; font-size:13.5px; line-height:1.5; font-weight:600;
+    color:var(--texte-3); text-decoration:none}
+  .f-liens a:hover{color:var(--rouge-700); text-decoration:underline}
+  @media (max-width:820px){ .footer-reseau{grid-template-columns:1fr} }
+  @media (max-width:620px){
+    .footer-reseau{padding-top:26px; gap:20px}
+    .f-liens{margin-top:11px; gap:7px 16px}
+    .f-liens a{font-size:13px}
+  }
+
+
+  /* ---------- héros club ---------- */
+  .hero-club{position:relative; isolation:isolate; overflow:hidden; background:var(--fond);
+    border-bottom:1px solid var(--bord)}
+  .hero-club::before{content:""; position:absolute; z-index:-2; left:50%; top:-10%;
+    translate:-50% 0; width:min(1100px,140%); aspect-ratio:2/1; pointer-events:none;
+    background:radial-gradient(50% 50% at 50% 50%,
+      rgba(236,22,46,.06) 0%, rgba(236,22,46,.025) 40%, rgba(236,22,46,0) 72%)}
+  .hero-club::after{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:repeating-linear-gradient(115deg, rgba(22,22,15,.028) 0 1px, transparent 1px 15px)}
+  .hero-club-in{padding-block:clamp(122px,14vw,158px) clamp(46px,6vw,74px);
+    display:flex; flex-direction:column; align-items:center; text-align:center}
+  .hero-club h1{margin-top:24px; font-size:clamp(30px,5vw,62px); line-height:.98;
+    letter-spacing:.014em; color:var(--texte)}
+  .hero-club h1 span{display:block}
+  .hero-club h1 .ligne-logo{display:flex; flex-wrap:wrap; justify-content:center;
+    align-items:baseline; gap:.02em .3em}
+  /* le mot-symbole est calé sur la hauteur de capitale d'Anton et sur la ligne de base */
+  /* « MON CLUB COMBAT » est bien plus long que l'ancien mot-symbole (rapport
+     17,6 contre 11,3) : a la hauteur de capitale il depasserait la ligne. On le
+     pose plus bas, et sous 760 px il prend sa propre ligne. Le « sur » descend
+     avec lui : la capitale d'Anton vaut ~0,73 em, donc 0,46 / 0,73 = 0,63 em
+     donne deux mots de meme hauteur. */
+  .h1-logo{flex-shrink:0; height:.46em; width:auto; translate:0 -.02em;
+    filter:drop-shadow(0 2px 8px rgba(22,22,15,.12))}
+  .h1-sur{font-size:.63em; letter-spacing:.02em; color:var(--texte-2)}
+  @media (max-width:760px){
+    /* en colonne, l'axe transversal devient l'horizontale : `baseline` se lit
+       alors comme `flex-start` et colle le « sur » a gauche. On recentre. */
+    .hero-club h1 .ligne-logo{flex-direction:column; align-items:center; gap:.16em}
+    /* le logo retrecit, le « sur » suit : 0,4 / 0,73 = 0,55 em */
+    .h1-logo{height:.4em}
+    .h1-sur{font-size:.55em}
+  }
+  .hero-sous{margin-top:20px; max-width:52ch; font-size:clamp(15px,1.35vw,17.5px);
+    line-height:1.62; color:var(--texte-2)}
+  .rassure{margin-top:26px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px}
+  .rassure li{display:inline-flex; align-items:center; gap:8px; padding:9px 16px;
+    border:1px solid var(--bord); border-radius:999px; background:var(--surface);
+    font-size:13.5px; font-weight:700; color:var(--texte-2)}
+  .rassure svg{color:var(--rouge-lien); flex-shrink:0}
+  /* Le premier bouton tombait a 2126 px sur un telephone : deux ecrans et demi avant
+     de pouvoir agir. Il y en a un ici aussi, celui du bloc « Comment ca se passe »
+     reste en place (Amaury, 22/09/2026). */
+  .hero-club-actions{margin-top:28px}
+
+  /* Le heros faisait 602 px sur un telephone pour un titre de deux lignes : on ne
+     garde au-dessus que la hauteur du bandeau. */
+  @media (max-width:620px){
+    .hero-club-in{padding-block:86px 30px}
+    .hero-club h1{margin-top:18px}
+    .hero-sous{margin-top:15px}
+    .rassure{margin-top:18px; gap:8px}
+    .rassure li{padding:7px 13px; font-size:13px}
+    .hero-club-actions{margin-top:22px}
+    .hero-exemple{margin-top:14px}
+  }
+
+  /* ---------- sections ---------- */
+  .section{padding-block:clamp(44px,5.4vw,72px)}
+  @media (max-width:620px){ .section{padding-block:34px} }
+  .grille-form{display:grid; gap:clamp(22px,2.6vw,32px);
+    grid-template-columns:minmax(0,1.45fr) minmax(280px,.95fr); align-items:start}
+  @media (max-width:940px){ .grille-form{grid-template-columns:1fr} }
+
+  /* ---------- formulaire ---------- */
+  .carte-form{padding:clamp(22px,2.6vw,34px); border:1px solid var(--bord-2);
+    border-radius:var(--r-l); background:var(--surface)}
+  .bloc + .bloc{margin-top:30px; padding-top:28px; border-top:1px solid var(--bord)}
+  .bloc-titre{font-size:11.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--texte-4)}
+  .champs{margin-top:18px; display:grid; gap:16px; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .champ{display:flex; flex-direction:column; gap:7px; min-width:0}
+  .champ.large{grid-column:1 / -1}
+  @media (max-width:560px){ .champs{grid-template-columns:1fr} }
+  .champ label{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .champ label .opt{font-weight:600; color:var(--texte-4)}
+  .champ input, .champ textarea{
+    width:100%; min-height:48px; padding:12px 14px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600; line-height:1.4;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .champ textarea{min-height:104px; resize:vertical}
+  .champ input::placeholder, .champ textarea::placeholder{color:var(--texte-4); font-weight:500}
+  .champ input:focus, .champ textarea:focus{outline:none; border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+
+  .choix{margin-top:18px; display:flex; flex-wrap:wrap; gap:9px}
+  .choix label{position:relative; display:inline-flex; align-items:center; gap:8px;
+    min-height:44px; padding:10px 17px; border:1px solid var(--bord-2); border-radius:999px;
+    background:var(--fond); font-size:14px; font-weight:700; color:var(--texte-2);
+    cursor:pointer; transition:border-color .15s ease, color .15s ease, background-color .15s ease}
+  .choix label:hover{border-color:rgba(220,18,41,.45); color:var(--texte)}
+  .choix input{position:absolute; opacity:0; width:1px; height:1px}
+  .choix input:focus-visible + span{outline:2px solid var(--rouge-lien); outline-offset:6px;
+    border-radius:4px}
+  .choix label:has(input:checked){border-color:var(--rouge-600); color:var(--texte);
+    background:rgba(220,18,41,.08); color:var(--rouge-700)}
+
+  .form-pied{margin-top:28px; display:flex; flex-wrap:wrap; align-items:center; gap:14px 20px}
+  .form-pied .btn{min-height:52px; padding:14px 28px; font-size:15px}
+  .form-note{flex:1 1 220px; min-width:0; font-size:12.5px; line-height:1.55; color:var(--texte-4)}
+  .form-note a{color:var(--texte-3)}
+
+  /* confirmation */
+  .merci{display:none; padding:clamp(26px,3vw,40px); text-align:center}
+  .merci.on{display:block}
+  .carte-form.envoye .form-corps{display:none}
+  .merci-rond{width:56px; height:56px; margin-inline:auto; display:grid; place-items:center;
+    border-radius:50%; background:rgba(220,18,41,.09); color:var(--rouge-600)}
+  .merci h2{margin-top:18px; font-size:clamp(22px,2.6vw,30px); line-height:1.05}
+  .merci p{margin-top:12px; margin-inline:auto; max-width:46ch; font-size:15px; line-height:1.62;
+    color:var(--texte-3)}
+
+  /* ---------- panneau latéral ---------- */
+  .panneau{padding:clamp(22px,2.4vw,28px); border:1px solid var(--bord-2);
+    border-radius:var(--r-l); background:var(--surface)}
+  /* Le panneau colle au defilement, mais depuis qu'il porte l'apercu il est plus
+     haut que bien des ecrans : sans plafond, son bas devenait inatteignable. */
+  @media (min-width:941px){
+    .panneau{position:sticky; top:26px; max-height:calc(100vh - 52px); overflow:auto;
+      overscroll-behavior:contain; scrollbar-width:thin;
+      scrollbar-color:var(--bord-3) transparent}
+    .panneau::-webkit-scrollbar{width:8px}
+    .panneau::-webkit-scrollbar-thumb{background:var(--bord-3); border-radius:999px}
+  }
+  .panneau h2{font-size:clamp(19px,2vw,23px); line-height:1.1; color:var(--texte)}
+  .avantages{margin-top:20px; display:flex; flex-direction:column; gap:14px}
+  .avantages li{display:flex; align-items:flex-start; gap:11px; font-size:14.5px; line-height:1.5;
+    color:var(--texte-2)}
+  .avantages svg{flex-shrink:0; margin-top:3px; color:var(--rouge-lien)}
+  .pro-note{margin-top:24px; padding-top:22px; border-top:1px solid var(--bord)}
+  .pro-note .prix{display:flex; align-items:baseline; gap:8px}
+  .pro-note .prix b{font-family:Anton,"Arial Narrow",sans-serif; font-weight:400;
+    font-size:30px; line-height:1; color:var(--texte)}
+  .pro-note .prix span{font-size:13.5px; font-weight:700; color:var(--texte-4)}
+  .pro-note p{margin-top:11px; font-size:14px; line-height:1.6; color:var(--texte-3)}
+  .pro-note .btn{margin-top:18px; width:100%}
+  .btn-ligne{background:transparent; color:var(--texte); border:1px solid var(--bord-3);
+    box-shadow:none}
+  .btn-ligne:hover{border-color:var(--texte-3); color:var(--texte); background:transparent}
+
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+
+  /* ---------- aide et blocs incomplets ---------- */
+  .bloc-aide{ margin:0 0 14px; color:var(--texte-3); font-size:13.5px; line-height:1.55; }
+  .champ-aide{ margin:7px 0 0; color:var(--texte-4); font-size:12.5px; }
+  .bloc-manque{ animation:secousse .4s; }
+  .bloc-manque .bloc-titre{ color:var(--rouge-lien); }
+  @keyframes secousse{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)}
+                       75%{transform:translateX(5px)} }
+  @media (prefers-reduced-motion: reduce){ .bloc-manque{ animation:none } }
+
+  /* ---------- photos ---------- */
+  .photos{ display:grid; gap:12px; }
+  .photo-ajout{ display:flex; flex-direction:column; align-items:center; justify-content:center;
+                gap:5px; min-height:118px; padding:18px; cursor:pointer; text-align:center;
+                border:1.5px dashed var(--bord-3); border-radius:var(--r-l);
+                background:var(--surface); color:var(--texte-2);
+                font-weight:700; font-size:14.5px; transition:border-color .15s, background .15s; }
+  .photo-ajout:hover{ border-color:var(--rouge-lien); background:var(--surface-2); }
+  .photo-ajout svg{ color:var(--texte-3); }
+  .photo-ajout small{ font-weight:600; font-size:12px; color:var(--texte-4); }
+  .photo-ajout[hidden]{ display:none; }
+  .photo-liste{ list-style:none; margin:0; padding:0; display:grid; gap:10px;
+                grid-template-columns:repeat(auto-fill, minmax(104px, 1fr)); }
+  .photo-liste li{ position:relative; aspect-ratio:4/3; border-radius:var(--r-m);
+                   overflow:hidden; background:var(--surface-2); }
+  .photo-liste img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-tag{ position:absolute; left:6px; bottom:6px; font-size:10px; font-weight:800;
+              letter-spacing:.05em; text-transform:uppercase; padding:3px 7px;
+              border-radius:999px; background:var(--rouge-600); color:#fff; }
+  .photo-x{ position:absolute; top:5px; right:5px; width:26px; height:26px; border:0;
+            border-radius:50%; background:rgba(255,255,255,.92);
+            border:1px solid var(--bord-2); color:var(--texte);
+            font-size:17px; line-height:1; cursor:pointer; }
+  .photo-x:hover{ background:var(--rouge-600); color:#fff; }
+
+  /* ---------- horaires ---------- */
+  .horaires{ list-style:none; margin:0; padding:0; display:grid; gap:2px; }
+  .jour-ligne{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center;
+               padding:9px 10px; margin-inline:-10px; border-radius:var(--r-m); }
+  .jour-ligne:hover{ background:var(--surface); }
+  .jour-bascule{ display:flex; gap:10px; align-items:center; cursor:pointer;
+                 font-weight:700; font-size:14.5px; }
+  .jour-bascule input{ width:18px; height:18px; accent-color:var(--rouge-600); cursor:pointer; }
+  .jour-creneau{ display:flex; gap:8px; align-items:center; color:var(--texte-3); }
+  .jour-creneau input{ font:inherit; font-size:14px; padding:7px 9px; color:var(--texte);
+                       background:var(--surface-2); border:1px solid var(--bord-2);
+                       border-radius:var(--r-m); color-scheme:dark; }
+  .jour-ferme{ display:none; color:var(--texte-4); font-size:14px; font-weight:600; }
+  .jour-ligne.ferme .jour-creneau{ display:none; }
+  .jour-ligne.ferme .jour-ferme{ display:inline; }
+  .jour-ligne.ferme .jour-bascule{ color:var(--texte-4); }
+
+  /* ---------- aperçu en direct ---------- */
+  .apercu{ margin-bottom:26px; padding-bottom:26px; border-bottom:1px solid var(--bord); }
+  /* l'apercu est desormais seul dans le panneau : le filet ne separe plus rien */
+  .apercu:last-child{ margin-bottom:0; padding-bottom:0; border-bottom:0; }
+  .apercu-titre{ margin:0 0 12px; font-size:13px; font-weight:800; letter-spacing:.06em;
+                 text-transform:uppercase; color:var(--texte-3); }
+  .apercu-cadre{ border:1px solid var(--bord-2); border-radius:var(--r-l);
+                 overflow:hidden; background:var(--surface); }
+  .apercu-visuel{ height:124px; background:var(--surface-2); }
+  .apercu-visuel img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .apercu-visuel.vide{ display:grid; place-items:center; color:var(--texte-4);
+                       font-size:12.5px; font-weight:600;
+                       border-bottom:1px solid var(--bord); }
+  .apercu-corps{ padding:15px; }
+  .apercu-nom{ display:block; font-size:16px; font-weight:800; line-height:1.25; }
+  .apercu-lieu{ display:block; margin-top:3px; font-size:13px; color:var(--texte-3); }
+  .apercu-chips{ list-style:none; display:flex; flex-wrap:wrap; gap:5px; margin:11px 0 0;
+                 padding:0; }
+  .apercu-chips li{ font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px;
+                    border:1px solid var(--bord-2); color:var(--texte-3); }
+  .apercu-mot{ margin:11px 0 0; font-size:13px; line-height:1.55; color:var(--texte-2);
+               display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+               overflow:hidden; }
+  .apercu-coord{ list-style:none; margin:11px 0 0; padding:0; display:grid; gap:3px;
+                 font-size:12.5px; color:var(--texte-2); }
+  .apercu-jours{ margin:11px 0 0; font-size:12px; color:var(--texte-3); }
+  .apercu .creux{ color:var(--texte-4); font-style:italic; }
+  .apercu-note{ margin:10px 0 0; font-size:12px; color:var(--texte-4); line-height:1.5; }
+
+  .merci-recap{ margin-top:14px; padding-top:14px; border-top:1px solid var(--bord);
+                font-size:13.5px; color:var(--texte-3); }
+
+  /* Les deux champs d'heure ne se compriment pas : a l'etroit ils poussaient la
+     ligne, et donc tout le formulaire, au-dela de l'ecran. On passe la plage
+     horaire sous le nom du jour. */
+  @media (max-width: 560px){
+    .jour-ligne{ grid-template-columns:1fr; gap:7px; }
+    .jour-creneau{ padding-left:28px; }
+    .jour-creneau input{ flex:1 1 0; min-width:0; }
+    .jour-ligne.ferme .jour-ferme{ padding-left:28px; }
+  }
+
+  /* ---------- les chiffres de la page de referencement ---------- */
+  /* Meme decoupe que les avantages de l'accueil : des filets et un segment
+     rouge en tete de colonne, aucune boite. */
+  .chiffres-club-bloc{background:var(--surface); border-block:1px solid var(--bord);
+    padding-block:clamp(30px,3.6vw,46px)}
+  .chiffres-club{display:grid; gap:0; grid-template-columns:repeat(4,minmax(0,1fr))}
+  .chiffres-club li{position:relative; border-top:1px solid var(--bord);
+    padding:22px 20px 22px 0}
+  .chiffres-club li + li{padding-left:24px; border-left:1px solid var(--bord)}
+  .chiffres-club li::before{content:""; position:absolute; top:-1px; left:0;
+    width:30px; height:2px; background:var(--rouge-500)}
+  .chiffres-club li + li::before{left:24px}
+  .cc-nb{display:block; font-size:clamp(26px,3.2vw,42px); line-height:1;
+    letter-spacing:.008em; color:var(--rouge-500); white-space:nowrap}
+  .cc-lb{display:block; margin-top:10px; font-size:13px; font-weight:700;
+    line-height:1.45; color:var(--texte-3)}
+  .chiffres-mot{margin-top:clamp(24px,2.6vw,32px); max-width:74ch;
+    font-size:15px; line-height:1.72; color:var(--texte-2)}
+  /* Le filet vertical ne separe que des colonnes voisines : des qu'un element
+     passe en tete de rangee, il perd son bord gauche et son retrait, sinon la
+     colonne entiere se retrouve decalee. */
+  @media (max-width:820px){
+    .chiffres-club{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .chiffres-club li{padding-right:14px}
+    .chiffres-club li:nth-child(odd), .chiffres-club li + li:nth-child(odd){
+      padding-left:0; border-left:0}
+    .chiffres-club li:nth-child(odd)::before{left:0}
+  }
+  /* « 100+ », « 30 000 », « 500 », « 0 € » tiennent a deux par ligne jusqu'a 320 px :
+     les empiler faisait quatre rangees pour quatre mots (Amaury, 22/09/2026). */
+  @media (max-width:420px){
+    .chiffres-club li{padding-right:10px}
+    .chiffres-club li + li:not(:nth-child(odd)){padding-left:14px}
+    .chiffres-club li + li:not(:nth-child(odd))::before{left:14px}
+  }
+  @media (max-width:620px){
+    .chiffres-club-bloc .chiffres-mot{margin-top:20px; font-size:14.5px}
+  }
+
+  .hero-exemple{margin-top:18px; font-size:14px}
+  .hero-exemple a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+
+  /* ---------- page de vente : etapes, ce qu'on obtient, creation ---------- */
+  /* Meme parti pris que le reste du site : des filets et un segment rouge en tete
+     de colonne, aucune boite. Le gerant lit trois etapes, il ne remplit rien ici. */
+  .etapes-bloc{background:var(--surface); border-bottom:1px solid var(--bord)}
+  /* un <ol> pour le sens, mais les puces natives doubleraient les chiffres dessines */
+  .etapes{margin-top:clamp(28px,3.4vw,44px); padding:0; list-style:none; display:grid; gap:0;
+    grid-template-columns:repeat(3,minmax(0,1fr))}
+  .etapes li{position:relative; border-top:1px solid var(--bord);
+    padding:26px 26px 6px 0}
+  .etapes li + li{padding-left:clamp(24px,2.6vw,40px); border-left:1px solid var(--bord)}
+  .etapes li::before{content:""; position:absolute; top:-1px; left:0;
+    width:30px; height:2px; background:var(--rouge-500)}
+  .etapes li + li::before{left:clamp(24px,2.6vw,40px)}
+  .et-nb{display:block; font-size:clamp(24px,2.6vw,32px); line-height:1;
+    color:var(--rouge-500)}
+  .et-titre{margin-top:12px; font-size:17px; font-weight:800; letter-spacing:-.005em;
+    color:var(--texte)}
+  .etapes p{margin-top:9px; font-size:14.5px; line-height:1.62; color:var(--texte-2)}
+  @media (max-width:820px){
+    .etapes{grid-template-columns:1fr}
+    .etapes li, .etapes li + li{padding-left:0; padding-right:0; border-left:0}
+    .etapes li + li::before{left:0}
+  }
+  @media (max-width:620px){
+    .etapes{margin-top:24px}
+    .etapes li{padding-block:20px}
+    .et-titre{margin-top:9px}
+    .etapes p{margin-top:7px}
+    .creer{margin-top:30px; padding-top:26px}
+    .btn-grand{margin-top:20px}
+  }
+
+  .obtenez{display:grid; gap:clamp(28px,3.4vw,54px);
+    grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr); align-items:center}
+  @media (max-width:860px){ .obtenez{grid-template-columns:1fr} }
+  .ob-lien{margin-top:24px; font-size:14.5px}
+  .ob-lien a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+  /* une fiche muette, juste pour montrer la forme : pas un vrai club */
+  .ob-cadre{border:1px solid var(--bord-2); border-radius:var(--r-l); overflow:hidden;
+    background:var(--surface); box-shadow:0 18px 44px -32px rgba(22,22,15,.5)}
+  /* une plage grise nue se lirait comme une image cassee : l'appareil photo dit
+     que c'est la place de la photo du club */
+  .ob-bande{display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden;
+    gap:8px; height:128px; border-bottom:1px solid var(--bord);
+    background:var(--surface-2); color:var(--texte-4);
+    font-size:12.5px; font-weight:700}
+  /* Une vraie photo au lieu de la bande grise : le gerant voit la fiche qu'il aura,
+     et non un rectangle vide qui se lit comme une image cassee. */
+  .ob-photo{display:block; width:100%; height:100%; object-fit:cover}
+  .ob-corps{padding:18px 20px 22px}
+  .ob-nom{display:block; font-size:16.5px; font-weight:800; color:var(--texte)}
+  .ob-lieu{display:block; margin-top:4px; font-size:13.5px; font-weight:700;
+    color:var(--texte-4)}
+  .ob-chips{margin-top:13px; display:flex; flex-wrap:wrap; gap:7px}
+  .ob-chips li{padding:6px 12px; border:1px solid var(--bord); border-radius:999px;
+    font-size:12.5px; font-weight:700; color:var(--texte-3)}
+  .ob-mot{margin-top:14px; font-size:14px; line-height:1.6; color:var(--texte-3)}
+  .ob-vue figcaption{margin-top:14px; text-align:center; font-size:13px;
+    color:var(--texte-4)}
+
+  /* Le bouton est au pied des trois etapes, pas en bas de page : le gerant vient de
+     lire ce qu'on attend de lui, c'est la qu'il decide. Centre sous la grille. */
+  .creer{max-width:56ch; margin:clamp(38px,4.2vw,56px) auto 0; padding-top:clamp(30px,3.4vw,42px);
+    border-top:1px solid var(--bord); text-align:center}
+  .creer-mot{font-size:15.5px; line-height:1.68; color:var(--texte-2)}
+  .btn-grand{margin-top:24px; min-height:58px; padding-inline:38px; font-size:16.5px}
+  .creer-note{margin-top:16px; font-size:13.5px; color:var(--texte-4)}
+  .creer-note a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+
+  .pro-bande-in{display:flex; align-items:flex-end; justify-content:space-between;
+    gap:20px 40px; flex-wrap:wrap}
+  .pro-bande-in > div{max-width:62ch}
+  .pro-bande-in p{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
+  .pro-bande-note{font-size:13.5px; color:var(--texte-4)}
+
+  /* ---------- page de la fiche : le fil de l'etape 2 ---------- */
+  /* le bandeau est en position absolue : la premiere section lui laisse la place */
+  .sous-bandeau{padding-top:clamp(112px,11vw,136px)}
+  .fil{max-width:72ch; margin-bottom:clamp(24px,2.8vw,36px)}
+  .fil-titre{margin-top:12px; font-size:clamp(26px,3.4vw,40px); line-height:1;
+    letter-spacing:.012em; color:var(--texte)}
+  .fil-mot{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
+
+  /* ---------- messages de la fiche branchee sur la base ---------- */
+  .form-etat{margin-bottom:14px; padding:11px 13px; border-radius:var(--r-m);
+    background:var(--surface-2); border:1px solid var(--bord);
+    font-size:13.5px; line-height:1.55; font-weight:600; color:var(--texte-2)}
+  .form-erreur{margin-bottom:14px; padding:11px 13px; border-radius:var(--r-m);
+    background:rgba(236,22,46,.07); border:1px solid rgba(236,22,46,.28);
+    font-size:13.5px; line-height:1.55; font-weight:600; color:var(--rouge-700)}
+  .form-etat[hidden], .form-erreur[hidden]{display:none}
+
+  /* ---------- espace club et back-office ---------- */
+  /* Meme parti pris que le reste du site : des filets et un segment rouge, aucune
+     boite. Une ligne par demande ou par fiche, separee par un filet. */
+  /* La colonne de chiffres de l'accueil : ces regles vivent dans page.tpl.html,
+     que ces pages-ci n'utilisent pas. Meme dessin, pour que ce soit le meme site. */
+  .ouv-liste{display:grid; gap:0; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ouv-liste li{position:relative; border-top:1px solid var(--bord);
+    padding:22px 18px 22px 0}
+  .ouv-liste li + li{padding-left:22px; border-left:1px solid var(--bord)}
+  .ouv-liste li::before{content:""; position:absolute; top:-1px; left:0;
+    width:30px; height:2px; background:var(--rouge-500)}
+  .ouv-liste li + li::before{left:22px}
+  .ouv-nb{display:block; font-size:clamp(26px,3vw,38px); line-height:1;
+    letter-spacing:.008em; color:var(--rouge-500); white-space:nowrap}
+  .ouv-lb{display:block; margin-top:10px; font-size:13px; font-weight:700;
+    line-height:1.45; color:var(--texte-3)}
+  @media (max-width:420px){
+    .ouv-liste li{padding-right:12px}
+    .ouv-liste li + li{padding-left:12px}
+    .ouv-liste li + li::before{left:12px}
+  }
+
+  /* l'etat de la fiche, meme pastille que le suivi des demandes */
+  .esp-etat{margin-top:16px; display:inline-flex; align-items:center; gap:7px;
+    padding:6px 13px; border-radius:999px; border:1px solid var(--bord);
+    font-size:12.5px; font-weight:800; color:var(--texte-3)}
+  .esp-etat::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--texte-4)}
+  .esp-publie{border-color:rgba(29,138,74,.35); color:var(--vert)}
+  .esp-publie::before{background:var(--vert)}
+  .esp-en_attente{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .esp-en_attente::before{background:var(--rouge-500)}
+  .esp-refuse, .esp-suspendu{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .esp-refuse::before, .esp-suspendu::before{background:var(--rouge-500)}
+
+  .esp-chiffres, .ad-chiffres{margin-top:clamp(26px,3vw,36px); max-width:52ch}
+  .esp-mot{margin-top:clamp(22px,2.4vw,30px); max-width:64ch;
+    font-size:15.5px; line-height:1.68; color:var(--texte-2)}
+  .esp-actions{margin-top:26px; display:flex; flex-wrap:wrap; gap:12px}
+  .esp-actions .btn[hidden]{display:none}
+
+  .demandes, .fiches{margin-top:clamp(24px,2.8vw,34px); display:grid; gap:0}
+  .demande, .fiche{position:relative; border-top:1px solid var(--bord);
+    padding:clamp(22px,2.4vw,28px) 0}
+  .demande::before, .fiche::before{content:""; position:absolute; top:-1px; left:0;
+    width:34px; height:2px; background:var(--rouge-500)}
+
+  .dem-qui, .fiche-tete{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px}
+  .dem-qui b, .fiche-tete b{font-size:17px; color:var(--texte)}
+  .dem-quand, .fiche-lieu{font-size:13px; font-weight:700; color:var(--texte-4)}
+
+  .dem-coord, .fiche-faits{margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 20px;
+    font-size:14px; color:var(--texte-2)}
+  .dem-coord a{color:var(--rouge-lien); font-weight:700; text-underline-offset:3px}
+  .dem-mot, .fiche-mot{margin-top:12px; max-width:68ch; font-size:14.5px; line-height:1.62;
+    color:var(--texte-3)}
+
+  .dem-suivi, .fiche-actions{margin-top:16px; display:flex; flex-wrap:wrap;
+    align-items:center; gap:10px}
+  .btn-mini{min-height:38px; padding:9px 16px; font-size:13.5px}
+  /* l'etat se lit a la couleur : recue est en attente, confirmee est le lead */
+  .dem-etat{display:inline-flex; align-items:center; gap:7px; padding:6px 13px;
+    border-radius:999px; border:1px solid var(--bord);
+    font-size:12.5px; font-weight:800; color:var(--texte-3)}
+  .dem-etat::before{content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--texte-4)}
+  .dem-confirmee{border-color:rgba(236,22,46,.35); color:var(--rouge-700)}
+  .dem-confirmee::before{background:var(--rouge-500)}
+  .dem-honoree{border-color:rgba(29,138,74,.35); color:var(--vert)}
+  .dem-honoree::before{background:var(--vert)}
+  .dem-absente, .dem-annulee{color:var(--texte-4)}
+  /* ---------- la fenetre de creation de l'espace club ---------- */
+  /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
+     ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
+     sont portes ici, scopes a .fen-form, pour que la fenetre tienne toute seule
+     sur une page qui n'a pas le CSS du formulaire. */
+  .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:center;
+    justify-content:center; padding:20px; overflow:auto;
+    background:rgba(22,22,15,.52); backdrop-filter:blur(2px)}
+  .voile[hidden]{display:none}
+  body.fige{overflow:hidden}
+  .fenetre{position:relative; width:min(100%,440px); padding:clamp(24px,3vw,34px);
+    border-radius:var(--r-l); background:var(--surface);
+    box-shadow:0 36px 90px -30px rgba(22,22,15,.6);
+    animation:monte .24s cubic-bezier(.2,.7,.2,1)}
+  @keyframes monte{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){ .fenetre{animation:none} }
+  .fen-fermer{position:absolute; top:12px; right:12px; display:inline-flex;
+    align-items:center; justify-content:center; width:38px; height:38px;
+    border:0; border-radius:999px; background:transparent; color:var(--texte-4);
+    cursor:pointer; transition:background-color .15s ease, color .15s ease}
+  .fen-fermer:hover{background:var(--fond); color:var(--texte)}
+  .fen-titre{margin-top:10px; font-size:clamp(23px,3vw,29px); line-height:1.02;
+    color:var(--texte)}
+  .fen-mot{margin-top:12px; font-size:14.5px; line-height:1.6; color:var(--texte-2)}
+  .fen-form{margin-top:22px; display:flex; flex-direction:column; gap:15px}
+  .fen-form .champ{display:flex; flex-direction:column; gap:7px; min-width:0}
+  .fen-form label{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .fen-form input{width:100%; min-height:48px; padding:12px 14px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m);
+    background:var(--fond); color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600; line-height:1.4;
+    transition:border-color .15s ease, box-shadow .15s ease}
+  .fen-form input::placeholder{color:var(--texte-4); font-weight:500}
+  .fen-form input:focus{outline:none; border-color:rgba(236,22,46,.55);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  .fen-form .champ-aide{margin:0; color:var(--texte-4); font-size:12.5px}
+  .fen-form .btn{margin-top:5px; width:100%}
+  .fen-note{font-size:12.5px; line-height:1.55; color:var(--texte-4)}
+  .champ.manque input{border-color:var(--rouge-500);
+    box-shadow:0 0 0 4px rgba(236,22,46,.10)}
+  /* l'erreur que renvoie le serveur, traduite par MCC.dire() */
+  .fen-erreur{margin:0; padding:11px 13px; border-radius:var(--r-m);
+    background:rgba(236,22,46,.07); border:1px solid rgba(236,22,46,.28);
+    color:var(--rouge-700); font-size:13.5px; line-height:1.5; font-weight:600}
+  .fen-erreur[hidden]{display:none}
+  /* un bouton qui se lit comme un lien : bascule creation <-> connexion */
+  .lien-bouton{padding:0; border:0; background:none; cursor:pointer;
+    font:inherit; font-weight:700; color:var(--rouge-lien);
+    text-decoration:underline; text-underline-offset:3px}
+  .fen-bascule{margin:0; font-size:13px; color:var(--texte-4)}
+  .fen-bascule [data-mode][hidden]{display:none}
+  .champ[hidden]{display:none}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<path id="mcc-mono-m" fill-rule="evenodd" d="M285.4 914.3L211.6 865.0L211.7 587.7L395.2 710.6L346.4 745.0L346.2 766.5L285.4 725.0L285.4 914.3Z"/>
+<path id="mcc-mono-c" fill-rule="evenodd" d="M600.7 588.4L600.6 701.7L531.0 751.2L528.0 725.4L435.1 791.9L435.1 954.0L432.0 955.1L361.0 906.9L361.4 753.0L600.7 588.4ZM600.9 776.9L600.4 865.6L453.6 958.6L453.7 872.1L600.9 776.9Z"/>
+<path id="mcc-mot-mon" fill-rule="evenodd" d="M656.2 827.7L683.6 722.3L726.8 722.4L746.6 767.1L791.3 722.4L836.2 722.4L809.3 828.0L772.0 828.0L770.7 827.0L786.5 769.3L745.0 811.5L730.0 811.5L727.6 809.0L709.5 769.1L694.6 827.8L656.2 827.7ZM973.5 734.1L976.4 741.8L976.2 751.4L963.9 801.9L957.7 814.0L947.9 822.1L936.3 826.4L924.2 828.2L858.7 828.2L843.8 824.7L834.9 816.9L831.7 807.2L831.9 797.9L843.1 751.9L848.9 739.4L858.1 730.6L868.0 725.5L881.0 722.2L949.7 722.2L961.4 724.9L968.2 728.5L973.5 734.1ZM1126.6 722.5L1099.0 828.0L1056.5 828.0L1024.6 768.5L1009.9 828.0L971.2 828.0L998.7 722.5L1041.4 722.4L1072.8 781.1L1088.8 722.4L1126.6 722.5ZM1291.6 722.1L1283.8 752.6L1219.1 752.7L1213.0 753.7L1208.2 756.8L1205.6 760.8L1198.6 788.9L1198.6 794.2L1202.4 797.2L1273.4 797.1L1265.7 827.5L1182.2 827.5L1169.1 823.7L1161.1 817.6L1157.6 810.0C1157.0 807.9 1157.0 807.8 1157.0 805.0L1158.0 792.9L1169.3 749.9L1175.4 738.3L1182.0 731.6L1191.4 726.3L1206.2 722.2L1291.6 722.1ZM1376.1 827.4L1278.1 827.4L1305.8 722.2L1343.9 722.3L1324.1 797.4L1383.5 797.4L1376.1 827.4ZM1534.6 722.2L1513.3 804.7L1509.3 812.3L1502.1 819.4L1492.0 824.5L1479.0 827.4L1423.7 827.4L1409.0 824.9L1400.1 820.5L1395.6 815.7L1392.3 807.9L1392.7 794.8L1411.6 722.2L1450.1 722.3L1432.7 790.3L1434.8 796.3L1439.1 797.6L1469.0 797.6C1474.7 797.3 1471.6 797.2 1473.0 796.2L1477.4 791.8L1495.2 722.2L1534.6 722.2ZM1521.4 827.5L1549.0 722.2L1634.2 722.2L1647.2 725.6L1655.5 732.2L1658.1 741.9L1655.4 753.9L1649.1 763.4L1639.2 770.0L1648.7 775.9L1652.3 781.9L1653.6 788.3L1652.5 798.0L1648.6 808.7L1640.6 818.2L1628.3 824.5L1613.4 827.5L1521.4 827.5ZM1574.9 761.7L1611.2 761.7L1615.7 759.0L1617.6 753.0L1614.1 749.4L1578.4 749.2L1574.9 761.7ZM934.3 756.0L932.0 753.7C930.9 753.1 935.1 752.9 928.0 752.7L889.5 752.7L883.5 754.9L879.8 759.8L873.0 787.0L872.4 792.0L873.9 796.0L878.0 798.3C879.3 798.7 875.4 798.4 882.0 798.4L917.9 798.4L923.1 796.4L926.1 793.0L928.4 787.0L934.6 761.8L934.3 756.0ZM1565.1 800.3L1607.7 800.0L1611.8 796.1L1612.8 788.7L1607.9 785.7L1570.0 785.7L1568.5 787.0L1565.1 800.3Z"/>
+<path id="mcc-mot-combat" fill-rule="evenodd" d="M1832.0 722.1L1831.3 729.0L1825.3 752.3L1755.1 752.3L1748.1 754.2L1743.5 758.4L1741.3 765.0L1735.2 789.9L1736.5 795.0L1739.0 796.9L1813.7 797.4L1805.6 827.4L1718.8 827.4L1704.4 823.6L1697.5 817.8L1693.5 807.2L1694.4 796.6L1705.9 750.9L1711.6 739.3L1718.3 731.4L1730.1 725.2L1748.3 722.0L1832.0 722.1ZM1830.7 816.8L1827.5 809.8L1827.5 798.3L1840.1 749.2L1847.5 736.2L1858.0 728.1L1869.4 723.8L1881.5 722.2L1948.1 722.3L1960.9 725.2L1968.8 730.5L1973.2 737.2L1974.2 744.7L1973.2 753.6L1960.5 802.4L1955.0 812.8L1945.7 820.8L1935.5 825.0L1923.8 827.4L1853.1 827.4L1838.1 823.5L1830.7 816.8ZM2149.6 722.2L2146.4 737.2L2122.0 827.4L2087.0 827.4L2084.0 826.2L2099.7 769.0L2057.7 811.5L2048.8 811.8L2038.8 811.4L2021.7 768.7L2005.6 827.5L1968.3 827.5L1996.7 722.5L2039.1 722.5L2058.5 768.3L2104.5 722.3L2149.6 722.2ZM2138.5 827.4L2166.3 725.0L2167.9 722.3L2257.3 722.2L2272.1 725.3L2279.4 731.9L2281.9 741.9L2279.4 752.9L2273.3 761.9L2262.2 769.7L2270.5 774.0L2275.1 780.6L2276.2 788.2L2275.2 798.9L2270.7 809.7L2261.6 819.1L2248.8 824.8L2235.7 827.4L2138.5 827.4ZM2270.4 827.4L2351.0 723.4L2355.0 722.3L2400.3 722.3L2425.9 827.4L2382.6 827.4L2368.6 760.0L2367.0 757.4L2314.4 827.4L2270.4 827.4ZM2539.4 722.3L2537.0 733.9L2532.0 751.7L2503.0 751.8L2500.4 753.0L2480.4 827.5L2442.6 827.5L2463.5 753.0L2462.0 751.8L2428.6 751.7L2437.4 722.2L2539.4 722.3ZM2194.6 761.6L2234.2 761.7L2239.1 758.1L2239.7 752.0L2237.0 749.4L2233.0 748.8L2198.2 748.6L2194.6 761.6ZM1869.6 794.9L1873.0 797.6C1874.2 798.1 1870.2 797.9 1877.0 798.0L1913.6 798.0L1919.4 796.8L1924.3 790.5L1931.9 761.0L1931.2 754.8L1927.2 752.3L1921.4 752.0L1886.9 752.0L1881.0 754.3L1877.5 758.1L1875.7 763.8L1869.1 789.0L1869.6 794.9ZM2184.4 799.0L2187.0 800.0L2229.2 799.8L2233.9 796.3L2234.6 789.0L2233.0 786.8L2229.0 785.4L2187.7 785.3L2184.4 799.0ZM2328.4 827.4L2350.6 797.9L2361.8 797.8L2369.5 827.3L2328.4 827.4Z"/>
+</defs></svg>
+<header class="site-header">
+  <div class="wrap header-in">
+    <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
+      <svg viewBox="212 589 389 369" width="38" height="36" role="img" aria-label="Mon Club Combat">
+        <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+      </svg>
+      <svg class="brand-mot" viewBox="657 722 1883 107" width="194" height="11" aria-hidden="true">
+        <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
+      </svg>
+    </a>
+    <nav class="site-nav" aria-label="Navigation principale">
+      <div class="nav-item">
+        <a class="nav-link" href="recherche.html" aria-haspopup="true">Clubs <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Clubs">
+          <div class="nav-col">
+            <p class="nav-col-t">Par ville</p>
+            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
+          </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Parcourir</p>
+            <ul>
+              <li><a href="recherche.html">Toutes les salles</a></li>
+              <li><a href="index.html#villes">Toutes les villes</a></li>
+              <li><a href="index.html#salles">Les salles à découvrir</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#disciplines" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Disciplines">
+          <div class="nav-col">
+            <p class="nav-col-t">Les plus pratiquées</p>
+            <ul><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li></ul>
+          </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Autres disciplines</p>
+            <ul><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="clubs.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu nav-menu-1" aria-label="Pro">
+          <div class="nav-col">
+            <ul>
+              <li><a href="clubs.html#pro">Accès pro</a></li>
+              <li><a href="clubs.html">Référencer ma salle</a></li>
+              <li><a href="index.html#acquisition">Acquisition</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+  <section class="section sous-bandeau">
+    <div class="wrap">
+      <div class="fil">
+        <p class="eyebrow">Mon Club Combat</p>
+        <h1 class="section-titre display">Back-office</h1>
+      </div>
+
+      <p class="form-etat" id="ad-charge">Chargement…</p>
+      <p class="form-erreur" id="ad-erreur" hidden role="alert"></p>
+
+      <div id="ad-corps" hidden>
+        <ul class="ouv-liste ad-chiffres">
+          <li><span class="ouv-nb display" id="ad-attente">0</span>
+              <span class="ouv-lb">Fiches à vérifier</span></li>
+          <li><span class="ouv-nb display" id="ad-publies">0</span>
+              <span class="ouv-lb">Clubs en ligne</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ad-liste-bloc" id="ad-liste-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">À vérifier</p>
+      <h2 class="section-titre display">Les fiches qui attendent</h2>
+      <p class="section-chapo" id="ad-vide" hidden>Rien à vérifier pour l'instant.</p>
+      <ul class="fiches" id="ad-fiches"></ul>
+    </div>
+  </section>
+
+  <section class="section ad-ligne-bloc" id="ad-ligne-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">En ligne</p>
+      <h2 class="section-titre display">Les clubs publiés</h2>
+      <ul class="fiches" id="ad-enligne"></ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-haut">
+    <div class="footer-marque">
+      <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
+        <svg viewBox="212 589 389 369" width="36" height="34" role="img" aria-label="Mon Club Combat">
+          <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+        </svg>
+        <svg viewBox="657 722 1883 107" width="184" height="10.5" aria-hidden="true">
+          <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
+        </svg>
+      </a>
+      <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
+        les clubs qui veulent remplir leurs séances d'essai.</p>
+      <div class="reseaux">
+        <a href="index.html#instagram" aria-label="Mon Club Combat sur Instagram">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="index.html#tiktok" aria-label="Mon Club Combat sur TikTok">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.2 4v10.4a3.6 3.6 0 1 1-3.6-3.6"/><path d="M14.2 4.4c.5 2.4 2.2 4 4.6 4.2"/></svg>
+        </a>
+        <a href="index.html#facebook" aria-label="Mon Club Combat sur Facebook">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.8 21v-7.4h2.6l.4-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.5V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H9.2v3h2.6V21"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <nav class="footer-col" aria-labelledby="f-prat">
+      <h2 id="f-prat">Pratiquants</h2>
+      <ul>
+        <li><a href="index.html#recherche">Rechercher une salle</a></li>
+        <li><a href="index.html#disciplines">Toutes les disciplines</a></li>
+        <li><a href="index.html#villes">Salles par ville</a></li>
+        <li><a href="index.html#seance-essai">Réserver une séance d'essai</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-clubs">
+      <h2 id="f-clubs">Clubs</h2>
+      <ul>
+        <li><a href="clubs.html">Référencer ma salle</a></li>
+        <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
+        <li><a href="index.html#acquisition">Acquisition de leads</a></li>
+        <li><a href="espace-club.html">Espace club</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-fs">
+      <h2 id="f-fs">Mon Club Combat</h2>
+      <ul>
+        <li><a href="index.html#a-propos">À propos</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="index.html#aide">Aide</a></li>
+        <li><a href="index.html#presse">Presse</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="wrap footer-reseau">
+    <section aria-labelledby="f-villes">
+      <h2 id="f-villes">Salles de sports de combat par ville</h2>
+      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Sports de combat à Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Sports de combat à Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a></li><li><a href="sports-de-combat-lille.html">Sports de combat à Lille</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Sports de combat à Nantes</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-rennes.html">Sports de combat à Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Sports de combat à Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
+    </section>
+    <section aria-labelledby="f-disc">
+      <h2 id="f-disc">Salles par discipline</h2>
+      <ul class="f-liens"><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li></ul>
+    </section>
+  </div>
+
+  <div class="wrap footer-bas">
+    <p>© 2026 Mon Club Combat. Tous droits réservés.</p>
+    <nav class="footer-legal" aria-label="Informations légales">
+      <a href="index.html#mentions">Mentions légales</a>
+      <a href="index.html#cgu">CGU</a>
+      <a href="index.html#cgv">CGV</a>
+      <a href="index.html#confidentialite">Confidentialité</a>
+      <a href="index.html#cookies">Cookies</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- La creation de l'espace club se fait dans une fenetre, pas dans la page : le gerant
+     voit ce qu'on lui demande avant de s'engager, et le formulaire de la fiche l'attend
+     sur referencer.html. Elle est posee sur TOUTES les pages, parce que seul le bouton
+     du bandeau mene a la page de vente : partout ailleurs, « Referencer ma salle »
+     ouvre directement la creation de compte (Amaury, 22/09/2026).
+     Depuis le 23/09/2026 elle cree un vrai compte, sauf quand la base n'est pas
+     joignable (dans un Artifact le CSP interdit toute requete) : la maquette retombe
+     alors sur son ancien comportement de demonstration. -->
+<div class="voile" id="voile" hidden>
+  <div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="fen-titre">
+    <button class="fen-fermer" type="button" id="fermer-compte" aria-label="Fermer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
+    <p class="eyebrow" id="fen-etape">Étape 1 sur 2</p>
+    <h2 class="fen-titre display" id="fen-titre">Créez votre espace club</h2>
+    <p class="fen-mot" id="fen-mot">Vous y modifierez votre fiche et vous y recevrez les demandes de séance
+      d'essai. La fiche de votre salle se remplit juste après.</p>
+
+    <form class="fen-form" id="form-compte" novalidate>
+      <div class="champ" id="champ-nom">
+        <label for="k-nom">Nom de la salle</label>
+        <input id="k-nom" name="nom" required autocomplete="organization" placeholder="Fight Club Marseille">
+      </div>
+      <div class="champ">
+        <label for="k-mail">Votre e-mail</label>
+        <input id="k-mail" name="mail" type="email" required autocomplete="email" placeholder="contact@votre-salle.fr">
+      </div>
+      <div class="champ">
+        <label for="k-mdp">Mot de passe</label>
+        <input id="k-mdp" name="mdp" type="password" required autocomplete="new-password" minlength="8">
+        <span class="champ-aide" id="k-mdp-aide">Huit caractères au minimum.</span>
+      </div>
+      <!-- l'erreur renvoyee par le serveur, en francais -->
+      <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
+      <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
+      <p class="fen-note" id="fen-note">Gratuit et sans engagement. Nous vérifions la fiche avant publication.</p>
+      <p class="fen-bascule">
+        <span data-mode="creation">Vous avez déjà un espace club ?
+          <button type="button" class="lien-bouton" id="fen-vers-connexion">Connectez-vous</button>.</span>
+        <span data-mode="connexion" hidden>Pas encore d'espace club ?
+          <button type="button" class="lien-bouton" id="fen-vers-creation">Créez-le</button>.</span>
+      </p>
+    </form>
+
+    <!-- quand la confirmation par e-mail est active cote Supabase, il n'y a pas de
+         session a la sortie de l'inscription : on le dit au lieu de tourner en rond -->
+    <div id="fen-verif" hidden>
+      <p class="fen-mot">Nous venons d'envoyer un lien de confirmation à
+        <b id="fen-verif-mail"></b>. Ouvrez-le, puis revenez vous connecter ici pour
+        remplir la fiche de votre salle.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="sb.js"></script>
+<script>
+/* ---- la fenetre de creation de l'espace club ----
+   Presente sur toutes les pages. Tout element portant data-compte l'ouvre :
+   boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
+   Seul le bouton du bandeau reste un lien vers la page de vente.
+
+   Depuis le 23/09/2026 elle cree un vrai compte. Deux chemins possibles selon
+   le reglage de Supabase :
+     - confirmation par e-mail desactivee : l'inscription ouvre une session, on
+       enchaine directement sur la fiche ;
+     - confirmation activee : il n'y a pas de session, donc pas de club creable
+       tout de suite. On le dit, et c'est referencer.html qui creera le club au
+       premier passage une fois le compte confirme.
+   Quand la base n'est pas joignable (CSP d'un Artifact), on retombe sur
+   l'ancien comportement de demonstration : la maquette reste consultable. */
+(function (){
+  var voile = document.getElementById('voile');
+  if (!voile) return;
+  var form     = document.getElementById('form-compte');
+  var erreur   = document.getElementById('fen-erreur');
+  var envoi    = document.getElementById('fen-envoi');
+  var champNom = document.getElementById('champ-nom');
+  var rendu = null;
+  var mode = 'creation';
+
+  var SB = window.MCC || null;
+  var reel = !!(SB && SB.prete());
+
+  /* ---------- ouverture et fermeture ---------- */
+  function ouvre(){
+    rendu = document.activeElement;
+    voile.hidden = false;
+    document.body.classList.add('fige');
+    (mode === 'creation' ? document.getElementById('k-nom')
+                         : document.getElementById('k-mail')).focus();
+  }
+  function ferme(){
+    voile.hidden = true;
+    document.body.classList.remove('fige');
+    if (rendu) rendu.focus();
+  }
+  /* la recherche et l'annuaire reecrivent leurs resultats : on ecoute le document
+     plutot que chaque bouton, pour que ceux crees plus tard marchent aussi */
+  document.addEventListener('click', function (e){
+    var d = e.target.closest ? e.target.closest('[data-compte]') : null;
+    if (!d) return;
+    e.preventDefault();
+    bascule(d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation');
+    ouvre();
+  });
+
+  document.getElementById('fermer-compte').addEventListener('click', ferme);
+  voile.addEventListener('mousedown', function (e){ if (e.target === voile) ferme(); });
+  document.addEventListener('keydown', function (e){
+    if (e.key === 'Escape' && !voile.hidden) ferme();
+    /* la fenetre garde le focus tant qu'elle est ouverte */
+    if (e.key === 'Tab' && !voile.hidden) {
+      var f = voile.querySelectorAll('button, input, a[href]');
+      f = Array.prototype.filter.call(f, function (x){ return x.offsetParent !== null; });
+      if (!f.length) return;
+      var premier = f[0], dernier = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === premier) { e.preventDefault(); dernier.focus(); }
+      else if (!e.shiftKey && document.activeElement === dernier) { e.preventDefault(); premier.focus(); }
+    }
+  });
+
+  /* ---------- creation ou connexion ---------- */
+  function bascule(v){
+    mode = v;
+    var creation = mode === 'creation';
+    champNom.hidden = !creation;
+    document.getElementById('k-nom').required = creation;
+    document.getElementById('fen-etape').textContent = creation ? 'Étape 1 sur 2' : 'Espace club';
+    document.getElementById('fen-titre').textContent = creation ? 'Créez votre espace club' : 'Connectez-vous';
+    document.getElementById('fen-mot').textContent = creation
+      ? 'Vous y modifierez votre fiche et vous y recevrez les demandes de séance d’essai. La fiche de votre salle se remplit juste après.'
+      : 'Retrouvez votre fiche et les demandes de séance d’essai reçues.';
+    document.getElementById('fen-envoi').textContent = creation ? 'Continuer vers ma fiche' : 'Se connecter';
+    document.getElementById('k-mdp').setAttribute('autocomplete', creation ? 'new-password' : 'current-password');
+    document.getElementById('k-mdp-aide').hidden = !creation;
+    document.getElementById('fen-note').hidden = !creation;
+    Array.prototype.forEach.call(voile.querySelectorAll('[data-mode]'), function (s){
+      s.hidden = s.getAttribute('data-mode') !== mode;
+    });
+    montre('');
+  }
+  document.getElementById('fen-vers-connexion').addEventListener('click', function (){ bascule('connexion'); });
+  document.getElementById('fen-vers-creation').addEventListener('click',  function (){ bascule('creation'); });
+
+  function montre(msg){
+    erreur.textContent = msg || '';
+    erreur.hidden = !msg;
+  }
+  function occupe(oui){
+    envoi.disabled = oui;
+    envoi.textContent = oui ? 'Un instant…'
+      : (mode === 'creation' ? 'Continuer vers ma fiche' : 'Se connecter');
+  }
+
+  form.addEventListener('submit', function (e){
+    e.preventDefault();
+    montre('');
+    var manque = false;
+    Array.prototype.forEach.call(form.querySelectorAll('input[required]'), function (c){
+      if (c.closest('.champ').hidden) { c.closest('.champ').classList.remove('manque'); return; }
+      var vide = !c.value.trim() || (c.type === 'email' && c.value.indexOf('@') < 1)
+                 || (mode === 'creation' && c.minLength > 0 && c.value.length < c.minLength);
+      c.closest('.champ').classList.toggle('manque', vide);
+      if (vide && !manque) { c.focus(); manque = true; }
+    });
+    if (manque) return;
+
+    var nom  = document.getElementById('k-nom').value.trim();
+    var mail = document.getElementById('k-mail').value.trim();
+    var mdp  = document.getElementById('k-mdp').value;
+
+    /* pas de base joignable : la maquette garde son comportement d'avant */
+    if (!reel) { location.href = 'referencer.html?nom=' + encodeURIComponent(nom); return; }
+
+    occupe(true);
+    var sb = SB.client;
+    var p = mode === 'creation'
+      ? sb.auth.signUp({ email: mail, password: mdp, options: { data: { nom_salle: nom } } })
+      : sb.auth.signInWithPassword({ email: mail, password: mdp });
+
+    p.then(function (r){
+      if (r.error) { occupe(false); montre(SB.dire(r.error)); return; }
+
+      /* inscription sans session : Supabase attend la confirmation de l'adresse */
+      if (mode === 'creation' && !(r.data && r.data.session)) {
+        form.hidden = true;
+        document.getElementById('fen-verif-mail').textContent = mail;
+        document.getElementById('fen-verif').hidden = false;
+        return;
+      }
+      /* le nom saisi amorce la fiche ; le club lui-meme est cree par referencer.html,
+         qui est le seul endroit ou l'on sait s'il en existe deja un */
+      location.href = 'referencer.html' + (nom ? '?nom=' + encodeURIComponent(nom) : '');
+    }).catch(function (err){
+      occupe(false);
+      montre(SB.dire(err));
+    });
+  });
+})();
+</script>
+
+<script>
+/* ---- le back-office ----
+   Reserve a l'equipe : etre dans la table `equipe` est la seule condition, et
+   c'est le RLS qui la fait respecter. Ce script ne cache pas une page qu'un
+   curieux pourrait forcer, il affiche ce que la base accepte de lui donner : un
+   visiteur qui ouvrirait admin.html ne verrait aucun club en attente, parce que
+   la politique de lecture ne lui en renvoie aucun. */
+(function (){
+  var SB = window.MCC;
+  var charge = document.getElementById('ad-charge');
+  var erreur = document.getElementById('ad-erreur');
+  function dit(m){ charge.textContent = m; charge.hidden = false; }
+  function rate(m){ charge.hidden = true; erreur.textContent = m; erreur.hidden = false; }
+
+  if (!SB || !SB.prete()) {
+    rate('Le back-office a besoin d’une connexion au serveur, qui n’est pas disponible ici.');
+    return;
+  }
+  var sb = SB.client;
+  var ech = function (t){
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  };
+
+  /* Un slug lisible et stable : c'est l'URL de la fiche, elle ne doit plus bouger
+     une fois publiee, donc on ne la pose qu'a la premiere publication. */
+  function slugifie(nom, ville){
+    return (nom + ' ' + (ville || ''))
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 70);
+  }
+
+  SB.session().then(function (s){
+    if (!s) { SB.exigeCompte(); dit('Connectez-vous avec un compte de l’équipe.'); return null; }
+    return sb.from('equipe').select('membre_id').limit(1).then(function (r){
+      if (r.error) throw r.error;
+      if (!r.data || !r.data.length) {
+        rate('Ce compte ne fait pas partie de l’équipe Mon Club Combat.');
+        return null;
+      }
+      return true;
+    });
+  }).then(function (ok){
+    if (!ok) return;
+    charge.hidden = true;
+    document.getElementById('ad-corps').hidden = false;
+    return recharge();
+  }).catch(function (e){ rate(SB.dire(e)); });
+
+  function recharge(){
+    return sb.from('club').select('*').order('modifie_le', { ascending: false })
+      .then(function (r){
+        if (r.error) throw r.error;
+        var tous = r.data || [];
+        var attente = tous.filter(function (c){ return c.statut === 'en_attente'; });
+        var enligne = tous.filter(function (c){ return c.statut === 'publie'; });
+
+        document.getElementById('ad-attente').textContent = attente.length;
+        document.getElementById('ad-publies').textContent = enligne.length;
+
+        document.getElementById('ad-liste-bloc').hidden = false;
+        document.getElementById('ad-vide').hidden = attente.length > 0;
+        document.getElementById('ad-fiches').innerHTML = attente.map(carte).join('');
+
+        document.getElementById('ad-ligne-bloc').hidden = enligne.length === 0;
+        document.getElementById('ad-enligne').innerHTML = enligne.map(carte).join('');
+      });
+  }
+
+  function carte(c){
+    var d = (c.disciplines || []).join(' · ');
+    var jours = Object.keys(c.horaires || {}).length;
+    var enAttente = c.statut === 'en_attente';
+    return '<li class="fiche" data-id="' + ech(c.id) + '">' +
+      '<div class="fiche-tete"><b>' + ech(c.nom) + '</b>' +
+        '<span class="fiche-lieu">' + ech([c.code_postal, c.ville].filter(Boolean).join(' ') || 'Ville non renseignée') + '</span></div>' +
+      '<ul class="fiche-faits">' +
+        '<li>' + (d ? ech(d) : 'Aucune discipline') + '</li>' +
+        '<li>' + (jours ? jours + ' jours d’ouverture' : 'Aucun horaire') + '</li>' +
+        '<li>' + ((c.photos || []).length) + ' photo' + ((c.photos || []).length > 1 ? 's' : '') + '</li>' +
+        '<li>' + ech(c.tel || c.mail || 'Aucune coordonnée') + '</li>' +
+      '</ul>' +
+      (c.presentation ? '<p class="fiche-mot">' + ech(c.presentation) + '</p>' : '') +
+      '<div class="fiche-actions">' +
+        (enAttente
+          ? '<button type="button" class="btn btn-rouge btn-mini" data-act="publie">Publier</button>' +
+            '<button type="button" class="btn btn-ligne btn-mini" data-act="refuse">Refuser</button>'
+          : '<button type="button" class="btn btn-ligne btn-mini" data-act="suspendu">Retirer de l’annuaire</button>') +
+      '</div></li>';
+  }
+
+  document.querySelector('main').addEventListener('click', function (e){
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var li = b.closest('.fiche');
+    var id = li.dataset.id;
+    var act = b.dataset.act;
+    var champs = { statut: act };
+
+    if (act === 'refuse') {
+      var motif = prompt('Pourquoi cette fiche n’est-elle pas retenue ? Le gérant le lira.');
+      if (motif === null) return;
+      champs.motif_refus = motif.trim() || 'Fiche incomplète.';
+    }
+    if (act === 'publie') {
+      champs.publie_le = new Date().toISOString();
+      champs.motif_refus = null;
+    }
+
+    b.disabled = true;
+    var avant = Promise.resolve();
+    /* le slug n'est pose qu'une fois : l'URL d'une fiche publiee ne doit plus bouger */
+    if (act === 'publie') {
+      avant = sb.from('club').select('slug, nom, ville').eq('id', id).single()
+        .then(function (r){
+          if (r.error) throw r.error;
+          if (!r.data.slug) champs.slug = slugifie(r.data.nom, r.data.ville);
+        });
+    }
+    avant.then(function (){
+      return sb.from('club').update(champs).eq('id', id);
+    }).then(function (r){
+      if (r.error) throw r.error;
+      return recharge();
+    }).catch(function (err){
+      b.disabled = false;
+      rate(SB.dire(err));
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

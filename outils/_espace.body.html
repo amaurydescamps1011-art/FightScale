@@ -1,0 +1,49 @@
+%%HEADER%%
+
+<main id="contenu">
+  <section class="section sous-bandeau">
+    <div class="wrap">
+      <div class="fil">
+        <p class="eyebrow">Espace club</p>
+        <h1 class="section-titre display" id="esp-nom">Votre espace club</h1>
+      </div>
+
+      <!-- l'etat de la fiche est un mot, pas un chiffre : il va dans une pastille,
+           pas dans la colonne des nombres, ou « En verification » deborderait -->
+      <p class="esp-etat" id="esp-etat" hidden><span id="esp-statut"></span></p>
+
+      <!-- tant que la session n'est pas lue, on n'affiche ni l'un ni l'autre :
+           montrer « aucune demande » avant de savoir serait un mensonge -->
+      <p class="form-etat" id="esp-charge">Chargement…</p>
+      <p class="form-erreur" id="esp-erreur" hidden role="alert"></p>
+
+      <div id="esp-corps" hidden>
+        <p class="esp-mot" id="esp-mot"></p>
+        <!-- une demande recue n'est pas un lead : c'est la reservation confirmee
+             qui en est un (regle d'Amaury), donc les deux chiffres sont montres -->
+        <ul class="ouv-liste esp-chiffres">
+          <li><span class="ouv-nb display" id="esp-nb">0</span>
+              <span class="ouv-lb">Demandes de séance d'essai</span></li>
+          <li><span class="ouv-nb display" id="esp-nb-ok">0</span>
+              <span class="ouv-lb">Réservations confirmées</span></li>
+        </ul>
+        <div class="esp-actions">
+          <a class="btn btn-rouge" href="referencer.html">Modifier ma fiche</a>
+          <a class="btn btn-ligne" id="esp-voir" href="#" hidden>Voir ma fiche en ligne</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section esp-demandes-bloc" id="esp-demandes-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Ce que vous avez reçu</p>
+      <h2 class="section-titre display">Les demandes de séance d'essai</h2>
+      <p class="section-chapo" id="esp-vide" hidden>Aucune demande pour l'instant. Elles
+        arriveront ici dès que votre fiche sera en ligne.</p>
+      <ul class="demandes" id="esp-demandes"></ul>
+    </div>
+  </section>
+</main>
+
+%%FOOTER%%

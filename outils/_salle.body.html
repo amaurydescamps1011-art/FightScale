@@ -1,0 +1,133 @@
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+%%HEADER%%
+
+<main id="contenu">
+  <div class="fiche" id="fiche" hidden>
+
+    <!-- Visible seulement sur salle.html?demo=1, la fiche montree aux gerants
+         depuis « Referencer ma salle ». Aucun visiteur ne tombe dessus par
+         l'annuaire : elle n'y est pas. -->
+    <p class="bandeau-demo" id="bandeau-demo" hidden>
+      <b>Exemple</b> — ce club n'existe pas. Voici la fiche que votre salle
+      obtient gratuitement. <a href="clubs.html">Référencer la mienne</a>
+    </p>
+
+    <nav class="fil" aria-label="Fil d'Ariane">
+      <div class="wrap fil-in">
+        <a href="index.html">Accueil</a>
+        <span aria-hidden="true">/</span>
+        <a href="recherche.html" id="fil-ville">Salles</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" id="fil-nom"></span>
+      </div>
+    </nav>
+
+    <section class="visuels">
+      <div class="wrap">
+        <div class="galerie" id="galerie"></div>
+      </div>
+    </section>
+
+    <section class="tete">
+      <div class="wrap tete-in">
+        <div class="tete-texte">
+          <h1 class="display" id="s-nom"></h1>
+          <p class="tete-meta" id="s-meta"></p>
+          <ul class="chips" id="s-disc"></ul>
+        </div>
+        <div class="tete-actions" id="s-actions"></div>
+      </div>
+    </section>
+
+    <div class="wrap corps">
+
+      <div class="col-principale">
+
+        <section class="pan" id="presentation">
+          <h2 class="pan-titre">La salle</h2>
+          <div class="prose" id="s-presentation"></div>
+          <dl class="faits" id="s-faits"></dl>
+        </section>
+
+        <section class="pan" id="disciplines">
+          <h2 class="pan-titre">Disciplines enseignées</h2>
+          <ul class="grille-disc" id="s-grille-disc"></ul>
+        </section>
+
+        <section class="pan" id="equipements">
+          <h2 class="pan-titre">Équipements</h2>
+          <ul class="equip" id="s-equip"></ul>
+        </section>
+
+        <section class="pan" id="horaires">
+          <h2 class="pan-titre">Planning de la semaine</h2>
+          <p class="pan-sous" id="s-amplitude"></p>
+          <ol class="semaine" id="s-semaine"></ol>
+        </section>
+
+        <section class="pan" id="avis">
+          <div class="pan-tete">
+            <h2 class="pan-titre">Avis</h2>
+            <p class="pan-note" id="s-avis-note"></p>
+          </div>
+          <ul class="avis" id="s-avis"></ul>
+        </section>
+
+      </div>
+
+      <aside class="col-cote">
+        <div class="cote-collant">
+
+          <section class="pan pan-carte">
+            <div class="mini-carte">
+              <canvas id="mini" aria-label="Plan du quartier de la salle"></canvas>
+              <noscript><p class="mini-vide">Le plan a besoin de JavaScript.</p></noscript>
+            </div>
+            <div class="cote-adresse">
+              <h2 class="cote-titre">Adresse</h2>
+              <p id="s-adresse"></p>
+              <a class="btn btn-ligne" id="s-itineraire" target="_blank" rel="noopener">
+                %%BOUSSOLE%%Ouvrir l'itinéraire
+              </a>
+            </div>
+          </section>
+
+          <section class="pan">
+            <h2 class="cote-titre">Contacter la salle</h2>
+            <ul class="coord" id="s-coord"></ul>
+            <p class="cote-note">Dites que vous venez de Mon Club Combat, la salle saura d'où
+              vous arrivez.</p>
+          </section>
+
+          <section class="pan pan-club">
+            <h2 class="cote-titre">Vous gérez cette salle&nbsp;?</h2>
+            <p>Cette fiche est gratuite. Réclamez-la pour corriger les informations,
+              ajouter vos photos et tenir votre planning à jour.</p>
+            <button class="btn btn-rouge" type="button" data-compte>Réclamer ma fiche</button>
+          </section>
+
+        </div>
+      </aside>
+
+    </div>
+
+    <section class="section autour" id="autour" hidden>
+      <div class="wrap">
+        <h2 class="pan-titre" id="autour-titre">Autres salles</h2>
+        <ul class="autour-liste" id="s-autour"></ul>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="introuvable" id="introuvable" hidden>
+    <div class="wrap introuvable-in">
+      <h1 class="display">Cette salle n'existe pas</h1>
+      <p>Le lien est peut-être incomplet, ou la fiche a été retirée de l'annuaire.</p>
+      <a class="btn btn-rouge" href="recherche.html">Voir toutes les salles</a>
+    </div>
+  </div>
+</main>
+
+%%FOOTER%%

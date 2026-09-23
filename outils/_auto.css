@@ -1,0 +1,12 @@
+  /* ---------- suggestions de villes ---------- */
+  .sug{position:absolute; z-index:60; top:calc(100% + 10px); left:0; right:0;
+    min-width:236px; margin:0; padding:6px; list-style:none; border-radius:14px;
+    background:var(--surface); border:1px solid var(--bord-2);
+    box-shadow:var(--ombre-3);
+    max-height:min(320px,52vh); overflow:auto; overscroll-behavior:contain}
+  .sug li{display:flex; align-items:center; gap:11px; min-height:44px; padding:10px 13px;
+    border-radius:10px; cursor:pointer; font-size:14.5px; font-weight:700;
+    color:var(--texte-2); transition:background-color .12s ease, color .12s ease}
+  .sug li svg{flex-shrink:0; color:var(--texte-4)}
+  .sug li:hover,.sug li[aria-selected="true"]{background:rgba(22,22,15,.05); color:var(--texte)}
+  .sug li:hover svg,.sug li[aria-selected="true"] svg{color:var(--rouge-lien)}

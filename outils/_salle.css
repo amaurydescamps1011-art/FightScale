@@ -1,0 +1,217 @@
+  /* ---------- fiche salle ---------- */
+  body{ background:var(--fond); color:var(--texte);
+        font-family:Manrope, system-ui, sans-serif; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding-inline:var(--gutter); }
+  .skip{ position:absolute; left:-9999px; }
+  .skip:focus{ left:12px; top:12px; z-index:60; background:var(--texte);
+               color:var(--fond); padding:10px 16px; border-radius:var(--r-m); }
+
+  /* sur l'accueil l'en-tete flotte au-dessus du heros ; ici il n'y a pas de heros,
+     il doit donc reprendre sa place dans le flux */
+  .site-header{ position:relative; inset:auto; background:var(--fond);
+                border-bottom:1px solid var(--bord); }
+
+  .fil{ border-bottom:1px solid var(--bord); }
+  .fil-in{ display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+           padding-block:14px; font-size:13px; color:var(--texte-3); }
+  .fil a{ color:var(--texte-2); text-decoration:none; }
+  .fil a:hover{ color:var(--texte); text-decoration:underline; }
+  .fil [aria-current]{ color:var(--texte); font-weight:700; }
+
+  /* ---------- visuels ---------- */
+  .visuels{ padding-top:24px; }
+  .galerie{ display:grid; gap:10px; border-radius:var(--r-l); overflow:hidden;
+            grid-template-columns:2fr 1fr 1fr; grid-template-rows:repeat(2, 132px); }
+  .galerie .vis{ position:relative; overflow:hidden; background:var(--surface); }
+  .galerie .vis:first-child{ grid-row:span 2; }
+  .galerie svg, .galerie img{ display:block; width:100%; height:100%; object-fit:cover; }
+  .vis-marque{ position:absolute; left:12px; bottom:10px; font-size:11px; letter-spacing:.06em;
+               text-transform:uppercase; color:var(--texte-3);
+               background:rgba(255,255,255,.9); border:1px solid var(--bord-2);
+               padding:4px 8px; border-radius:999px;
+               backdrop-filter:blur(3px); }
+
+  /* ---------- tête ---------- */
+  .tete-in{ display:flex; gap:28px; align-items:flex-end; justify-content:space-between;
+            flex-wrap:wrap; padding-block:26px 22px; }
+  .tete-texte{ min-width:0; }
+  .tete h1{ margin:0 0 10px; font-family:Anton, Impact, sans-serif; font-weight:400;
+            letter-spacing:.01em; line-height:1.02; text-transform:uppercase;
+            font-size:clamp(30px, 4.6vw, 52px); }
+  .tete-meta{ margin:0; color:var(--texte-2); font-size:15px;
+              display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .tete-meta .sep{ color:var(--bord-3); }
+  .tete-meta .note{ display:inline-flex; gap:5px; align-items:center;
+                    color:var(--texte); font-weight:700; }
+  .tete-meta .note svg{ color:var(--or, #E8A33D); }
+  .tete-meta .note small{ color:var(--texte-3); font-weight:600; }
+  .ouvert, .ferme{ display:inline-flex; gap:6px; align-items:center; font-weight:700;
+                   font-size:13px; }
+  .ouvert{ color:var(--vert); } .ferme{ color:var(--texte-3); }
+  .ouvert::before, .ferme::before{ content:""; width:7px; height:7px; border-radius:50%;
+                                   background:currentColor; }
+
+  .chips{ list-style:none; display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 0; padding:0; }
+  .chips li{ font-size:13px; font-weight:700; padding:6px 12px; border-radius:999px;
+             background:var(--surface-2); border:1px solid var(--bord-2);
+             color:var(--texte-2); }
+
+  .tete-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  .btn{ display:inline-flex; gap:8px; align-items:center; justify-content:center;
+        min-height:48px; padding:0 20px; border-radius:var(--r-m); font:inherit;
+        font-weight:800; font-size:15px; text-decoration:none; cursor:pointer;
+        border:1px solid transparent; transition:background .15s, border-color .15s; }
+  .btn-rouge{ background:var(--rouge-600); color:#fff; }
+  .btn-rouge:hover{ background:var(--rouge-700); }
+  .btn-ligne{ background:transparent; color:var(--texte); border-color:var(--bord-3); }
+  .btn-ligne:hover{ background:var(--surface-2); border-color:var(--texte-3); }
+  .btn svg{ flex:none; }
+
+  /* ---------- corps ---------- */
+  .corps{ display:grid; gap:24px; grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);
+          align-items:start; padding-block:10px 40px; }
+  .col-principale{ display:grid; gap:18px; min-width:0; }
+  .col-cote{ min-width:0; }
+  .cote-collant{ display:grid; gap:18px; position:sticky; top:18px; }
+
+  .pan{ background:var(--surface); border:1px solid var(--bord);
+        border-radius:var(--r-l); padding:22px; }
+  .pan-titre{ margin:0 0 4px; font-family:Anton, Impact, sans-serif; font-weight:400;
+              text-transform:uppercase; letter-spacing:.02em; font-size:22px; }
+  .pan-sous{ margin:0 0 14px; color:var(--texte-3); font-size:13.5px; }
+  .cote-titre{ margin:0 0 12px; font-size:15px; font-weight:800; letter-spacing:.01em; }
+
+  .prose{ margin-top:14px; }
+  .prose p{ margin:0 0 12px; color:var(--texte-2); line-height:1.62; font-size:15.5px; }
+  .prose p:last-child{ margin-bottom:0; }
+
+  .faits{ display:grid; grid-template-columns:repeat(auto-fit, minmax(128px, 1fr));
+          gap:14px; margin:20px 0 0; padding-top:18px; border-top:1px solid var(--bord); }
+  .faits div{ min-width:0; }
+  .faits dt{ font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+             color:var(--texte-3); margin-bottom:4px; }
+  .faits dd{ margin:0; font-size:17px; font-weight:800; }
+
+  .grille-disc{ list-style:none; margin:14px 0 0; padding:0; display:grid; gap:10px;
+                grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); }
+  .grille-disc li{ display:flex; gap:10px; align-items:center; padding:13px 15px;
+                   background:var(--surface-2); border:1px solid var(--bord);
+                   border-radius:var(--r-m); font-weight:700; font-size:14.5px; }
+  .grille-disc svg{ color:var(--rouge-lien); flex:none; }
+
+  .semaine{ list-style:none; margin:0; padding:0; }
+  .semaine > li{ display:grid; grid-template-columns:112px 1fr; gap:16px;
+                 padding:13px 0; border-top:1px solid var(--bord); }
+  .semaine > li:first-child{ border-top:0; }
+  .semaine .jour{ font-weight:800; font-size:14.5px; }
+  .semaine .aujourdhui .jour{ color:var(--rouge-lien); }
+  /* sur une colonne étroite, « · aujourd’hui » se coupait en laissant le point
+     pendre en bout de ligne : on le passe sous le nom du jour */
+  .semaine .aujourdhui .jour::after{ content:"aujourd’hui"; display:block; font-weight:600;
+                                     font-size:12px; color:var(--texte-3); }
+  .cours{ display:grid; gap:7px; min-width:0; }
+  .cours .c{ display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; font-size:14.5px; }
+  .cours .h{ font-variant-numeric:tabular-nums; font-weight:700; color:var(--texte);
+             white-space:nowrap; }
+  .cours .q{ color:var(--texte-2); }
+  .cours .n{ font-size:12px; color:var(--texte-3); }
+  .repos{ color:var(--texte-3); font-size:14.5px; }
+
+  /* ---------- colonne de droite ---------- */
+  .pan-carte{ padding:0; overflow:hidden; }
+  .mini-carte{ position:relative; height:210px; background:#E9EEF3; }
+  .mini-carte canvas{ display:block; width:100%; height:100%; }
+  .mini-vide{ position:absolute; inset:0; display:grid; place-items:center;
+              margin:0; color:var(--texte-3); font-size:13px; }
+  .cote-adresse{ padding:18px; border-top:1px solid var(--bord); }
+  .cote-adresse p{ margin:0 0 14px; color:var(--texte-2); line-height:1.55; font-size:15px; }
+  .cote-adresse .btn{ width:100%; }
+
+  .coord{ list-style:none; margin:0; padding:0; display:grid; gap:2px; }
+  .coord a{ display:flex; gap:11px; align-items:center; padding:11px 10px; margin-inline:-10px;
+            border-radius:var(--r-m); color:var(--texte); text-decoration:none;
+            font-size:14.5px; font-weight:600; }
+  .coord a:hover{ background:var(--surface-2); }
+  .coord svg{ color:var(--texte-3); flex:none; }
+  .coord a:hover svg{ color:var(--rouge-lien); }
+  .coord .quoi{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cote-note{ margin:14px 0 0; padding-top:14px; border-top:1px solid var(--bord);
+              color:var(--texte-3); font-size:13px; line-height:1.5; }
+
+  .pan-club p{ margin:0 0 14px; color:var(--texte-2); font-size:14.5px; line-height:1.55; }
+  .pan-club .btn{ width:100%; }
+
+  /* ---------- autres salles ---------- */
+  .autour{ border-top:1px solid var(--bord); padding-block:34px 44px; }
+  .autour-liste{ list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px;
+                 grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); }
+  .autour-liste a{ display:flex; gap:13px; align-items:center; padding:14px;
+                   background:var(--surface); border:1px solid var(--bord);
+                   border-radius:var(--r-l); text-decoration:none; color:inherit;
+                   transition:border-color .15s, background .15s; }
+  .autour-liste a:hover{ border-color:var(--bord-3); background:var(--surface-2); }
+  .autour-liste .sig{ flex:none; width:46px; height:46px; border-radius:var(--r-m);
+                      display:grid; place-items:center; font-family:Anton, Impact, sans-serif;
+                      font-size:15px; letter-spacing:.02em; background:var(--bord);
+                      color:var(--texte-2); }
+  .autour-liste .t{ min-width:0; }
+  .autour-liste .t b{ display:block; font-size:15px; overflow:hidden;
+                      text-overflow:ellipsis; white-space:nowrap; }
+  .autour-liste .t span{ font-size:13px; color:var(--texte-3); }
+
+  .introuvable-in{ padding-block:90px 110px; text-align:center; }
+  .introuvable h1{ font-family:Anton, Impact, sans-serif; font-weight:400;
+                   text-transform:uppercase; font-size:clamp(28px,5vw,44px); margin:0 0 12px; }
+  .introuvable p{ color:var(--texte-2); margin:0 0 24px; }
+
+  @media (max-width: 900px){
+    .corps{ grid-template-columns:1fr; }
+    .cote-collant{ position:static; }
+    .galerie{ grid-template-columns:1fr 1fr; grid-template-rows:180px 96px; }
+    .galerie .vis:first-child{ grid-row:auto; grid-column:span 2; }
+    .galerie .vis:nth-child(n+4){ display:none; }
+    .tete-in{ align-items:flex-start; }
+    /* « Appeler la salle » se coupait en deux lignes dans une demi-largeur :
+       sur mobile chaque action prend sa propre ligne */
+    .tete-actions{ width:100%; }
+    .tete-actions .btn{ flex:1 1 100%; }
+    .semaine > li{ grid-template-columns:1fr; gap:6px; }
+  }
+
+/* ---------- equipements et avis : les deux blocs de fiche que masalledesport
+     a et que la notre n'avait pas ---------- */
+.equip{margin-top:18px; display:grid; gap:10px 16px;
+  grid-template-columns:repeat(3,minmax(0,1fr))}
+.equip li{display:flex; align-items:center; gap:10px; min-height:42px;
+  padding:9px 13px; font-size:14px; font-weight:600; color:var(--texte-2);
+  background:var(--surface-2); border:1px solid var(--bord); border-radius:var(--r-m)}
+.equip li svg{flex:none; color:var(--rouge-600)}
+@media (max-width:900px){ .equip{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:520px){ .equip{grid-template-columns:1fr} }
+
+.pan-tete{display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+  flex-wrap:wrap}
+.pan-note{display:inline-flex; align-items:center; gap:7px; font-size:14px;
+  color:var(--texte-3)}
+.pan-note svg{color:var(--rouge-500)}
+.pan-note b{font-size:15.5px; color:var(--texte)}
+
+.avis{margin-top:18px; display:grid; gap:0}
+.avis li{padding-block:18px; border-top:1px solid var(--bord)}
+.avis li:first-child{padding-top:4px; border-top:0}
+.avis-tete{display:flex; align-items:center; flex-wrap:wrap; gap:10px}
+.avis-nom{font-size:14.5px; font-weight:800; color:var(--texte)}
+.avis-etoiles{display:inline-flex; gap:1px; line-height:0}
+.avis-etoiles .pleine{color:var(--rouge-500)}
+.avis-etoiles .vide{color:var(--bord-3)}
+.avis-date{margin-left:auto; font-size:13px; color:var(--texte-4)}
+.avis-texte{margin-top:9px; font-size:14.5px; line-height:1.7; color:var(--texte-2)}
+@media (max-width:520px){ .avis-date{margin-left:0; width:100%} }
+
+  /* Bandeau de la fiche d'exemple. Il doit se lire avant le nom du club, donc
+     il est plein rouge : c'est le seul aplat de marque de la page. */
+  .bandeau-demo{margin:0; padding:11px var(--gutter); background:var(--rouge-600);
+    color:#FFFFFF; font-size:13.5px; font-weight:600; line-height:1.5;
+    text-align:center}
+  .bandeau-demo b{font-weight:800}
+  .bandeau-demo a{color:#FFFFFF; text-underline-offset:3px}

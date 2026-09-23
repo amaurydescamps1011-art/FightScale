@@ -1,0 +1,43 @@
+%%HEADER%%
+
+<main id="contenu">
+  <section class="section sous-bandeau">
+    <div class="wrap">
+      <div class="fil">
+        <p class="eyebrow">Mon Club Combat</p>
+        <h1 class="section-titre display">Back-office</h1>
+      </div>
+
+      <p class="form-etat" id="ad-charge">Chargement…</p>
+      <p class="form-erreur" id="ad-erreur" hidden role="alert"></p>
+
+      <div id="ad-corps" hidden>
+        <ul class="ouv-liste ad-chiffres">
+          <li><span class="ouv-nb display" id="ad-attente">0</span>
+              <span class="ouv-lb">Fiches à vérifier</span></li>
+          <li><span class="ouv-nb display" id="ad-publies">0</span>
+              <span class="ouv-lb">Clubs en ligne</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ad-liste-bloc" id="ad-liste-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">À vérifier</p>
+      <h2 class="section-titre display">Les fiches qui attendent</h2>
+      <p class="section-chapo" id="ad-vide" hidden>Rien à vérifier pour l'instant.</p>
+      <ul class="fiches" id="ad-fiches"></ul>
+    </div>
+  </section>
+
+  <section class="section ad-ligne-bloc" id="ad-ligne-bloc" hidden>
+    <div class="wrap">
+      <p class="eyebrow">En ligne</p>
+      <h2 class="section-titre display">Les clubs publiés</h2>
+      <ul class="fiches" id="ad-enligne"></ul>
+    </div>
+  </section>
+</main>
+
+%%FOOTER%%

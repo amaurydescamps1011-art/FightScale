@@ -1,0 +1,102 @@
+
+<a class="skip" href="#resultats">Aller aux résultats</a>
+
+<header class="barre-appli">
+  <div class="wrap barre-in">
+    <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
+      <svg viewBox="212 589 389 369" width="34" height="32" role="img" aria-label="Mon Club Combat">
+        <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+      </svg>
+      <svg class="brand-mot" viewBox="657 722 1883 107" width="172" height="9.8" aria-hidden="true">
+        <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
+      </svg>
+    </a>
+
+    <form class="champ-ville" id="form-ville" role="search">
+      %%PIN%%
+      <label class="skip" for="q-ville">Ville</label>
+      <input id="q-ville" name="ville" autocomplete="address-level2" placeholder="Paris, Lyon, Marseille…">
+      <button class="btn btn-rouge" type="submit">Rechercher</button>
+    </form>
+
+    <nav class="barre-nav" aria-label="Navigation principale">
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#disciplines" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Disciplines">
+          <div class="nav-col">
+            <p class="nav-col-t">Les plus pratiquées</p>
+            <ul>%%MENU_DISC_A%%</ul>
+          </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Autres disciplines</p>
+            <ul>%%MENU_DISC_B%%</ul>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#villes" aria-haspopup="true">Villes <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu nav-menu-1" aria-label="Villes">
+          <div class="nav-col"><ul class="nav-2col">%%MENU_VILLES%%</ul></div>
+        </div>
+      </div>
+      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+
+  <div class="filtres-bloc">
+    <div class="wrap">
+      <nav class="fil" id="fil" aria-label="Fil d'Ariane"></nav>
+      <h1 class="compte" id="compte">Chargement des salles…</h1>
+      <div class="rangee-filtres" id="filtres" role="group" aria-label="Filtrer les résultats"></div>
+      <button type="button" class="btn-carte" id="b-carte" aria-expanded="false" aria-controls="carte-zone">
+        %%PIN%%<span id="b-carte-txt">Afficher sur la carte</span>
+      </button>
+    </div>
+  </div>
+
+  <section class="carte-zone" id="carte-zone" aria-label="Carte des salles" hidden>
+    <div class="wrap">
+      <div class="carte-boite">
+        <canvas id="plan" aria-label="Plan de proximité des salles autour du centre-ville"></canvas>
+        <div class="carte-haut">
+          <span class="carte-etiq" id="carte-ville">Marseille</span>
+          <span class="carte-nord" aria-hidden="true">N</span>
+        </div>
+        <div class="carte-zoom">
+          <button type="button" id="z-plus" aria-label="Zoomer">+</button>
+          <button type="button" id="z-moins" aria-label="Dézoomer">&minus;</button>
+          <button type="button" id="z-france" class="z-large">Toute la France</button>
+        </div>
+        <div class="carte-bas">
+          <span class="echelle"><i id="echelle-barre"></i><span id="echelle-txt">1 km</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="colonne-liste" id="resultats" aria-label="Salles trouvées">
+    <div class="wrap">
+      <div class="liste" id="liste"></div>
+      <nav class="pagination" id="pagination" aria-label="Pages de résultats"></nav>
+    </div>
+  </section>
+
+  <section class="fond-seo" id="fond-seo" aria-labelledby="seo-titre">
+    <div class="wrap">
+      <h2 class="seo-titre display" id="seo-titre"></h2>
+      <div class="seo-texte" id="seo-texte"></div>
+
+      <h2 class="seo-sous" id="seo-disc-titre">Par discipline</h2>
+      <div class="seo-liens" id="seo-disc"></div>
+
+      <h2 class="seo-sous">Salles de sports de combat dans d'autres villes</h2>
+      <div class="seo-liens" id="seo-villes"></div>
+    </div>
+  </section>
+
+</main>
+
+%%FOOTER%%
