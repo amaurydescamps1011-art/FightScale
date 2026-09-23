@@ -709,11 +709,11 @@
         <div class="nav-menu" aria-label="Disciplines">
           <div class="nav-col">
             <p class="nav-col-t">Les plus pratiquées</p>
-            <ul><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li></ul>
+            <ul><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li></ul>
           </div>
           <div class="nav-col">
             <p class="nav-col-t">Autres disciplines</p>
-            <ul><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li></ul>
+            <ul><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li><li><a href="lutte.html">Lutte</a></li><li><a href="self-defense.html">Self-défense</a></li></ul>
           </div>
         </div>
       </div>
@@ -972,7 +972,7 @@
     </section>
     <section aria-labelledby="f-disc">
       <h2 id="f-disc">Salles par discipline</h2>
-      <ul class="f-liens"><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li></ul>
+      <ul class="f-liens"><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li><li><a href="lutte.html">Lutte</a></li><li><a href="self-defense.html">Self-défense</a></li></ul>
     </section>
   </div>
 
@@ -1176,8 +1176,12 @@ var VILLES_FR = [["Agen",44.2004,0.6333],["Aix-en-Provence",43.52,5.45],["Ajacci
 </script>
 <script>
   (function () {
+    /* Les dix du cahier des charges. La meme liste que build_annuaire.DISCIPLINES
+       et que le formulaire de referencement : une discipline qu'un club peut
+       cocher doit etre cherchable, sinon il n'est trouvable nulle part. */
     var DISCIPLINES = ['Toutes les disciplines', 'MMA', 'Boxe anglaise', 'Kickboxing',
-      'Muay Thaï', 'Jiu-jitsu brésilien', 'Grappling', 'Karaté', 'Judo'];
+      'Muay Thaï', 'Jiu-jitsu brésilien', 'Grappling', 'Karaté', 'Judo',
+      'Lutte', 'Self-défense'];
 
     var btn = document.getElementById('dd-btn');
     var panneau = document.getElementById('dd-panneau');

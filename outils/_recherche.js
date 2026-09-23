@@ -2,8 +2,10 @@
    Aucun fond de carte externe n'est chargeable ici, donc le plan est construit
    à partir des vraies coordonnées : distances et directions sont exactes. */
 
+/* Les dix du cahier des charges, et les memes que build_annuaire.DISCIPLINES :
+   un filtre qui n'existe pas ici rend introuvables les clubs qui l'ont coche. */
 var DISCIPLINES = ['MMA','Boxe anglaise','Kickboxing','Muay Thaï','Jiu-jitsu brésilien',
-                   'Grappling','Karaté','Judo'];
+                   'Grappling','Karaté','Judo','Lutte','Self-défense'];
 
 /* nom, initiales, ville, lat, lon, disciplines, note, avis, pro, horaires, ouvert aujourd'hui */
 

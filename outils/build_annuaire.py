@@ -77,13 +77,18 @@ def tableau(nom):
 
 SALLES = tableau('SALLES')
 
+# Le cahier des charges du 22/09/2026 en compte dix. Le formulaire de
+# referencement les proposait deja toutes les dix, mais l'annuaire n'en
+# connaissait que huit : un club qui cochait « Lutte » n'etait trouvable nulle
+# part. Les deux listes doivent rester identiques.
 DISCIPLINES = ['MMA', 'Boxe anglaise', 'Kickboxing', 'Muay Thaï', 'Jiu-jitsu brésilien',
-               'Grappling', 'Karaté', 'Judo']
+               'Grappling', 'Karaté', 'Judo', 'Lutte', 'Self-défense']
 # l'article et le nom tels qu'on les ecrit dans une phrase : « le judo », « de
 # boxe anglaise », mais « le MMA » et « de Muay Thai » gardent leur casse.
 ART = {'MMA': 'le MMA', 'Boxe anglaise': 'la boxe anglaise', 'Kickboxing': 'le kickboxing',
        'Muay Thaï': 'le Muay Thaï', 'Jiu-jitsu brésilien': 'le jiu-jitsu brésilien',
-       'Grappling': 'le grappling', 'Karaté': 'le karaté', 'Judo': 'le judo'}
+       'Grappling': 'le grappling', 'Karaté': 'le karaté', 'Judo': 'le judo',
+       'Lutte': 'la lutte', 'Self-défense': 'la self-défense'}
 NOM = {d: ART[d].split(' ', 1)[1] for d in ART}
 
 def ardoise(t):
@@ -115,12 +120,13 @@ def reseau(html):
         lis((fichier_disc(d), d) for d in DISCIPLINES))
     html = html.replace('%%MENU_VILLES%%',
         lis((fichier_ville(v), v) for v in VILLES))
-    # les quatre premieres disciplines dans une colonne, les quatre autres dans
-    # la seconde, comme les deux groupes titres de masalledesport
+    # deux colonnes de meme hauteur, comme les deux groupes titres de
+    # masalledesport ; la coupe suit la liste, pas un nombre fixe
+    coupe = (len(DISCIPLINES) + 1) // 2
     html = html.replace('%%MENU_DISC_A%%',
-        lis((fichier_disc(d), d) for d in DISCIPLINES[:4]))
+        lis((fichier_disc(d), d) for d in DISCIPLINES[:coupe]))
     html = html.replace('%%MENU_DISC_B%%',
-        lis((fichier_disc(d), d) for d in DISCIPLINES[4:]))
+        lis((fichier_disc(d), d) for d in DISCIPLINES[coupe:]))
     for reste in ('%%FOOTER_', '%%MENU_'):
         assert reste not in html, reste
     return html

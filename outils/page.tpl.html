@@ -883,8 +883,12 @@
 <script src="carte.js"></script>
 <script>
   (function () {
+    /* Les dix du cahier des charges. La meme liste que build_annuaire.DISCIPLINES
+       et que le formulaire de referencement : une discipline qu'un club peut
+       cocher doit etre cherchable, sinon il n'est trouvable nulle part. */
     var DISCIPLINES = ['Toutes les disciplines', 'MMA', 'Boxe anglaise', 'Kickboxing',
-      'Muay Thaï', 'Jiu-jitsu brésilien', 'Grappling', 'Karaté', 'Judo'];
+      'Muay Thaï', 'Jiu-jitsu brésilien', 'Grappling', 'Karaté', 'Judo',
+      'Lutte', 'Self-défense'];
 
     var btn = document.getElementById('dd-btn');
     var panneau = document.getElementById('dd-panneau');

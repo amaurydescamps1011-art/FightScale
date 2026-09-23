@@ -61,7 +61,8 @@
   var ART = { 'MMA': 'le MMA', 'Boxe anglaise': 'la boxe anglaise',
     'Kickboxing': 'le kickboxing', 'Muay Thaï': 'le Muay Thaï',
     'Jiu-jitsu brésilien': 'le jiu-jitsu brésilien', 'Grappling': 'le grappling',
-    'Karaté': 'le karaté', 'Judo': 'le judo' };
+    'Karaté': 'le karaté', 'Judo': 'le judo', 'Lutte': 'la lutte',
+    'Self-défense': 'la self-défense' };
 
   function phrase(n){
     var pluriel = n > 1 ? 's' : '';
