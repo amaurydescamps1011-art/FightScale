@@ -9,9 +9,132 @@
    rejouerait cet appel n'obtient qu'une page de paiement de plus.
 
    Cette fonction est appelee avec le jeton du gerant : `verify_jwt` reste a
-   true dans config.toml. */
+   true dans config.toml (dans le tableau de bord : « Enforce JWT
+   verification » laisse allume).
 
-import { CORS, json, env, stripe, base, clubDuGerant, gerantDuJeton } from '../_partage.ts';
+   Un seul fichier, sans import : il se deploie en le collant tel quel dans
+   l'editeur du tableau de bord Supabase. Les petites fonctions du haut sont
+   donc recopiees dans chacune des trois fonctions de paiement -- qui en
+   corrige une corrige les trois. */
+
+/* ------------------------------------------------------------ le commun */
+
+/* Aucune dependance : ni SDK Stripe, ni supabase-js. Le reste du projet est un
+   site sans build ni paquet, et une fonction qui tire une bibliotheque depuis
+   un CDN a chaque deploiement casse le jour ou la version epinglee disparait.
+   L'API Stripe est du POST en formulaire et du JSON en retour, PostgREST est du
+   HTTP : il n'y a rien a abstraire. */
+
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
+function json(corps: unknown, code = 200): Response {
+  return new Response(JSON.stringify(corps),
+    { status: code, headers: { ...CORS, 'Content-Type': 'application/json' } });
+}
+
+/** Une variable d'environnement obligatoire, ou une erreur qui la nomme. */
+function env(nom: string): string {
+  const v = Deno.env.get(nom);
+  if (!v) throw new Error('variable d\'environnement absente : ' + nom);
+  return v;
+}
+
+/* L'API Stripe prend des formulaires, avec les objets imbriques entre crochets :
+   `line_items[0][price]=price_123`. On aplatit donc l'objet plutot que d'ecrire
+   ces cles a la main, ou la moindre faute de frappe passe inapercue. */
+function aplatit(o: unknown, prefixe = '', sortie = new URLSearchParams()): URLSearchParams {
+  if (o === null || o === undefined) return sortie;
+  if (Array.isArray(o)) {
+    o.forEach((v, i) => aplatit(v, prefixe + '[' + i + ']', sortie));
+  } else if (typeof o === 'object') {
+    for (const [k, v] of Object.entries(o as Record<string, unknown>)) {
+      aplatit(v, prefixe ? prefixe + '[' + k + ']' : k, sortie);
+    }
+  } else {
+    sortie.append(prefixe, String(o));
+  }
+  return sortie;
+}
+
+async function stripe(chemin: string, corps?: unknown): Promise<any> {
+  const r = await fetch('https://api.stripe.com/v1/' + chemin, {
+    method: corps ? 'POST' : 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + env('STRIPE_CLE'),
+      'Content-Type': 'application/x-www-form-urlencoded',
+      /* Epinglee : sans ca, Stripe sert la version du compte, qui change le
+         jour ou quelqu'un clique « mettre a jour » dans le tableau de bord. */
+      'Stripe-Version': '2024-06-20',
+    },
+    body: corps ? aplatit(corps).toString() : undefined,
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error('Stripe ' + r.status + ' : ' + (d?.error?.message || chemin));
+  return d;
+}
+
+/* Ecrire avec la cle service_role, c'est passer a cote du RLS. Elle ne vit que
+   dans les secrets de la fonction (Supabase la fournit d'office) et ne doit
+   jamais partir vers une page. */
+async function base(chemin: string, init: RequestInit = {}): Promise<any> {
+  const cle = env('SUPABASE_SERVICE_ROLE_KEY');
+  const r = await fetch(env('SUPABASE_URL') + '/rest/v1/' + chemin, {
+    ...init,
+    headers: {
+      'apikey': cle,
+      'Authorization': 'Bearer ' + cle,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation,resolution=merge-duplicates',
+      ...(init.headers || {}),
+    },
+  });
+  const t = await r.text();
+  if (!r.ok) throw new Error('base ' + r.status + ' : ' + t.slice(0, 300));
+  return t ? JSON.parse(t) : null;
+}
+
+/* ------------------------------------------------------------- le club */
+
+/** L'identifiant du club que ce compte gere, ou null. */
+async function clubDuGerant(uid: string): Promise<string | null> {
+  const l = await base('club_membre?select=club_id&membre_id=eq.' + encodeURIComponent(uid) + '&limit=1');
+  return l?.[0]?.club_id ?? null;
+}
+
+/** Le `sub` du jeton. La plateforme a deja verifie la signature (verify_jwt),
+ *  donc on se contente de lire la charge utile -- la verifier une seconde fois
+ *  demanderait le secret JWT du projet dans les secrets de la fonction.
+ *  Avec les cles `sb_publishable_…`, supabase-js envoie le jeton de session du
+ *  gerant connecte : c'est bien un JWT, qui porte son `sub`. Un visiteur non
+ *  connecte n'envoie que la cle publiable, que la plateforme refuse avant
+ *  meme d'arriver ici. */
+function gerantDuJeton(req: Request): string | null {
+  const h = req.headers.get('Authorization') || '';
+  const jwt = h.replace(/^Bearer\s+/i, '');
+  const part = jwt.split('.')[1];
+  if (!part) return null;
+  try {
+    const p = JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
+    return p.sub || null;
+  } catch { return null; }
+}
+
+/* ------------------------------------------------------------ l'appel */
+
+/* Le Pro coute 39 € par mois. Le prix est ecrit ici, et pas lu de la page :
+   personne ne choisit son tarif depuis la console. Si un prix a ete cree dans
+   Stripe (`price_…`) et pose dans le secret STRIPE_PRIX, c'est lui qui sert ;
+   sinon Stripe fabrique le prix a la volee a partir de ces lignes. */
+const PRO = {
+  currency: 'eur',
+  unit_amount: 3900,
+  recurring: { interval: 'month' },
+  product_data: { name: 'Mon Club Combat Pro' },
+};
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
@@ -24,7 +147,7 @@ Deno.serve(async (req) => {
     const clubId = await clubDuGerant(uid);
     if (!clubId) return json({ erreur: 'aucun club rattache a ce compte' }, 403);
 
-    const site = env('SITE_URL').replace(/\/+$/, '');
+    const site = (Deno.env.get('SITE_URL') || 'https://monclubcombat.fr').replace(/\/+$/, '');
     const retour = site + '/espace-club.html';
 
     /* L'abonnement deja connu, s'il existe : c'est lui qui porte le client
@@ -33,6 +156,8 @@ Deno.serve(async (req) => {
 
     if (action === 'gerer') {
       if (!abo?.stripe_client) return json({ erreur: 'aucun abonnement a gerer' }, 404);
+      /* Le portail doit avoir ete active une fois dans Stripe (Facturation >
+         Portail client), sinon Stripe refuse ici -- voir LISEZ-MOI.md. */
       const portail = await stripe('billing_portal/sessions', {
         customer: abo.stripe_client,
         return_url: retour,
@@ -50,7 +175,8 @@ Deno.serve(async (req) => {
     /* Un client Stripe par club, reutilise ensuite. `metadata.club_id` est le
        fil qui relie le paiement a la fiche : le webhook n'a que ca pour savoir
        qui crediter, donc il est pose sur le client, sur la session et sur
-       l'abonnement. */
+       l'abonnement. `type: 'pro'` le distingue des packs de l'agence, qui
+       passent par le meme webhook et ne touchent jamais a `club.offre`. */
     let client = abo?.stripe_client;
     if (!client) {
       const c = await stripe('customers', {
@@ -65,18 +191,21 @@ Deno.serve(async (req) => {
       });
     }
 
+    const prix = Deno.env.get('STRIPE_PRIX');
+    const meta = { club_id: clubId, type: 'pro' };
+
     const session = await stripe('checkout/sessions', {
       mode: 'subscription',
       customer: client,
-      line_items: [{ price: env('STRIPE_PRIX'), quantity: 1 }],
+      line_items: [prix ? { price: prix, quantity: 1 } : { price_data: PRO, quantity: 1 }],
       /* Stripe renvoie le gerant sur son espace : il y verra le Pro actif des
          que le webhook sera passe, ce qui prend une seconde ou deux. */
       success_url: retour + '?abonnement=ok',
       cancel_url: retour + '?abonnement=annule',
       locale: 'fr',
       allow_promotion_codes: true,
-      subscription_data: { metadata: { club_id: clubId } },
-      metadata: { club_id: clubId },
+      subscription_data: { metadata: meta },
+      metadata: meta,
     });
 
     return json({ url: session.url });

@@ -277,6 +277,18 @@ window.supabase = {
         sauve();
         return Promise.resolve({ data: id, error: null });
       },
+      /* Les fonctions Stripe (paiement, achat-pack). Fermees par defaut, comme
+         tant qu'Amaury ne les a pas deployees : l'appel rend un 404 et la page
+         retombe sur la demande a la main. `__FAUX__.caisse = true` les ouvre ;
+         elles rendent alors une adresse de ce site, qui tient lieu de Stripe. */
+      functions: { invoke: function (nom, o){
+        S.appels = (S.appels || []).concat([{ fonction: nom, corps: (o && o.body) || {} }]);
+        sauve();
+        if (!S.caisse) return Promise.resolve({ data: null, error: {
+          name: 'FunctionsHttpError', message: 'Not found',
+          context: { status: 404, json: function (){ return Promise.resolve({}); } } } });
+        return Promise.resolve({ data: { url: location.origin + '/index.html?stripe=' + nom }, error: null });
+      } },
       storage: { from: function (){ return { upload: function (chemin){
         S.fichiers.push(chemin); sauve();
         return Promise.resolve({ data: { path: chemin }, error: null });

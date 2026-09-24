@@ -487,6 +487,119 @@ drop trigger if exists acquisition_previent on contact_acquisition;
 create trigger acquisition_previent after insert on contact_acquisition
   for each row execute function previent_l_equipe();
 
+-- ------------------------------------------ les packs achetes en ligne
+-- La page acquisition.html vend aussi les packs directement : le club choisit
+-- un pack et une duree, et paie par Stripe. C'est la fonction `achat-pack` qui
+-- ecrit la ligne (`en_attente`), avec le prix qu'elle calcule elle-meme, puis
+-- le webhook `paiement-stripe` qui la fait passer `payee` quand l'argent est la.
+-- Les deux ecrivent avec la cle service_role, qui passe a cote du RLS : depuis
+-- le site, personne n'ecrit ici, et seule l'equipe lit.
+create table if not exists commande_pack (
+  id                uuid primary key default gen_random_uuid(),
+  cree_le           timestamptz not null default now(),
+  pack              text not null check (pack in ('start', 'grow', 'boost', 'scale', 'pro', 'custom')),
+  -- l'engagement en mois : 0 (sans), 3 (-15 %) ou 6 (-20 %)
+  duree             integer not null check (duree in (0, 3, 6)),
+  -- ce que Stripe preleve chaque mois, remise comprise, hors taxes
+  montant_centimes  integer not null check (montant_centimes > 0),
+  club              text not null check (length(club) between 1 and 200),
+  ville             text not null check (length(ville) between 1 and 120),
+  nom               text not null check (length(nom) between 1 and 160),
+  mail              text not null check (mail like '%_@_%' and length(mail) <= 254),
+  tel               text check (length(tel) <= 40),
+  statut            text not null default 'en_attente'
+                    check (statut in ('en_attente', 'payee', 'impayee', 'resiliee')),
+  -- le premier paiement ; pose par la base, voir commande_pack_payee_le()
+  payee_le          timestamptz,
+  -- les identifiants Stripe, pour retrouver la commande dans le tableau de bord
+  stripe_session    text unique,
+  stripe_client     text,
+  stripe_abonnement text unique
+);
+alter table commande_pack enable row level security;
+
+-- Supabase donne par defaut tous les droits a anon et authenticated sur une
+-- table neuve. On ne laisse que la lecture, et a l'equipe seulement par la
+-- politique ci-dessous : aucune politique d'ecriture, et plus meme le droit.
+revoke all on commande_pack from public, anon, authenticated;
+grant select on commande_pack to authenticated;
+
+drop policy if exists commande_equipe on commande_pack;
+create policy commande_equipe on commande_pack
+  for select to authenticated using (est_admin());
+
+-- La date du premier paiement, posee une fois. Stripe rejoue ses evenements,
+-- et un club qui repasse de `impayee` a `payee` ne doit pas changer de date.
+create or replace function commande_pack_payee_le() returns trigger
+  language plpgsql as
+$$
+begin
+  if new.statut = 'payee' and new.payee_le is null then
+    new.payee_le := now();
+  end if;
+  return new;
+end
+$$;
+drop trigger if exists commande_pack_payee_le on commande_pack;
+create trigger commande_pack_payee_le before insert or update on commande_pack
+  for each row execute function commande_pack_payee_le();
+
+-- L'equipe est prevenue sur contact@ des qu'un pack est paye : c'est le signal
+-- pour lancer la campagne du club. Un e-mail rate ne bloque jamais le webhook.
+create or replace function previent_pack_paye() returns trigger
+  language plpgsql security definer set search_path = public, pg_temp as
+$$
+declare
+  offre   text := initcap(new.pack);
+  seances text := case new.pack when 'start' then '20' when 'grow' then '40'
+                    when 'boost' then '60' when 'scale' then '100'
+                    when 'pro' then '150' when 'custom' then '200' end;
+  prix    text := (new.montant_centimes / 100)::text || ','
+                  || lpad((new.montant_centimes % 100)::text, 2, '0') || ' € HT / mois';
+  engage  text := case new.duree when 0 then 'Sans engagement'
+                    else 'Engagement ' || new.duree || ' mois' end;
+begin
+  begin
+    perform envoie_mail(
+      jsonb_build_array('contact@monclubcombat.fr'),
+      'Pack ' || offre || ' payé : ' || new.club,
+      cadre_mail(
+        'Un pack vient d''être payé',
+        html_sur(new.club) || ', à ' || html_sur(new.ville) || ', a payé le pack '
+          || html_sur(offre) || ' (' || seances || ' séances d''essai par mois).',
+        '<table style="border-collapse:collapse;font-size:15px;line-height:1.5">'
+          || ligne_mail('Club', '<b>' || html_sur(new.club) || '</b>')
+          || ligne_mail('Ville', html_sur(new.ville))
+          || ligne_mail('Contact', html_sur(new.nom))
+          || ligne_mail('E-mail', '<a href="mailto:' || html_sur(new.mail) || '" style="color:#BB0F22">' || html_sur(new.mail) || '</a>')
+          || ligne_mail('Téléphone', html_sur(new.tel))
+          || ligne_mail('Pack', html_sur(offre) || ', ' || seances || ' séances / mois')
+          || ligne_mail('Durée', engage)
+          || ligne_mail('Montant', prix)
+          || ligne_mail('Stripe', html_sur(new.stripe_abonnement))
+          || '</table>',
+        'Répondez à cet e-mail pour écrire au club.'),
+      'Un pack vient d''être payé' || E'\n\n'
+        || 'Club : ' || new.club || E'\n' || 'Ville : ' || new.ville || E'\n'
+        || 'Contact : ' || new.nom || E'\n' || 'E-mail : ' || new.mail || E'\n'
+        || coalesce('Téléphone : ' || nullif(new.tel, '') || E'\n', '')
+        || 'Pack : ' || offre || ', ' || seances || E' séances / mois\n'
+        || 'Durée : ' || engage || E'\n'
+        || 'Montant : ' || prix || E'\n'
+        || coalesce('Stripe : ' || new.stripe_abonnement || E'\n', ''),
+      new.mail);
+  exception when others then null;
+  end;
+  return new;
+end
+$$;
+revoke all on function previent_pack_paye() from public, anon, authenticated;
+revoke all on function commande_pack_payee_le() from public, anon, authenticated;
+drop trigger if exists commande_pack_previent on commande_pack;
+create trigger commande_pack_previent after update of statut on commande_pack
+  for each row when (new.statut = 'payee' and old.statut is distinct from 'payee')
+  execute function previent_pack_paye();
+
 -- Un envoi quotidien aux clubs (« prospects a rappeler aujourd'hui ») a existe
 -- quelques minutes le 24/09/2026. Amaury n'en veut pas : des e-mails pour rien.
 -- Les relances qu'il veut vont au pratiquant, avant sa seance. On retire la

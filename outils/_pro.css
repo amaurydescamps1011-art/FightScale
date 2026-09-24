@@ -20,10 +20,37 @@
     text-transform:uppercase; color:var(--texte-4)}
   .pro-salle{margin:0 auto 0 8px; min-width:0; font-size:15px; font-weight:800;
     color:var(--texte); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .pro-sortir{flex-shrink:0; font-size:13.5px; font-weight:700; color:var(--texte-2);
-    text-decoration:none; border-bottom:1px solid var(--bord-3); padding-bottom:1px}
-  .pro-sortir:hover{color:var(--rouge-700); border-color:currentColor}
-  .pro-sortir[hidden]{display:none}
+  /* le compte, en haut a droite */
+  .pro-cpt{position:relative; flex-shrink:0}
+  .pro-cpt-btn{display:flex; align-items:center; gap:9px; min-height:40px; padding:4px 10px 4px 4px;
+    border:1px solid var(--bord); border-radius:999px; background:var(--surface); cursor:pointer;
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700; color:var(--texte)}
+  .pro-cpt-btn:hover, .pro-cpt-btn[aria-expanded="true"]{border-color:var(--bord-3); background:var(--surface-2)}
+  .pro-cpt-rond{display:grid; place-items:center; width:32px; height:32px; border-radius:50%;
+    background:var(--texte); color:#fff; font-size:12.5px; font-weight:800; letter-spacing:.02em}
+  .pro-cpt-rond svg{width:17px; height:17px}
+  .pro-cpt-nom{max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pro-cpt-chev{color:var(--texte-4); transition:rotate .15s ease}
+  .pro-cpt-btn[aria-expanded="true"] .pro-cpt-chev{rotate:180deg}
+  .pro-cpt-menu{position:absolute; right:0; top:calc(100% + 8px); z-index:50; width:260px; padding:6px;
+    border:1px solid var(--bord); border-radius:var(--r-l); background:var(--surface);
+    box-shadow:0 12px 36px rgba(22,22,15,.14)}
+  .pro-cpt-menu[hidden]{display:none}
+  .pro-cpt-qui{margin:0 0 6px; padding:10px 10px 12px; border-bottom:1px solid var(--bord)}
+  .pro-cpt-qui b{display:block; font-size:14px; color:var(--texte); overflow:hidden; text-overflow:ellipsis}
+  .pro-cpt-qui span{display:block; margin-top:2px; font-size:12.5px; color:var(--texte-4);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pro-cpt-menu a, .pro-cpt-menu .pro-quitter{display:flex; align-items:center; gap:10px; width:100%;
+    padding:9px 10px; border:0; border-radius:var(--r-m); background:none; cursor:pointer; text-align:left;
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700; color:var(--texte-2);
+    text-decoration:none}
+  .pro-cpt-menu a[hidden]{display:none}
+  .pro-cpt-menu svg{width:17px; height:17px; flex-shrink:0; opacity:.7}
+  .pro-cpt-menu a:hover{background:var(--surface-2); color:var(--texte)}
+  .pro-cpt-menu a[aria-current="page"]{color:var(--rouge-700)}
+  .pro-cpt-menu .pro-quitter{margin-top:6px; border-top:1px solid var(--bord); border-radius:0 0 var(--r-m) var(--r-m);
+    padding-top:12px}
+  .pro-cpt-menu .pro-quitter:hover{color:var(--rouge-700)}
 
   /* Le rail tient toute la hauteur meme quand il a peu de liens : sans cela son
      fond blanc s'arretait au milieu de la page et la colonne de gauche se
@@ -63,14 +90,6 @@
   .pro-palier-t{margin:0; font-size:13px; font-weight:800; color:var(--texte)}
   .pro-palier-m{margin:5px 0 11px; font-size:12.5px; line-height:1.5; color:var(--texte-4)}
   .pro-palier .btn{width:100%; justify-content:center}
-
-  .pro-quitter{display:flex; align-items:center; gap:11px; width:100%;
-    padding:10px 12px; border:0; border-radius:var(--r-m); background:none;
-    cursor:pointer; text-align:left;
-    font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:700;
-    color:var(--texte-4)}
-  .pro-quitter svg{width:18px; height:18px; opacity:.75}
-  .pro-quitter:hover{background:var(--surface-2); color:var(--rouge-700)}
 
   .pro-vue{grid-row:2; min-width:0}
   /* Les sections de ces pages viennent du site public, ou elles sont centrees
@@ -112,11 +131,9 @@
     .pro-pastille{background:var(--texte)}
     .pro-liens a[aria-current="page"] .pro-pastille{background:#fff; color:var(--rouge-700)}
     /* au telephone le rappel du palier quitte le rail -- l'espace club le porte
-       deja en grand. La deconnexion reste, en derniere pastille : c'est le seul
-       endroit d'ou elle est atteignable. */
+       deja en grand. */
     .pro-palier{display:none}
-    .pro-quitter{width:auto; flex-shrink:0; padding:8px 13px; border-radius:999px;
-      background:var(--surface-2); white-space:nowrap}
-    .pro-quitter span{display:none}
+    .pro-cpt-nom, .pro-cpt-chev{display:none}
+    .pro-cpt-btn{padding:3px}
     .pro-pied{grid-column:1}
   }

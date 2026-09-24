@@ -116,6 +116,9 @@ ICONES = {
     # le back-office : un trousseau de reglages
     'I_ADMIN': icone('<path d="M4 7.2h10M18 7.2h2M4 16.8h2M10 16.8h10"/>'
                      '<circle cx="16" cy="7.2" r="2.2"/><circle cx="8" cy="16.8" r="2.2"/>'),
+    # retour au site public : une maison
+    'I_SITE': icone('<path d="M4 10.6 12 4l8 6.6V19a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 19Z"/>'
+                    '<path d="M9.6 20.6v-5.4h4.8v5.4"/>'),
     # sortir : une porte avec la fleche dehors
     'I_SORTIE': icone('<path d="M9.6 20.4H5.8A1.8 1.8 0 0 1 4 18.6V5.4a1.8 1.8 0 0 1 1.8-1.8h3.8"/>'
                       '<path d="M15.2 16.4 19.6 12l-4.4-4.4"/><path d="M19.6 12H9.6"/>'),

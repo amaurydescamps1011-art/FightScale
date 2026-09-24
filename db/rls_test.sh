@@ -300,5 +300,63 @@ ok "un visiteur ne se marque pas deja traite" \
 ok "une offre inventee est refusee" \
    "$(q "set role anon; insert into contact_acquisition (club,ville,nom,mail,pack) values ('X','Y','Z','z@ex.fr','gratuit');" | cut -c1-5)" "ERROR"
 
+# Les packs achetes en ligne (24/09/2026). La fonction achat-pack et le webhook
+# ecrivent avec la cle service_role (ici postgres, hors RLS) ; depuis le site,
+# personne n'ecrit, et seule l'equipe lit.
+q "delete from net.envois; insert into commande_pack (id,pack,duree,montant_centimes,club,ville,nom,mail,tel,stripe_session) values ('eeeeeeee-0000-0000-0000-000000000001','grow',3,51000,'<b>Iron</b> Gym','Lyon','Sam','sam@ex.fr','06 00 00 00 00','cs_test_1');" >/dev/null
+ok "une commande nait en attente, sans mail" \
+   "$(q "select statut || ' ' || (payee_le is null) || ' ' || (select count(*) from net.envois) from commande_pack;")" "en_attente true 0 "
+ok "le visiteur ne lit pas les commandes" \
+   "$(q "set role anon; select count(*) from commande_pack;" | cut -c1-5)" "ERROR"
+ok "un gerant non plus" \
+   "$(q "$(cnx $A) select count(*) from commande_pack;")" "0 "
+ok "l'equipe les lit" \
+   "$(q "$(cnx $AD) select pack || ' ' || montant_centimes from commande_pack;")" "grow 51000 "
+ok "le visiteur ne passe pas de commande a la main" \
+   "$(q "set role anon; insert into commande_pack (pack,duree,montant_centimes,club,ville,nom,mail) values ('grow',0,1,'X','Y','Z','z@ex.fr');" | cut -c1-5)" "ERROR"
+ok "un compte connecte non plus" \
+   "$(q "$(cnx $A) insert into commande_pack (pack,duree,montant_centimes,club,ville,nom,mail) values ('grow',0,1,'X','Y','Z','z@ex.fr');" | cut -c1-5)" "ERROR"
+ok "personne ne se declare paye depuis le site" \
+   "$(q "set role anon; update commande_pack set statut='payee';" | cut -c1-5)" "ERROR"
+ok "ni un gerant, ni meme l'equipe" \
+   "$(q "$(cnx $AD) update commande_pack set statut='payee';" | cut -c1-5)" "ERROR"
+q "update commande_pack set statut='payee', stripe_client='cus_P', stripe_abonnement='sub_P' where id='eeeeeeee-0000-0000-0000-000000000001';" >/dev/null
+ok "payee par le webhook, la date du paiement se pose" \
+   "$(q "select statut || ' ' || (payee_le is not null) from commande_pack;")" "payee true "
+ok "et l'equipe recoit un e-mail, un seul" \
+   "$(q "select count(*) from net.envois;")" "1 "
+ok "sur contact@, avec le club en reponse" \
+   "$(q "select (body->'to')::text || ' ' || (body->>'reply_to') from net.envois;")" "[\"contact@monclubcombat.fr\"] sam@ex.fr "
+ok "le sujet dit le pack et le club" \
+   "$(q "select body->>'subject' from net.envois;")" "Pack Grow payé : <b>Iron</b> Gym "
+ok "le nom du club est echappe dans le HTML" \
+   "$(q "select (body->>'html') like '%&lt;b&gt;Iron%' and (body->>'html') not like '%<b>Iron%' from net.envois;")" "t "
+ok "le montant se lit en euros" \
+   "$(q "select (body->>'text') like '%510,00 € HT / mois%' from net.envois;")" "t "
+# Stripe rejoue ses evenements : un deuxieme « payee » n'envoie rien de plus, et
+# ne deplace pas la date du premier paiement
+AVANT=$(q "select payee_le from commande_pack;")
+q "update commande_pack set statut='payee', stripe_client='cus_P';" >/dev/null
+ok "un evenement rejoue ne renvoie pas de mail" \
+   "$(q "select count(*) from net.envois;")" "1 "
+ok "un impaye se note" \
+   "$(q "with u as (update commande_pack set statut='impayee' returning statut) select * from u;")" "impayee "
+ok "un statut invente est refuse" \
+   "$(q "update commande_pack set statut='offerte';" | cut -c1-5)" "ERROR"
+ok "un pack invente aussi" \
+   "$(q "insert into commande_pack (pack,duree,montant_centimes,club,ville,nom,mail) values ('gratuit',0,100,'X','Y','Z','z@ex.fr');" | cut -c1-5)" "ERROR"
+ok "et une duree hors grille" \
+   "$(q "insert into commande_pack (pack,duree,montant_centimes,club,ville,nom,mail) values ('grow',12,100,'X','Y','Z','z@ex.fr');" | cut -c1-5)" "ERROR"
+ok "ou une adresse sans arobase" \
+   "$(q "insert into commande_pack (pack,duree,montant_centimes,club,ville,nom,mail) values ('grow',0,100,'X','Y','Z','pas-une-adresse');" | cut -c1-5)" "ERROR"
+# un Resend en panne ne doit jamais faire echouer le webhook
+q "create or replace function net.http_post(url text, body jsonb default '{}', params jsonb default '{}', headers jsonb default '{}', timeout_milliseconds int default 5000) returns bigint language plpgsql as \$\$ begin raise exception 'panne'; end \$\$;" >/dev/null
+ok "si l'envoi echoue, la commande passe payee quand meme" \
+   "$(q "with u as (update commande_pack set statut='payee' returning statut) select * from u;")" "payee "
+ok "et le premier paiement garde sa date" \
+   "$(q "select payee_le from commande_pack;")" "$AVANT"
+ok "personne n'appelle le mail des packs a la main" \
+   "$(q "set role anon; select previent_pack_paye();" | cut -c1-5)" "ERROR"
+
 echo
 [ $RATES -eq 0 ] && echo "tout passe" || { echo "$RATES echec(s)"; exit 1; }

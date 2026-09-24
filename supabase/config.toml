@@ -1,5 +1,6 @@
-# Les deux fonctions de paiement. Rien n'est deploye a ce jour (23/09/2026) :
-# il n'y a pas encore de compte Stripe, voir LISEZ-MOI.md.
+# Les trois fonctions de paiement. Rien n'est deploye a ce jour (24/09/2026) :
+# voir LISEZ-MOI.md, qui dit comment les poser depuis le tableau de bord.
+# Dans le tableau de bord, `verify_jwt` s'appelle « Enforce JWT verification ».
 
 [functions.paiement]
 # appelee par le gerant depuis son espace : son jeton Supabase fait foi
@@ -8,4 +9,13 @@ verify_jwt = true
 [functions.paiement-stripe]
 # Stripe n'a pas de jeton Supabase. C'est la signature Stripe, verifiee dans
 # la fonction, qui tient lieu de preuve -- d'ou ce false, qui n'est pas un oubli.
+verify_jwt = false
+
+[functions.achat-pack]
+# appelee par un visiteur anonyme depuis acquisition.html : il n'a pas de
+# compte, donc pas de jeton, et la cle publiable `sb_publishable_…` n'est pas
+# un JWT -- avec true, la plateforme le refuserait avant la fonction. Ce false
+# ne donne rien a personne : le prix est calcule dans la fonction, jamais lu de
+# la page, et tout ce qu'elle rend est une page de paiement Stripe. La commande
+# ne passe payee que par le webhook signe.
 verify_jwt = false

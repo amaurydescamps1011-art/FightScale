@@ -23,7 +23,27 @@
       <span class="pro-marque-mot">Espace pro</span>
     </a>
     <p class="pro-salle" id="pro-salle"></p>
-    <a class="pro-sortir" href="index.html" id="pro-voir" hidden>Voir ma fiche en ligne</a>
+
+    <!-- Le compte, en haut a droite, comme dans tout logiciel (Amaury,
+         24/09/2026). Il porte « Mon compte », la fiche en ligne, le retour au
+         site et la deconnexion : rien de tout ca n'est un espace de travail, donc
+         rien de tout ca n'a sa place dans le rail. -->
+    <div class="pro-cpt">
+      <button type="button" class="pro-cpt-btn" id="pro-cpt-btn" aria-expanded="false"
+        aria-controls="pro-cpt-menu" aria-haspopup="true">
+        <span class="pro-cpt-rond" id="pro-cpt-rond" aria-hidden="true">%%I_COMPTE%%</span>
+        <span class="pro-cpt-nom" id="pro-cpt-nom">Mon compte</span>
+        <svg class="pro-cpt-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="pro-cpt-menu" id="pro-cpt-menu" hidden>
+        <p class="pro-cpt-qui"><b id="pro-cpt-qui"></b><span id="pro-cpt-mail"></span></p>
+        <a href="mon-compte.html" data-page="mon-compte">%%I_COMPTE%%<span>Mon compte</span></a>
+        <a href="index.html" id="pro-voir" target="_blank" rel="noopener" hidden>%%I_FICHE%%<span>Voir ma fiche en ligne</span></a>
+        <a href="index.html">%%I_SITE%%<span>Retour au site</span></a>
+        <button type="button" class="pro-quitter" id="pro-quitter">%%I_SORTIE%%<span>Se déconnecter</span></button>
+      </div>
+    </div>
   </header>
 
   <nav class="pro-rail" id="pro-rail" aria-label="Votre espace">
@@ -31,7 +51,6 @@
       <li><a href="espace-club.html" data-page="espace-club">%%I_BORD%%<span>Espace club</span>
         <b class="pro-pastille" id="pro-pastille" hidden></b></a></li>
       <li><a href="referencer.html" data-page="referencer">%%I_FICHE%%<span>Ma fiche</span></a></li>
-      <li><a href="mon-compte.html" data-page="mon-compte">%%I_COMPTE%%<span>Mon compte</span></a></li>
     </ul>
 
     <!-- Le back-office n'appartient pas au gerant : c'est l'outil de l'equipe Mon
@@ -53,9 +72,6 @@
       <a class="btn btn-rouge btn-mini" href="espace-club.html#esp-verrou-bloc"
          id="pro-palier-a">Passer au Pro</a>
     </div>
-
-    <button type="button" class="pro-quitter" id="pro-quitter"
-      aria-label="Se déconnecter">%%I_SORTIE%%<span>Se déconnecter</span></button>
   </nav>
 
   <div class="pro-vue">

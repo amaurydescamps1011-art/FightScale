@@ -692,6 +692,9 @@
   @media (max-width:560px){ .esp-chiffres{grid-template-columns:repeat(2,minmax(0,1fr))} }
   .esp-mot{margin-top:clamp(22px,2.4vw,30px); max-width:64ch;
     font-size:15.5px; line-height:1.68; color:var(--texte-2)}
+  .esp-retour{margin-top:18px; max-width:64ch; padding:12px 15px; border-radius:var(--r-m);
+    border:1px solid var(--bord); background:var(--surface-2); font-size:15px; line-height:1.55}
+  .esp-retour-ok{border-color:rgba(29,138,74,.35); background:rgba(29,138,74,.07); color:var(--vert)}
   .esp-actions{margin-top:26px; display:flex; flex-wrap:wrap; gap:12px}
   .esp-actions .btn[hidden]{display:none}
 
@@ -976,10 +979,37 @@
     text-transform:uppercase; color:var(--texte-4)}
   .pro-salle{margin:0 auto 0 8px; min-width:0; font-size:15px; font-weight:800;
     color:var(--texte); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .pro-sortir{flex-shrink:0; font-size:13.5px; font-weight:700; color:var(--texte-2);
-    text-decoration:none; border-bottom:1px solid var(--bord-3); padding-bottom:1px}
-  .pro-sortir:hover{color:var(--rouge-700); border-color:currentColor}
-  .pro-sortir[hidden]{display:none}
+  /* le compte, en haut a droite */
+  .pro-cpt{position:relative; flex-shrink:0}
+  .pro-cpt-btn{display:flex; align-items:center; gap:9px; min-height:40px; padding:4px 10px 4px 4px;
+    border:1px solid var(--bord); border-radius:999px; background:var(--surface); cursor:pointer;
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700; color:var(--texte)}
+  .pro-cpt-btn:hover, .pro-cpt-btn[aria-expanded="true"]{border-color:var(--bord-3); background:var(--surface-2)}
+  .pro-cpt-rond{display:grid; place-items:center; width:32px; height:32px; border-radius:50%;
+    background:var(--texte); color:#fff; font-size:12.5px; font-weight:800; letter-spacing:.02em}
+  .pro-cpt-rond svg{width:17px; height:17px}
+  .pro-cpt-nom{max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pro-cpt-chev{color:var(--texte-4); transition:rotate .15s ease}
+  .pro-cpt-btn[aria-expanded="true"] .pro-cpt-chev{rotate:180deg}
+  .pro-cpt-menu{position:absolute; right:0; top:calc(100% + 8px); z-index:50; width:260px; padding:6px;
+    border:1px solid var(--bord); border-radius:var(--r-l); background:var(--surface);
+    box-shadow:0 12px 36px rgba(22,22,15,.14)}
+  .pro-cpt-menu[hidden]{display:none}
+  .pro-cpt-qui{margin:0 0 6px; padding:10px 10px 12px; border-bottom:1px solid var(--bord)}
+  .pro-cpt-qui b{display:block; font-size:14px; color:var(--texte); overflow:hidden; text-overflow:ellipsis}
+  .pro-cpt-qui span{display:block; margin-top:2px; font-size:12.5px; color:var(--texte-4);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pro-cpt-menu a, .pro-cpt-menu .pro-quitter{display:flex; align-items:center; gap:10px; width:100%;
+    padding:9px 10px; border:0; border-radius:var(--r-m); background:none; cursor:pointer; text-align:left;
+    font-family:Manrope,system-ui,sans-serif; font-size:14px; font-weight:700; color:var(--texte-2);
+    text-decoration:none}
+  .pro-cpt-menu a[hidden]{display:none}
+  .pro-cpt-menu svg{width:17px; height:17px; flex-shrink:0; opacity:.7}
+  .pro-cpt-menu a:hover{background:var(--surface-2); color:var(--texte)}
+  .pro-cpt-menu a[aria-current="page"]{color:var(--rouge-700)}
+  .pro-cpt-menu .pro-quitter{margin-top:6px; border-top:1px solid var(--bord); border-radius:0 0 var(--r-m) var(--r-m);
+    padding-top:12px}
+  .pro-cpt-menu .pro-quitter:hover{color:var(--rouge-700)}
 
   /* Le rail tient toute la hauteur meme quand il a peu de liens : sans cela son
      fond blanc s'arretait au milieu de la page et la colonne de gauche se
@@ -1019,14 +1049,6 @@
   .pro-palier-t{margin:0; font-size:13px; font-weight:800; color:var(--texte)}
   .pro-palier-m{margin:5px 0 11px; font-size:12.5px; line-height:1.5; color:var(--texte-4)}
   .pro-palier .btn{width:100%; justify-content:center}
-
-  .pro-quitter{display:flex; align-items:center; gap:11px; width:100%;
-    padding:10px 12px; border:0; border-radius:var(--r-m); background:none;
-    cursor:pointer; text-align:left;
-    font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:700;
-    color:var(--texte-4)}
-  .pro-quitter svg{width:18px; height:18px; opacity:.75}
-  .pro-quitter:hover{background:var(--surface-2); color:var(--rouge-700)}
 
   .pro-vue{grid-row:2; min-width:0}
   /* Les sections de ces pages viennent du site public, ou elles sont centrees
@@ -1068,12 +1090,10 @@
     .pro-pastille{background:var(--texte)}
     .pro-liens a[aria-current="page"] .pro-pastille{background:#fff; color:var(--rouge-700)}
     /* au telephone le rappel du palier quitte le rail -- l'espace club le porte
-       deja en grand. La deconnexion reste, en derniere pastille : c'est le seul
-       endroit d'ou elle est atteignable. */
+       deja en grand. */
     .pro-palier{display:none}
-    .pro-quitter{width:auto; flex-shrink:0; padding:8px 13px; border-radius:999px;
-      background:var(--surface-2); white-space:nowrap}
-    .pro-quitter span{display:none}
+    .pro-cpt-nom, .pro-cpt-chev{display:none}
+    .pro-cpt-btn{padding:3px}
     .pro-pied{grid-column:1}
   }
   /* ---------- la fenetre de creation de l'espace club ---------- */
@@ -1225,7 +1245,27 @@
       <span class="pro-marque-mot">Espace pro</span>
     </a>
     <p class="pro-salle" id="pro-salle"></p>
-    <a class="pro-sortir" href="index.html" id="pro-voir" hidden>Voir ma fiche en ligne</a>
+
+    <!-- Le compte, en haut a droite, comme dans tout logiciel (Amaury,
+         24/09/2026). Il porte « Mon compte », la fiche en ligne, le retour au
+         site et la deconnexion : rien de tout ca n'est un espace de travail, donc
+         rien de tout ca n'a sa place dans le rail. -->
+    <div class="pro-cpt">
+      <button type="button" class="pro-cpt-btn" id="pro-cpt-btn" aria-expanded="false"
+        aria-controls="pro-cpt-menu" aria-haspopup="true">
+        <span class="pro-cpt-rond" id="pro-cpt-rond" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.4a7.2 7.2 0 0 1 14.4 0"/></svg></span>
+        <span class="pro-cpt-nom" id="pro-cpt-nom">Mon compte</span>
+        <svg class="pro-cpt-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="pro-cpt-menu" id="pro-cpt-menu" hidden>
+        <p class="pro-cpt-qui"><b id="pro-cpt-qui"></b><span id="pro-cpt-mail"></span></p>
+        <a href="mon-compte.html" data-page="mon-compte"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.4a7.2 7.2 0 0 1 14.4 0"/></svg><span>Mon compte</span></a>
+        <a href="index.html" id="pro-voir" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.8H6.6A1.8 1.8 0 0 0 4.8 4.6v14.8a1.8 1.8 0 0 0 1.8 1.8h10.8a1.8 1.8 0 0 0 1.8-1.8V7.6Z"/><path d="M14 2.8v4.8h5.2"/><path d="M8.4 12.6h7.2M8.4 16.6h7.2"/></svg><span>Voir ma fiche en ligne</span></a>
+        <a href="index.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6V19a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 19Z"/><path d="M9.6 20.6v-5.4h4.8v5.4"/></svg><span>Retour au site</span></a>
+        <button type="button" class="pro-quitter" id="pro-quitter"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.6 20.4H5.8A1.8 1.8 0 0 1 4 18.6V5.4a1.8 1.8 0 0 1 1.8-1.8h3.8"/><path d="M15.2 16.4 19.6 12l-4.4-4.4"/><path d="M19.6 12H9.6"/></svg><span>Se déconnecter</span></button>
+      </div>
+    </div>
   </header>
 
   <nav class="pro-rail" id="pro-rail" aria-label="Votre espace">
@@ -1233,7 +1273,6 @@
       <li><a href="espace-club.html" data-page="espace-club"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.4" y="3.4" width="7.4" height="7.4" rx="1.6"/><rect x="13.2" y="3.4" width="7.4" height="7.4" rx="1.6"/><rect x="3.4" y="13.2" width="7.4" height="7.4" rx="1.6"/><rect x="13.2" y="13.2" width="7.4" height="7.4" rx="1.6"/></svg><span>Espace club</span>
         <b class="pro-pastille" id="pro-pastille" hidden></b></a></li>
       <li><a href="referencer.html" data-page="referencer"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.8H6.6A1.8 1.8 0 0 0 4.8 4.6v14.8a1.8 1.8 0 0 0 1.8 1.8h10.8a1.8 1.8 0 0 0 1.8-1.8V7.6Z"/><path d="M14 2.8v4.8h5.2"/><path d="M8.4 12.6h7.2M8.4 16.6h7.2"/></svg><span>Ma fiche</span></a></li>
-      <li><a href="mon-compte.html" data-page="mon-compte"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.4a7.2 7.2 0 0 1 14.4 0"/></svg><span>Mon compte</span></a></li>
     </ul>
 
     <!-- Le back-office n'appartient pas au gerant : c'est l'outil de l'equipe Mon
@@ -1255,9 +1294,6 @@
       <a class="btn btn-rouge btn-mini" href="espace-club.html#esp-verrou-bloc"
          id="pro-palier-a">Passer au Pro</a>
     </div>
-
-    <button type="button" class="pro-quitter" id="pro-quitter"
-      aria-label="Se déconnecter"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.6 20.4H5.8A1.8 1.8 0 0 1 4 18.6V5.4a1.8 1.8 0 0 1 1.8-1.8h3.8"/><path d="M15.2 16.4 19.6 12l-4.4-4.4"/><path d="M19.6 12H9.6"/></svg><span>Se déconnecter</span></button>
   </nav>
 
   <div class="pro-vue">
@@ -2009,8 +2045,11 @@
 <script>
 /* ---- le rail de l'espace pro ----
    Il porte ce qui ne change pas d'une page a l'autre : ou on est, le nom de la
-   salle, la pastille des demandes en attente, le back-office pour l'equipe, le
-   rappel du palier et la deconnexion.
+   salle, la pastille des demandes en attente, le back-office pour l'equipe et
+   le rappel du palier. Le compte et la deconnexion vivent en haut a droite,
+   dans le menu du compte (Amaury, 24/09/2026 : « comme le font habituellement
+   les logiciels »). Au passage, la deconnexion ne clignote plus au pied du rail
+   pendant que le rappel du palier se charge.
 
    Il se remplit apres la session, donc apres coup : le squelette est deja a
    l'ecran et ne clignote pas. Sans serveur (la maquette en Artifact), il reste
@@ -2023,8 +2062,26 @@
      c'est lui qui doit savoir ou il est, pas le build. */
   var ici = (location.pathname.split('/').pop() || 'espace-club.html')
     .replace(/\.html$/, '') || 'espace-club';
-  var lien = rail.querySelector('[data-page="' + ici + '"]');
+  var lien = rail.querySelector('[data-page="' + ici + '"]')
+          || document.querySelector('#pro-cpt-menu [data-page="' + ici + '"]');
   if (lien) lien.setAttribute('aria-current', 'page');
+
+  /* ---------- le menu du compte ---------- */
+  var btn = document.getElementById('pro-cpt-btn');
+  var menu = document.getElementById('pro-cpt-menu');
+  function ouvre(oui){
+    menu.hidden = !oui;
+    btn.setAttribute('aria-expanded', String(oui));
+  }
+  if (btn && menu) {
+    btn.addEventListener('click', function (e){ e.stopPropagation(); ouvre(menu.hidden); });
+    document.addEventListener('click', function (e){
+      if (!menu.hidden && !menu.contains(e.target)) ouvre(false);
+    });
+    document.addEventListener('keydown', function (e){
+      if (e.key === 'Escape' && !menu.hidden) { ouvre(false); btn.focus(); }
+    });
+  }
 
   var SB = window.MCC;
   if (!SB || !SB.prete()) return;
@@ -2037,10 +2094,14 @@
 
   SB.session().then(function (s){
     if (!s) return null;
-    return Promise.all([SB.monClub(), SB.estAdmin()]);
+    var mail = (s.user && s.user.email) || '';
+    return Promise.all([SB.monClub(), SB.estAdmin(),
+      SB.monProfil ? SB.monProfil().catch(function (){ return null; }) : null])
+      .then(function (r){ r.push(mail); return r; });
   }).then(function (r){
     if (!r) return null;
-    var club = r[0], admin = r[1];
+    var club = r[0], admin = r[1], profil = r[2], mail = r[3];
+    compte(profil, mail, club);
     if (admin) document.getElementById('pro-admin').hidden = false;
     if (!club) return null;
 
@@ -2063,6 +2124,20 @@
     if (a) a.setAttribute('aria-label', 'Espace club, ' + n +
       (n === 1 ? ' nouvelle demande' : ' nouvelles demandes'));
   }).catch(function (){ /* le rail reste un rail */ });
+
+  /* Le rond du compte : les initiales de la personne, a defaut celles de
+     l'adresse. Le nom complet et l'adresse sont dans le menu. */
+  function compte(profil, mail, club){
+    var nom = (profil && profil.nom) || '';
+    var base = nom || mail.split('@')[0] || (club && club.nom) || '';
+    var mots = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
+    var ini = mots.length > 1 ? mots[0][0] + mots[1][0] : (mots[0] || '').slice(0, 2);
+    if (ini) document.getElementById('pro-cpt-rond').textContent = ini;
+    document.getElementById('pro-cpt-nom').textContent = nom || 'Mon compte';
+    document.getElementById('pro-cpt-qui').textContent = nom || (club && club.nom) || 'Mon compte';
+    document.getElementById('pro-cpt-mail').textContent = mail;
+  }
 
   /* Le rappel du palier suit le gerant de page en page. Pour un Pro c'est une
      ligne qui confirme ; pour un gratuit, la porte vers l'abonnement. */

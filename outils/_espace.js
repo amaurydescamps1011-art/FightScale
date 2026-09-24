@@ -95,6 +95,7 @@
         ? m[1] + ' Motif : ' + club.motif_refus
         : m[1];
 
+    retour(club);
     complet(club);
     formule(club);
     verrou(club);
@@ -344,15 +345,16 @@
       return '<li><span class="esp-puce">' + CLE + '</span>' +
              '<b>' + ech(l[0]) + '</b><span>' + ech(l[1]) + '</span></li>';
     }).join('');
-    /* s'il a deja demande, on ne lui repropose pas le bouton */
-    SB.monInteretPro(club.id).then(function (i){ if (i) deja(i.cree_le); });
+    /* s'il a deja demande, on le lui rappelle ; le bouton reste, puisqu'il mene
+       maintenant a la caisse */
+    SB.monInteretPro(club.id).then(function (i){ if (i) deja(i.cree_le, false); });
   }
 
-  function deja(quand){
+  function deja(quand, fige){
     var d = new Date(quand);
     var le = isNaN(d) ? '' : ' (demandé le ' +
       d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) + ')';
-    ['esp-pro'].forEach(function (id){
+    if (fige !== false) ['esp-pro'].forEach(function (id){
       var b = document.getElementById(id);
       if (b) { b.disabled = true; b.textContent = 'Demande envoyée'; }
     });
@@ -362,9 +364,11 @@
     p.hidden = false;
   }
 
-  /* Le paiement n'est pas branche : le bouton enregistre la demande, et c'est le
-     back-office qui ouvre l'abonnement. Le jour ou Stripe existe, c'est le meme
-     bouton qui mene en caisse. */
+  /* Le bouton mene en caisse : la fonction `paiement` ouvre une page Stripe, et
+     c'est Stripe, par le webhook, qui donne le Pro (Amaury, 24/09/2026 : « comme
+     un SaaS, un moteur de paiement relie a Stripe »). Tant que le paiement n'est
+     pas deploye, le meme bouton retombe sur l'ancienne demande a la main, que le
+     back-office traite. */
   function poseBouton(id, club){
     var b = document.getElementById(id);
     if (!b) return;
@@ -373,12 +377,77 @@
       err.hidden = true;
       b.disabled = true;
       var mot = b.textContent;
-      b.textContent = 'Envoi…';
-      SB.veutLePro(club.id)
-        .then(function (){ deja(new Date().toISOString()); })
+      b.textContent = 'Ouverture du paiement…';
+      SB.caisse('paiement', { action: 'passer' })
+        .then(function (url){ location.href = url; })
+        .catch(function (e){
+          if (!e || !e.indisponible) throw e;
+          return SB.veutLePro(club.id).then(function (){ deja(new Date().toISOString()); });
+        })
         .catch(function (e){
           b.disabled = false; b.textContent = mot;
           err.textContent = SB.dire(e); err.hidden = false;
+        });
+    });
+  }
+
+  /* ---------- le retour de Stripe ----------
+     Stripe renvoie ici avec ?abonnement=ok ou =annule. « ok » veut dire que la
+     carte est passee, pas encore que le Pro est ouvert : c'est le webhook qui
+     l'ouvre, quelques secondes plus tard. On relit donc le club jusqu'a le voir
+     Pro, puis on recharge la page propre. */
+  function retour(club){
+    var q = new URLSearchParams(location.search).get('abonnement');
+    if (!q) return;
+    var p = document.getElementById('esp-retour');
+    var propre = function (){ history.replaceState(null, '', location.pathname + location.hash); };
+    if (q === 'annule') {
+      p.textContent = 'Paiement annulé : rien n’a été débité. Vous pouvez reprendre quand vous voulez.';
+      p.className = 'esp-retour';
+      p.hidden = false; propre(); return;
+    }
+    if (q !== 'ok') { propre(); return; }
+    if ((club.offre || 'gratuit') === 'pro') {
+      p.textContent = 'Bienvenue dans Mon Club Combat Pro. Votre abonnement est actif.';
+      p.className = 'esp-retour esp-retour-ok';
+      p.hidden = false; propre(); return;
+    }
+    p.textContent = 'Paiement reçu, nous ouvrons votre abonnement…';
+    p.className = 'esp-retour esp-retour-ok';
+    p.hidden = false;
+    var essais = 0;
+    (function relit(){
+      setTimeout(function (){
+        SB.monClub().then(function (c){
+          if (c && c.offre === 'pro') { location.replace(location.pathname + '?abonnement=ok'); return; }
+          if (++essais < 8) return relit();
+          p.textContent = 'Paiement reçu. Votre abonnement s’ouvre dans un instant : ' +
+            'rechargez la page d’ici une minute.';
+          propre();
+        }).catch(function (){ if (++essais < 8) relit(); });
+      }, 2500);
+    })();
+  }
+
+  /* Le Pro gere son abonnement chez Stripe : carte, factures, resiliation. */
+  function poseGerer(){
+    var b = document.getElementById('esp-gerer');
+    if (!b || b.dataset.pose) return;
+    b.dataset.pose = '1';
+    b.addEventListener('click', function (){
+      var err = document.getElementById('esp-gerer-err');
+      err.hidden = true;
+      b.disabled = true;
+      b.textContent = 'Ouverture…';
+      SB.caisse('paiement', { action: 'gerer' })
+        .then(function (url){ location.href = url; })
+        .catch(function (e){
+          b.disabled = false; b.textContent = 'Gérer mon abonnement';
+          err.textContent = e && (e.indisponible || e.code === 404)
+            ? 'La gestion en ligne n’est pas encore ouverte. Écrivez-nous à ' +
+              'contact@monclubcombat.fr, nous nous en occupons.'
+            : SB.dire(e);
+          err.hidden = false;
         });
     });
   }
@@ -411,8 +480,11 @@
       return '<li class="' + (l[0] ? 'ok' : 'ferme') + '">' +
         '<span class="esp-puce">' + (l[0] ? OUI : CLE) + '</span>' + ech(l[1]) + '</li>';
     }).join('');
+    document.getElementById('esp-gerer-zone').hidden = !pro;
+    if (pro) poseGerer();
     document.getElementById('esp-formule-note').innerHTML = pro
-      ? 'Mon Club Combat Pro, 39 € par mois, sans engagement.'
+      ? 'Mon Club Combat Pro, 39 € par mois, sans engagement. Carte, factures et ' +
+        'résiliation se gèrent ci-dessous.'
       : 'Mon Club Combat Pro, 39 € par mois, sans engagement. ' +
         '<a href="clubs.html#pro">Voir ce qu’il ajoute</a>.';
   }

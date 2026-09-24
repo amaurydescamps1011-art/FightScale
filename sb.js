@@ -387,6 +387,39 @@ window.MCC = (function (){
     });
   }
 
+  /* ---- la caisse ----
+     Les fonctions de paiement (supabase/functions) rendent l'adresse d'une page
+     Stripe, ou l'on emmene le gerant. Tant qu'elles ne sont pas deployees, ou
+     que leurs secrets manquent, l'appel echoue d'une facon que l'on reconnait :
+     l'erreur porte alors `indisponible`, et la page retombe sur la demande a la
+     main plutot que d'afficher une panne. */
+  function indispo(){
+    var e = new Error('Le paiement en ligne n’est pas encore ouvert.');
+    e.indisponible = true;
+    return e;
+  }
+  function caisse(fonction, corps){
+    if (!client || !client.functions) return Promise.reject(indispo());
+    return client.functions.invoke(fonction, { body: corps || {} }).then(function (r){
+      if (!r.error) {
+        if (r.data && r.data.url) return r.data.url;
+        throw indispo();
+      }
+      var rep = r.error.context;
+      var code = rep && rep.status;
+      if (/FunctionsFetchError|FunctionsRelayError/.test(r.error.name || '') || code === 404 || code === 503)
+        throw indispo();
+      var lu = rep && rep.json ? rep.json().catch(function (){ return {}; }) : Promise.resolve({});
+      return lu.then(function (b){
+        var m = (b && b.erreur) || r.error.message || 'Le paiement n’a pas pu s’ouvrir.';
+        if (/variable d'environnement/.test(m)) throw indispo();
+        var e = new Error(m);
+        e.code = code;
+        throw e;
+      });
+    });
+  }
+
   /* La demande en cours, s'il y en a une : la page dit « c'est note » plutot que
      de reproposer un bouton sur lequel il a deja appuye. */
   function monInteretPro(clubId){
@@ -420,6 +453,6 @@ window.MCC = (function (){
     deposeDemande: deposeDemande, lienPhoto: lienPhoto,
     compteVue: compteVue, vuesDuClub: vuesDuClub,
     nouvellesDemandes: nouvellesDemandes,
-    veutLePro: veutLePro, monInteretPro: monInteretPro
+    veutLePro: veutLePro, monInteretPro: monInteretPro, caisse: caisse
   };
 })();

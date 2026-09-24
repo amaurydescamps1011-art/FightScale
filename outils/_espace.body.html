@@ -19,6 +19,8 @@
 
       <div id="esp-corps" hidden>
         <p class="esp-mot" id="esp-mot"></p>
+        <!-- le retour de la page de paiement Stripe : ?abonnement=ok ou =annule -->
+        <p class="esp-retour" id="esp-retour" hidden role="status"></p>
         <!-- Plus de rangee de boutons ici : le rail de gauche mene a la fiche, au
              compte et au back-office, et la tete porte « Voir ma fiche en ligne ».
              Les repeter faisait quatre fois le meme geste a l'ecran. -->
@@ -127,6 +129,10 @@
       <h2 class="section-titre display" id="esp-formule-titre">Fiche gratuite</h2>
       <ul class="esp-formule" id="esp-formule"></ul>
       <p class="esp-formule-note" id="esp-formule-note"></p>
+      <div class="esp-actions" id="esp-gerer-zone" hidden>
+        <button class="btn btn-ligne" type="button" id="esp-gerer">Gérer mon abonnement</button>
+      </div>
+      <p class="form-erreur" id="esp-gerer-err" hidden role="alert"></p>
     </div>
   </section>
 </main>

@@ -82,7 +82,7 @@
           séance, vous suivez le prospect jusqu'à l'adhésion, et nous ajustons les campagnes
           sur ce qui remplit vraiment vos cours.</p>
         <svg class="ag-courbe" viewBox="0 0 200 60" aria-hidden="true">
-          <path d="M4 52 18 44 32 30 46 38 60 33 74 40 88 38 102 41 116 34 130 14 144 26 158 17"
+          <path pathLength="1" d="M4 52 18 44 32 30 46 38 60 33 74 40 88 38 102 41 116 34 130 14 144 26 158 17"
                 fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
         </svg>
       </li>
@@ -143,12 +143,18 @@
       </div>
 
       <ul class="acq-packs ag-packs">
-        <li><span class="ag-pack">Start</span><span class="acq-prix"><b data-base="300">300 €</b>/mois</span><span class="ag-pack-nb">20 séances d'essai confirmées</span></li>
-        <li><span class="ag-pack">Grow</span><span class="acq-prix"><b data-base="600">600 €</b>/mois</span><span class="ag-pack-nb">40 séances d'essai confirmées</span></li>
-        <li><span class="ag-pack">Boost</span><span class="acq-prix"><b data-base="900">900 €</b>/mois</span><span class="ag-pack-nb">60 séances d'essai confirmées</span></li>
-        <li><span class="ag-pack">Scale</span><span class="acq-prix"><b data-base="1500">1 500 €</b>/mois</span><span class="ag-pack-nb">100 séances d'essai confirmées</span></li>
-        <li><span class="ag-pack">Pro</span><span class="acq-prix"><b data-base="2250">2 250 €</b>/mois</span><span class="ag-pack-nb">150 séances d'essai confirmées</span></li>
-        <li><span class="ag-pack">Custom</span><span class="acq-prix"><b data-base="3000">3 000 €</b>/mois</span><span class="ag-pack-nb">200 séances d'essai confirmées</span></li>
+        <li data-pack="start"><span class="ag-pack">Start</span><span class="acq-prix"><b data-base="300">300 €</b>/mois</span><span class="ag-pack-nb">20 séances d'essai confirmées</span>
+          <button class="ag-btn ag-btn-ligne ag-choisir" type="button">Choisir %%FLECHE%%</button></li>
+        <li data-pack="grow"><span class="ag-pack">Grow</span><span class="acq-prix"><b data-base="600">600 €</b>/mois</span><span class="ag-pack-nb">40 séances d'essai confirmées</span>
+          <button class="ag-btn ag-btn-ligne ag-choisir" type="button">Choisir %%FLECHE%%</button></li>
+        <li data-pack="boost"><span class="ag-pack">Boost</span><span class="acq-prix"><b data-base="900">900 €</b>/mois</span><span class="ag-pack-nb">60 séances d'essai confirmées</span>
+          <button class="ag-btn ag-btn-ligne ag-choisir" type="button">Choisir %%FLECHE%%</button></li>
+        <li data-pack="scale"><span class="ag-pack">Scale</span><span class="acq-prix"><b data-base="1500">1 500 €</b>/mois</span><span class="ag-pack-nb">100 séances d'essai confirmées</span>
+          <button class="ag-btn ag-btn-ligne ag-choisir" type="button">Choisir %%FLECHE%%</button></li>
+        <li data-pack="pro"><span class="ag-pack">Pro</span><span class="acq-prix"><b data-base="2250">2 250 €</b>/mois</span><span class="ag-pack-nb">150 séances d'essai confirmées</span>
+          <button class="ag-btn ag-btn-ligne ag-choisir" type="button">Choisir %%FLECHE%%</button></li>
+        <li data-pack="custom"><span class="ag-pack">Custom</span><span class="acq-prix"><b data-base="3000">3 000 €</b>/mois</span><span class="ag-pack-nb">200 séances d'essai confirmées</span>
+          <button class="ag-btn ag-btn-ligne ag-choisir" type="button">Choisir %%FLECHE%%</button></li>
       </ul>
 
       <div class="ag-inclus">
@@ -172,9 +178,19 @@
       <h2 class="ag-h2">Prêt à remplir vos cours d'essai ?</h2>
       <p class="ag-sous-rouge">Laissez-nous gérer votre acquisition de A à Z.</p>
     </div>
+    <!-- Calendly : l'adresse de l'agenda d'Amaury va dans data-url. Vide, le
+         bloc reste cache et le formulaire tient seul la place : pas de cadre
+         vide ni de faux agenda. Le script de Calendly n'est charge que si le
+         bloc existe, et seulement quand on approche de la section. -->
     <div class="ag-rdv" id="parler">
+      <div class="ag-calendly" id="ag-calendly" data-url="" hidden>
+        <p class="ag-form-t">Réservez votre rendez-vous</p>
+        <p class="ag-form-mot">Choisissez un créneau pour le brief : trente minutes, au
+          téléphone ou en visio, pour parler de votre club.</p>
+        <div class="ag-calendly-cadre" id="ag-calendly-cadre"></div>
+      </div>
       <form class="acq-form ag-form" id="acq-form" novalidate>
-        <p class="ag-form-t">Prendre rendez-vous</p>
+        <p class="ag-form-t" id="acq-form-t">Prendre rendez-vous</p>
         <p class="ag-form-mot">Laissez vos coordonnées : nous vous rappelons pour le brief,
           sans engagement. Rien n'est lancé sans votre accord sur la stratégie et le budget.</p>
         <div class="acq-2">
@@ -214,6 +230,69 @@
         rapidement pour parler de votre club.</p>
     </div>
   </section>
+
+  <!-- La caisse d'un pack. Le prix n'est ici que pour etre lu : la fonction
+       achat-pack le recalcule de son cote a partir du pack et de la duree, et
+       c'est Stripe qui encaisse. -->
+  <dialog class="ag-caisse" id="ag-caisse" aria-labelledby="ag-caisse-t">
+    <form class="ag-caisse-in" id="ag-caisse-form" novalidate>
+      <div class="ag-caisse-tete">
+        <div>
+          <p class="ag-pack">Pack <span id="c-pack">Grow</span></p>
+          <p class="ag-caisse-t" id="ag-caisse-t"><span id="c-nb">40</span> séances d'essai
+            confirmées par mois</p>
+        </div>
+        <button class="ag-caisse-x" type="button" id="c-fermer" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+
+      <div class="acq-duree ag-caisse-duree" role="radiogroup" aria-label="Durée d'engagement">
+        <button type="button" role="radio" aria-checked="true" data-remise="0">Sans engagement</button>
+        <button type="button" role="radio" aria-checked="false" data-remise="15">3 mois <b>−15 %</b></button>
+        <button type="button" role="radio" aria-checked="false" data-remise="20">6 mois <b>−20 %</b></button>
+      </div>
+
+      <dl class="ag-caisse-recap">
+        <div><dt>Chaque mois</dt><dd><b id="c-prix">600 €</b> HT</dd></div>
+        <div><dt>La séance d'essai</dt><dd id="c-unite">15 € HT</dd></div>
+        <div><dt>Engagement</dt><dd id="c-engage">Aucun, résiliable chaque mois</dd></div>
+      </dl>
+
+      <div class="acq-2">
+        <label class="champ"><span>Nom du club</span>
+          <input id="c-club" required autocomplete="organization"></label>
+        <label class="champ"><span>Ville</span>
+          <input id="c-ville" required autocomplete="address-level2"></label>
+      </div>
+      <label class="champ"><span>Votre nom</span>
+        <input id="c-nom" required autocomplete="name"></label>
+      <div class="acq-2">
+        <label class="champ"><span>E-mail</span>
+          <input id="c-mail" type="email" required autocomplete="email"></label>
+        <label class="champ"><span>Téléphone</span>
+          <input id="c-tel" type="tel" autocomplete="tel"></label>
+      </div>
+      <p class="form-erreur" id="c-erreur" hidden role="alert"></p>
+      <button class="ag-btn ag-btn-rouge ag-btn-plein" type="submit" id="c-payer">Payer par carte</button>
+      <p class="acq-legal">Paiement sécurisé par Stripe, prélevé chaque mois. Après le paiement,
+        nous vous appelons pour fixer le rendez-vous de brief.</p>
+    </form>
+    <div class="ag-caisse-in ag-caisse-merci" id="c-merci" hidden>
+      <p class="ag-caisse-t">C'est noté.</p>
+      <p id="c-merci-mot"></p>
+      <button class="ag-btn ag-btn-ligne" type="button" id="c-ok">Fermer</button>
+    </div>
+  </dialog>
+
+  <p class="ag-retour" id="ag-retour" hidden role="status">
+    <span id="ag-retour-mot"></span>
+    <button type="button" id="ag-retour-x" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </p>
 
   <!-- le bouton qui suit la lecture, comme leur « Votre audit offert » -->
   <a class="ag-flottant" href="#contact">Parler de mon club %%FLECHE%%</a>
