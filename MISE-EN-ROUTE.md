@@ -82,7 +82,8 @@ compte, pas seulement toi. On la remet dès qu'on a notre propre expéditeur
 https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/url-configuration
 
 - *Site URL* : `https://fight-scale.vercel.app`
-- *Redirect URLs* : ajouter `https://fight-scale.vercel.app/referencer.html`
+- *Redirect URLs* : ajouter `https://fight-scale.vercel.app/espace-club.html`,
+  `https://fight-scale.vercel.app/referencer.html`
   et `https://fight-scale.vercel.app/motdepasse.html`
 
 Sans ça, le lien « mot de passe oublié » et le retour de Google renvoient sur
@@ -265,8 +266,11 @@ vérifie. Pour le domaine nu, le nom est **`@`** (ou vide).
 https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/url-configuration
 
 - *Site URL* : `https://monclubcombat.fr`
-- *Redirect URLs* : **ajoute** `https://monclubcombat.fr/referencer.html` et
-  `https://monclubcombat.fr/motdepasse.html`. Garde les deux anciennes lignes
+- *Redirect URLs* : **ajoute** `https://monclubcombat.fr/espace-club.html`,
+  `https://monclubcombat.fr/referencer.html` et
+  `https://monclubcombat.fr/motdepasse.html`. Depuis le 24/09, Google et l'e-mail
+  de confirmation ramènent sur l'espace club : sans la première ligne, ils
+  retombent sur l'accueil. Garde les deux anciennes lignes
   `fight-scale.vercel.app` : elles ne gênent pas.
 
 Puis le test : crée un compte avec une adresse à toi sur
@@ -318,10 +322,9 @@ s'enregistrent quand même. Pour changer la clé plus tard :
 
 1. Ouvrir https://fight-scale.vercel.app en navigation privée. Cliquer
    « Référencer ma salle » dans le bandeau.
-2. Sur la page de vente, cliquer « Référencer ma salle » au pied des trois étapes.
-   → une fenêtre s'ouvre, avec **Continuer avec Google** en premier.
+2. → une fenêtre s'ouvre tout de suite, avec **Continuer avec Google** en premier.
 3. Cliquer Continuer avec Google, choisir un compte.
-   → retour sur `referencer.html`, connecté, sans mot de passe à saisir.
+   → arrivée dans l'espace club, connecté, le club déjà créé. Cliquer « Ma fiche ».
 4. Remplir la fiche : nom, adresse, ville, code postal, présentation, disciplines,
    photos, horaires d'ouverture.
 5. **Ajouter deux ou trois cours** dans « Vos cours » : le jour, l'heure de début
