@@ -22,7 +22,7 @@ pg_isready -h "$D" -p 5433 -q 2>/dev/null || \
 P="psql -h $D -p 5433 -U postgres -q"
 q(){ psql -h "$D" -p 5433 -U postgres -tAq -c "$1" 2>&1 | tr '\n' ' ' | sed 's/  */ /g'; }
 
-$P -c "drop schema if exists public cascade; create schema public; drop schema if exists auth cascade; drop schema if exists net cascade; drop schema if exists vault cascade;" >/dev/null
+$P -c "drop schema if exists public cascade; create schema public; drop schema if exists auth cascade; drop schema if exists net cascade; drop schema if exists vault cascade;" >/dev/null 2>&1
 $P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
 create schema auth;
 create table auth.users (id uuid primary key, raw_user_meta_data jsonb, email text);
@@ -40,14 +40,19 @@ $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 do $$ begin create role anon; exception when duplicate_object then null; end $$;
 do $$ begin create role authenticated; exception when duplicate_object then null; end $$;
 SQL
+# Ce que Supabase donne par defaut a anon et authenticated sur tout objet cree
+# dans public : pose AVANT le schema, pour que ses revoke comptent comme la-bas.
+$P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
+grant usage on schema public to anon, authenticated;
+alter default privileges in schema public grant all on tables to anon, authenticated;
+alter default privileges in schema public grant all on functions to anon, authenticated;
+alter default privileges in schema public grant all on sequences to anon, authenticated;
+SQL
 $P -v ON_ERROR_STOP=1 -f "$ICI/001_schema.sql" >/dev/null 2>&1 || { echo "le schema ne s'applique pas"; exit 1; }
 # rejouable : le meme fichier passe deux fois sans erreur
 $P -v ON_ERROR_STOP=1 -f "$ICI/001_schema.sql" >/dev/null 2>&1 || { echo "le schema n'est pas rejouable"; exit 1; }
 
 $P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
-grant usage on schema public to anon, authenticated;
-grant select, insert, update, delete on all tables in schema public to anon, authenticated;
-grant execute on all functions in schema public to anon, authenticated;
 insert into auth.users (id, raw_user_meta_data, email) values
   ('11111111-1111-1111-1111-111111111111', '{"full_name":"Alain"}'::jsonb, 'alain@ex.fr'),
   ('22222222-2222-2222-2222-222222222222', '{}'::jsonb, 'gerant-b@ex.fr'),
@@ -273,6 +278,34 @@ ok "si l'envoi echoue, la demande s'enregistre quand meme" \
    "$(q "set role anon; with i as (insert into demande (club_id,nom,mail) values ('bbbbbbbb-0000-0000-0000-000000000002','Ines','ines@ex.fr') returning 1) select count(*) from i;")" "1 "
 ok "personne n'appelle l'envoi a la main" \
    "$(q "set role anon; select previent_le_club();" | cut -c1-5)" "ERROR"
+
+# Les relances du matin (24/09/2026) : un e-mail par club Pro, avec les prospects
+# dont la date de rappel est passee ou tombe aujourd'hui.
+q "create or replace function net.http_post(url text, body jsonb default '{}', params jsonb default '{}', headers jsonb default '{}', timeout_milliseconds int default 5000) returns bigint language sql as \$\$ insert into net.envois values (url, headers, body); select 1::bigint \$\$; delete from net.envois;" >/dev/null
+J="(now() at time zone 'Europe/Paris')::date"
+q "update demande set relance = $J where nom in ('<b>Zoé</b>','Paul');
+   update demande set relance = $J - 3 where nom = 'Jean';
+   update demande set relance = $J + 1 where nom = 'Lea';
+   update demande set relance = $J, statut = 'adherent' where nom = 'Nadia';" >/dev/null
+ok "le visiteur ne declenche pas les relances" \
+   "$(q "set role anon; select relances_du_jour();" | cut -c1-5)" "ERROR"
+ok "un gerant non plus" \
+   "$(q "$(cnx $B) select relances_du_jour();" | cut -c1-5)" "ERROR"
+ok "un seul e-mail part : le club gratuit n'en recoit pas" \
+   "$(q "select relances_du_jour();")" "1 "
+ok "au gerant du club Pro" \
+   "$(q "select body->'to' from net.envois;")" "[\"gerant-b@ex.fr\"] "
+ok "avec les deux prospects dus, dans le sujet" \
+   "$(q "select body->>'subject' from net.envois;")" "2 prospects à rappeler aujourd'hui "
+ok "le retard est signale, le futur et l'adherent sont laisses" \
+   "$(q "select (body->>'html') like '%Jean%prévu le%' and (body->>'html') not like '%Lea%' and (body->>'html') not like '%Nadia%' from net.envois;")" "t "
+ok "les noms restent echappes" \
+   "$(q "select (body->>'html') like '%&lt;b&gt;Zoé%' from net.envois;")" "t "
+q "delete from vault.decrypted_secrets;" >/dev/null
+ok "sans cle, les relances ne partent pas" \
+   "$(q "select relances_du_jour();")" "0 "
+ok "la creation de club reste fermee au visiteur" \
+   "$(q "set role anon; select creer_mon_club('X');" | cut -c1-5)" "ERROR"
 
 echo
 [ $RATES -eq 0 ] && echo "tout passe" || { echo "$RATES echec(s)"; exit 1; }

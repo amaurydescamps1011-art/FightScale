@@ -280,11 +280,14 @@ quand on écrira les notifications.
 
 ---
 
-## 3 ter. L'e-mail au club quand une demande arrive
+## 3 ter. Les e-mails aux clubs : demandes et relances
 
 Dès qu'un pratiquant demande une séance d'essai, le gérant reçoit un e-mail avec
 le nom, l'e-mail, le téléphone et le message, plus un bouton vers son espace
 club. **S'il répond à cet e-mail, c'est le pratiquant qui reçoit la réponse.**
+
+Et chaque matin à 8 h (7 h l'hiver), un club Pro reçoit la liste des prospects
+dont la date « Rappeler le » est arrivée. Rien les jours où il n'y en a pas.
 
 C'est la base qui envoie, par Resend. Il lui faut sa propre clé :
 
@@ -303,6 +306,16 @@ C'est la base qui envoie, par Resend. Il lui faut sa propre clé :
    dépôt ni dans une page.
 4. Test : sur la fiche d'un club **Pro publié**, demande une séance d'essai
    avec une autre adresse. Le gérant doit recevoir l'e-mail dans la minute.
+
+5. Vérifie que les relances sont programmées, dans le SQL Editor :
+
+   ```sql
+   select jobname, schedule from cron.job;
+   ```
+
+   Tu dois voir `relances-du-jour` et `0 6 * * *`. Si Supabase répond que
+   `cron` n'existe pas : **Database → Extensions**, active **pg_cron** (et
+   **pg_net** s'il est éteint), puis recolle le schéma.
 
 Tant que la clé n'est pas dans le coffre, rien ne part, et les demandes
 s'enregistrent quand même. Pour changer la clé plus tard :

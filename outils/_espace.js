@@ -6,8 +6,9 @@
 
    Le suivi tient dans la table `demande` : l'etape, une note libre, une date de
    relance. Ce qui manque encore, et qui est annonce comme tel : les campagnes,
-   les etiquettes, la fusion de doublons, l'historique des changements, et les
-   relances envoyees par e-mail (il faut un fournisseur d'envoi).
+   les etiquettes, la fusion de doublons, l'historique des changements. Les
+   e-mails (demande recue, rappels du matin) partent de la base : voir
+   previent_le_club() et relances_du_jour() dans db/001_schema.sql.
 
    Tout ce qui est ecrit ici appartient au club : la politique `demande_suivi`
    ne laisse un gerant lire et modifier que les demandes de son propre club. */
@@ -323,10 +324,10 @@
      'Un bouton sur votre fiche, qui ne propose que vos vrais cours.'],
     ['Vos coordonnées visibles',
      'Téléphone, e-mail, site et réseaux. Aujourd’hui un visiteur ne peut pas vous joindre.'],
-    ['Les demandes, ici même',
-     'Chaque personne qui veut essayer arrive dans cette page, avec ce qu’elle cherche.'],
+    ['Les demandes, ici et par e-mail',
+     'Chaque personne qui veut essayer arrive dans cette page et dans votre boîte mail.'],
     ['Le suivi de chaque prospect',
-     'De la demande à l’adhésion, avec vos notes et la date à laquelle le rappeler.'],
+     'De la demande à l’adhésion, avec vos notes, et un e-mail le matin où le rappeler.'],
     ['L’export de vos prospects',
      'Toute votre liste en un fichier, pour votre logiciel ou votre comptable.'],
     ['Votre salle mise en avant',
@@ -394,7 +395,8 @@
          [1, 'Téléphone, e-mail, site et réseaux visibles'],
          [1, 'Réservation de séance d’essai sur vos vrais cours'],
          [1, 'Le suivi de vos prospects, de la demande à l’adhésion'],
-         [0, 'Les relances par e-mail et les statistiques d’acquisition, bientôt']]
+         [1, 'Chaque demande et chaque rappel du jour par e-mail'],
+         [0, 'Les statistiques d’acquisition, bientôt']]
       : [[1, 'Votre fiche, vos photos et votre planning dans l’annuaire'],
          [1, 'Les visites de votre fiche, comptées ici'],
          [0, 'Votre téléphone, votre e-mail, votre site et vos réseaux'],

@@ -298,94 +298,206 @@ create or replace function html_sur(t text) returns text
 $$ select replace(replace(replace(replace(coalesce(t, ''),
      '&', '&amp;'), '<', '&lt;'), '>', '&gt;'), '"', '&quot;') $$;
 
-create or replace function previent_le_club() returns trigger
-  language plpgsql security definer set search_path = public, pg_temp as
+-- Qui prevenir pour un club : les gerants, par l'adresse de leur compte ; a
+-- defaut, l'adresse de la fiche.
+create or replace function destinataires_du_club(cible uuid) returns jsonb
+  language plpgsql stable security definer set search_path = public, pg_temp as
 $$
-declare
-  cle    text;
-  dest   jsonb;
-  salle  text;
-  mail_fiche text;
-  lignes text := '';
-  texte  text;
-  corps  text;
-  site   constant text := 'https://monclubcombat.fr';
+declare dest jsonb; fiche text;
 begin
-  begin
-    select decrypted_secret into cle from vault.decrypted_secrets
-      where name = 'resend_cle' limit 1;
-  exception when others then return new;       -- pas de coffre : pas d'envoi
-  end;
-  if cle is null or cle = '' then return new; end if;
-
-  -- les gerants du club, par l'adresse de leur compte ; a defaut, celle de la fiche
   select jsonb_agg(distinct u.email) into dest
     from club_membre m join auth.users u on u.id = m.membre_id
-   where m.club_id = new.club_id and coalesce(u.email, '') <> '';
-  select nom, mail into salle, mail_fiche from club where id = new.club_id;
-  if dest is null and coalesce(mail_fiche, '') <> '' then
-    dest := jsonb_build_array(mail_fiche);
+   where m.club_id = cible and coalesce(u.email, '') <> '';
+  if dest is null then
+    select mail into fiche from club where id = cible;
+    if coalesce(fiche, '') <> '' then dest := jsonb_build_array(fiche); end if;
   end if;
-  if dest is null or jsonb_array_length(dest) = 0 then return new; end if;
+  return dest;
+end
+$$;
 
-  lignes :=
-       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Nom</td><td style="padding:6px 0;font-weight:700">' || html_sur(new.nom) || '</td></tr>'
-    || '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">E-mail</td><td style="padding:6px 0"><a href="mailto:' || html_sur(new.mail) || '" style="color:#BB0F22">' || html_sur(new.mail) || '</a></td></tr>'
-    || case when coalesce(new.tel, '') <> '' then
-       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Téléphone</td><td style="padding:6px 0"><a href="tel:' || html_sur(regexp_replace(new.tel, '[^0-9+]', '', 'g')) || '" style="color:#BB0F22">' || html_sur(new.tel) || '</a></td></tr>' else '' end
-    || case when coalesce(new.discipline, '') <> '' then
-       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Discipline</td><td style="padding:6px 0">' || html_sur(new.discipline) || '</td></tr>' else '' end
-    || case when coalesce(new.creneau, '') <> '' then
-       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Quand</td><td style="padding:6px 0">' || html_sur(new.creneau) || '</td></tr>' else '' end;
-
-  corps :=
+-- L'habit commun des e-mails : la marque, un titre, une phrase, le contenu,
+-- et le bouton vers l'espace club.
+create or replace function cadre_mail(titre text, chapo text, contenu text, pied text)
+  returns text language sql immutable as
+$$ select
        '<div style="font-family:Arial,Helvetica,sans-serif;background:#F7F6F3;padding:24px 12px">'
     || '<div style="max-width:520px;margin:0 auto;background:#FFFFFF;border:1px solid #E8E5DF;border-radius:12px;padding:28px 24px;color:#16160F">'
     || '<p style="margin:0 0 18px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#EC162E">Mon Club Combat</p>'
-    || '<h1 style="margin:0 0 8px;font-size:22px;line-height:1.25">Nouvelle demande de séance d''essai</h1>'
-    || '<p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#3A3A41">'
-    || html_sur(new.nom) || ' aimerait essayer ' || html_sur(salle) || '. Un rappel dans la journée fait souvent la différence.</p>'
-    || '<table style="border-collapse:collapse;font-size:15px;line-height:1.5">' || lignes || '</table>'
-    || case when coalesce(new.message, '') <> '' then
-       '<p style="margin:18px 0 0;padding:12px 14px;background:#F7F6F3;border-radius:8px;font-size:15px;line-height:1.6;white-space:pre-wrap">' || html_sur(new.message) || '</p>' else '' end
-    || '<p style="margin:24px 0 0"><a href="' || site || '/espace-club.html" style="display:inline-block;background:#DC1229;color:#FFFFFF;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:8px">Ouvrir mon espace club</a></p>'
-    || '<p style="margin:20px 0 0;font-size:13px;line-height:1.55;color:#6F6B66">Répondez directement à cet e-mail pour écrire à ' || html_sur(new.nom) || '.</p>'
-    || '</div></div>';
+    || '<h1 style="margin:0 0 8px;font-size:22px;line-height:1.25">' || titre || '</h1>'
+    || '<p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#3A3A41">' || chapo || '</p>'
+    || contenu
+    || '<p style="margin:24px 0 0"><a href="https://monclubcombat.fr/espace-club.html" style="display:inline-block;background:#DC1229;color:#FFFFFF;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:8px">Ouvrir mon espace club</a></p>'
+    || coalesce('<p style="margin:20px 0 0;font-size:13px;line-height:1.55;color:#6F6B66">' || pied || '</p>', '')
+    || '</div></div>' $$;
 
-  texte := 'Nouvelle demande de séance d''essai pour ' || coalesce(salle, 'votre salle') || E'\n\n'
-    || 'Nom : ' || new.nom || E'\n'
-    || 'E-mail : ' || new.mail || E'\n'
-    || case when coalesce(new.tel, '') <> '' then 'Téléphone : ' || new.tel || E'\n' else '' end
-    || case when coalesce(new.discipline, '') <> '' then 'Discipline : ' || new.discipline || E'\n' else '' end
-    || case when coalesce(new.creneau, '') <> '' then 'Quand : ' || new.creneau || E'\n' else '' end
-    || case when coalesce(new.message, '') <> '' then E'\n' || new.message || E'\n' else '' end
-    || E'\nOuvrir mon espace club : ' || site || '/espace-club.html' || E'\n'
-    || 'Répondez à cet e-mail pour écrire à ' || new.nom || '.';
-
+-- L'envoi lui-meme. Rend vrai si la requete est partie. Ne leve jamais : un
+-- e-mail rate ne doit rien empecher d'autre.
+create or replace function envoie_mail(dest jsonb, sujet text, html text, texte text,
+                                       repondre text default null)
+  returns boolean language plpgsql security definer set search_path = public, pg_temp as
+$$
+declare cle text;
+begin
+  if dest is null or jsonb_array_length(dest) = 0 then return false; end if;
+  begin
+    select decrypted_secret into cle from vault.decrypted_secrets
+      where name = 'resend_cle' limit 1;
+  exception when others then return false;     -- pas de coffre : pas d'envoi
+  end;
+  if cle is null or cle = '' then return false; end if;
   begin
     perform net.http_post(
       url     := 'https://api.resend.com/emails',
       headers := jsonb_build_object('Authorization', 'Bearer ' || cle,
                                     'Content-Type', 'application/json'),
-      body    := jsonb_build_object(
+      body    := jsonb_strip_nulls(jsonb_build_object(
         'from',     'Mon Club Combat <contact@monclubcombat.fr>',
         'to',       dest,
-        -- le gerant repond, et c'est le pratiquant qui recoit : pas d'intermediaire
-        'reply_to', new.mail,
-        'subject',  'Demande de séance d''essai : ' || new.nom,
-        'html',     corps,
-        'text',     texte));
-  exception when others then null;              -- pg_net absent ou refus : on n'empeche rien
+        'reply_to', repondre,
+        'subject',  sujet,
+        'html',     html,
+        'text',     texte)));
+  exception when others then return false;     -- pg_net absent ou refus
   end;
+  return true;
+end
+$$;
+
+create or replace function ligne_mail(etiquette text, valeur text) returns text
+  language sql immutable as
+$$ select case when coalesce(valeur, '') = '' then '' else
+     '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66;vertical-align:top">' || etiquette
+     || '</td><td style="padding:6px 0">' || valeur || '</td></tr>' end $$;
+
+create or replace function previent_le_club() returns trigger
+  language plpgsql security definer set search_path = public, pg_temp as
+$$
+declare
+  salle text;
+  tel   text := nullif(regexp_replace(coalesce(new.tel, ''), '[^0-9+]', '', 'g'), '');
+begin
+  select nom into salle from club where id = new.club_id;
+  perform envoie_mail(
+    destinataires_du_club(new.club_id),
+    'Demande de séance d''essai : ' || new.nom,
+    cadre_mail(
+      'Nouvelle demande de séance d''essai',
+      html_sur(new.nom) || ' aimerait essayer ' || html_sur(salle)
+        || '. Un rappel dans la journée fait souvent la différence.',
+      '<table style="border-collapse:collapse;font-size:15px;line-height:1.5">'
+        || ligne_mail('Nom', '<b>' || html_sur(new.nom) || '</b>')
+        || ligne_mail('E-mail', '<a href="mailto:' || html_sur(new.mail) || '" style="color:#BB0F22">' || html_sur(new.mail) || '</a>')
+        || ligne_mail('Téléphone', case when tel is not null then '<a href="tel:' || html_sur(tel) || '" style="color:#BB0F22">' || html_sur(new.tel) || '</a>' end)
+        || ligne_mail('Discipline', html_sur(new.discipline))
+        || ligne_mail('Quand', html_sur(new.creneau))
+        || '</table>'
+        || case when coalesce(new.message, '') <> '' then
+           '<p style="margin:18px 0 0;padding:12px 14px;background:#F7F6F3;border-radius:8px;font-size:15px;line-height:1.6;white-space:pre-wrap">' || html_sur(new.message) || '</p>' else '' end,
+      'Répondez directement à cet e-mail pour écrire à ' || html_sur(new.nom) || '.'),
+    'Nouvelle demande de séance d''essai pour ' || coalesce(salle, 'votre salle') || E'\n\n'
+      || 'Nom : ' || new.nom || E'\n'
+      || 'E-mail : ' || new.mail || E'\n'
+      || coalesce('Téléphone : ' || nullif(new.tel, '') || E'\n', '')
+      || coalesce('Discipline : ' || nullif(new.discipline, '') || E'\n', '')
+      || coalesce('Quand : ' || nullif(new.creneau, '') || E'\n', '')
+      || coalesce(E'\n' || nullif(new.message, '') || E'\n', '')
+      || E'\nOuvrir mon espace club : https://monclubcombat.fr/espace-club.html\n'
+      || 'Répondez à cet e-mail pour écrire à ' || new.nom || '.',
+    -- le gerant repond, et c'est le pratiquant qui recoit : pas d'intermediaire
+    new.mail);
   return new;
 end
 $$;
--- personne ne l'appelle a la main : elle lit le coffre et les comptes
-revoke all on function previent_le_club() from public;
+
+-- personne ne les appelle a la main : elles lisent le coffre et les comptes.
+-- Supabase donne par defaut l'execution de toute fonction a anon et
+-- authenticated, d'ou le revoke nomme.
+revoke all on function destinataires_du_club(uuid) from public, anon, authenticated;
+revoke all on function envoie_mail(jsonb, text, text, text, text) from public, anon, authenticated;
+revoke all on function previent_le_club() from public, anon, authenticated;
 
 drop trigger if exists demande_previent on demande;
 create trigger demande_previent after insert on demande
   for each row execute function previent_le_club();
+
+-- ------------------------------------------ les relances, chaque matin
+-- Le suivi de l'espace club porte une date « rappeler le » par prospect. Un
+-- gerant n'ouvre pas son espace tous les jours : chaque matin, il recoit la
+-- liste de ceux qu'il devait rappeler, et rien les jours ou il n'y en a pas.
+-- C'est une fonction du Pro. Meme regle que la page : une date passee ou du
+-- jour, sur un prospect qui n'est ni adherent ni annule.
+create or replace function relances_du_jour() returns integer
+  language plpgsql security definer set search_path = public, pg_temp as
+$$
+declare
+  jour  date := (now() at time zone 'Europe/Paris')::date;
+  c     record;
+  d     record;
+  lignes text;
+  texte  text;
+  n      integer;
+  partis integer := 0;
+begin
+  for c in
+    select cl.id, cl.nom from club cl
+     where cl.offre = 'pro'
+       and exists (select 1 from demande x where x.club_id = cl.id
+                     and x.relance <= jour and x.statut::text not in ('adherent', 'annulee'))
+  loop
+    lignes := ''; texte := ''; n := 0;
+    for d in
+      select nom, mail, tel, relance, notes from demande
+       where club_id = c.id and relance <= jour and statut::text not in ('adherent', 'annulee')
+       order by relance, cree_le
+    loop
+      n := n + 1;
+      lignes := lignes
+        || '<tr><td style="padding:10px 0;border-top:1px solid #E8E5DF;font-size:15px;line-height:1.5">'
+        || '<b>' || html_sur(d.nom) || '</b>'
+        || case when d.relance < jour then ' <span style="color:#B10E21;font-size:13px">prévu le '
+             || to_char(d.relance, 'DD/MM') || '</span>' else '' end
+        || '<br>'
+        || case when coalesce(d.tel, '') <> '' then '<a href="tel:' || html_sur(regexp_replace(d.tel, '[^0-9+]', '', 'g'))
+             || '" style="color:#BB0F22">' || html_sur(d.tel) || '</a> · ' else '' end
+        || '<a href="mailto:' || html_sur(d.mail) || '" style="color:#BB0F22">' || html_sur(d.mail) || '</a>'
+        || case when coalesce(d.notes, '') <> '' then '<br><span style="color:#6F6B66;font-size:14px">'
+             || html_sur(left(d.notes, 200)) || '</span>' else '' end
+        || '</td></tr>';
+      texte := texte || '- ' || d.nom
+        || case when d.relance < jour then ' (prévu le ' || to_char(d.relance, 'DD/MM') || ')' else '' end
+        || ' : ' || coalesce(nullif(d.tel, '') || ', ', '') || d.mail || E'\n';
+    end loop;
+    if envoie_mail(
+         destinataires_du_club(c.id),
+         case when n = 1 then '1 prospect à rappeler aujourd''hui'
+              else n || ' prospects à rappeler aujourd''hui' end,
+         cadre_mail(
+           case when n = 1 then 'Un prospect à rappeler aujourd''hui'
+                else n || ' prospects à rappeler aujourd''hui' end,
+           'Les rappels que vous avez notés pour ' || html_sur(c.nom) || ' arrivent à échéance.',
+           '<table style="border-collapse:collapse;width:100%">' || lignes || '</table>',
+           'Une fois rappelé, changez son étape ou sa date dans votre espace : il sort de cette liste.'),
+         'Prospects à rappeler aujourd''hui pour ' || c.nom || E'\n\n' || texte
+           || E'\nOuvrir mon espace club : https://monclubcombat.fr/espace-club.html')
+    then partis := partis + 1; end if;
+  end loop;
+  return partis;
+end
+$$;
+revoke all on function relances_du_jour() from public, anon, authenticated;
+
+-- Tous les jours a 6 h UTC, soit 8 h a Paris l'ete et 7 h l'hiver, par pg_cron
+-- (fourni par Supabase). Rejouable : la tache est reposee a l'identique.
+do $$ begin
+  create extension if not exists pg_cron;
+exception when others then null; end $$;
+do $$ begin
+  perform cron.unschedule('relances-du-jour');
+exception when others then null; end $$;
+do $$ begin
+  perform cron.schedule('relances-du-jour', '0 6 * * *', 'select public.relances_du_jour()');
+exception when others then null; end $$;
 
 -- --------------------------------------------- les vues d'une fiche de club
 -- Amaury, 23/09/2026 : « dans l'espace club, il n'y a rien, donc faut le build.
