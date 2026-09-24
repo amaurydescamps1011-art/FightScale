@@ -62,6 +62,10 @@ les autres e-mails du site.
 
 ## 3. Activer le portail client (une seule fois)
 
+> **Mode test : déjà fait le 24/09/2026** (portail « Mon Club Combat Pro » :
+> carte, factures, adresse, n° de TVA, résiliation en fin de période). À
+> refaire seulement en mode réel.
+
 C'est la page Stripe où un club Pro change sa carte ou résilie. Tant qu'elle
 n'est pas activée, le bouton « Gérer mon abonnement » renvoie une erreur.
 
@@ -117,6 +121,12 @@ remplace tout par la nouvelle version → **Deploy updates**. Vérifie ensuite q
 l'interrupteur JWT n'a pas bougé.
 
 ## 6. Créer le webhook dans Stripe
+
+> **Mode test : déjà créé le 24/09/2026**, avec les 4 événements et la
+> version d'API du code. Il te reste seulement le point 7 ci-dessous :
+> ouvre https://dashboard.stripe.com/test/webhooks, clique sur la
+> destination « Mon Club Combat : Pro et packs », puis **Révéler** le
+> secret de signature.
 
 C'est l'adresse que Stripe appelle pour dire « c'est payé ».
 
