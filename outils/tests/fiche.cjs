@@ -23,18 +23,12 @@ const OUT = require('path').join(__dirname, '..', 'captures');
   await p.waitForTimeout(1200);
   const compte = await p.textContent('#compte');
   const vide = await p.isVisible('.vide');
-  // depuis le 22/09/2026 tous les boutons « Referencer ma salle » ouvrent la fenetre
-  // de creation de l'espace club ; seul celui du bandeau mene a la page de vente
-  const cta = await p.getAttribute('.vide-cta', 'data-compte');
-  console.log('recherche   :', compte.trim(), '| etat vide =', vide, '| ouvre la fenetre:', cta !== null);
+  // Amaury, 24/09/2026 : tous les « Referencer ma salle » menent a la page de
+  // vente (clubs.html) ; seuls « Acces pro » et « Espace club » ouvrent la fenetre
+  const cta = await p.getAttribute('.vide-cta', 'href');
+  console.log('recherche   :', compte.trim(), '| etat vide =', vide, '| mene a:', cta);
   if (!vide) erreurs.push('la recherche n\'affiche pas son etat vide');
-  if (cta === null) erreurs.push('l\'etat vide n\'ouvre pas la creation de l\'espace club');
-  else {
-    await p.click('.vide-cta');
-    await p.waitForTimeout(300);
-    if (!await p.isVisible('#voile')) erreurs.push('l\'etat vide : la fenetre ne s\'ouvre pas');
-    await p.click('#fermer-compte');
-  }
+  if (cta !== 'clubs.html') erreurs.push('l\'etat vide ne mene pas a la page Referencer');
   if (await p.locator('.res').count()) erreurs.push('des salles apparaissent alors que l\'annuaire est vide');
 
   // --- 2. la fiche d'exemple, atteinte depuis « referencer ma salle » ---

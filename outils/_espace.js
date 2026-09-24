@@ -193,6 +193,7 @@
     return SB.vuesDuClub(club.id, 30).then(function (l){
       LESVUES = l;
       document.getElementById('esp-chiffres-bloc').hidden = false;
+      document.getElementById('esp-agence-bloc').hidden = false;
       chiffres();
       courbe(30);
       entonnoir();

@@ -610,7 +610,7 @@
                    création de compte, puis l'espace club ; jamais un morceau
                    de la page d'accueil -->
               <li><a href="clubs.html" data-compte="connexion">Accès pro</a></li>
-              <li><a href="clubs.html" data-compte>Référencer ma salle</a></li>
+              <li><a href="clubs.html">Référencer ma salle</a></li>
               <li><a href="clubs.html#pro">Offres et tarifs</a></li>
               <li><a href="acquisition.html" target="_blank" rel="noopener">Acquisition</a></li>
             </ul>
@@ -618,7 +618,7 @@
         </div>
       </div>
 
-      <a class="btn btn-rouge" href="clubs.html" data-compte><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>
   </div>
 </header>
@@ -628,12 +628,12 @@
       <nav class="fil" aria-label="Fil d'Ariane"><a href="index.html">Accueil</a><i aria-hidden="true">›</i><a href="recherche.html">Salles de sports de combat</a><i aria-hidden="true">›</i><span aria-current="page">Montpellier</span></nav>
       <h1 class="ann-h1 display">Salles de sports de combat à <b>Montpellier</b></h1>
       <p class="ann-intro">Il n’y a pas encore de salle de sports de combat référencée à Montpellier. Nous ouvrons l’annuaire aux clubs en ce moment : si vous dirigez une salle à Montpellier, la fiche est gratuite et prend cinq minutes.</p>
-      <div class="ann-actions"><button class="btn btn-rouge" type="button" data-compte>Référencer ma salle</button><a class="btn btn-ligne" href="recherche.html">Chercher dans une autre ville</a></div>
+      <div class="ann-actions"><a class="btn btn-rouge" href="clubs.html">Référencer ma salle</a><a class="btn btn-ligne" href="recherche.html">Chercher dans une autre ville</a></div>
     </div>
   </div>
 
   <section class="colonne-liste" id="resultats" aria-label="Salles" data-ville="Montpellier">
-    <div class="wrap"><div class="liste"><div class="vide"><h2 class="display">Pas encore de salle à Montpellier</h2><p>Il n’y a pas encore de salle référencée dans cette ville. Vous dirigez un club à Montpellier&nbsp;? Soyez le premier, c’est gratuit et votre fiche apparaît ici.</p><button class="btn btn-rouge vide-cta" type="button" data-compte>Référencer ma salle</button><p class="vide-sous">Ou regardez par discipline&nbsp;:</p><div class="vide-villes"><a class="puce" href="mma.html">MMA</a><a class="puce" href="boxe-anglaise.html">Boxe anglaise</a><a class="puce" href="kickboxing.html">Kickboxing</a><a class="puce" href="muay-thai.html">Muay Thaï</a><a class="puce" href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a><a class="puce" href="grappling.html">Grappling</a><a class="puce" href="karate.html">Karaté</a><a class="puce" href="judo.html">Judo</a><a class="puce" href="lutte.html">Lutte</a><a class="puce" href="self-defense.html">Self-défense</a></div></div></div></div>
+    <div class="wrap"><div class="liste"><div class="vide"><h2 class="display">Pas encore de salle à Montpellier</h2><p>Il n’y a pas encore de salle référencée dans cette ville. Vous dirigez un club à Montpellier&nbsp;? Soyez le premier, c’est gratuit et votre fiche apparaît ici.</p><a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a><p class="vide-sous">Ou regardez par discipline&nbsp;:</p><div class="vide-villes"><a class="puce" href="mma.html">MMA</a><a class="puce" href="boxe-anglaise.html">Boxe anglaise</a><a class="puce" href="kickboxing.html">Kickboxing</a><a class="puce" href="muay-thai.html">Muay Thaï</a><a class="puce" href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a><a class="puce" href="grappling.html">Grappling</a><a class="puce" href="karate.html">Karaté</a><a class="puce" href="judo.html">Judo</a><a class="puce" href="lutte.html">Lutte</a><a class="puce" href="self-defense.html">Self-défense</a></div></div></div></div>
   </section>
 
   <section class="fond-seo">
@@ -672,7 +672,7 @@
     <nav class="footer-col" aria-labelledby="f-clubs">
       <h2 id="f-clubs">Clubs</h2>
       <ul>
-        <li><a href="clubs.html" data-compte>Référencer ma salle</a></li>
+        <li><a href="clubs.html">Référencer ma salle</a></li>
         <li><a href="clubs.html" data-compte="connexion">Espace club</a></li>
         <li><a href="clubs.html#pro">Offres et tarifs</a></li>
         <li><a href="acquisition.html" target="_blank" rel="noopener">Acquisition de leads</a></li>
@@ -1247,7 +1247,7 @@
                        : 'recherche.html?discipline=' + encodeURIComponent(discipline);
       actions.innerHTML =
         '<a class="btn btn-rouge" href="' + vers + '">Voir sur la carte</a>' +
-        '<button class="btn btn-ligne" type="button" data-compte>Référencer ma salle</button>';
+        '<a class="btn btn-ligne" href="clubs.html">Référencer ma salle</a>';
     }
   });
 

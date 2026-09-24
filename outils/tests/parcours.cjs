@@ -32,7 +32,7 @@ const url = f => 'file://' + path.join(S, f);
       // l'offre aux premiers clubs qui doit s'afficher, et elle seule.
       ouvertureVisible: !!ouv && !ouv.hidden,
       sallesVisible: !!sal && !sal.hidden,
-      cta: !!document.querySelector('#ouverture [data-compte]'),
+      cta: !!document.querySelector('#ouverture a[href="clubs.html"]'),
       chiffres: document.querySelectorAll('#ouverture .ouv-nb').length,
     };
   });
@@ -40,7 +40,7 @@ const url = f => 'file://' + path.join(S, f);
   if (acc.cartes) erreurs.push('accueil : ' + acc.cartes + ' cartes de salles alors que l\'annuaire est vide');
   if (!acc.ouvertureVisible) erreurs.push('accueil : l\'offre aux premiers clubs ne s\'affiche pas');
   if (acc.sallesVisible) erreurs.push('accueil : la section des salles referencees s\'affiche alors qu\'aucune salle n\'est referencee');
-  if (!acc.cta) erreurs.push('accueil : l\'offre aux premiers clubs n\'ouvre pas la creation de compte');
+  if (!acc.cta) erreurs.push('accueil : l\'offre aux premiers clubs ne mene pas a la page Referencer');
   if (acc.chiffres !== 2) erreurs.push('accueil : ' + acc.chiffres + ' chiffres, attendu 2');
 
   // --- 2. accueil -> fiche d'exemple, par la page de referencement ---
@@ -66,7 +66,7 @@ const url = f => 'file://' + path.join(S, f);
     h1: document.querySelector('h1').textContent.replace(/\s+/g, ' ').trim(),
     n: document.querySelectorAll('.res').length,
     dit: (document.querySelector('.vide') || {}).textContent || '',
-    cta: !!document.querySelector('.vide-cta[data-compte]'),
+    cta: !!document.querySelector('.vide-cta[href="clubs.html"]'),
   }));
   pas.push(['vignette -> ville', ann.fichier + ' | ' + ann.n + ' salle(s)']);
   if (!/^sports-de-combat-/.test(ann.fichier)) erreurs.push('vignette : ' + ann.fichier);
@@ -74,7 +74,7 @@ const url = f => 'file://' + path.join(S, f);
   if (!/pas encore de salle/i.test(ann.dit))
     erreurs.push('annuaire ville : la page ne dit pas qu\'aucune salle n\'est referencee');
   if (!ann.cta)
-    erreurs.push('annuaire ville : « referencer ma salle » n\'ouvre pas la creation de compte');
+    erreurs.push('annuaire ville : « referencer ma salle » ne mene pas a la page Referencer');
 
   // --- 4b. la page de recherche, avec sa liste paginee et sa carte repliee ---
   await p.goto(url('recherche.html') + '?ville=Marseille');
@@ -84,23 +84,20 @@ const url = f => 'file://' + path.join(S, f);
     n: document.querySelectorAll('.res').length,
     carteRepliee: document.getElementById('carte-zone').hidden,
     dit: (document.querySelector('.vide') || {}).textContent || '',
-    cta: !!document.querySelector('.vide-cta[data-compte]'),
+    cta: !!document.querySelector('.vide-cta[href="clubs.html"]'),
   }));
   pas.push(['recherche', rech.h1]);
   if (rech.n) erreurs.push('recherche : des resultats alors que l\'annuaire est vide');
   if (!rech.carteRepliee) erreurs.push('recherche : la carte n\'est pas repliee au chargement');
   if (!/pas encore de salle/i.test(rech.dit))
     erreurs.push('recherche : l\'etat vide ne dit pas qu\'aucune salle n\'est referencee');
-  if (!rech.cta) erreurs.push('recherche : « referencer ma salle » n\'ouvre pas la creation de compte');
+  if (!rech.cta) erreurs.push('recherche : « referencer ma salle » ne mene pas a la page Referencer');
 
   // --- 5. recherche -> page de vente -> fenetre -> fiche ---
-  // Le formulaire ne vit plus sur la page de vente : on passe par la creation de
-  // l'espace club (le club y est cree au premier chargement), puis la fiche
-  // reprend le nom saisi. Le bandeau « Referencer ma salle » ouvre la fenetre
-  // sur place au lieu de mener a la page de vente (Amaury, 24/09/2026).
-  await p.click('.btn-rouge[data-compte]');
-  await p.waitForTimeout(350);
-  if (!await p.isVisible('#voile')) erreurs.push('bandeau : « referencer ma salle » n\'ouvre pas la fenetre');
+  // Amaury, 24/09/2026 : le bouton « Referencer ma salle » du bandeau mene a la
+  // page Referencer votre salle (clubs.html) ; c'est la que la fenetre s'ouvre.
+  if (await p.getAttribute('a.btn-rouge:has(.l-long)', 'href') !== 'clubs.html')
+    erreurs.push('bandeau : « referencer ma salle » ne mene pas a la page Referencer');
   await p.goto(url('clubs.html'));
   await p.waitForLoadState('load');
   await p.waitForTimeout(500);

@@ -126,7 +126,10 @@ for f in ('carte.js', 'geo.js', 'sb.js'):
 
 # Les photos de villes et celles de la fiche d'exemple, quand elles existent.
 import tuiles, gen_salles
-for rel in tuiles.photos_deposees() + [x for x in gen_salles.photos_exemple() if x]:
+# La photo de l'agence (Amaury, 24/09/2026 : « on remplace l'image principale
+# de la page agence par celle que je te mets »).
+AGENCE = ['photos/agence-heros.webp', 'photos/agence-heros-700.webp']
+for rel in tuiles.photos_deposees() + [x for x in gen_salles.photos_exemple() if x] + AGENCE:
     dest = os.path.join(SORTIE, rel)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     shutil.copy(os.path.join(DEPOT, rel), dest)

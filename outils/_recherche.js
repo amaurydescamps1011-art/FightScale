@@ -313,7 +313,7 @@ function rendListe(){
         : 'Aucune salle ne correspond à cette recherche. Enlevez un filtre, ou essayez ' +
           'une autre ville.') + '</p>' +
       (toutVide || nu
-        ? '<button class="btn btn-rouge vide-cta" type="button" data-compte>Référencer ma salle</button>' : '') +
+        ? '<a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a>' : '') +
       (toutVide ? '' :
         '<p class="vide-sous">' + (nu ? 'En attendant, ces villes ont des salles&nbsp;:'
                                       : 'Essayez plutôt&nbsp;:') + '</p>' +

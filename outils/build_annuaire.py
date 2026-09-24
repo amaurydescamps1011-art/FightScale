@@ -183,7 +183,7 @@ def vide(titre, phrase, sous, puces):
     return ('<div class="vide">'
             '<h2 class="display">%s</h2>'
             '<p>%s</p>'
-            '<button class="btn btn-rouge vide-cta" type="button" data-compte>Référencer ma salle</button>'
+            '<a class="btn btn-rouge vide-cta" href="clubs.html">Référencer ma salle</a>'
             '<p class="vide-sous">%s</p>'
             '<div class="vide-villes">%s</div>'
             '</div>') % (titre, phrase, sous, puces)
@@ -279,11 +279,11 @@ for d in DISCIPLINES:
                   '<i aria-hidden="true">›</i><span aria-current="page">%s</span>' % d,
         h1='Salles de <b>%s</b> en France' % NOM[d],
         intro=intro,
-        actions=(('<button class="btn btn-rouge" type="button" data-compte>Référencer ma salle</button>'
+        actions=(('<a class="btn btn-rouge" href="clubs.html">Référencer ma salle</a>'
                   '<a class="btn btn-ligne" href="recherche.html">Chercher dans une autre ville</a>')
                  if not n else
                  ('<a class="btn btn-rouge" href="recherche.html?discipline=%s">Voir sur la carte</a>'
-                  '<button class="btn btn-ligne" type="button" data-compte>Référencer ma salle</button>'
+                  '<a class="btn btn-ligne" href="clubs.html">Référencer ma salle</a>'
                   % d.replace(' ', '%20'))),
         salles=corps,
         t1='%s par ville' % d,
@@ -328,11 +328,11 @@ for v in VILLES:
                   '<i aria-hidden="true">›</i><span aria-current="page">%s</span>' % v,
         h1='Salles de sports de combat à <b>%s</b>' % v,
         intro=intro,
-        actions=(('<button class="btn btn-rouge" type="button" data-compte>Référencer ma salle</button>'
+        actions=(('<a class="btn btn-rouge" href="clubs.html">Référencer ma salle</a>'
                   '<a class="btn btn-ligne" href="recherche.html">Chercher dans une autre ville</a>')
                  if not n else
                  ('<a class="btn btn-rouge" href="recherche.html?ville=%s">Voir sur la carte</a>'
-                  '<button class="btn btn-ligne" type="button" data-compte>Référencer ma salle</button>'
+                  '<a class="btn btn-ligne" href="clubs.html">Référencer ma salle</a>'
                   % v.replace(' ', '%20'))),
         salles=corps,
         t1='Par discipline à %s' % v,

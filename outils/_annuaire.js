@@ -96,7 +96,7 @@
                        : 'recherche.html?discipline=' + encodeURIComponent(discipline);
       actions.innerHTML =
         '<a class="btn btn-rouge" href="' + vers + '">Voir sur la carte</a>' +
-        '<button class="btn btn-ligne" type="button" data-compte>Référencer ma salle</button>';
+        '<a class="btn btn-ligne" href="clubs.html">Référencer ma salle</a>';
     }
   });
 

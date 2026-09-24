@@ -68,7 +68,7 @@
       v.hidden = false;
     }
 
-    palier(club);
+    palier(club, mail);
     return SB.nouvellesDemandes ? SB.nouvellesDemandes(club.id) : 0;
   }).then(function (n){
     if (!n) return;
@@ -96,8 +96,17 @@
 
   /* Le rappel du palier suit le gerant de page en page. Pour un Pro c'est une
      ligne qui confirme ; pour un gratuit, la porte vers l'abonnement. */
-  function palier(club){
+  function palier(club, mail){
     var pro = (club.offre || 'gratuit') === 'pro';
+    /* Amaury, 24/09/2026 : le « Passer au Pro » du rail « n'est pas connecte ».
+       Il mene donc tout droit a la page de paiement Stripe, comme celui de
+       l'espace club, avec l'identifiant du club et l'e-mail du compte. */
+    var lien = SB.stripe && SB.stripe.pro;
+    if (!pro && lien) {
+      document.getElementById('pro-palier-a').href = lien + (lien.indexOf('?') < 0 ? '?' : '&') +
+        'client_reference_id=' + encodeURIComponent(club.id) +
+        (mail ? '&prefilled_email=' + encodeURIComponent(mail) : '');
+    }
     var bloc = document.getElementById('pro-palier');
     document.getElementById('pro-palier-t').textContent =
       pro ? 'Mon Club Combat Pro' : 'Fiche gratuite';

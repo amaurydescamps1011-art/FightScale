@@ -878,6 +878,20 @@
   @media (max-width:900px){ .esp-kpi{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (max-width:430px){ .esp-kpi{grid-template-columns:1fr} }
 
+  /* L'encart de l'agence, sous les chiffres : une carte sombre qui se detache
+     sans crier, un seul bouton. */
+  .esp-agence-bloc{padding-block:0 clamp(8px,1vw,12px)}
+  .esp-agence{display:flex; align-items:center; justify-content:space-between;
+    gap:clamp(18px,3vw,40px); padding:clamp(22px,3vw,34px);
+    border-radius:var(--r-l); background:#16160F; color:#F4F2EC}
+  .esp-agence-dit{max-width:60ch}
+  .esp-agence-sur{margin:0; font-size:12.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:#FF6B6B}
+  .esp-agence-t{margin:8px 0 0; font-size:clamp(21px,2.2vw,26px); line-height:1.2; color:#fff}
+  .esp-agence-m{margin:10px 0 0; font-size:14.5px; line-height:1.6; color:#CFCBC0}
+  .esp-agence .btn{flex:none}
+  @media (max-width:700px){ .esp-agence{flex-direction:column; align-items:stretch} }
+
   /* Le bloc du Pro, pour un club gratuit : les memes sections, grisees et
      fermees. On montre les fonctions, jamais de fausses lignes de prospects --
      une demonstration inventee se voit, et fait douter du reste. */
@@ -1273,6 +1287,7 @@
       <li><a href="espace-club.html" data-page="espace-club"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.4" y="3.4" width="7.4" height="7.4" rx="1.6"/><rect x="13.2" y="3.4" width="7.4" height="7.4" rx="1.6"/><rect x="3.4" y="13.2" width="7.4" height="7.4" rx="1.6"/><rect x="13.2" y="13.2" width="7.4" height="7.4" rx="1.6"/></svg><span>Espace club</span>
         <b class="pro-pastille" id="pro-pastille" hidden></b></a></li>
       <li><a href="referencer.html" data-page="referencer"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.8H6.6A1.8 1.8 0 0 0 4.8 4.6v14.8a1.8 1.8 0 0 0 1.8 1.8h10.8a1.8 1.8 0 0 0 1.8-1.8V7.6Z"/><path d="M14 2.8v4.8h5.2"/><path d="M8.4 12.6h7.2M8.4 16.6h7.2"/></svg><span>Ma fiche</span></a></li>
+      <li><a href="acquisition.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.8 10.2v3.6a1.2 1.2 0 0 0 1.2 1.2h2.4l7.8 4.2V4.8L7.4 9H5a1.2 1.2 0 0 0-1.2 1.2Z"/><path d="M8.6 15.2 10 20.2"/><path d="M18.4 9a4 4 0 0 1 0 6"/></svg><span>Acquisition</span></a></li>
     </ul>
 
     <!-- Le back-office n'appartient pas au gerant : c'est l'outil de l'equipe Mon
@@ -2422,7 +2437,7 @@
       v.hidden = false;
     }
 
-    palier(club);
+    palier(club, mail);
     return SB.nouvellesDemandes ? SB.nouvellesDemandes(club.id) : 0;
   }).then(function (n){
     if (!n) return;
@@ -2450,8 +2465,17 @@
 
   /* Le rappel du palier suit le gerant de page en page. Pour un Pro c'est une
      ligne qui confirme ; pour un gratuit, la porte vers l'abonnement. */
-  function palier(club){
+  function palier(club, mail){
     var pro = (club.offre || 'gratuit') === 'pro';
+    /* Amaury, 24/09/2026 : le « Passer au Pro » du rail « n'est pas connecte ».
+       Il mene donc tout droit a la page de paiement Stripe, comme celui de
+       l'espace club, avec l'identifiant du club et l'e-mail du compte. */
+    var lien = SB.stripe && SB.stripe.pro;
+    if (!pro && lien) {
+      document.getElementById('pro-palier-a').href = lien + (lien.indexOf('?') < 0 ? '?' : '&') +
+        'client_reference_id=' + encodeURIComponent(club.id) +
+        (mail ? '&prefilled_email=' + encodeURIComponent(mail) : '');
+    }
     var bloc = document.getElementById('pro-palier');
     document.getElementById('pro-palier-t').textContent =
       pro ? 'Mon Club Combat Pro' : 'Fiche gratuite';

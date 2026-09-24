@@ -55,8 +55,13 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   };
 
   // ---------- 1. creation du compte depuis l'accueil ----------
+  // Amaury, 24/09/2026 : « Referencer ma salle » mene a la page Referencer votre
+  // salle, et c'est son bouton qui ouvre la fenetre de creation.
   await aller('index.html');
-  await pg.click('#ouverture [data-compte]');
+  ok('l\'accueil mene a la page Referencer',
+     await pg.getAttribute('#ouverture .btn-rouge', 'href'), 'clubs.html');
+  await aller('clubs.html');
+  await pg.click('.creer [data-compte]');
   await pg.waitForTimeout(200);
   ok('la fenetre s\'ouvre', await pg.isVisible('#voile'), true);
   await pg.fill('#k-nom', 'Team Ouragan Boxe');
@@ -476,7 +481,7 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('il mene aux espaces de travail',
      await pg.evaluate(() => Array.from(document.querySelectorAll('#pro-liens a, .pro-liens a'))
        .filter(a => a.offsetParent !== null).map(a => a.getAttribute('href'))),
-     ['espace-club.html', 'referencer.html', 'admin.html']);
+     ['espace-club.html', 'referencer.html', 'acquisition.html', 'admin.html']);
   /* Amaury, 24/09/2026 : le compte en haut a droite, et plus de « Se deconnecter »
      au pied du rail (il y clignotait a chaque changement de page) */
   ok('la deconnexion a quitte le rail', await pg.locator('#pro-rail .pro-quitter').count(), 0);
@@ -633,7 +638,22 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.click('.acq-duree [data-remise="20"]');
   ok('six mois : le pack Start passe a 240 €',
      await pg.textContent('.acq-packs [data-base="300"]'), '240 €');
-  ok('et la seance a 12 €', await pg.textContent('#acq-unite'), '12 €');
+  ok('plus de prix a la seance ni de « 0 € »', await pg.evaluate(() =>
+     /15 €|0 € pour|à confirmer/i.test(document.querySelector('main').textContent)), false);
+  ok('plus de formulaire en bas de page', await pg.locator('#contact').count(), 0);
+  ok('le panneau est ferme au depart', await pg.isVisible('#parler'), false);
+  await pg.click('.ag-heros [data-parler]');
+  await pg.waitForTimeout(350);
+  ok('« En discuter » ouvre le panneau', await pg.isVisible('#parler'), true);
+  await pg.keyboard.press('Escape');
+  await pg.waitForTimeout(350);
+  ok('Echap le referme', await pg.isVisible('#parler'), false);
+  await pg.evaluate(() => { document.getElementById('a-pack').value = 'grow'; });
+  await pg.evaluate(() => window.scrollTo(0, 2000));
+  await pg.waitForTimeout(400);
+  await pg.click('.ag-flottant');
+  await pg.waitForTimeout(350);
+  ok('le bouton flottant l\'ouvre aussi', await pg.isVisible('#parler'), true);
   await pg.click('#a-envoi');
   await pg.waitForTimeout(200);
   ok('un formulaire vide ne part pas',
@@ -642,7 +662,6 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.fill('#a-ville', 'Marseille');
   await pg.fill('#a-nom', 'Amaury');
   await pg.fill('#a-mail', 'contact@ouragan.fr');
-  await pg.selectOption('#a-pack', 'grow');
   await pg.click('#a-envoi');
   await pg.waitForTimeout(400);
   ok('la demande de rappel est deposee',
@@ -665,7 +684,7 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('le lien suit la duree choisie', pg.url(), lienBoost);
   ok('plus de caisse maison', await (async () => { await aller('acquisition.html');
     return pg.locator('#ag-caisse').count(); })(), 0);
-  await aller('acquisition.html?paiement=ok#contact');
+  await aller('acquisition.html?paiement=ok');
   await pg.waitForTimeout(300);
   ok('au retour, le paiement est confirme',
      /Paiement reçu/.test(await pg.textContent('#ag-retour')), true);

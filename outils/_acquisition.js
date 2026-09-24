@@ -1,8 +1,8 @@
 /* ---- la page acquisition ----
    Le choix de la duree d'engagement, qui recalcule les prix sous les yeux ; le
-   paiement des packs, sur les pages de Stripe (liens de paiement) ; l'agenda
-   Calendly ; le formulaire « etre rappele », qui ecrit dans la table
-   contact_acquisition. La base previent l'equipe par e-mail dans les deux cas
+   paiement des packs, sur les pages de Stripe (liens de paiement) ; le panneau
+   « En discuter », qui ouvre l'agenda Calendly ou, faute d'agenda, le petit
+   formulaire « etre rappele » qui ecrit dans la table contact_acquisition. La base previent l'equipe par e-mail dans les deux cas
    (previent_l_equipe() et previent_pack_paye() dans db/001_schema.sql).
 
    Amaury, 24/09/2026 : « un tout petit peu plus d'effet, que ce soit pas
@@ -45,8 +45,6 @@
     boutons.forEach(function (x){
       x.setAttribute('aria-checked', String(Number(x.getAttribute('data-remise')) === r));
     });
-    var u = $('acq-unite');
-    if (u) u.textContent = euros(15 * (100 - r) / 100);
   }
   boutons.forEach(function (x){
     x.addEventListener('click', function (){ applique(Number(x.getAttribute('data-remise'))); });
@@ -67,10 +65,10 @@
       var liens = SB && SB.stripe && SB.stripe.packs && SB.stripe.packs[cle];
       var url = liens && liens[String(DUREE[remise])];
       if (!url) {
-        /* sans lien, on ne fait pas semblant : on mene au formulaire de rappel,
-           pack deja choisi */
+        /* sans lien, on ne fait pas semblant : on ouvre le panneau pour en
+           discuter, pack deja note */
         var sel = $('a-pack'); if (sel) sel.value = cle;
-        location.hash = '#contact';
+        ouvre(b);
         return;
       }
       b.classList.add('part');
@@ -103,40 +101,78 @@
     history.replaceState(null, '', location.pathname + location.hash);
   })();
 
-  /* ---------- Calendly ---------- */
-  (function (){
-    var bloc = $('ag-calendly');
-    var url = bloc && bloc.getAttribute('data-url');
-    if (!url) return;
+  /* ---------- le panneau « En discuter » ----------
+     Amaury, 24/09/2026 : plutot qu'un formulaire en bas de page, « un pop-up
+     sur le cote (...) et la ca ouvre sur un Calendly ». Tout element marque
+     data-parler l'ouvre ; Echap, la croix et le voile le referment, et le
+     focus revient au bouton qui l'a ouvert. */
+  var panneau = $('parler'), voile = $('ag-voile'), avant = null;
+  var bloc = $('ag-calendly');
+  var agenda = bloc && bloc.getAttribute('data-url');
+  if (agenda) {
     bloc.hidden = false;
-    $('parler').classList.add('ag-rdv-deux');
-    $('acq-form-t').textContent = 'Ou laissez vos coordonnées';
-    var pose = false;
-    function charge(){
-      if (pose) return; pose = true;
-      var s = document.createElement('script');
-      s.src = 'https://assets.calendly.com/assets/external/widget.js';
-      s.async = true;
-      s.onload = function (){
-        if (!window.Calendly) return;
-        Calendly.initInlineWidget({
-          url: url + (url.indexOf('?') < 0 ? '?' : '&') + 'hide_gdpr_banner=1&primary_color=ec162e',
-          parentElement: $('ag-calendly-cadre')
-        });
-      };
-      s.onerror = function (){
-        $('ag-calendly-cadre').innerHTML = '<a class="ag-btn ag-btn-ligne" target="_blank" ' +
-          'rel="noopener" href="' + url.replace(/"/g, '') + '">Ouvrir l’agenda</a>';
-      };
-      document.head.appendChild(s);
-    }
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es){
-        if (es.some(function (e){ return e.isIntersecting; })) { charge(); io.disconnect(); }
-      }, { rootMargin: '800px 0px' });
-      io.observe(bloc);
-    } else charge();
-  })();
+    var f0 = $('acq-form'); if (f0) f0.hidden = true;
+    panneau.classList.add('ag-panneau-large');
+  }
+  var pose = false;
+  function calendly(){
+    if (!agenda || pose) return; pose = true;
+    var sc = document.createElement('script');
+    sc.src = 'https://assets.calendly.com/assets/external/widget.js';
+    sc.async = true;
+    sc.onload = function (){
+      if (!window.Calendly) return;
+      Calendly.initInlineWidget({
+        url: agenda + (agenda.indexOf('?') < 0 ? '?' : '&') + 'hide_gdpr_banner=1&primary_color=ec162e',
+        parentElement: $('ag-calendly-cadre')
+      });
+    };
+    sc.onerror = function (){
+      $('ag-calendly-cadre').innerHTML = '<a class="ag-btn ag-btn-ligne" target="_blank" ' +
+        'rel="noopener" href="' + agenda.replace(/"/g, '') + '">Ouvrir l’agenda</a>';
+    };
+    document.head.appendChild(sc);
+  }
+  function ouvre(depuis){
+    if (!panneau) return;
+    avant = depuis || document.activeElement;
+    panneau.hidden = false; voile.hidden = false;
+    document.documentElement.classList.add('ag-fige');
+    requestAnimationFrame(function (){ panneau.classList.add('ouvert'); voile.classList.add('ouvert'); });
+    calendly();
+    var premier = panneau.querySelector('input:not([type=hidden]), .ag-pan-x');
+    if (premier) setTimeout(function (){ premier.focus({ preventScroll: true }); }, 60);
+  }
+  function ferme(){
+    if (!panneau || panneau.hidden) return;
+    panneau.classList.remove('ouvert'); voile.classList.remove('ouvert');
+    document.documentElement.classList.remove('ag-fige');
+    setTimeout(function (){ panneau.hidden = true; voile.hidden = true; }, calme ? 0 : 260);
+    if (avant && avant.focus) avant.focus({ preventScroll: true });
+  }
+  document.addEventListener('click', function (e){
+    var d = e.target.closest && e.target.closest('[data-parler]');
+    if (!d) return;
+    e.preventDefault();
+    ouvre(d);
+  });
+  if (panneau) {
+    $('ag-pan-x').addEventListener('click', ferme);
+    voile.addEventListener('click', ferme);
+    document.addEventListener('keydown', function (e){
+      if (panneau.hidden) return;
+      if (e.key === 'Escape') { ferme(); return; }
+      if (e.key !== 'Tab') return;
+      var f = Array.prototype.filter.call(
+        panneau.querySelectorAll('button, input:not([type=hidden]), a[href], iframe'),
+        function (x){ return x.offsetParent !== null; });
+      if (!f.length) return;
+      var a = f[0], z = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+      else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+    });
+    if (location.hash === '#parler') ouvre();
+  }
 
   /* ---------- le mouvement ----------
      Les blocs montent a leur arrivee, les chiffres comptent, le planning se
@@ -148,9 +184,9 @@
     main.classList.add('ag-anime');
 
     var groupes = [
-      ['.ag-heros-dit > *', 90], ['.ag-heros-photo', 0], ['.ag-chiffres li', 110],
+      ['.ag-heros-dit > *', 90], ['.ag-heros-photo', 0],
       ['.ag-centre > *', 80], ['.ag-carte', 90], ['.ag-planning-dit > *', 80],
-      ['.ag-ecran', 0], ['.ag-etroit > :not(.ag-packs)', 60], ['.ag-packs li', 60], ['.ag-rdv', 0]
+      ['.ag-ecran', 0], ['.ag-etroit > :not(.ag-packs)', 60], ['.ag-packs li', 60]
     ];
     var vus = [];
     groupes.forEach(function (g){
@@ -202,22 +238,15 @@
   })();
 
   /* ---------- le bouton flottant ----------
-     Il suit la lecture et s'efface quand le formulaire est a l'ecran : inutile
-     d'inviter a prendre contact sous les yeux du formulaire. */
+     Il apparait une fois le heros passe (le heros porte deja « En discuter »)
+     et suit la lecture jusqu'en bas. */
   var flottant = document.querySelector('.ag-flottant');
-  var fin = $('contact');
   var heros = document.querySelector('.ag-heros');
-  if (flottant && fin && 'IntersectionObserver' in window) {
-    var vus2 = { fin: false, heros: true };
-    var maj = function (){ flottant.classList.toggle('cache', vus2.fin || vus2.heros); };
+  if (flottant && heros && 'IntersectionObserver' in window) {
+    flottant.classList.add('cache');
     new IntersectionObserver(function (es){
-      es.forEach(function (e){ vus2[e.target === fin ? 'fin' : 'heros'] = e.isIntersecting; });
-      maj();
-    }, { threshold: 0.05 }).observe(fin);
-    if (heros) new IntersectionObserver(function (es){
-      vus2.heros = es[es.length - 1].isIntersecting; maj();
+      flottant.classList.toggle('cache', es[es.length - 1].isIntersecting);
     }, { rootMargin: '-60% 0px 0px 0px' }).observe(heros);
-    maj();
   }
 
   /* ---------- le formulaire ---------- */
@@ -241,7 +270,7 @@
       mail: $('a-mail').value.trim(),
       tel: $('a-tel').value.trim() || null,
       pack: $('a-pack').value || null,
-      message: $('a-mot').value.trim() || null
+      message: null
     };
 
     if (!(SB && SB.prete())) {

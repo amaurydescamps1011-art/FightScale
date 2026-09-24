@@ -668,6 +668,20 @@
   @media (max-width:900px){ .esp-kpi{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (max-width:430px){ .esp-kpi{grid-template-columns:1fr} }
 
+  /* L'encart de l'agence, sous les chiffres : une carte sombre qui se detache
+     sans crier, un seul bouton. */
+  .esp-agence-bloc{padding-block:0 clamp(8px,1vw,12px)}
+  .esp-agence{display:flex; align-items:center; justify-content:space-between;
+    gap:clamp(18px,3vw,40px); padding:clamp(22px,3vw,34px);
+    border-radius:var(--r-l); background:#16160F; color:#F4F2EC}
+  .esp-agence-dit{max-width:60ch}
+  .esp-agence-sur{margin:0; font-size:12.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:#FF6B6B}
+  .esp-agence-t{margin:8px 0 0; font-size:clamp(21px,2.2vw,26px); line-height:1.2; color:#fff}
+  .esp-agence-m{margin:10px 0 0; font-size:14.5px; line-height:1.6; color:#CFCBC0}
+  .esp-agence .btn{flex:none}
+  @media (max-width:700px){ .esp-agence{flex-direction:column; align-items:stretch} }
+
   /* Le bloc du Pro, pour un club gratuit : les memes sections, grisees et
      fermees. On montre les fonctions, jamais de fausses lignes de prospects --
      une demonstration inventee se voit, et fait douter du reste. */

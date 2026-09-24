@@ -877,6 +877,20 @@
   @media (max-width:900px){ .esp-kpi{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (max-width:430px){ .esp-kpi{grid-template-columns:1fr} }
 
+  /* L'encart de l'agence, sous les chiffres : une carte sombre qui se detache
+     sans crier, un seul bouton. */
+  .esp-agence-bloc{padding-block:0 clamp(8px,1vw,12px)}
+  .esp-agence{display:flex; align-items:center; justify-content:space-between;
+    gap:clamp(18px,3vw,40px); padding:clamp(22px,3vw,34px);
+    border-radius:var(--r-l); background:#16160F; color:#F4F2EC}
+  .esp-agence-dit{max-width:60ch}
+  .esp-agence-sur{margin:0; font-size:12.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:#FF6B6B}
+  .esp-agence-t{margin:8px 0 0; font-size:clamp(21px,2.2vw,26px); line-height:1.2; color:#fff}
+  .esp-agence-m{margin:10px 0 0; font-size:14.5px; line-height:1.6; color:#CFCBC0}
+  .esp-agence .btn{flex:none}
+  @media (max-width:700px){ .esp-agence{flex-direction:column; align-items:stretch} }
+
   /* Le bloc du Pro, pour un club gratuit : les memes sections, grisees et
      fermees. On montre les fonctions, jamais de fausses lignes de prospects --
      une demonstration inventee se voit, et fait douter du reste. */
@@ -1131,7 +1145,7 @@
                    création de compte, puis l'espace club ; jamais un morceau
                    de la page d'accueil -->
               <li><a href="#creer" data-compte="connexion">Accès pro</a></li>
-              <li><a href="#creer" data-compte>Référencer ma salle</a></li>
+              <li><a href="#creer">Référencer ma salle</a></li>
               <li><a href="clubs.html#pro">Offres et tarifs</a></li>
               <li><a href="acquisition.html" target="_blank" rel="noopener">Acquisition</a></li>
             </ul>
@@ -1139,7 +1153,7 @@
         </div>
       </div>
 
-      <a class="btn btn-rouge" href="#creer" data-compte><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+      <a class="btn btn-rouge" href="#creer"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>
   </div>
 </header>
@@ -1334,7 +1348,7 @@
     <nav class="footer-col" aria-labelledby="f-clubs">
       <h2 id="f-clubs">Clubs</h2>
       <ul>
-        <li><a href="#creer" data-compte>Référencer ma salle</a></li>
+        <li><a href="#creer">Référencer ma salle</a></li>
         <li><a href="#creer" data-compte="connexion">Espace club</a></li>
         <li><a href="clubs.html#pro">Offres et tarifs</a></li>
         <li><a href="acquisition.html" target="_blank" rel="noopener">Acquisition de leads</a></li>

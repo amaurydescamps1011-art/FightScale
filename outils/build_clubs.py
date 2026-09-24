@@ -119,6 +119,9 @@ ICONES = {
     # retour au site public : une maison
     'I_SITE': icone('<path d="M4 10.6 12 4l8 6.6V19a1.6 1.6 0 0 1-1.6 1.6H5.6A1.6 1.6 0 0 1 4 19Z"/>'
                     '<path d="M9.6 20.6v-5.4h4.8v5.4"/>'),
+    # l'agence d'acquisition : un porte-voix
+    'I_AGENCE': icone('<path d="M3.8 10.2v3.6a1.2 1.2 0 0 0 1.2 1.2h2.4l7.8 4.2V4.8L7.4 9H5a1.2 1.2 0 0 0-1.2 1.2Z"/>'
+                      '<path d="M8.6 15.2 10 20.2"/><path d="M18.4 9a4 4 0 0 1 0 6"/>'),
     # sortir : une porte avec la fleche dehors
     'I_SORTIE': icone('<path d="M9.6 20.4H5.8A1.8 1.8 0 0 1 4 18.6V5.4a1.8 1.8 0 0 1 1.8-1.8h3.8"/>'
                       '<path d="M15.2 16.4 19.6 12l-4.4-4.4"/><path d="M19.6 12H9.6"/>'),
