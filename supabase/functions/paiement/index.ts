@@ -204,6 +204,12 @@ Deno.serve(async (req) => {
       cancel_url: retour + '?abonnement=annule',
       locale: 'fr',
       allow_promotion_codes: true,
+      /* Une facture de club doit porter son adresse et, s'il en a un, son
+         numero de TVA. Avec un client deja cree, Stripe exige qu'on l'autorise
+         a mettre a jour le nom et l'adresse du client depuis la caisse. */
+      billing_address_collection: 'required',
+      tax_id_collection: { enabled: true },
+      customer_update: { name: 'auto', address: 'auto' },
       subscription_data: { metadata: meta },
       metadata: meta,
     });

@@ -147,12 +147,18 @@ async function signatureValide(corps: string, entete: string, secret: string): P
 /* ------------------------------------------------------------ le Pro */
 
 /** Recopie l'etat d'un abonnement Stripe dans la base, et aligne `club.offre`.
- *  Un abonnement en essai ou actif donne le Pro ; tout le reste le retire. */
+ *  Un abonnement en essai, actif ou en cours de relance donne le Pro ; tout
+ *  le reste le retire. L'abonnement est relu chez Stripe plutot que pris dans
+ *  l'evenement : un `created` en retard ne doit pas defaire un Pro paye. */
 async function applique(abonnement: any): Promise<string> {
   const clubId = abonnement?.metadata?.club_id;
   if (!clubId) return 'sans club_id, ignore';
 
-  const actif = abonnement.status === 'active' || abonnement.status === 'trialing';
+  /* `past_due` garde le Pro : Stripe retente le prelevement pendant quelques
+     jours (Smart Retries), et couper la fiche d'un club au premier refus de
+     carte serait brutal. Au bout des tentatives, l'abonnement passe `unpaid`
+     ou `canceled`, et la le Pro tombe. */
+  const actif = ['active', 'trialing', 'past_due'].includes(abonnement.status);
   /* La fin de periode a quitte l'abonnement pour ses lignes dans les versions
      recentes de l'API. Les evenements arrivent dans la version choisie en
      creant le webhook, pas dans celle epinglee plus haut : on lit les deux. */
@@ -264,7 +270,7 @@ Deno.serve(async (req) => {
            Le Pro garde son chemin d'origine : `type: 'pro'`, ou pas de type
            du tout pour un abonnement cree avant que le type existe. */
         if (estPack(objet)) quoi = await appliquePack(await stripe('subscriptions/' + objet.id));
-        else quoi = await applique(objet);
+        else quoi = await applique(await stripe('subscriptions/' + objet.id));
         break;
       /* Un prelevement echoue : Stripe repasse l'abonnement en `past_due` et
          nous renverra un `subscription.updated`. On ne coupe rien ici. */

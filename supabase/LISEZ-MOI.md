@@ -212,6 +212,20 @@ Une carte refusée pour tester l'échec : `4000 0000 0000 0002`.
 6. Les commandes de test restent dans la table ; pour les effacer (SQL Editor) :
    `delete from commande_pack where stripe_session like 'cs_test_%';`
 
+Les **factures** : Stripe en émet une à chaque prélèvement, Pro comme packs.
+Avant le mode réel, dans Stripe :
+- Paramètres › Facturation › **Modèle de facture** : ta raison sociale, ton
+  adresse, ton SIREN, et soit ton numéro de TVA, soit la mention
+  « TVA non applicable, art. 293 B du CGI » si tu es en franchise.
+- Paramètres › Facturation › **E-mails aux clients** : coche l'envoi des
+  factures et des reçus de paiement, et l'e-mail en cas d'échec de paiement.
+- Paramètres › Facturation › **Gestion des échecs de paiement** : garde les
+  nouvelles tentatives automatiques (Smart Retries). Pendant ces tentatives le
+  club garde le Pro ; si elles échouent toutes, l'abonnement est résilié et le
+  site retire le Pro tout seul. Choisis « résilier l'abonnement » comme issue.
+La caisse demande l'adresse de facturation et, en option, le numéro de TVA du
+club : ils apparaissent sur ses factures.
+
 Deux points à voir avec le comptable avant le mode réel :
 - **La TVA.** Les packs sont affichés et facturés **hors taxes** : Stripe
   prélève le montant HT tel quel et n'ajoute pas de TVA, sauf si on active

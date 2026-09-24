@@ -205,6 +205,8 @@ Deno.serve(async (req) => {
       }],
       /* l'adresse de facturation, pour que la facture d'un club soit juste */
       billing_address_collection: 'required',
+      /* le numero de TVA du club, s'il en a un, sur sa facture */
+      tax_id_collection: { enabled: true },
       success_url: page + '?paiement=ok#contact',
       cancel_url: page + '?paiement=annule#offres',
       locale: 'fr',
