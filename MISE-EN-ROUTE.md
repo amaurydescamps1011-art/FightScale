@@ -176,27 +176,69 @@ l'annuaire aura quelques clubs — dis-le moi, c'est une ligne à changer.
 
 ---
 
-## 3 bis. L'expéditeur d'e-mails
+## 3 bis. L'expéditeur d'e-mails — `monclubcombat.fr`
 
-Trois choses attendent le même chaînon manquant, et une seule mise en place les
-débloque toutes :
+Le domaine est pris (24/09/2026). Trois choses attendaient ce chaînon, et cette
+mise en place les débloque toutes :
 
 1. la confirmation d'adresse à la création de compte ;
 2. la notification au gérant quand une demande de séance d'essai arrive — pour
    l'instant il doit ouvrir son espace pour la voir ;
 3. les relances par e-mail, promises dans le Pro à 39 €.
 
-Ce qu'il faut : **un nom de domaine**, une dizaine d'euros par an, sans société.
-`monclubcombat.fr` ou équivalent. Il sert deux fois : les e-mails partent de
-`contact@monclubcombat.fr` au lieu d'une adresse partagée qui finit en spam, et le
-site quitte `fight-scale.vercel.app` pour ton vrai nom.
+**Resend plutôt que Brevo.** Les deux marchent. Resend est fait pour ce qu'on a
+à faire : des e-mails déclenchés par le site (confirmation, notification,
+relance). Brevo est une plateforme marketing — newsletters, contacts,
+automatisations — dont on n'utiliserait que le SMTP, en traversant une interface
+bâtie pour autre chose. Resend : 3 000 e-mails par mois gratuits, 100 par jour,
+un domaine. Brevo : 300 par jour, sans limite mensuelle, mais son offre gratuite
+signe les e-mails de sa marque. Si un jour on envoie une vraie newsletter aux
+clubs, on reprendra Brevo à côté ; pour l'instant, Resend.
 
-Ensuite, un compte chez **Resend** (gratuit jusqu'à 3 000 e-mails par mois, le plus
-simple à brancher) ou **Brevo** si tu préfères un français. Deux enregistrements
-DNS à poser, les identifiants SMTP à coller dans Supabase sous Authentication →
-Emails → SMTP Settings, et je câble le reste.
+### a. Poser le domaine chez Resend
 
-Dis-moi quand tu veux t'y mettre et je te fais la marche à suivre.
+1. Compte gratuit sur https://resend.com — par e-mail, ou avec GitHub.
+2. **Domains → Add Domain** → `monclubcombat.fr`, région **EU (Ireland)**.
+3. Resend affiche **trois enregistrements DNS** à poser chez ton registrar
+   (celui où tu as acheté le domaine) :
+   - un **MX** sur `send.monclubcombat.fr`,
+   - un **TXT** sur `send.monclubcombat.fr` (le SPF),
+   - un **TXT** sur `resend._domainkey.monclubcombat.fr` (la DKIM, une longue
+     ligne : copie-la en entier, sans espace ajouté).
+4. Chez ton registrar : la zone DNS, puis un enregistrement par ligne. Recopie
+   le **nom**, le **type** et la **valeur** exactement comme Resend les donne.
+5. Retour sur Resend → **Verify**. Ça prend de quelques minutes à quelques
+   heures. Tant que c'est « Pending », rien ne part.
+
+Attention : si le domaine est chez Vercel, la zone DNS est chez Vercel, pas chez
+le registrar. Dis-le moi, c'est le même geste à un autre endroit.
+
+### b. Donner le SMTP à Supabase
+
+1. Sur Resend → **API Keys** → **Create API Key**, droit d'envoi. **La clé ne
+   s'affiche qu'une fois.** Ne me la colle pas ici : elle va dans Supabase et
+   nulle part ailleurs.
+2. Supabase → **Authentication → Emails → SMTP Settings** → **Enable Custom
+   SMTP**, puis :
+   - Host : `smtp.resend.com`
+   - Port : `587`
+   - Username : `resend`
+   - Password : la clé API
+   - Sender email : `contact@monclubcombat.fr`
+   - Sender name : `Mon Club Combat`
+3. **Save**, puis rallume **Confirm email** dans le bloc « User Signups » de la
+   page Sign In / Providers — celui qu'on avait éteint le 23/09.
+4. Crée un compte de test avec une adresse à toi : l'e-mail doit arriver, et le
+   lien doit ramener sur le site.
+
+### c. Le site prend son nom
+
+Vercel → le projet → **Settings → Domains** → `monclubcombat.fr`, et Vercel dit
+quels enregistrements poser. Ensuite je change les adresses écrites dans le site
+et j'enlève le `noindex`, pour que Google puisse enfin le lire.
+
+À faire dans cet ordre : le domaine chez Resend d'abord (les e-mails débloquent
+la création de compte), le site ensuite.
 
 ---
 

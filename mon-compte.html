@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mon Club Combat">
-<meta property="og:title" content="Mon compte — Mon Club Combat">
+<meta property="og:title" content="Mon compte | Mon Club Combat">
 <meta property="og:description" content="Vos informations, votre salle et votre mot de passe.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -20,7 +20,7 @@
   img{max-width:100%}
   [hidden]{display:none !important}
 </style>
-<title>Mon compte — Mon Club Combat</title>
+<title>Mon compte | Mon Club Combat</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
 <style>
@@ -1683,7 +1683,8 @@
      compte, back-office, modifier ma fiche -- quand on est dans l'espace B2C. »
 
      Donc pas de menu deroulant ici : le bandeau public porte un seul bouton, qui
-     mene a l'espace pro. Tout le reste (la fiche, le compte, le back-office, la
+     mene a l'espace pro, dans un onglet a lui (« il y aura deux pages d'ouvertes,
+     la page B2C et la page espace club ») -- le site public reste ouvert derriere. Tout le reste (la fiche, le compte, le back-office, la
      deconnexion) vit dans le rail de cet espace, ou c'est a sa place. */
   function poseMenu(infos){
     if (!bandeau) return;
@@ -1697,7 +1698,7 @@
     var zone = document.createElement('div');
     zone.className = 'nav-compte';
     zone.innerHTML =
-      '<a class="cpt-bouton" href="' + ou + '">' +
+      '<a class="cpt-bouton" href="' + ou + '" target="_blank" rel="noopener">' +
         '<span class="cpt-rond">' + ech(initiales(nom)) +
         (neuves ? pastille(neuves) : '') + '</span>' +
         '<span class="cpt-nom">' + ech(quoi) + '</span>' + FLECHE + '</a>';

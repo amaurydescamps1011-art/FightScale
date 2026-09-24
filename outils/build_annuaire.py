@@ -274,7 +274,7 @@ for d in DISCIPLINES:
                      'Ou regardez par ville&nbsp;:',
                      liens([(fichier_ville(v), v) for v in VILLES[:8]]))
     ECRITS[fichier_disc(d)] = page(
-        titre='%s — salles et clubs en France' % d,
+        titre='%s : salles et clubs en France' % d,
         fil=FIL + '<a href="recherche.html">Salles de sports de combat</a>'
                   '<i aria-hidden="true">›</i><span aria-current="page">%s</span>' % d,
         h1='Salles de <b>%s</b> en France' % NOM[d],

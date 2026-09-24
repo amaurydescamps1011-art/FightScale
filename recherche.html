@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mon Club Combat">
-<meta property="og:title" content="Salles de sports de combat — Mon Club Combat">
+<meta property="og:title" content="Salles de sports de combat | Mon Club Combat">
 <meta property="og:description" content="Cherchez une salle de sports de combat par ville et par discipline, sur la carte.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -19,7 +19,7 @@
   img{max-width:100%}
   [hidden]{display:none !important}
 </style>
-<title>Salles de sports de combat — Mon Club Combat</title>
+<title>Salles de sports de combat | Mon Club Combat</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
 <style>
@@ -1121,12 +1121,12 @@ function rendTitre(){
   var h1 = document.getElementById('compte');
   h1.innerHTML = n
     ? '<b>' + n + '</b> salle' + (n > 1 ? 's' : '') + quoi + lieu +
-      ' <span class="compte-suite">— comparez les horaires, les disciplines et les avis</span>'
+      ' <span class="compte-suite">: comparez les horaires, les disciplines et les avis</span>'
     : 'Aucune salle' + quoi + lieu;
   var etiq = document.getElementById('carte-ville');
   etiq.textContent = etat.ville; etiq.hidden = !etat.ville;
   document.title = (etat.ville ? 'Salles de sports de combat à ' + etat.ville
-                               : 'Salles de sports de combat') + ' — Mon Club Combat';
+                               : 'Salles de sports de combat') + ' | Mon Club Combat';
 }
 
 /* ---------- une carte de résultat ---------- */
@@ -2147,7 +2147,8 @@ if (!CALME) requestAnimationFrame(boucle);
      compte, back-office, modifier ma fiche -- quand on est dans l'espace B2C. »
 
      Donc pas de menu deroulant ici : le bandeau public porte un seul bouton, qui
-     mene a l'espace pro. Tout le reste (la fiche, le compte, le back-office, la
+     mene a l'espace pro, dans un onglet a lui (« il y aura deux pages d'ouvertes,
+     la page B2C et la page espace club ») -- le site public reste ouvert derriere. Tout le reste (la fiche, le compte, le back-office, la
      deconnexion) vit dans le rail de cet espace, ou c'est a sa place. */
   function poseMenu(infos){
     if (!bandeau) return;
@@ -2161,7 +2162,7 @@ if (!CALME) requestAnimationFrame(boucle);
     var zone = document.createElement('div');
     zone.className = 'nav-compte';
     zone.innerHTML =
-      '<a class="cpt-bouton" href="' + ou + '">' +
+      '<a class="cpt-bouton" href="' + ou + '" target="_blank" rel="noopener">' +
         '<span class="cpt-rond">' + ech(initiales(nom)) +
         (neuves ? pastille(neuves) : '') + '</span>' +
         '<span class="cpt-nom">' + ech(quoi) + '</span>' + FLECHE + '</a>';

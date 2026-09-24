@@ -83,7 +83,7 @@ function lien(href, icone, texte, dehors){
 function rendFiche(s){
   var d = s[11];
   document.getElementById('fiche').hidden = false;
-  document.title = s[0] + ' — ' + s[2] + ' | Mon Club Combat';
+  document.title = s[0] + ', ' + s[2] + ' | Mon Club Combat';
 
   var filVille = document.getElementById('fil-ville');
   filVille.textContent = 'Salles à ' + s[2];
@@ -380,7 +380,7 @@ function ouvreEssai(s){
   if (param('demo')){
     document.getElementById('bandeau-demo').hidden = false;
     rendFiche(SALLE_DEMO);
-    document.title = 'Exemple de fiche club — Mon Club Combat';
+    document.title = 'Exemple de fiche club | Mon Club Combat';
     return;
   }
   var demande = param('s');
@@ -421,6 +421,6 @@ function ouvreEssai(s){
 
   function introuvable(){
     document.getElementById('introuvable').hidden = false;
-    document.title = 'Salle introuvable — Mon Club Combat';
+    document.title = 'Salle introuvable | Mon Club Combat';
   }
 })();

@@ -130,12 +130,12 @@ body = (body.replace('%%HEADER%%', header).replace('%%FOOTER%%', footer)
             .replace('%%OB_VISUEL%%', OB_VISUEL)
             .replace('%%APPAREIL%%', APPAREIL).replace('%%CROIX%%', CROIX))
 
-TITRE = {'clubs': 'Référencer ma salle — Mon Club Combat',
-         'referencer': 'La fiche de votre salle — Mon Club Combat',
-         'espace-club': 'Mon espace club — Mon Club Combat',
-         'admin': 'Back-office — Mon Club Combat',
-         'motdepasse': 'Nouveau mot de passe — Mon Club Combat',
-         'mon-compte': 'Mon compte — Mon Club Combat'}[QUI]
+TITRE = {'clubs': 'Référencer ma salle | Mon Club Combat',
+         'referencer': 'La fiche de votre salle | Mon Club Combat',
+         'espace-club': 'Mon espace club | Mon Club Combat',
+         'admin': 'Back-office | Mon Club Combat',
+         'motdepasse': 'Nouveau mot de passe | Mon Club Combat',
+         'mon-compte': 'Mon compte | Mon Club Combat'}[QUI]
 
 page = (
 '''<title>''' + TITRE + '''</title>

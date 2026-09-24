@@ -60,12 +60,12 @@ function rendTitre(){
   var h1 = document.getElementById('compte');
   h1.innerHTML = n
     ? '<b>' + n + '</b> salle' + (n > 1 ? 's' : '') + quoi + lieu +
-      ' <span class="compte-suite">— comparez les horaires, les disciplines et les avis</span>'
+      ' <span class="compte-suite">: comparez les horaires, les disciplines et les avis</span>'
     : 'Aucune salle' + quoi + lieu;
   var etiq = document.getElementById('carte-ville');
   etiq.textContent = etat.ville; etiq.hidden = !etat.ville;
   document.title = (etat.ville ? 'Salles de sports de combat à ' + etat.ville
-                               : 'Salles de sports de combat') + ' — Mon Club Combat';
+                               : 'Salles de sports de combat') + ' | Mon Club Combat';
 }
 
 /* ---------- une carte de résultat ---------- */

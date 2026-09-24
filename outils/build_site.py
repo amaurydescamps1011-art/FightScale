@@ -8,28 +8,28 @@ import os, re, shutil
 
 SORTIE = 'site'
 DESCR = {
- 'index.html': ("Mon Club Combat — trouvez la salle de sports de combat près de chez vous",
+ 'index.html': ("Mon Club Combat : trouvez la salle de sports de combat près de chez vous",
    "L'annuaire des salles de sports de combat en France : MMA, boxe anglaise, "
    "kickboxing, Muay Thaï, jiu-jitsu brésilien, grappling, karaté et judo."),
- 'recherche.html': ("Salles de sports de combat — Mon Club Combat",
+ 'recherche.html': ("Salles de sports de combat | Mon Club Combat",
    "Cherchez une salle de sports de combat par ville et par discipline, sur la carte."),
- 'salle.html': ("Salle de sports de combat — Mon Club Combat",
+ 'salle.html': ("Salle de sports de combat | Mon Club Combat",
    "La fiche d'une salle de sports de combat : disciplines, planning des cours, "
    "adresse, horaires et coordonnées."),
- 'clubs.html': ("Référencer ma salle — Mon Club Combat",
+ 'clubs.html': ("Référencer ma salle | Mon Club Combat",
    "Référencez gratuitement votre salle de sports de combat sur Mon Club Combat "
    "et recevez des demandes de séances d'essai."),
  # la fiche se remplit sur sa propre page, derriere la creation de l'espace club :
  # elle n'a rien a faire dans un resultat de recherche
- 'referencer.html': ("La fiche de votre salle — Mon Club Combat",
+ 'referencer.html': ("La fiche de votre salle | Mon Club Combat",
    "Remplissez la fiche de votre salle de sports de combat."),
- 'espace-club.html': ("Mon espace club — Mon Club Combat",
+ 'espace-club.html': ("Mon espace club | Mon Club Combat",
    "Suivez votre fiche et vos demandes de séance d'essai."),
- 'admin.html': ("Back-office — Mon Club Combat",
+ 'admin.html': ("Back-office | Mon Club Combat",
    "Vérification des fiches de club."),
- 'motdepasse.html': ("Nouveau mot de passe — Mon Club Combat",
+ 'motdepasse.html': ("Nouveau mot de passe | Mon Club Combat",
    "Choisissez un nouveau mot de passe pour votre espace club."),
- 'mon-compte.html': ("Mon compte — Mon Club Combat",
+ 'mon-compte.html': ("Mon compte | Mon Club Combat",
    "Vos informations, votre salle et votre mot de passe."),
 }
 
@@ -43,7 +43,7 @@ SANS_INDEX = {'referencer.html', 'espace-club.html', 'admin.html', 'motdepasse.h
 import build_annuaire as ann
 for d in ann.DISCIPLINES:
     DESCR[ann.fichier_disc(d)] = (
-        '%s — salles et clubs en France | Mon Club Combat' % d,
+        '%s : salles et clubs en France | Mon Club Combat' % d,
         'Toutes les salles de %s référencées sur Mon Club Combat : horaires, planning '
         'des cours, adresse et contact direct.' % d)
 for v in ann.VILLES:
