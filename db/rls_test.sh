@@ -22,10 +22,19 @@ pg_isready -h "$D" -p 5433 -q 2>/dev/null || \
 P="psql -h $D -p 5433 -U postgres -q"
 q(){ psql -h "$D" -p 5433 -U postgres -tAq -c "$1" 2>&1 | tr '\n' ' ' | sed 's/  */ /g'; }
 
-$P -c "drop schema if exists public cascade; create schema public; drop schema if exists auth cascade;" >/dev/null
+$P -c "drop schema if exists public cascade; create schema public; drop schema if exists auth cascade; drop schema if exists net cascade; drop schema if exists vault cascade;" >/dev/null
 $P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
 create schema auth;
-create table auth.users (id uuid primary key, raw_user_meta_data jsonb);
+create table auth.users (id uuid primary key, raw_user_meta_data jsonb, email text);
+-- ce que Supabase fournit pour l'e-mail au club : pg_net (qui ici ne fait que
+-- noter l'appel) et le coffre, vide au depart
+create schema net;
+create table net.envois (url text, headers jsonb, body jsonb);
+create or replace function net.http_post(url text, body jsonb default '{}', params jsonb default '{}',
+  headers jsonb default '{}', timeout_milliseconds int default 5000) returns bigint
+  language sql as $$ insert into net.envois values (url, headers, body); select 1::bigint $$;
+create schema vault;
+create table vault.decrypted_secrets (name text, decrypted_secret text);
 create or replace function auth.uid() returns uuid language sql stable as
 $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 do $$ begin create role anon; exception when duplicate_object then null; end $$;
@@ -39,11 +48,11 @@ $P -v ON_ERROR_STOP=1 <<'SQL' >/dev/null
 grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on all tables in schema public to anon, authenticated;
 grant execute on all functions in schema public to anon, authenticated;
-insert into auth.users (id, raw_user_meta_data) values
-  ('11111111-1111-1111-1111-111111111111', '{"full_name":"Alain"}'::jsonb),
-  ('22222222-2222-2222-2222-222222222222', '{}'::jsonb),
-  ('33333333-3333-3333-3333-333333333333', '{}'::jsonb),
-  ('44444444-4444-4444-4444-444444444444', '{}'::jsonb);
+insert into auth.users (id, raw_user_meta_data, email) values
+  ('11111111-1111-1111-1111-111111111111', '{"full_name":"Alain"}'::jsonb, 'alain@ex.fr'),
+  ('22222222-2222-2222-2222-222222222222', '{}'::jsonb, 'gerant-b@ex.fr'),
+  ('33333333-3333-3333-3333-333333333333', '{}'::jsonb, null),
+  ('44444444-4444-4444-4444-444444444444', '{}'::jsonb, null);
 insert into equipe (membre_id) values ('33333333-3333-3333-3333-333333333333');
 insert into club (id, nom, ville, statut, offre, tel, mail, instagram) values
   ('aaaaaaaa-0000-0000-0000-000000000001', 'Club A', 'Marseille', 'en_attente', 'gratuit', '0491000001', 'a@ex.fr', 'club_a'),
@@ -233,6 +242,37 @@ ok "et ne se l'invente pas" \
    "$(q "$(cnx $A) insert into abonnement (club_id, statut) values ('aaaaaaaa-0000-0000-0000-000000000001','active');" | cut -c1-5)" "ERROR"
 ok "ni ne prolonge le sien" \
    "$(q "$(cnx $B) with u as (update abonnement set fin_periode = now() + interval '9 years' where club_id='bbbbbbbb-0000-0000-0000-000000000002' returning 1) select count(*) from u;")" "0 "
+
+# L'e-mail au club quand une demande arrive (24/09/2026). La base ecrit a Resend
+# par pg_net ; ici pg_net ne fait que noter l'appel dans net.envois.
+ok "sans cle Resend dans le coffre, rien ne part" \
+   "$(q "select count(*) from net.envois;")" "0 "
+q "insert into vault.decrypted_secrets values ('resend_cle', 're_test');" >/dev/null
+q "set role anon; insert into demande (club_id,nom,mail,tel,message) values ('bbbbbbbb-0000-0000-0000-000000000002','<b>Zoé</b>','zoe@ex.fr','06 12 34 56 78','Débutante <script>x</script>');" >/dev/null
+ok "avec la cle, une demande anonyme part en un e-mail" \
+   "$(q "select count(*) from net.envois;")" "1 "
+ok "vers Resend, avec la cle du coffre" \
+   "$(q "select url||' '||(headers->>'Authorization') from net.envois;")" "https://api.resend.com/emails Bearer re_test "
+ok "au gerant du club, et a lui seul" \
+   "$(q "select body->'to' from net.envois;")" "[\"gerant-b@ex.fr\"] "
+ok "le gerant qui repond ecrit au pratiquant" \
+   "$(q "select body->>'reply_to' from net.envois;")" "zoe@ex.fr "
+ok "le nom du pratiquant est echappe dans le HTML" \
+   "$(q "select (body->>'html') like '%&lt;b&gt;Zoé&lt;/b&gt;%' and (body->>'html') not like '%<b>Zoé%' from net.envois;")" "t "
+ok "son message aussi" \
+   "$(q "select (body->>'html') not like '%<script>%' from net.envois;")" "t "
+ok "le texte brut accompagne le HTML" \
+   "$(q "select (body->>'text') like '%06 12 34 56 78%' from net.envois;")" "t "
+# un club sans compte de gerant : l'adresse de sa fiche prend le relais
+q "insert into demande (club_id,nom,mail) values ('cccccccc-0000-0000-0000-000000000003','Paul','paul@ex.fr');" >/dev/null
+ok "sans gerant, l'adresse de la fiche recoit" \
+   "$(q "select body->'to' from net.envois where body->>'reply_to'='paul@ex.fr';")" "[\"c@ex.fr\"] "
+# un Resend en panne ne doit jamais faire echouer le formulaire du pratiquant
+q "create or replace function net.http_post(url text, body jsonb default '{}', params jsonb default '{}', headers jsonb default '{}', timeout_milliseconds int default 5000) returns bigint language plpgsql as \$\$ begin raise exception 'panne'; end \$\$;" >/dev/null
+ok "si l'envoi echoue, la demande s'enregistre quand meme" \
+   "$(q "set role anon; with i as (insert into demande (club_id,nom,mail) values ('bbbbbbbb-0000-0000-0000-000000000002','Ines','ines@ex.fr') returning 1) select count(*) from i;")" "1 "
+ok "personne n'appelle l'envoi a la main" \
+   "$(q "set role anon; select previent_le_club();" | cut -c1-5)" "ERROR"
 
 echo
 [ $RATES -eq 0 ] && echo "tout passe" || { echo "$RATES echec(s)"; exit 1; }

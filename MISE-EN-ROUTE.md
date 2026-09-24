@@ -280,6 +280,36 @@ quand on écrira les notifications.
 
 ---
 
+## 3 ter. L'e-mail au club quand une demande arrive
+
+Dès qu'un pratiquant demande une séance d'essai, le gérant reçoit un e-mail avec
+le nom, l'e-mail, le téléphone et le message, plus un bouton vers son espace
+club. **S'il répond à cet e-mail, c'est le pratiquant qui reçoit la réponse.**
+
+C'est la base qui envoie, par Resend. Il lui faut sa propre clé :
+
+1. Resend → **API Keys** → **Create API Key**, nom `notifications`, droit
+   **Sending access**. Copie-la (elle ne s'affiche qu'une fois). Ne me la colle
+   pas ici.
+2. **Recolle le schéma** (`db/001_schema.sql`) dans le SQL Editor → Run.
+3. Toujours dans le SQL Editor, une seule ligne, avec ta clé entre les
+   apostrophes :
+
+   ```sql
+   select vault.create_secret('re_ta_cle_ici', 'resend_cle');
+   ```
+
+   La clé va dans le coffre chiffré de Supabase (Vault). Elle n'est ni dans le
+   dépôt ni dans une page.
+4. Test : sur la fiche d'un club **Pro publié**, demande une séance d'essai
+   avec une autre adresse. Le gérant doit recevoir l'e-mail dans la minute.
+
+Tant que la clé n'est pas dans le coffre, rien ne part, et les demandes
+s'enregistrent quand même. Pour changer la clé plus tard :
+`select vault.update_secret((select id from vault.secrets where name = 'resend_cle'), 're_nouvelle_cle');`
+
+---
+
 ## 4. Le test complet, dans l'ordre
 
 À faire une fois les étapes 1 à 3 finies. Chaque ligne est vérifiable à l'œil.

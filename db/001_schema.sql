@@ -276,6 +276,117 @@ drop trigger if exists profil_modifie_le on profil;
 create trigger profil_modifie_le before update on profil
   for each row execute function touche_modifie_le();
 
+-- ---------------------------------------- prevenir le club d'une demande
+-- Sans ce mail, un gerant ne savait qu'une demande l'attendait qu'en ouvrant son
+-- espace, et un pratiquant qu'on ne rappelle pas dans la journee va ailleurs.
+--
+-- Il n'y a pas de serveur a nous : c'est la base qui ecrit a Resend, par pg_net
+-- (des requetes HTTP depuis Postgres, fournies par Supabase). La cle Resend vit
+-- dans le coffre de Supabase (Vault), jamais dans ce fichier ni dans une page :
+--   select vault.create_secret('re_...', 'resend_cle');
+-- Tant qu'elle n'y est pas, rien ne part et la demande s'enregistre quand meme.
+-- pg_net envoie apres coup, hors de la transaction : un Resend en panne ne fait
+-- jamais echouer le formulaire du pratiquant.
+do $$ begin
+  create extension if not exists pg_net with schema extensions;
+exception when others then null; end $$;
+
+-- le texte d'un pratiquant entre dans du HTML : on l'echappe, sinon un nom
+-- comme « <a href=...> » deviendrait un lien dans la boite du gerant
+create or replace function html_sur(t text) returns text
+  language sql immutable as
+$$ select replace(replace(replace(replace(coalesce(t, ''),
+     '&', '&amp;'), '<', '&lt;'), '>', '&gt;'), '"', '&quot;') $$;
+
+create or replace function previent_le_club() returns trigger
+  language plpgsql security definer set search_path = public, pg_temp as
+$$
+declare
+  cle    text;
+  dest   jsonb;
+  salle  text;
+  mail_fiche text;
+  lignes text := '';
+  texte  text;
+  corps  text;
+  site   constant text := 'https://monclubcombat.fr';
+begin
+  begin
+    select decrypted_secret into cle from vault.decrypted_secrets
+      where name = 'resend_cle' limit 1;
+  exception when others then return new;       -- pas de coffre : pas d'envoi
+  end;
+  if cle is null or cle = '' then return new; end if;
+
+  -- les gerants du club, par l'adresse de leur compte ; a defaut, celle de la fiche
+  select jsonb_agg(distinct u.email) into dest
+    from club_membre m join auth.users u on u.id = m.membre_id
+   where m.club_id = new.club_id and coalesce(u.email, '') <> '';
+  select nom, mail into salle, mail_fiche from club where id = new.club_id;
+  if dest is null and coalesce(mail_fiche, '') <> '' then
+    dest := jsonb_build_array(mail_fiche);
+  end if;
+  if dest is null or jsonb_array_length(dest) = 0 then return new; end if;
+
+  lignes :=
+       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Nom</td><td style="padding:6px 0;font-weight:700">' || html_sur(new.nom) || '</td></tr>'
+    || '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">E-mail</td><td style="padding:6px 0"><a href="mailto:' || html_sur(new.mail) || '" style="color:#BB0F22">' || html_sur(new.mail) || '</a></td></tr>'
+    || case when coalesce(new.tel, '') <> '' then
+       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Téléphone</td><td style="padding:6px 0"><a href="tel:' || html_sur(regexp_replace(new.tel, '[^0-9+]', '', 'g')) || '" style="color:#BB0F22">' || html_sur(new.tel) || '</a></td></tr>' else '' end
+    || case when coalesce(new.discipline, '') <> '' then
+       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Discipline</td><td style="padding:6px 0">' || html_sur(new.discipline) || '</td></tr>' else '' end
+    || case when coalesce(new.creneau, '') <> '' then
+       '<tr><td style="padding:6px 16px 6px 0;color:#6F6B66">Quand</td><td style="padding:6px 0">' || html_sur(new.creneau) || '</td></tr>' else '' end;
+
+  corps :=
+       '<div style="font-family:Arial,Helvetica,sans-serif;background:#F7F6F3;padding:24px 12px">'
+    || '<div style="max-width:520px;margin:0 auto;background:#FFFFFF;border:1px solid #E8E5DF;border-radius:12px;padding:28px 24px;color:#16160F">'
+    || '<p style="margin:0 0 18px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#EC162E">Mon Club Combat</p>'
+    || '<h1 style="margin:0 0 8px;font-size:22px;line-height:1.25">Nouvelle demande de séance d''essai</h1>'
+    || '<p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#3A3A41">'
+    || html_sur(new.nom) || ' aimerait essayer ' || html_sur(salle) || '. Un rappel dans la journée fait souvent la différence.</p>'
+    || '<table style="border-collapse:collapse;font-size:15px;line-height:1.5">' || lignes || '</table>'
+    || case when coalesce(new.message, '') <> '' then
+       '<p style="margin:18px 0 0;padding:12px 14px;background:#F7F6F3;border-radius:8px;font-size:15px;line-height:1.6;white-space:pre-wrap">' || html_sur(new.message) || '</p>' else '' end
+    || '<p style="margin:24px 0 0"><a href="' || site || '/espace-club.html" style="display:inline-block;background:#DC1229;color:#FFFFFF;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:8px">Ouvrir mon espace club</a></p>'
+    || '<p style="margin:20px 0 0;font-size:13px;line-height:1.55;color:#6F6B66">Répondez directement à cet e-mail pour écrire à ' || html_sur(new.nom) || '.</p>'
+    || '</div></div>';
+
+  texte := 'Nouvelle demande de séance d''essai pour ' || coalesce(salle, 'votre salle') || E'\n\n'
+    || 'Nom : ' || new.nom || E'\n'
+    || 'E-mail : ' || new.mail || E'\n'
+    || case when coalesce(new.tel, '') <> '' then 'Téléphone : ' || new.tel || E'\n' else '' end
+    || case when coalesce(new.discipline, '') <> '' then 'Discipline : ' || new.discipline || E'\n' else '' end
+    || case when coalesce(new.creneau, '') <> '' then 'Quand : ' || new.creneau || E'\n' else '' end
+    || case when coalesce(new.message, '') <> '' then E'\n' || new.message || E'\n' else '' end
+    || E'\nOuvrir mon espace club : ' || site || '/espace-club.html' || E'\n'
+    || 'Répondez à cet e-mail pour écrire à ' || new.nom || '.';
+
+  begin
+    perform net.http_post(
+      url     := 'https://api.resend.com/emails',
+      headers := jsonb_build_object('Authorization', 'Bearer ' || cle,
+                                    'Content-Type', 'application/json'),
+      body    := jsonb_build_object(
+        'from',     'Mon Club Combat <contact@monclubcombat.fr>',
+        'to',       dest,
+        -- le gerant repond, et c'est le pratiquant qui recoit : pas d'intermediaire
+        'reply_to', new.mail,
+        'subject',  'Demande de séance d''essai : ' || new.nom,
+        'html',     corps,
+        'text',     texte));
+  exception when others then null;              -- pg_net absent ou refus : on n'empeche rien
+  end;
+  return new;
+end
+$$;
+-- personne ne l'appelle a la main : elle lit le coffre et les comptes
+revoke all on function previent_le_club() from public;
+
+drop trigger if exists demande_previent on demande;
+create trigger demande_previent after insert on demande
+  for each row execute function previent_le_club();
+
 -- --------------------------------------------- les vues d'une fiche de club
 -- Amaury, 23/09/2026 : « dans l'espace club, il n'y a rien, donc faut le build.
 -- Faut mettre le max de data. » Le premier chiffre qu'un gerant veut voir, c'est
