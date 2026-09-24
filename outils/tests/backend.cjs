@@ -40,6 +40,9 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   });
 
   await pg.addInitScript(FAUX);
+  /* les pages de Stripe ne sont pas joignables ici : on s'arrete a leur porte */
+  await pg.route(/^https:\/\/(buy|billing)\.stripe\.com\//, r =>
+    r.fulfill({ contentType: 'text/html', body: '<p>Stripe</p>' }));
   const aller = async (f) => { await pg.goto(B + f); await pg.waitForTimeout(400); };
   /* le faux serveur ecrit dans sessionStorage a chaque operation ; apres une
      modification faite depuis le test, il faut le lui dire */
@@ -341,28 +344,26 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('la formule montre les portes fermees',
      await pg.locator('#esp-formule li.ferme').count(), 4);
 
-  // le bouton enregistre la demande ; c'est le back-office qui ouvrira le Pro
+  // « Passer au Pro » mene a la page de paiement Stripe, jamais a une « demande envoyee »
   ok('le bouton est là, une seule fois', await pg.isVisible('#esp-pro'), true);
+  const idClub = await pg.evaluate(() => window.__FAUX__.club[0].id);
   await pg.click('#esp-pro');
-  await pg.waitForTimeout(500);
-  ok('la demande part', await pg.evaluate(() => window.__FAUX__.interet_pro.length), 1);
-  ok('pour son club et sous son nom', await pg.evaluate(() => {
-    const i = window.__FAUX__.interet_pro[0];
-    return i.club_id === window.__FAUX__.club[0].id
-        && i.membre_id === window.__FAUX__.session.user.id;
-  }), true);
-  ok('et on le lui dit', /C’est noté/.test(await pg.textContent('#esp-pro-fait')), true);
-  ok('le bouton ne se represente plus',
-     await pg.isDisabled('#esp-pro'), true);
-  await garde();
-
-  /* au retour sur la page, on se souvient qu'il a demande */
+  await pg.waitForURL(/buy\.stripe\.com/, { timeout: 4000 }).catch(() => {});
+  ok('Passer au Pro ouvre la page de paiement Stripe', /^https:\/\/buy\.stripe\.com\//.test(pg.url()), true);
+  ok('avec l\'identifiant du club', new URL(pg.url()).searchParams.get('client_reference_id'), idClub);
+  ok('et l\'e-mail du compte', new URL(pg.url()).searchParams.get('prefilled_email'), 'contact@ouragan.fr');
   await aller('espace-club.html');
   await pg.waitForTimeout(800);
-  ok('la demande est retenue d\'une visite a l\'autre',
-     /C’est noté/.test(await pg.textContent('#esp-pro-fait')), true);
-  ok('et appuyer deux fois ne fait pas deux demandes',
-     await pg.evaluate(() => window.__FAUX__.interet_pro.length), 1);
+  ok('aucune demande a la main n\'est enregistree',
+     await pg.evaluate(() => window.__FAUX__.interet_pro.length), 0);
+  ok('et aucun « C\'est note » ne s\'affiche', await pg.isVisible('#esp-pro-fait'), false);
+
+  /* le back-office garde sa liste des clubs interesses (demandes d'avant) */
+  await pg.evaluate(() => {
+    window.__FAUX__.interet_pro.push({ club_id: window.__FAUX__.club[0].id,
+      membre_id: window.__FAUX__.session.user.id, cree_le: new Date().toISOString() });
+    window.__FAUX_ECRIT__();
+  });
 
   // ---------- 6 quater. le back-office voit qui attend ----------
   await aller('admin.html');
@@ -390,18 +391,12 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('et la formule est celle du Pro',
      await pg.textContent('#esp-formule-titre'), 'Mon Club Combat Pro');
 
-  // ---------- 6 sexies. Stripe : gerer, revenir, payer ----------
+  // ---------- 6 sexies. Stripe : gerer, revenir ----------
   ok('un Pro peut gerer son abonnement', await pg.isVisible('#esp-gerer'), true);
   await pg.click('#esp-gerer');
-  await pg.waitForTimeout(500);
-  ok('tant que Stripe n\'est pas deploye, on lui dit d\'ecrire',
-     /contact@monclubcombat\.fr/.test(await pg.textContent('#esp-gerer-err')), true);
-  await pg.evaluate(() => { window.__FAUX__.caisse = true; window.__FAUX_ECRIT__(); });
-  await pg.click('#esp-gerer');
-  await pg.waitForURL(/stripe=paiement/, { timeout: 4000 }).catch(() => {});
-  ok('une fois deploye, le bouton ouvre le portail Stripe', /stripe=paiement/.test(pg.url()), true);
-  ok('avec l\'action gerer', await pg.evaluate(() =>
-    window.__FAUX__.appels.slice(-1)[0].corps.action), 'gerer');
+  await pg.waitForURL(/billing\.stripe\.com/, { timeout: 4000 }).catch(() => {});
+  ok('le bouton ouvre le portail client de Stripe', /^https:\/\/billing\.stripe\.com\//.test(pg.url()), true);
+  ok('e-mail pre-rempli', new URL(pg.url()).searchParams.get('prefilled_email'), 'contact@ouragan.fr');
 
   await aller('espace-club.html?abonnement=ok');
   await pg.waitForTimeout(800);
@@ -415,23 +410,12 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   }
   await garde();
 
-
   /* on remet le club en gratuit : la suite du test l'attend ainsi */
   await pg.evaluate(() => { window.__FAUX__.club[0].offre = 'gratuit'; window.__FAUX_ECRIT__(); });
-
-  /* un gratuit, Stripe ouvert : « Passer au Pro » mene a la caisse */
-  await aller('espace-club.html');
-  await pg.waitForTimeout(800);
-  await pg.click('#esp-pro');
-  await pg.waitForURL(/stripe=paiement/, { timeout: 4000 }).catch(() => {});
-  ok('Passer au Pro ouvre le paiement Stripe', /stripe=paiement/.test(pg.url()), true);
-  ok('avec l\'action passer', await pg.evaluate(() =>
-    window.__FAUX__.appels.slice(-1)[0].corps.action), 'passer');
   await aller('espace-club.html?abonnement=annule');
   await pg.waitForTimeout(800);
   ok('un paiement annule le dit sans alarmer',
      /rien n’a été débité/.test(await pg.textContent('#esp-retour')), true);
-  await pg.evaluate(() => { window.__FAUX__.caisse = false; window.__FAUX_ECRIT__(); });
   await garde();
 
   // ---------- 7. le bandeau public, une fois connecte ----------
@@ -668,57 +652,25 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
 
   // ---------- 10 bis. payer un pack ----------
   await aller('acquisition.html');
+  await pg.click('#offres .acq-duree [data-remise="15"]');
   await pg.click('.ag-packs [data-pack="boost"] .ag-choisir');
-  await pg.waitForTimeout(400);
-  ok('choisir un pack ouvre la caisse', await pg.isVisible('#ag-caisse'), true);
-  ok('sur le bon pack', await pg.textContent('#c-pack'), 'Boost');
-  ok('au prix du mois', await pg.textContent('#c-prix'), '900 €');
-  await pg.click('#ag-caisse .acq-duree [data-remise="15"]');
-  ok('trois mois : 765 € par mois', await pg.textContent('#c-prix'), '765 €');
-  ok('et le total de l\'engagement', /2 295 €/.test(await pg.textContent('#c-engage')), true);
-  ok('la page suit la caisse',
-     await pg.getAttribute('#offres .acq-duree [data-remise="15"]', 'aria-checked'), 'true');
-  if (process.env.CAPTURES) await pg.screenshot({ path: process.env.CAPTURES + '/caisse-1280.png' });
-  await pg.click('#c-payer');
-  await pg.waitForTimeout(200);
-  ok('une caisse vide ne part pas',
-     await pg.evaluate(() => (window.__FAUX__.appels || []).filter(a => a.fonction === 'achat-pack').length), 0);
-  await pg.fill('#c-club', 'Team Ouragan Boxe');
-  await pg.fill('#c-ville', 'Marseille');
-  await pg.fill('#c-nom', 'Amaury');
-  await pg.fill('#c-mail', 'contact@ouragan.fr');
-  await pg.click('#c-payer');
-  await pg.waitForTimeout(500);
-  ok('Stripe ferme : la commande devient un rappel',
-     await pg.evaluate(() => window.__FAUX__.contact_acquisition.slice(-1).map(x => [x.pack, /3 mois/.test(x.message)])[0]),
-     ['boost', true]);
-  ok('et la caisse le dit', await pg.isVisible('#c-merci'), true);
-  await pg.keyboard.press('Escape');
-  await pg.waitForTimeout(300);
-  ok('Echap ferme la caisse', await pg.isVisible('#ag-caisse'), false);
-
-  await pg.evaluate(() => { window.__FAUX__.caisse = true; window.__FAUX_ECRIT__(); });
-  await pg.click('.ag-packs [data-pack="grow"] .ag-choisir');
-  await pg.waitForTimeout(300);
-  ok('les coordonnees ne sont pas a retaper', await pg.inputValue('#c-club'), 'Team Ouragan Boxe');
-  await pg.click('#c-payer');
-  await pg.waitForURL(/stripe=achat-pack/, { timeout: 4000 }).catch(() => {});
-  ok('Stripe ouvert : le paiement s\'ouvre', /stripe=achat-pack/.test(pg.url()), true);
-  ok('avec le pack et la duree, sans prix', await pg.evaluate(() => {
-    const c = window.__FAUX__.appels.slice(-1)[0].corps;
-    return [c.pack, c.duree, c.club, 'prix' in c];
-  }), ['grow', 3, 'Team Ouragan Boxe', false]);
+  await pg.waitForURL(/buy\.stripe\.com/, { timeout: 4000 }).catch(() => {});
+  ok('choisir un pack ouvre sa page de paiement Stripe', /^https:\/\/buy\.stripe\.com\//.test(pg.url()), true);
+  const lienBoost = await (async () => { await aller('acquisition.html');
+    return pg.evaluate(() => window.MCC.stripe.packs.boost['3']); })();
+  ok('celle du pack Boost a 3 mois', !!lienBoost, true);
+  await pg.click('#offres .acq-duree [data-remise="15"]');
+  await pg.click('.ag-packs [data-pack="boost"] .ag-choisir');
+  await pg.waitForURL(/buy\.stripe\.com/, { timeout: 4000 }).catch(() => {});
+  ok('le lien suit la duree choisie', pg.url(), lienBoost);
+  ok('plus de caisse maison', await (async () => { await aller('acquisition.html');
+    return pg.locator('#ag-caisse').count(); })(), 0);
   await aller('acquisition.html?paiement=ok#contact');
   await pg.waitForTimeout(300);
   ok('au retour, le paiement est confirme',
      /Paiement reçu/.test(await pg.textContent('#ag-retour')), true);
-  await aller('acquisition.html?paiement=annule#offres');
-  await pg.waitForTimeout(300);
-  ok('ou l\'annulation dite sans alarmer',
-     /rien n’a été débité/.test(await pg.textContent('#ag-retour')), true);
   ok('sans agenda Calendly tant qu\'il n\'y a pas d\'adresse',
      await pg.isVisible('#ag-calendly'), false);
-  await pg.evaluate(() => { window.__FAUX__.caisse = false; window.__FAUX_ECRIT__(); });
 
   console.log('');
   if (erreurs.length) {

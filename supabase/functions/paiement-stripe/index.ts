@@ -3,10 +3,14 @@
    C'est le seul endroit qui donne ou retire le Pro. Ni la page, ni le gerant,
    ni la fonction `paiement` ne touchent a `club.offre` : seul l'argent le fait.
 
-   Il suit aussi les packs de seances d'essai achetes sur acquisition.html
-   (fonction `achat-pack`) : ceux-la portent `type: 'pack'` dans leurs
-   metadonnees, ne mettent a jour que `commande_pack`, et ne touchent jamais a
-   `club.offre`.
+   Il suit aussi les packs de seances d'essai achetes sur acquisition.html :
+   ceux-la portent `type: 'pack'` dans leurs metadonnees, ne mettent a jour que
+   `commande_pack`, et ne touchent jamais a `club.offre`.
+
+   Depuis le 24/09/2026 les paiements passent par les liens de paiement Stripe
+   (pages hebergees par Stripe). Le Pro arrive avec `client_reference_id` =
+   l'identifiant du club, pose par le site ; le pack arrive sans commande, et
+   elle est creee ici a partir de ce que Stripe a collecte.
 
    Trois precautions, parce que ce point d'entree est ouvert sur l'internet et
    qu'il ecrit avec la cle `service_role` :
@@ -19,9 +23,9 @@
      3. L'horodatage est controle : sans lui, un evenement intercepte un jour
         pourrait etre rejoue indefiniment.
 
-   Rien de ce que Stripe raconte n'est cru sur parole pour l'identite du club :
-   le `club_id` vient des metadonnees que nous avons nous-memes posees en
-   creant la session. */
+   Le `club_id` vient de `client_reference_id`, que le site pose sur le lien
+   de paiement. Quelqu'un qui le changerait paierait le Pro d'un autre club :
+   il n'y gagne rien, et le paiement reste visible dans Stripe. */
 
 /* ------------------------------------------------------------ le commun */
 
@@ -207,7 +211,10 @@ const STATUT_PACK: Record<string, string> = {
  *  premier passage a `payee` (trigger `commande_pack_payee_le`), pour qu'un
  *  evenement rejoue ne deplace pas la date du premier paiement. */
 async function appliquePack(abonnement: any, session?: any): Promise<string> {
-  const id = abonnement?.metadata?.commande_id || session?.metadata?.commande_id;
+  let id = abonnement?.metadata?.commande_id || session?.metadata?.commande_id;
+  /* Un pack achete par lien de paiement Stripe n'a pas de commande prealable :
+     on la cree ici, a la fin du paiement, avec ce que Stripe a collecte. */
+  if (!id && session) id = await nouvelleCommande(abonnement, session);
   if (!id) return 'pack sans commande_id, ignore';
 
   const champs: Record<string, unknown> = {
@@ -232,6 +239,39 @@ async function appliquePack(abonnement: any, session?: any): Promise<string> {
 
 const estPack = (o: any) => o?.metadata?.type === 'pack';
 
+/** La commande d'un pack paye sur un lien de paiement Stripe. Le pack et la
+ *  duree viennent des metadonnees du lien, le nom du club et sa ville des deux
+ *  champs que la page Stripe demande, le reste des coordonnees de facturation.
+ *  L'identifiant est ensuite pose sur l'abonnement, pour que ses evenements
+ *  suivants (impaye, resiliation) retrouvent la commande. */
+async function nouvelleCommande(abonnement: any, session: any): Promise<string | null> {
+  const m = { ...(session?.metadata || {}), ...(abonnement?.metadata || {}) };
+  if (!m.pack) return null;
+  const champ = (k: string) =>
+    (session.custom_fields || []).find((f: any) => f.key === k)?.text?.value?.trim() || '';
+  const d = session.customer_details || {};
+  const ligne = {
+    pack: String(m.pack),
+    duree: Number(m.duree || 0),
+    montant_centimes: abonnement?.items?.data?.[0]?.price?.unit_amount ?? session.amount_subtotal,
+    club: (champ('club') || d.name || 'Club').slice(0, 200),
+    ville: (champ('ville') || d.address?.city || 'Non précisée').slice(0, 120),
+    nom: (d.name || champ('club') || 'Non précisé').slice(0, 160),
+    mail: d.email,
+    tel: d.phone ? String(d.phone).slice(0, 40) : null,
+    stripe_session: session.id,
+  };
+  const r = await base('commande_pack?on_conflict=stripe_session', {
+    method: 'POST',
+    body: JSON.stringify(ligne),
+  });
+  const id = r?.[0]?.id ?? null;
+  if (id && abonnement?.id) {
+    await stripe('subscriptions/' + abonnement.id, { metadata: { commande_id: id } });
+  }
+  return id;
+}
+
 /* ----------------------------------------------------------- l'entree */
 
 Deno.serve(async (req) => {
@@ -254,9 +294,20 @@ Deno.serve(async (req) => {
          l'abonnement, donc on va le chercher : c'est lui qui fait foi. */
       case 'checkout.session.completed': {
         const id = objet.subscription;
-        const abonnement = id ? await stripe('subscriptions/' + id) : null;
-        if (estPack(objet)) quoi = await appliquePack(abonnement, objet);
-        else if (abonnement && !estPack(abonnement)) quoi = await applique(abonnement);
+        let abonnement = id ? await stripe('subscriptions/' + id) : null;
+        if (estPack(objet) || estPack(abonnement)) quoi = await appliquePack(abonnement, objet);
+        else if (abonnement) {
+          /* Le Pro paye sur le lien de paiement Stripe : le site y ajoute
+             `client_reference_id` = l'identifiant du club. On le recopie sur
+             l'abonnement, ou l'attendent `applique` et tous ses evenements
+             suivants. */
+          const club = objet.client_reference_id;
+          if (club && !abonnement.metadata?.club_id) {
+            abonnement = await stripe('subscriptions/' + id,
+              { metadata: { club_id: club, type: 'pro' } });
+          }
+          quoi = await applique(abonnement);
+        }
         break;
       }
       /* Creation, changement de carte, resiliation, echec de paiement : Stripe
@@ -276,11 +327,13 @@ Deno.serve(async (req) => {
          nous renverra un `subscription.updated`. On ne coupe rien ici. */
     }
 
-    /* Toujours 200 des que la signature est bonne : un code d'erreur ferait
-       rejouer l'evenement par Stripe pendant trois jours. */
     return json({ recu: true, quoi });
   } catch (err) {
+    /* Un echec (base injoignable, secret manquant) repond 500 : Stripe le
+       montre dans le journal du webhook et rejoue l'evenement plus tard, ce
+       qui rattrape un paiement que la base n'aurait pas enregistre. Tout est
+       idempotent, un evenement rejoue ne fait rien de travers. */
     console.error(err);
-    return json({ recu: true, erreur: String((err as Error).message || err) });
+    return json({ recu: false, erreur: String((err as Error).message || err) }, 500);
   }
 });

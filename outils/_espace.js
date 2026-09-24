@@ -345,49 +345,37 @@
       return '<li><span class="esp-puce">' + CLE + '</span>' +
              '<b>' + ech(l[0]) + '</b><span>' + ech(l[1]) + '</span></li>';
     }).join('');
-    /* s'il a deja demande, on le lui rappelle ; le bouton reste, puisqu'il mene
-       maintenant a la caisse */
-    SB.monInteretPro(club.id).then(function (i){ if (i) deja(i.cree_le, false); });
   }
 
-  function deja(quand, fige){
-    var d = new Date(quand);
-    var le = isNaN(d) ? '' : ' (demandé le ' +
-      d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) + ')';
-    if (fige !== false) ['esp-pro'].forEach(function (id){
-      var b = document.getElementById(id);
-      if (b) { b.disabled = true; b.textContent = 'Demande envoyée'; }
+  /* « Passer au Pro » mene a la page de paiement de Stripe (un lien de
+     paiement), sans passer par une fonction a nous. Le site y ajoute
+     l'identifiant du club (client_reference_id) et l'e-mail du compte ; le
+     webhook `paiement-stripe` relie l'abonnement au club et ouvre le Pro.
+     Amaury, 24/09/2026 : pas de « demande envoyee » a la place d'un paiement. */
+  function versStripe(base, club){
+    return SB.session().then(function (s){
+      var mail = s && s.user && s.user.email;
+      var q = [];
+      if (club) q.push('client_reference_id=' + encodeURIComponent(club.id));
+      if (mail) q.push('prefilled_email=' + encodeURIComponent(mail));
+      return base + (q.length ? (base.indexOf('?') < 0 ? '?' : '&') + q.join('&') : '');
     });
-    var p = document.getElementById('esp-pro-fait');
-    p.textContent = 'C’est noté' + le + '. Nous revenons vers vous pour ouvrir votre ' +
-      'abonnement. En attendant, votre fiche reste en ligne.';
-    p.hidden = false;
   }
 
-  /* Le bouton mene en caisse : la fonction `paiement` ouvre une page Stripe, et
-     c'est Stripe, par le webhook, qui donne le Pro (Amaury, 24/09/2026 : « comme
-     un SaaS, un moteur de paiement relie a Stripe »). Tant que le paiement n'est
-     pas deploye, le meme bouton retombe sur l'ancienne demande a la main, que le
-     back-office traite. */
   function poseBouton(id, club){
     var b = document.getElementById(id);
     if (!b) return;
     b.addEventListener('click', function (){
       var err = document.getElementById('esp-pro-err');
       err.hidden = true;
+      var lien = SB.stripe && SB.stripe.pro;
+      if (!lien) {
+        err.textContent = 'Le paiement en ligne n’est pas encore ouvert. Écrivez-nous à contact@monclubcombat.fr.';
+        err.hidden = false; return;
+      }
       b.disabled = true;
-      var mot = b.textContent;
       b.textContent = 'Ouverture du paiement…';
-      SB.caisse('paiement', { action: 'passer' })
-        .then(function (url){ location.href = url; })
-        .catch(function (e){
-          if (!e || !e.indisponible) throw e;
-          return SB.veutLePro(club.id).then(function (){ deja(new Date().toISOString()); });
-        })
-        .catch(function (e){
-          b.disabled = false; b.textContent = mot;
-          err.textContent = SB.dire(e); err.hidden = false;
-        });
+      versStripe(lien, club).then(function (url){ location.href = url; });
     });
   }
 
@@ -429,7 +417,9 @@
     })();
   }
 
-  /* Le Pro gere son abonnement chez Stripe : carte, factures, resiliation. */
+  /* Le Pro gere son abonnement chez Stripe : carte, factures, resiliation. Le
+     portail client s'ouvre sur sa page de connexion, ou Stripe envoie un code
+     a l'e-mail de facturation ; on le pre-remplit avec celui du compte. */
   function poseGerer(){
     var b = document.getElementById('esp-gerer');
     if (!b || b.dataset.pose) return;
@@ -437,18 +427,13 @@
     b.addEventListener('click', function (){
       var err = document.getElementById('esp-gerer-err');
       err.hidden = true;
-      b.disabled = true;
-      b.textContent = 'Ouverture…';
-      SB.caisse('paiement', { action: 'gerer' })
-        .then(function (url){ location.href = url; })
-        .catch(function (e){
-          b.disabled = false; b.textContent = 'Gérer mon abonnement';
-          err.textContent = e && (e.indisponible || e.code === 404)
-            ? 'La gestion en ligne n’est pas encore ouverte. Écrivez-nous à ' +
-              'contact@monclubcombat.fr, nous nous en occupons.'
-            : SB.dire(e);
-          err.hidden = false;
-        });
+      var lien = SB.stripe && SB.stripe.portail;
+      if (!lien) {
+        err.textContent = 'La gestion en ligne n’est pas encore ouverte. Écrivez-nous à ' +
+          'contact@monclubcombat.fr, nous nous en occupons.';
+        err.hidden = false; return;
+      }
+      versStripe(lien, null).then(function (url){ location.href = url; });
     });
   }
 

@@ -224,40 +224,6 @@
   .ag-packs li:hover .ag-choisir{border-color:var(--texte); background:var(--texte); color:#fff}
   @media (max-width:560px){ .ag-choisir{align-self:stretch; min-height:42px} }
 
-  /* la caisse : une boite sur un voile, comme la fenetre de compte */
-  html.ag-bloque{overflow:hidden}
-  .ag-caisse{width:min(560px, calc(100vw - 24px)); max-height:calc(100dvh - 24px); padding:0;
-    border:0; border-radius:20px; background:#fff; color:var(--texte);
-    box-shadow:0 30px 80px rgba(22,22,15,.28); overflow:auto}
-  .ag-caisse::backdrop{background:rgba(22,22,15,.46); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px)}
-  .ag-caisse[open]{animation:ag-boite .28s cubic-bezier(.2,.8,.2,1)}
-  .ag-caisse-in{display:grid; gap:14px; padding:clamp(20px,3.4vw,30px)}
-  .ag-caisse-in[hidden]{display:none}
-  .ag-caisse-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:16px}
-  .ag-caisse-t{margin-top:4px; font-size:21px; font-weight:700; letter-spacing:-.025em; line-height:1.25}
-  .ag-caisse-x{flex:none; display:grid; place-items:center; width:40px; height:40px; margin:-6px -8px 0 0;
-    border:0; border-radius:10px; background:transparent; color:var(--texte-3); cursor:pointer}
-  .ag-caisse-x:hover{background:var(--surface-2); color:var(--texte)}
-  .ag-caisse .acq-duree{display:flex; gap:4px; padding:4px; border:1px solid #E2DFD9; border-radius:12px}
-  .ag-caisse .acq-duree button{flex:1 1 0; min-width:0; padding:4px 6px; line-height:1.2}
-  .ag-caisse-recap{margin:0; padding:14px 16px; border-radius:14px; background:#F7F6F3;
-    display:grid; gap:8px}
-  .ag-caisse-recap div{display:flex; justify-content:space-between; align-items:baseline; gap:12px;
-    font-size:14.5px}
-  .ag-caisse-recap dt{color:var(--texte-3)}
-  .ag-caisse-recap dd{margin:0; text-align:right; font-weight:700; color:var(--texte)}
-  .ag-caisse-recap dd b{font-size:22px; font-weight:800; letter-spacing:-.03em; font-variant-numeric:tabular-nums}
-  .ag-caisse .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
-  .ag-caisse .champ input{background:#fff}
-  .ag-caisse .champ.manque input{border-color:rgba(236,22,46,.7)}
-  .ag-caisse-merci{text-align:center; justify-items:center}
-  .ag-caisse-merci p:not(.ag-caisse-t){font-size:15.5px; line-height:1.6; color:var(--texte-2); max-width:44ch}
-  @media (max-width:560px){
-    .ag-caisse .acq-duree button{min-height:50px; font-size:13px}
-    .ag-caisse .acq-duree button b{display:block; font-size:12px}
-  }
-  @keyframes ag-boite{from{opacity:0; transform:translateY(14px) scale(.98)} to{opacity:1; transform:none}}
-
   /* le retour de Stripe */
   .ag-retour{position:fixed; z-index:60; top:76px; left:50%; transform:translateX(-50%);
     width:min(560px, calc(100vw - 32px)); display:flex; align-items:center; gap:12px;

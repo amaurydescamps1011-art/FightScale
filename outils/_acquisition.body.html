@@ -231,60 +231,6 @@
     </div>
   </section>
 
-  <!-- La caisse d'un pack. Le prix n'est ici que pour etre lu : la fonction
-       achat-pack le recalcule de son cote a partir du pack et de la duree, et
-       c'est Stripe qui encaisse. -->
-  <dialog class="ag-caisse" id="ag-caisse" aria-labelledby="ag-caisse-t">
-    <form class="ag-caisse-in" id="ag-caisse-form" novalidate>
-      <div class="ag-caisse-tete">
-        <div>
-          <p class="ag-pack">Pack <span id="c-pack">Grow</span></p>
-          <p class="ag-caisse-t" id="ag-caisse-t"><span id="c-nb">40</span> séances d'essai
-            confirmées par mois</p>
-        </div>
-        <button class="ag-caisse-x" type="button" id="c-fermer" aria-label="Fermer">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-        </button>
-      </div>
-
-      <div class="acq-duree ag-caisse-duree" role="radiogroup" aria-label="Durée d'engagement">
-        <button type="button" role="radio" aria-checked="true" data-remise="0">Sans engagement</button>
-        <button type="button" role="radio" aria-checked="false" data-remise="15">3 mois <b>−15 %</b></button>
-        <button type="button" role="radio" aria-checked="false" data-remise="20">6 mois <b>−20 %</b></button>
-      </div>
-
-      <dl class="ag-caisse-recap">
-        <div><dt>Chaque mois</dt><dd><b id="c-prix">600 €</b> HT</dd></div>
-        <div><dt>La séance d'essai</dt><dd id="c-unite">15 € HT</dd></div>
-        <div><dt>Engagement</dt><dd id="c-engage">Aucun, résiliable chaque mois</dd></div>
-      </dl>
-
-      <div class="acq-2">
-        <label class="champ"><span>Nom du club</span>
-          <input id="c-club" required autocomplete="organization"></label>
-        <label class="champ"><span>Ville</span>
-          <input id="c-ville" required autocomplete="address-level2"></label>
-      </div>
-      <label class="champ"><span>Votre nom</span>
-        <input id="c-nom" required autocomplete="name"></label>
-      <div class="acq-2">
-        <label class="champ"><span>E-mail</span>
-          <input id="c-mail" type="email" required autocomplete="email"></label>
-        <label class="champ"><span>Téléphone</span>
-          <input id="c-tel" type="tel" autocomplete="tel"></label>
-      </div>
-      <p class="form-erreur" id="c-erreur" hidden role="alert"></p>
-      <button class="ag-btn ag-btn-rouge ag-btn-plein" type="submit" id="c-payer">Payer par carte</button>
-      <p class="acq-legal">Paiement sécurisé par Stripe, prélevé chaque mois. Après le paiement,
-        nous vous appelons pour fixer le rendez-vous de brief.</p>
-    </form>
-    <div class="ag-caisse-in ag-caisse-merci" id="c-merci" hidden>
-      <p class="ag-caisse-t">C'est noté.</p>
-      <p id="c-merci-mot"></p>
-      <button class="ag-btn ag-btn-ligne" type="button" id="c-ok">Fermer</button>
-    </div>
-  </dialog>
 
   <p class="ag-retour" id="ag-retour" hidden role="status">
     <span id="ag-retour-mot"></span>

@@ -87,6 +87,13 @@ entier, comme d'habitude (il est rejouable, rien ne s'efface) :
 
 ## 5. Déployer les trois fonctions (copier-coller)
 
+> **Depuis le 24/09/2026 à 13 h, seule `paiement-stripe` compte.** Les boutons
+> du site mènent directement aux pages de paiement de Stripe (liens de
+> paiement créés dans le compte Stripe) et au portail client de Stripe.
+> `paiement` et `achat-pack` ne sont plus appelées : les laisser déployées ne
+> gêne pas. **Recolle `paiement-stripe` à chaque mise à jour** (onglet Code,
+> Deploy updates), interrupteur JWT éteint.
+
 Chaque fonction tient dans **un seul fichier `index.ts`**, à coller tel quel.
 Pour chacune des trois, dans cet ordre :
 

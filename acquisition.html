@@ -1182,40 +1182,6 @@
   .ag-packs li:hover .ag-choisir{border-color:var(--texte); background:var(--texte); color:#fff}
   @media (max-width:560px){ .ag-choisir{align-self:stretch; min-height:42px} }
 
-  /* la caisse : une boite sur un voile, comme la fenetre de compte */
-  html.ag-bloque{overflow:hidden}
-  .ag-caisse{width:min(560px, calc(100vw - 24px)); max-height:calc(100dvh - 24px); padding:0;
-    border:0; border-radius:20px; background:#fff; color:var(--texte);
-    box-shadow:0 30px 80px rgba(22,22,15,.28); overflow:auto}
-  .ag-caisse::backdrop{background:rgba(22,22,15,.46); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px)}
-  .ag-caisse[open]{animation:ag-boite .28s cubic-bezier(.2,.8,.2,1)}
-  .ag-caisse-in{display:grid; gap:14px; padding:clamp(20px,3.4vw,30px)}
-  .ag-caisse-in[hidden]{display:none}
-  .ag-caisse-tete{display:flex; align-items:flex-start; justify-content:space-between; gap:16px}
-  .ag-caisse-t{margin-top:4px; font-size:21px; font-weight:700; letter-spacing:-.025em; line-height:1.25}
-  .ag-caisse-x{flex:none; display:grid; place-items:center; width:40px; height:40px; margin:-6px -8px 0 0;
-    border:0; border-radius:10px; background:transparent; color:var(--texte-3); cursor:pointer}
-  .ag-caisse-x:hover{background:var(--surface-2); color:var(--texte)}
-  .ag-caisse .acq-duree{display:flex; gap:4px; padding:4px; border:1px solid #E2DFD9; border-radius:12px}
-  .ag-caisse .acq-duree button{flex:1 1 0; min-width:0; padding:4px 6px; line-height:1.2}
-  .ag-caisse-recap{margin:0; padding:14px 16px; border-radius:14px; background:#F7F6F3;
-    display:grid; gap:8px}
-  .ag-caisse-recap div{display:flex; justify-content:space-between; align-items:baseline; gap:12px;
-    font-size:14.5px}
-  .ag-caisse-recap dt{color:var(--texte-3)}
-  .ag-caisse-recap dd{margin:0; text-align:right; font-weight:700; color:var(--texte)}
-  .ag-caisse-recap dd b{font-size:22px; font-weight:800; letter-spacing:-.03em; font-variant-numeric:tabular-nums}
-  .ag-caisse .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
-  .ag-caisse .champ input{background:#fff}
-  .ag-caisse .champ.manque input{border-color:rgba(236,22,46,.7)}
-  .ag-caisse-merci{text-align:center; justify-items:center}
-  .ag-caisse-merci p:not(.ag-caisse-t){font-size:15.5px; line-height:1.6; color:var(--texte-2); max-width:44ch}
-  @media (max-width:560px){
-    .ag-caisse .acq-duree button{min-height:50px; font-size:13px}
-    .ag-caisse .acq-duree button b{display:block; font-size:12px}
-  }
-  @keyframes ag-boite{from{opacity:0; transform:translateY(14px) scale(.98)} to{opacity:1; transform:none}}
-
   /* le retour de Stripe */
   .ag-retour{position:fixed; z-index:60; top:76px; left:50%; transform:translateX(-50%);
     width:min(560px, calc(100vw - 32px)); display:flex; align-items:center; gap:12px;
@@ -1654,60 +1620,6 @@
     </div>
   </section>
 
-  <!-- La caisse d'un pack. Le prix n'est ici que pour etre lu : la fonction
-       achat-pack le recalcule de son cote a partir du pack et de la duree, et
-       c'est Stripe qui encaisse. -->
-  <dialog class="ag-caisse" id="ag-caisse" aria-labelledby="ag-caisse-t">
-    <form class="ag-caisse-in" id="ag-caisse-form" novalidate>
-      <div class="ag-caisse-tete">
-        <div>
-          <p class="ag-pack">Pack <span id="c-pack">Grow</span></p>
-          <p class="ag-caisse-t" id="ag-caisse-t"><span id="c-nb">40</span> séances d'essai
-            confirmées par mois</p>
-        </div>
-        <button class="ag-caisse-x" type="button" id="c-fermer" aria-label="Fermer">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-        </button>
-      </div>
-
-      <div class="acq-duree ag-caisse-duree" role="radiogroup" aria-label="Durée d'engagement">
-        <button type="button" role="radio" aria-checked="true" data-remise="0">Sans engagement</button>
-        <button type="button" role="radio" aria-checked="false" data-remise="15">3 mois <b>−15 %</b></button>
-        <button type="button" role="radio" aria-checked="false" data-remise="20">6 mois <b>−20 %</b></button>
-      </div>
-
-      <dl class="ag-caisse-recap">
-        <div><dt>Chaque mois</dt><dd><b id="c-prix">600 €</b> HT</dd></div>
-        <div><dt>La séance d'essai</dt><dd id="c-unite">15 € HT</dd></div>
-        <div><dt>Engagement</dt><dd id="c-engage">Aucun, résiliable chaque mois</dd></div>
-      </dl>
-
-      <div class="acq-2">
-        <label class="champ"><span>Nom du club</span>
-          <input id="c-club" required autocomplete="organization"></label>
-        <label class="champ"><span>Ville</span>
-          <input id="c-ville" required autocomplete="address-level2"></label>
-      </div>
-      <label class="champ"><span>Votre nom</span>
-        <input id="c-nom" required autocomplete="name"></label>
-      <div class="acq-2">
-        <label class="champ"><span>E-mail</span>
-          <input id="c-mail" type="email" required autocomplete="email"></label>
-        <label class="champ"><span>Téléphone</span>
-          <input id="c-tel" type="tel" autocomplete="tel"></label>
-      </div>
-      <p class="form-erreur" id="c-erreur" hidden role="alert"></p>
-      <button class="ag-btn ag-btn-rouge ag-btn-plein" type="submit" id="c-payer">Payer par carte</button>
-      <p class="acq-legal">Paiement sécurisé par Stripe, prélevé chaque mois. Après le paiement,
-        nous vous appelons pour fixer le rendez-vous de brief.</p>
-    </form>
-    <div class="ag-caisse-in ag-caisse-merci" id="c-merci" hidden>
-      <p class="ag-caisse-t">C'est noté.</p>
-      <p id="c-merci-mot"></p>
-      <button class="ag-btn ag-btn-ligne" type="button" id="c-ok">Fermer</button>
-    </div>
-  </dialog>
 
   <p class="ag-retour" id="ag-retour" hidden role="status">
     <span id="ag-retour-mot"></span>
@@ -2191,8 +2103,8 @@
 
 <script>
 /* ---- la page acquisition ----
-   Le choix de la duree d'engagement, qui recalcule les prix sous les yeux ; la
-   caisse des packs, qui passe par Stripe (fonction achat-pack) ; l'agenda
+   Le choix de la duree d'engagement, qui recalcule les prix sous les yeux ; le
+   paiement des packs, sur les pages de Stripe (liens de paiement) ; l'agenda
    Calendly ; le formulaire « etre rappele », qui ecrit dans la table
    contact_acquisition. La base previent l'equipe par e-mail dans les deux cas
    (previent_l_equipe() et previent_pack_paye() dans db/001_schema.sql).
@@ -2224,11 +2136,9 @@
   };
   var DUREE = { 0: 0, 15: 3, 20: 6 };      /* remise -> mois d'engagement */
   var remise = 0;
-  var choisi = null;
 
   /* ---------- la duree d'engagement ----------
-     Les deux selecteurs, celui des offres et celui de la caisse, n'en font
-     qu'un : changer l'un change l'autre. */
+     Le bouton « Choisir » de chaque pack suit la duree choisie ici. */
   var boutons = tous('.acq-duree button');
   function applique(r){
     remise = r;
@@ -2241,109 +2151,36 @@
     });
     var u = $('acq-unite');
     if (u) u.textContent = euros(15 * (100 - r) / 100);
-    recap();
   }
   boutons.forEach(function (x){
     x.addEventListener('click', function (){ applique(Number(x.getAttribute('data-remise'))); });
   });
 
-  /* ---------- la caisse ---------- */
-  var caisse = $('ag-caisse');
-  var cform = $('ag-caisse-form');
-
-  function recap(){
-    if (!choisi) return;
-    var p = PACKS[choisi], mois = DUREE[remise], prix = p[2] * (100 - remise) / 100;
-    $('c-pack').textContent = p[0];
-    $('c-nb').textContent = p[1];
-    $('c-prix').textContent = euros(prix);
-    $('c-unite').textContent = euros(15 * (100 - remise) / 100) + ' HT';
-    $('c-engage').textContent = mois
-      ? mois + ' mois, soit ' + euros(prix * mois) + ' HT au total'
-      : 'Aucun, résiliable chaque mois';
-    $('c-payer').textContent = 'Payer ' + euros(prix) + ' HT par carte';
-  }
-
-  function ouvre(pack){
-    choisi = pack;
-    cform.hidden = false;
-    $('c-merci').hidden = true;
-    $('c-erreur').hidden = true;
-    /* ce qui a deja ete tape dans le formulaire du bas n'est pas a retaper */
-    [['a-club', 'c-club'], ['a-ville', 'c-ville'], ['a-nom', 'c-nom'],
-     ['a-mail', 'c-mail'], ['a-tel', 'c-tel']].forEach(function (c){
-      var de = $(c[0]), vers = $(c[1]);
-      if (de && vers && !vers.value) vers.value = de.value;
-    });
-    recap();
-    if (caisse.showModal) caisse.showModal(); else caisse.setAttribute('open', '');
-    document.documentElement.classList.add('ag-bloque');
-  }
-  function ferme(){
-    if (caisse.close) caisse.close(); else caisse.removeAttribute('open');
-  }
-  if (caisse) {
-    caisse.addEventListener('close', function (){
-      document.documentElement.classList.remove('ag-bloque');
-    });
-    /* un clic sur le voile, hors de la boite, ferme */
-    caisse.addEventListener('click', function (e){ if (e.target === caisse) ferme(); });
-    $('c-fermer').addEventListener('click', ferme);
-    $('c-ok').addEventListener('click', ferme);
-    tous('.ag-packs li[data-pack]').forEach(function (li){
-      var b = li.querySelector('.ag-choisir');
-      var cle = li.getAttribute('data-pack');
-      b.setAttribute('aria-label', 'Choisir le pack ' + PACKS[cle][0]);
-      b.addEventListener('click', function (){ ouvre(cle); });
-    });
-
-    cform.addEventListener('submit', function (e){
-      e.preventDefault();
-      var err = $('c-erreur');
-      err.hidden = true;
-      var manque = verifie(['c-club', 'c-ville', 'c-nom', 'c-mail']);
-      if (manque) { manque.focus(); return; }
-      var corps = {
-        pack: choisi, duree: DUREE[remise],
-        club: $('c-club').value.trim(), ville: $('c-ville').value.trim(),
-        nom: $('c-nom').value.trim(), mail: $('c-mail').value.trim(),
-        tel: $('c-tel').value.trim()
-      };
-      if (!(SB && SB.prete())) {
-        err.textContent = 'Le paiement a besoin du serveur. Écrivez-nous à contact@monclubcombat.fr.';
-        err.hidden = false; return;
+  /* ---------- le paiement d'un pack ----------
+     « Choisir » mene a la page de paiement de Stripe du pack, a la duree
+     d'engagement choisie : un lien de paiement par pack et par duree, crees
+     dans Stripe. Stripe y demande la carte, l'adresse de facturation, le nom
+     du club et sa ville ; le webhook `paiement-stripe` cree la commande.
+     Amaury, 24/09/2026 : notre caisse maison « donne le moins confiance au
+     monde ». */
+  tous('.ag-packs li[data-pack]').forEach(function (li){
+    var b = li.querySelector('.ag-choisir');
+    var cle = li.getAttribute('data-pack');
+    b.setAttribute('aria-label', 'Choisir le pack ' + PACKS[cle][0]);
+    b.addEventListener('click', function (){
+      var liens = SB && SB.stripe && SB.stripe.packs && SB.stripe.packs[cle];
+      var url = liens && liens[String(DUREE[remise])];
+      if (!url) {
+        /* sans lien, on ne fait pas semblant : on mene au formulaire de rappel,
+           pack deja choisi */
+        var sel = $('a-pack'); if (sel) sel.value = cle;
+        location.hash = '#contact';
+        return;
       }
-      var payer = $('c-payer'), mot = payer.textContent;
-      payer.disabled = true;
-      payer.textContent = 'Ouverture du paiement…';
-      SB.caisse('achat-pack', corps)
-        .then(function (url){ location.href = url; })
-        .catch(function (e){
-          /* Tant que le paiement n'est pas deploye, la commande devient une
-             demande de rappel : l'equipe la recoit et finalise a la main. */
-          if (!e || !e.indisponible) throw e;
-          var p = PACKS[choisi], mois = DUREE[remise];
-          return SB.client.from('contact_acquisition').insert({
-            club: corps.club, ville: corps.ville, nom: corps.nom, mail: corps.mail,
-            tel: corps.tel || null, pack: choisi,
-            message: 'Veut payer le pack ' + p[0] + ', ' +
-              (mois ? 'engagement ' + mois + ' mois' : 'sans engagement') +
-              ' (paiement en ligne pas encore ouvert).'
-          }).then(function (r){
-            if (r.error) throw r.error;
-            cform.hidden = true;
-            $('c-merci-mot').textContent = 'Le paiement en ligne ouvre très bientôt. Nous vous ' +
-              'rappelons pour lancer votre pack ' + p[0] + ' et fixer le rendez-vous de brief.';
-            $('c-merci').hidden = false;
-            payer.disabled = false; payer.textContent = mot;
-          });
-        })
-        .catch(function (e){
-          payer.disabled = false; payer.textContent = mot;
-          err.textContent = SB.dire(e); err.hidden = false;
-        });
+      b.classList.add('part');
+      location.href = url;
     });
-  }
+  });
 
   function verifie(ids){
     var manque = null;

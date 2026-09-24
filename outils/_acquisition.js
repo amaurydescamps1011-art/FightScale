@@ -1,6 +1,6 @@
 /* ---- la page acquisition ----
-   Le choix de la duree d'engagement, qui recalcule les prix sous les yeux ; la
-   caisse des packs, qui passe par Stripe (fonction achat-pack) ; l'agenda
+   Le choix de la duree d'engagement, qui recalcule les prix sous les yeux ; le
+   paiement des packs, sur les pages de Stripe (liens de paiement) ; l'agenda
    Calendly ; le formulaire « etre rappele », qui ecrit dans la table
    contact_acquisition. La base previent l'equipe par e-mail dans les deux cas
    (previent_l_equipe() et previent_pack_paye() dans db/001_schema.sql).
@@ -32,11 +32,9 @@
   };
   var DUREE = { 0: 0, 15: 3, 20: 6 };      /* remise -> mois d'engagement */
   var remise = 0;
-  var choisi = null;
 
   /* ---------- la duree d'engagement ----------
-     Les deux selecteurs, celui des offres et celui de la caisse, n'en font
-     qu'un : changer l'un change l'autre. */
+     Le bouton « Choisir » de chaque pack suit la duree choisie ici. */
   var boutons = tous('.acq-duree button');
   function applique(r){
     remise = r;
@@ -49,109 +47,36 @@
     });
     var u = $('acq-unite');
     if (u) u.textContent = euros(15 * (100 - r) / 100);
-    recap();
   }
   boutons.forEach(function (x){
     x.addEventListener('click', function (){ applique(Number(x.getAttribute('data-remise'))); });
   });
 
-  /* ---------- la caisse ---------- */
-  var caisse = $('ag-caisse');
-  var cform = $('ag-caisse-form');
-
-  function recap(){
-    if (!choisi) return;
-    var p = PACKS[choisi], mois = DUREE[remise], prix = p[2] * (100 - remise) / 100;
-    $('c-pack').textContent = p[0];
-    $('c-nb').textContent = p[1];
-    $('c-prix').textContent = euros(prix);
-    $('c-unite').textContent = euros(15 * (100 - remise) / 100) + ' HT';
-    $('c-engage').textContent = mois
-      ? mois + ' mois, soit ' + euros(prix * mois) + ' HT au total'
-      : 'Aucun, résiliable chaque mois';
-    $('c-payer').textContent = 'Payer ' + euros(prix) + ' HT par carte';
-  }
-
-  function ouvre(pack){
-    choisi = pack;
-    cform.hidden = false;
-    $('c-merci').hidden = true;
-    $('c-erreur').hidden = true;
-    /* ce qui a deja ete tape dans le formulaire du bas n'est pas a retaper */
-    [['a-club', 'c-club'], ['a-ville', 'c-ville'], ['a-nom', 'c-nom'],
-     ['a-mail', 'c-mail'], ['a-tel', 'c-tel']].forEach(function (c){
-      var de = $(c[0]), vers = $(c[1]);
-      if (de && vers && !vers.value) vers.value = de.value;
-    });
-    recap();
-    if (caisse.showModal) caisse.showModal(); else caisse.setAttribute('open', '');
-    document.documentElement.classList.add('ag-bloque');
-  }
-  function ferme(){
-    if (caisse.close) caisse.close(); else caisse.removeAttribute('open');
-  }
-  if (caisse) {
-    caisse.addEventListener('close', function (){
-      document.documentElement.classList.remove('ag-bloque');
-    });
-    /* un clic sur le voile, hors de la boite, ferme */
-    caisse.addEventListener('click', function (e){ if (e.target === caisse) ferme(); });
-    $('c-fermer').addEventListener('click', ferme);
-    $('c-ok').addEventListener('click', ferme);
-    tous('.ag-packs li[data-pack]').forEach(function (li){
-      var b = li.querySelector('.ag-choisir');
-      var cle = li.getAttribute('data-pack');
-      b.setAttribute('aria-label', 'Choisir le pack ' + PACKS[cle][0]);
-      b.addEventListener('click', function (){ ouvre(cle); });
-    });
-
-    cform.addEventListener('submit', function (e){
-      e.preventDefault();
-      var err = $('c-erreur');
-      err.hidden = true;
-      var manque = verifie(['c-club', 'c-ville', 'c-nom', 'c-mail']);
-      if (manque) { manque.focus(); return; }
-      var corps = {
-        pack: choisi, duree: DUREE[remise],
-        club: $('c-club').value.trim(), ville: $('c-ville').value.trim(),
-        nom: $('c-nom').value.trim(), mail: $('c-mail').value.trim(),
-        tel: $('c-tel').value.trim()
-      };
-      if (!(SB && SB.prete())) {
-        err.textContent = 'Le paiement a besoin du serveur. Écrivez-nous à contact@monclubcombat.fr.';
-        err.hidden = false; return;
+  /* ---------- le paiement d'un pack ----------
+     « Choisir » mene a la page de paiement de Stripe du pack, a la duree
+     d'engagement choisie : un lien de paiement par pack et par duree, crees
+     dans Stripe. Stripe y demande la carte, l'adresse de facturation, le nom
+     du club et sa ville ; le webhook `paiement-stripe` cree la commande.
+     Amaury, 24/09/2026 : notre caisse maison « donne le moins confiance au
+     monde ». */
+  tous('.ag-packs li[data-pack]').forEach(function (li){
+    var b = li.querySelector('.ag-choisir');
+    var cle = li.getAttribute('data-pack');
+    b.setAttribute('aria-label', 'Choisir le pack ' + PACKS[cle][0]);
+    b.addEventListener('click', function (){
+      var liens = SB && SB.stripe && SB.stripe.packs && SB.stripe.packs[cle];
+      var url = liens && liens[String(DUREE[remise])];
+      if (!url) {
+        /* sans lien, on ne fait pas semblant : on mene au formulaire de rappel,
+           pack deja choisi */
+        var sel = $('a-pack'); if (sel) sel.value = cle;
+        location.hash = '#contact';
+        return;
       }
-      var payer = $('c-payer'), mot = payer.textContent;
-      payer.disabled = true;
-      payer.textContent = 'Ouverture du paiement…';
-      SB.caisse('achat-pack', corps)
-        .then(function (url){ location.href = url; })
-        .catch(function (e){
-          /* Tant que le paiement n'est pas deploye, la commande devient une
-             demande de rappel : l'equipe la recoit et finalise a la main. */
-          if (!e || !e.indisponible) throw e;
-          var p = PACKS[choisi], mois = DUREE[remise];
-          return SB.client.from('contact_acquisition').insert({
-            club: corps.club, ville: corps.ville, nom: corps.nom, mail: corps.mail,
-            tel: corps.tel || null, pack: choisi,
-            message: 'Veut payer le pack ' + p[0] + ', ' +
-              (mois ? 'engagement ' + mois + ' mois' : 'sans engagement') +
-              ' (paiement en ligne pas encore ouvert).'
-          }).then(function (r){
-            if (r.error) throw r.error;
-            cform.hidden = true;
-            $('c-merci-mot').textContent = 'Le paiement en ligne ouvre très bientôt. Nous vous ' +
-              'rappelons pour lancer votre pack ' + p[0] + ' et fixer le rendez-vous de brief.';
-            $('c-merci').hidden = false;
-            payer.disabled = false; payer.textContent = mot;
-          });
-        })
-        .catch(function (e){
-          payer.disabled = false; payer.textContent = mot;
-          err.textContent = SB.dire(e); err.hidden = false;
-        });
+      b.classList.add('part');
+      location.href = url;
     });
-  }
+  });
 
   function verifie(ids){
     var manque = null;

@@ -398,6 +398,28 @@ window.MCC = (function (){
     e.indisponible = true;
     return e;
   }
+  /* Les pages de paiement hebergees par Stripe (liens de paiement), creees dans
+     le compte Stripe le 24/09/2026. Amaury : « la page de paiement que tu m'as
+     faite, c'est la page qui donne le moins confiance au monde ». Le paiement
+     se fait donc entierement chez Stripe ; le webhook `paiement-stripe` relie
+     ensuite l'abonnement au club (client_reference_id) ou cree la commande de
+     pack. Ce sont des adresses publiques, pas des secrets. */
+  /* Mode test tant que le compte Stripe n'est pas active : au passage en
+     reel, on recree ces liens en mode live et on remplace les adresses. */
+  var STRIPE = {
+    pro: 'https://buy.stripe.com/test_6oUcN5dlN5HnbyZ10n1oI00',
+    portail: 'https://billing.stripe.com/p/login/test_6oUcN5dlN5HnbyZ10n1oI00',
+    /* pack -> mois d'engagement (0, 3, 6) -> lien */
+    packs: {
+      start:  { 0: 'https://buy.stripe.com/test_4gM3cv6Xp4Dj0UlaAX1oI01', 3: 'https://buy.stripe.com/test_aFa5kD95xgm1eLbcJ51oI02', 6: 'https://buy.stripe.com/test_14A8wPftV6LrcD3dN91oI03' },
+      grow:   { 0: 'https://buy.stripe.com/test_9B67sL2H91r7cD39wT1oI04', 3: 'https://buy.stripe.com/test_9B614nbdF3zf32t8sP1oI05', 6: 'https://buy.stripe.com/test_00w9AT1D56Lr46x5gD1oI06' },
+      boost:  { 0: 'https://buy.stripe.com/test_9B6cN54Ph1r76eFbF11oI07', 3: 'https://buy.stripe.com/test_7sY3cvgxZ4Dj5aBdN91oI08', 6: 'https://buy.stripe.com/test_eVq7sLdlN4Dj32teRd1oI09' },
+      scale:  { 0: 'https://buy.stripe.com/test_bJeaEX3Ld7Pv1Yp9wT1oI0a', 3: 'https://buy.stripe.com/test_7sY00j6XpedT9qReRd1oI0b', 6: 'https://buy.stripe.com/test_bJebJ12H99XD8mNeRd1oI0c' },
+      pro:    { 0: 'https://buy.stripe.com/test_8x23cv6Xp6Lr6eF10n1oI0d', 3: 'https://buy.stripe.com/test_9B65kD6Xp8TzgTj24r1oI0e', 6: 'https://buy.stripe.com/test_3cIfZh4Phc5LeLbeRd1oI0f' },
+      custom: { 0: 'https://buy.stripe.com/test_8x28wPepRb1H1YpcJ51oI0g', 3: 'https://buy.stripe.com/test_8x23cv4Ph8Tz8mN7oL1oI0h', 6: 'https://buy.stripe.com/test_3cI7sL3Ldgm19qReRd1oI0i' }
+    }
+  };
+
   function caisse(fonction, corps){
     if (!client || !client.functions) return Promise.reject(indispo());
     return client.functions.invoke(fonction, { body: corps || {} }).then(function (r){
@@ -453,6 +475,7 @@ window.MCC = (function (){
     deposeDemande: deposeDemande, lienPhoto: lienPhoto,
     compteVue: compteVue, vuesDuClub: vuesDuClub,
     nouvellesDemandes: nouvellesDemandes,
-    veutLePro: veutLePro, monInteretPro: monInteretPro, caisse: caisse
+    veutLePro: veutLePro, monInteretPro: monInteretPro, caisse: caisse,
+    stripe: STRIPE
   };
 })();
