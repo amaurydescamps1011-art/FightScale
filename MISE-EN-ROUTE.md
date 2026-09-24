@@ -176,50 +176,81 @@ l'annuaire aura quelques clubs — dis-le moi, c'est une ligne à changer.
 
 ---
 
-## 3 bis. L'expéditeur d'e-mails — `monclubcombat.fr`
+## 3 bis. Le domaine `monclubcombat.fr`, chez LWS
 
-Le domaine est pris (24/09/2026). Trois choses attendaient ce chaînon, et cette
-mise en place les débloque toutes :
+Le domaine est pris chez **LWS** (23/09/2026), donc **toute la zone DNS se
+règle chez LWS** : les lignes que demandent Resend et Vercel se posent au même
+endroit. Trois choses attendaient ce chaînon :
 
 1. la confirmation d'adresse à la création de compte ;
-2. la notification au gérant quand une demande de séance d'essai arrive — pour
-   l'instant il doit ouvrir son espace pour la voir ;
+2. la notification au gérant quand une demande de séance d'essai arrive (pour
+   l'instant il doit ouvrir son espace pour la voir) ;
 3. les relances par e-mail, promises dans le Pro à 39 €.
 
-**Resend plutôt que Brevo.** Les deux marchent. Resend est fait pour ce qu'on a
-à faire : des e-mails déclenchés par le site (confirmation, notification,
-relance). Brevo est une plateforme marketing — newsletters, contacts,
-automatisations — dont on n'utiliserait que le SMTP, en traversant une interface
-bâtie pour autre chose. Resend : 3 000 e-mails par mois gratuits, 100 par jour,
-un domaine. Brevo : 300 par jour, sans limite mensuelle, mais son offre gratuite
-signe les e-mails de sa marque. Si un jour on envoie une vraie newsletter aux
-clubs, on reprendra Brevo à côté ; pour l'instant, Resend.
+**Resend plutôt que Brevo.** Resend est fait pour les e-mails déclenchés par le
+site (confirmation, notification, relance). Brevo est une plateforme marketing
+dont on n'utiliserait que le SMTP, et son offre gratuite signe les e-mails de sa
+marque. Resend : 3 000 e-mails par mois gratuits, 100 par jour.
 
-### a. Poser le domaine chez Resend
+**Ordre à suivre : a, b, c, d.** Garde deux onglets ouverts : LWS d'un côté,
+Resend ou Vercel de l'autre.
 
-1. Compte gratuit sur https://resend.com — par e-mail, ou avec GitHub.
+### Où est la zone DNS chez LWS
+
+Espace client LWS → **Mes domaines** (ou Mes services) → `monclubcombat.fr` →
+**Gérer** → **Zone DNS**. Tu y vois déjà des lignes posées par LWS (A, MX,
+TXT…). Pour chaque ligne à ajouter : le **type**, le **nom**, la **valeur**.
+
+**Le piège du nom** : LWS ajoute tout seul `.monclubcombat.fr` derrière. Si
+Resend affiche `send.monclubcombat.fr`, tape seulement **`send`**. Si tu tapes le
+nom complet, ça devient `send.monclubcombat.fr.monclubcombat.fr` et rien ne se
+vérifie. Pour le domaine nu, le nom est **`@`** (ou vide).
+
+### a. Les e-mails : Resend
+
+1. Compte gratuit sur https://resend.com.
 2. **Domains → Add Domain** → `monclubcombat.fr`, région **EU (Ireland)**.
-3. Resend affiche **trois enregistrements DNS** à poser chez ton registrar
-   (celui où tu as acheté le domaine) :
-   - un **MX** sur `send.monclubcombat.fr`,
-   - un **TXT** sur `send.monclubcombat.fr` (le SPF),
-   - un **TXT** sur `resend._domainkey.monclubcombat.fr` (la DKIM, une longue
-     ligne : copie-la en entier, sans espace ajouté).
-4. Chez ton registrar : la zone DNS, puis un enregistrement par ligne. Recopie
-   le **nom**, le **type** et la **valeur** exactement comme Resend les donne.
-5. Retour sur Resend → **Verify**. Ça prend de quelques minutes à quelques
-   heures. Tant que c'est « Pending », rien ne part.
+3. Resend affiche des enregistrements. Pose-les chez LWS un par un :
 
-Attention : si le domaine est chez Vercel, la zone DNS est chez Vercel, pas chez
-le registrar. Dis-le moi, c'est le même geste à un autre endroit.
+   | Type | Nom à taper chez LWS | Valeur |
+   |---|---|---|
+   | MX | `send` | celle de Resend (`feedback-smtp.eu-west-1…`), priorité **10** |
+   | TXT | `send` | `v=spf1 include:amazonses.com ~all` (copie celle de Resend) |
+   | TXT | `resend._domainkey` | la longue clé `p=…`, **copiée en entier** |
+   | TXT | `_dmarc` | `v=DMARC1; p=none;` |
 
-### b. Donner le SMTP à Supabase
+   La ligne DMARC n'est pas exigée par Resend mais Gmail la regarde : sans elle,
+   nos e-mails finissent plus souvent en spam.
+4. Ne touche pas aux MX déjà posés par LWS sur `@` : ils servent à *recevoir*
+   du courrier, les nôtres sont sur `send` et servent à *envoyer*. Ils ne se
+   gênent pas.
+5. Retour sur Resend → **Verify**. Quelques minutes à quelques heures. Tant que
+   c'est « Pending », rien ne part.
 
-1. Sur Resend → **API Keys** → **Create API Key**, droit d'envoi. **La clé ne
+### b. Le site : Vercel
+
+1. Vercel → projet **fight-scale** → **Settings → Domains → Add Domain** →
+   `monclubcombat.fr`. Vercel propose d'ajouter aussi `www.monclubcombat.fr` qui
+   redirige vers le domaine nu : **accepte cette option**.
+2. Vercel affiche « Invalid Configuration » et les lignes à poser. En général :
+   - un **A** sur `@` vers une adresse IP (recopie celle que Vercel affiche) ;
+   - un **CNAME** sur `www` vers une adresse `…vercel-dns…`.
+3. Chez LWS, **modifie** le A qui existe déjà sur `@` (LWS l'a fait pointer vers
+   sa page de parking) au lieu d'en ajouter un second. Même chose pour `www` :
+   s'il existe en A, supprime-le et crée le CNAME. **S'il y a une ligne AAAA sur
+   `@` ou `www`, supprime-la** : sinon une partie des visiteurs tombe sur la page
+   de LWS.
+4. Retour sur Vercel : les deux lignes passent au vert, et le certificat HTTPS
+   se fait tout seul. https://monclubcombat.fr affiche alors le site.
+   `fight-scale.vercel.app` continue de marcher en parallèle.
+
+### c. Le SMTP dans Supabase (quand Resend dit « Verified »)
+
+1. Resend → **API Keys** → **Create API Key**, droit d'envoi. **La clé ne
    s'affiche qu'une fois.** Ne me la colle pas ici : elle va dans Supabase et
    nulle part ailleurs.
 2. Supabase → **Authentication → Emails → SMTP Settings** → **Enable Custom
-   SMTP**, puis :
+   SMTP** :
    - Host : `smtp.resend.com`
    - Port : `587`
    - Username : `resend`
@@ -227,18 +258,25 @@ le registrar. Dis-le moi, c'est le même geste à un autre endroit.
    - Sender email : `contact@monclubcombat.fr`
    - Sender name : `Mon Club Combat`
 3. **Save**, puis rallume **Confirm email** dans le bloc « User Signups » de la
-   page Sign In / Providers — celui qu'on avait éteint le 23/09.
-4. Crée un compte de test avec une adresse à toi : l'e-mail doit arriver, et le
-   lien doit ramener sur le site.
+   page Sign In / Providers (celui qu'on avait éteint le 23/09).
 
-### c. Le site prend son nom
+### d. Les adresses de retour dans Supabase (quand le site est sur le domaine)
 
-Vercel → le projet → **Settings → Domains** → `monclubcombat.fr`, et Vercel dit
-quels enregistrements poser. Ensuite je change les adresses écrites dans le site
-et j'enlève le `noindex`, pour que Google puisse enfin le lire.
+https://supabase.com/dashboard/project/qhbutuhdmyajlgorbhxf/auth/url-configuration
 
-À faire dans cet ordre : le domaine chez Resend d'abord (les e-mails débloquent
-la création de compte), le site ensuite.
+- *Site URL* : `https://monclubcombat.fr`
+- *Redirect URLs* : **ajoute** `https://monclubcombat.fr/referencer.html` et
+  `https://monclubcombat.fr/motdepasse.html`. Garde les deux anciennes lignes
+  `fight-scale.vercel.app` : elles ne gênent pas.
+
+Puis le test : crée un compte avec une adresse à toi sur
+https://monclubcombat.fr. L'e-mail de confirmation doit arriver (regarde les
+spams la première fois), et son lien doit ramener sur `monclubcombat.fr`.
+
+**Recevoir du courrier** sur `contact@monclubcombat.fr` est une autre affaire :
+Resend ne fait qu'envoyer. Si des clubs répondent à nos e-mails, il faudra une
+boîte ou une redirection vers ton Gmail, dans la partie e-mail de LWS. On le fera
+quand on écrira les notifications.
 
 ---
 
