@@ -231,6 +231,16 @@
     .champ-ville{order:3; flex:1 1 100%; max-width:none}
     .barre-nav{margin-left:auto}
   }
+  /* meme bandeau que l'accueil au telephone : logo reduit, bouton resserre, tout sur une ligne */
+  @media (max-width:620px){
+    .barre-in .brand-mot{width:142px; height:8.1px}
+    .barre-nav .btn{min-height:40px; padding-inline:15px; font-size:13.5px}
+  }
+  @media (max-width:360px){
+    .barre-in .brand{gap:6px}
+    .barre-in .brand-mot{width:116px; height:6.6px}
+    .barre-nav .btn{padding-inline:13px; font-size:13px}
+  }
 
   /* ---------- barre de filtres ---------- */
   .filtres-bloc{border-bottom:1px solid var(--bord); background:var(--fond)}
@@ -441,12 +451,15 @@
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
      sont portes ici, scopes a .fen-form, pour que la fenetre tienne toute seule
      sur une page qui n'a pas le CSS du formulaire. */
-  .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:center;
-    justify-content:center; padding:20px; overflow:auto;
+  /* align-items:center sur un voile qui defile rognait le haut de la fenetre
+     des qu'elle depassait l'ecran (clavier du telephone ouvert) : le haut
+     devenait inatteignable. margin:auto sur la fenetre centre sans ce defaut. */
+  .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:flex-start;
+    justify-content:center; padding:20px; overflow:auto; overscroll-behavior:contain;
     background:rgba(22,22,15,.52); backdrop-filter:blur(2px)}
   .voile[hidden]{display:none}
   body.fige{overflow:hidden}
-  .fenetre{position:relative; width:min(100%,440px); padding:clamp(24px,3vw,34px);
+  .fenetre{position:relative; margin:auto; width:min(100%,440px); padding:clamp(24px,3vw,34px);
     border-radius:var(--r-l); background:var(--surface);
     box-shadow:0 36px 90px -30px rgba(22,22,15,.6);
     animation:monte .24s cubic-bezier(.2,.7,.2,1)}
@@ -508,6 +521,60 @@
   .fen-ou::before,.fen-ou::after{content:""; flex:1; height:1px; background:var(--bord)}
   .fen-ou[hidden]{display:none}
   .fen-form{margin-top:16px}
+
+  /* Amaury, 24/09/2026 : sur telephone la fenetre « prend toute la place de
+     l'ecran, et avec le clavier elle est rognee ». On la resserre : ni
+     monogramme ni sur-titre, un texte court, des champs moins hauts, et un
+     voile qui laisse voir la page autour. */
+  @media (max-width:620px){
+    .voile{padding:12px}
+    .fenetre{padding:20px 18px 18px; border-radius:18px}
+    .fen-logo, #fen-etape{display:none}
+    .fen-titre{margin-top:0; padding-right:36px; font-size:22px}
+    .fen-mot{margin-top:6px; font-size:13.5px; line-height:1.5}
+    .fen-fermer{top:8px; right:8px}
+    .btn-google{margin-top:14px; min-height:44px}
+    .fen-ou{margin-top:12px}
+    .fen-form{margin-top:10px; gap:10px}
+    .fen-form .champ{gap:5px}
+    .fen-form input{min-height:44px; padding:10px 12px; font-size:16px}
+    .fen-form .champ-aide{font-size:12px}
+    .fen-note{font-size:11.5px; line-height:1.45}
+  }
+
+  /* ---------- le menu du telephone ----------
+     Sous 1040 px les menus deroulants du bandeau disparaissent : il ne restait
+     que « Referencer ». Un bouton a trois traits ouvre ce panneau, pose sous le
+     bandeau. <details> l'ouvre sans script. */
+  .nav-mob{display:none}
+  /* le bouton suit la disparition des menus : 1040 px sur les pages, 1100 sur la recherche */
+  @media (max-width:1040px){ .site-nav .nav-mob{display:block} .site-nav{gap:8px} }
+  @media (max-width:1100px){ .barre-nav .nav-mob{display:block} .barre-nav{gap:8px} }
+  @media (max-width:1100px){
+    .nav-mob-btn{display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px;
+      border-radius:12px; border:1px solid var(--bord-2); background:var(--surface); color:var(--texte);
+      cursor:pointer; list-style:none}
+    .nav-mob-btn::-webkit-details-marker{display:none}
+    .nav-mob-x{display:none}
+    .nav-mob[open] .nav-mob-o{display:none}
+    .nav-mob[open] .nav-mob-x{display:block}
+    .nav-mob-panel{position:absolute; z-index:60; top:calc(100% - 4px); left:12px; right:12px;
+      max-height:calc(100dvh - 90px); overflow-y:auto; overscroll-behavior:contain;
+      display:flex; flex-direction:column; padding:10px; border-radius:16px;
+      background:var(--surface); border:1px solid var(--bord); box-shadow:var(--ombre-3, 0 18px 40px rgba(22,22,15,.18))}
+    .nav-mob-a{display:flex; align-items:center; justify-content:space-between; min-height:46px;
+      padding:0 12px; border-radius:10px; font-size:15.5px; font-weight:700; color:var(--texte);
+      text-decoration:none; cursor:pointer; list-style:none}
+    .nav-mob-a::-webkit-details-marker{display:none}
+    .nav-mob-a:hover, .nav-mob-a:active{background:var(--surface-2)}
+    .nav-mob-sous[open] > summary .nav-chev{rotate:180deg}
+    .nav-mob-l{display:grid; grid-template-columns:1fr 1fr; gap:0 8px; margin:0 0 6px; padding:0 4px;
+      list-style:none}
+    .nav-mob-l a{display:block; padding:9px 8px; border-radius:8px; font-size:14.5px; font-weight:600;
+      color:var(--texte-2); text-decoration:none}
+    .nav-mob-t{margin:10px 12px 4px; padding-top:12px; border-top:1px solid var(--bord);
+      font-size:10.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--texte-4)}
+  }
 
   /* ---------- le menu de compte, dans le bandeau ----------
      Amaury, 23/09/2026 : « je veux que ca cree un vrai compte (...) l'impression
@@ -619,6 +686,32 @@
       </div>
 
       <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+      <!-- Amaury, 24/09/2026 : sur telephone « il n'y a que la possibilite
+           d'appuyer sur Referencer, pas d'aller naviguer sur d'autres pages ».
+           Le menu tient dans un <details> : il s'ouvre sans script, et
+           _compte.js le referme au clic sur un lien ou a cote. -->
+      <details class="nav-mob">
+        <summary class="nav-mob-btn" aria-label="Menu">
+          <svg class="nav-mob-o" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="nav-mob-x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </summary>
+        <div class="nav-mob-panel">
+          <a class="nav-mob-a" href="recherche.html">Toutes les salles</a>
+          <details class="nav-mob-sous">
+            <summary class="nav-mob-a">Par ville <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <ul class="nav-mob-l"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
+          </details>
+          <details class="nav-mob-sous">
+            <summary class="nav-mob-a">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <ul class="nav-mob-l"><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li><li><a href="lutte.html">Lutte</a></li><li><a href="self-defense.html">Self-défense</a></li></ul>
+          </details>
+          <p class="nav-mob-t">Pro</p>
+          <a class="nav-mob-a" href="clubs.html" data-compte="connexion">Accès pro</a>
+          <a class="nav-mob-a" href="clubs.html">Référencer ma salle</a>
+          <a class="nav-mob-a" href="clubs.html#pro">Offres et tarifs</a>
+          <a class="nav-mob-a" href="acquisition.html" target="_blank" rel="noopener">Acquisition</a>
+        </div>
+      </details>
     </nav>
   </div>
 </header>
@@ -1145,6 +1238,25 @@
         });
     }).catch(function (){ /* le bandeau reste celui d'un visiteur */ });
   }
+
+  /* Le menu du telephone se referme au choix d'un lien, ou d'un toucher a
+     cote : un <details> seul resterait ouvert par-dessus la page. */
+  document.addEventListener('click', function (e){
+    var ouverts = document.querySelectorAll('details.nav-mob[open]');
+    if (!ouverts.length) return;
+    var t = e.target;
+    Array.prototype.forEach.call(ouverts, function (d){
+      if (!d.contains(t) || (t.closest && t.closest('a'))) d.removeAttribute('open');
+    });
+  });
+
+  /* Sur telephone, le clavier cache la moitie de l'ecran : on ramene le champ
+     touche au milieu de ce qui reste visible. */
+  var voileC = document.getElementById('voile');
+  if (voileC) voileC.addEventListener('focusin', function (e){
+    if (!e.target.matches || !e.target.matches('input') || innerWidth > 620) return;
+    setTimeout(function (){ e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);
+  });
 })();
 </script>
 

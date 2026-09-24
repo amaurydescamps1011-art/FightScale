@@ -31,6 +31,16 @@
     .champ-ville{order:3; flex:1 1 100%; max-width:none}
     .barre-nav{margin-left:auto}
   }
+  /* meme bandeau que l'accueil au telephone : logo reduit, bouton resserre, tout sur une ligne */
+  @media (max-width:620px){
+    .barre-in .brand-mot{width:142px; height:8.1px}
+    .barre-nav .btn{min-height:40px; padding-inline:15px; font-size:13.5px}
+  }
+  @media (max-width:360px){
+    .barre-in .brand{gap:6px}
+    .barre-in .brand-mot{width:116px; height:6.6px}
+    .barre-nav .btn{padding-inline:13px; font-size:13px}
+  }
 
   /* ---------- barre de filtres ---------- */
   .filtres-bloc{border-bottom:1px solid var(--bord); background:var(--fond)}

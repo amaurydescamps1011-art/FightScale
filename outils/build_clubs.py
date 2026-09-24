@@ -64,6 +64,7 @@ footer = footer.replace('href="clubs.html"', 'href="%s"' % ANCRE)
 if QUI == 'clubs':
     header = header.replace('href="#creer"><span class="l-long">', 'href="#creer" data-compte><span class="l-long">')
     header = header.replace('<a href="#creer">Référencer ma salle</a>', '<a href="#creer" data-compte>Référencer ma salle</a>')
+    header = header.replace('<a class="nav-mob-a" href="#creer">Référencer ma salle</a>', '<a class="nav-mob-a" href="#creer" data-compte>Référencer ma salle</a>')
     footer = footer.replace('<a href="#creer">Référencer ma salle</a>', '<a href="#creer" data-compte>Référencer ma salle</a>')
 import build_annuaire as ann
 footer = ann.reseau(footer)

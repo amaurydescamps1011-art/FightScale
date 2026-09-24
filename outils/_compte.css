@@ -3,12 +3,15 @@
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
      sont portes ici, scopes a .fen-form, pour que la fenetre tienne toute seule
      sur une page qui n'a pas le CSS du formulaire. */
-  .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:center;
-    justify-content:center; padding:20px; overflow:auto;
+  /* align-items:center sur un voile qui defile rognait le haut de la fenetre
+     des qu'elle depassait l'ecran (clavier du telephone ouvert) : le haut
+     devenait inatteignable. margin:auto sur la fenetre centre sans ce defaut. */
+  .voile{position:fixed; inset:0; z-index:200; display:flex; align-items:flex-start;
+    justify-content:center; padding:20px; overflow:auto; overscroll-behavior:contain;
     background:rgba(22,22,15,.52); backdrop-filter:blur(2px)}
   .voile[hidden]{display:none}
   body.fige{overflow:hidden}
-  .fenetre{position:relative; width:min(100%,440px); padding:clamp(24px,3vw,34px);
+  .fenetre{position:relative; margin:auto; width:min(100%,440px); padding:clamp(24px,3vw,34px);
     border-radius:var(--r-l); background:var(--surface);
     box-shadow:0 36px 90px -30px rgba(22,22,15,.6);
     animation:monte .24s cubic-bezier(.2,.7,.2,1)}
@@ -70,6 +73,60 @@
   .fen-ou::before,.fen-ou::after{content:""; flex:1; height:1px; background:var(--bord)}
   .fen-ou[hidden]{display:none}
   .fen-form{margin-top:16px}
+
+  /* Amaury, 24/09/2026 : sur telephone la fenetre « prend toute la place de
+     l'ecran, et avec le clavier elle est rognee ». On la resserre : ni
+     monogramme ni sur-titre, un texte court, des champs moins hauts, et un
+     voile qui laisse voir la page autour. */
+  @media (max-width:620px){
+    .voile{padding:12px}
+    .fenetre{padding:20px 18px 18px; border-radius:18px}
+    .fen-logo, #fen-etape{display:none}
+    .fen-titre{margin-top:0; padding-right:36px; font-size:22px}
+    .fen-mot{margin-top:6px; font-size:13.5px; line-height:1.5}
+    .fen-fermer{top:8px; right:8px}
+    .btn-google{margin-top:14px; min-height:44px}
+    .fen-ou{margin-top:12px}
+    .fen-form{margin-top:10px; gap:10px}
+    .fen-form .champ{gap:5px}
+    .fen-form input{min-height:44px; padding:10px 12px; font-size:16px}
+    .fen-form .champ-aide{font-size:12px}
+    .fen-note{font-size:11.5px; line-height:1.45}
+  }
+
+  /* ---------- le menu du telephone ----------
+     Sous 1040 px les menus deroulants du bandeau disparaissent : il ne restait
+     que « Referencer ». Un bouton a trois traits ouvre ce panneau, pose sous le
+     bandeau. <details> l'ouvre sans script. */
+  .nav-mob{display:none}
+  /* le bouton suit la disparition des menus : 1040 px sur les pages, 1100 sur la recherche */
+  @media (max-width:1040px){ .site-nav .nav-mob{display:block} .site-nav{gap:8px} }
+  @media (max-width:1100px){ .barre-nav .nav-mob{display:block} .barre-nav{gap:8px} }
+  @media (max-width:1100px){
+    .nav-mob-btn{display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px;
+      border-radius:12px; border:1px solid var(--bord-2); background:var(--surface); color:var(--texte);
+      cursor:pointer; list-style:none}
+    .nav-mob-btn::-webkit-details-marker{display:none}
+    .nav-mob-x{display:none}
+    .nav-mob[open] .nav-mob-o{display:none}
+    .nav-mob[open] .nav-mob-x{display:block}
+    .nav-mob-panel{position:absolute; z-index:60; top:calc(100% - 4px); left:12px; right:12px;
+      max-height:calc(100dvh - 90px); overflow-y:auto; overscroll-behavior:contain;
+      display:flex; flex-direction:column; padding:10px; border-radius:16px;
+      background:var(--surface); border:1px solid var(--bord); box-shadow:var(--ombre-3, 0 18px 40px rgba(22,22,15,.18))}
+    .nav-mob-a{display:flex; align-items:center; justify-content:space-between; min-height:46px;
+      padding:0 12px; border-radius:10px; font-size:15.5px; font-weight:700; color:var(--texte);
+      text-decoration:none; cursor:pointer; list-style:none}
+    .nav-mob-a::-webkit-details-marker{display:none}
+    .nav-mob-a:hover, .nav-mob-a:active{background:var(--surface-2)}
+    .nav-mob-sous[open] > summary .nav-chev{rotate:180deg}
+    .nav-mob-l{display:grid; grid-template-columns:1fr 1fr; gap:0 8px; margin:0 0 6px; padding:0 4px;
+      list-style:none}
+    .nav-mob-l a{display:block; padding:9px 8px; border-radius:8px; font-size:14.5px; font-weight:600;
+      color:var(--texte-2); text-decoration:none}
+    .nav-mob-t{margin:10px 12px 4px; padding-top:12px; border-top:1px solid var(--bord);
+      font-size:10.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--texte-4)}
+  }
 
   /* ---------- le menu de compte, dans le bandeau ----------
      Amaury, 23/09/2026 : « je veux que ca cree un vrai compte (...) l'impression

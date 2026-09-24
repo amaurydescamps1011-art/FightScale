@@ -40,6 +40,32 @@
         </div>
       </div>
       <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+      <!-- Amaury, 24/09/2026 : sur telephone « il n'y a que la possibilite
+           d'appuyer sur Referencer, pas d'aller naviguer sur d'autres pages ».
+           Le menu tient dans un <details> : il s'ouvre sans script, et
+           _compte.js le referme au clic sur un lien ou a cote. -->
+      <details class="nav-mob">
+        <summary class="nav-mob-btn" aria-label="Menu">
+          <svg class="nav-mob-o" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="nav-mob-x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </summary>
+        <div class="nav-mob-panel">
+          <a class="nav-mob-a" href="recherche.html">Toutes les salles</a>
+          <details class="nav-mob-sous">
+            <summary class="nav-mob-a">Par ville <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <ul class="nav-mob-l">%%MENU_VILLES%%</ul>
+          </details>
+          <details class="nav-mob-sous">
+            <summary class="nav-mob-a">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <ul class="nav-mob-l">%%MENU_DISC_A%%%%MENU_DISC_B%%</ul>
+          </details>
+          <p class="nav-mob-t">Pro</p>
+          <a class="nav-mob-a" href="clubs.html" data-compte="connexion">Accès pro</a>
+          <a class="nav-mob-a" href="clubs.html">Référencer ma salle</a>
+          <a class="nav-mob-a" href="clubs.html#pro">Offres et tarifs</a>
+          <a class="nav-mob-a" href="acquisition.html" target="_blank" rel="noopener">Acquisition</a>
+        </div>
+      </details>
     </nav>
   </div>
 </header>

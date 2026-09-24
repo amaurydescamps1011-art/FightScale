@@ -340,4 +340,23 @@
         });
     }).catch(function (){ /* le bandeau reste celui d'un visiteur */ });
   }
+
+  /* Le menu du telephone se referme au choix d'un lien, ou d'un toucher a
+     cote : un <details> seul resterait ouvert par-dessus la page. */
+  document.addEventListener('click', function (e){
+    var ouverts = document.querySelectorAll('details.nav-mob[open]');
+    if (!ouverts.length) return;
+    var t = e.target;
+    Array.prototype.forEach.call(ouverts, function (d){
+      if (!d.contains(t) || (t.closest && t.closest('a'))) d.removeAttribute('open');
+    });
+  });
+
+  /* Sur telephone, le clavier cache la moitie de l'ecran : on ramene le champ
+     touche au milieu de ce qui reste visible. */
+  var voileC = document.getElementById('voile');
+  if (voileC) voileC.addEventListener('focusin', function (e){
+    if (!e.target.matches || !e.target.matches('input') || innerWidth > 620) return;
+    setTimeout(function (){ e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);
+  });
 })();
