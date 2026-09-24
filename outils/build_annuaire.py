@@ -280,7 +280,7 @@ for d in DISCIPLINES:
         h1='Salles de <b>%s</b> en France' % NOM[d],
         intro=intro,
         actions=(('<button class="btn btn-rouge" type="button" data-compte>Référencer ma salle</button>'
-                  '<a class="btn btn-ligne" href="index.html#villes">Voir les villes couvertes</a>')
+                  '<a class="btn btn-ligne" href="recherche.html">Chercher dans une autre ville</a>')
                  if not n else
                  ('<a class="btn btn-rouge" href="recherche.html?discipline=%s">Voir sur la carte</a>'
                   '<button class="btn btn-ligne" type="button" data-compte>Référencer ma salle</button>'
@@ -329,7 +329,7 @@ for v in VILLES:
         h1='Salles de sports de combat à <b>%s</b>' % v,
         intro=intro,
         actions=(('<button class="btn btn-rouge" type="button" data-compte>Référencer ma salle</button>'
-                  '<a class="btn btn-ligne" href="index.html#villes">Voir les villes couvertes</a>')
+                  '<a class="btn btn-ligne" href="recherche.html">Chercher dans une autre ville</a>')
                  if not n else
                  ('<a class="btn btn-rouge" href="recherche.html?ville=%s">Voir sur la carte</a>'
                   '<button class="btn btn-ligne" type="button" data-compte>Référencer ma salle</button>'

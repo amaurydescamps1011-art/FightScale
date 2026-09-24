@@ -95,8 +95,13 @@ const url = f => 'file://' + path.join(S, f);
 
   // --- 5. recherche -> page de vente -> fenetre -> fiche ---
   // Le formulaire ne vit plus sur la page de vente : on passe par la creation de
-  // l'espace club, qui ouvre referencer.html avec le nom deja repris.
-  await p.click('a[href="clubs.html"]');
+  // l'espace club (le club y est cree au premier chargement), puis la fiche
+  // reprend le nom saisi. Le bandeau « Referencer ma salle » ouvre la fenetre
+  // sur place au lieu de mener a la page de vente (Amaury, 24/09/2026).
+  await p.click('.btn-rouge[data-compte]');
+  await p.waitForTimeout(350);
+  if (!await p.isVisible('#voile')) erreurs.push('bandeau : « referencer ma salle » n\'ouvre pas la fenetre');
+  await p.goto(url('clubs.html'));
   await p.waitForLoadState('load');
   await p.waitForTimeout(500);
   const vente = await p.evaluate(() => ({
@@ -121,7 +126,9 @@ const url = f => 'file://' + path.join(S, f);
   await p.fill('#k-mail', 'contact@club-essai.fr');
   await p.fill('#k-mdp', 'motdepasse1');
   await p.click('#form-compte button[type=submit]');
-  await p.waitForLoadState('load');
+  // sans serveur (ici), la fenetre ouvre directement la fiche en apercu ; avec
+  // le serveur elle mene a l'espace club, verifie par backend.cjs
+  await p.waitForURL(/referencer\.html/, { timeout: 5000 });
   await p.waitForTimeout(800);
   if (await p.inputValue('#c-nom') !== 'Club Essai')
     erreurs.push('fiche : le nom saisi a la creation du compte n\'est pas repris');

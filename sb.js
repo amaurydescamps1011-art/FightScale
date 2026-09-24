@@ -45,6 +45,27 @@ window.MCC = (function (){
       .catch(function (){ return null; });
   }
 
+  /* Le club du compte, cree s'il n'existe pas encore. Amaury, 24/09/2026 : la
+     creation de compte doit mener droit a l'espace club, sans page entre les
+     deux. C'est donc la premiere page ouverte apres l'inscription (l'espace
+     club, ou la fiche) qui cree le club, avec le nom saisi dans la fenetre
+     (?nom=), ou celui garde dans le compte, ou « Ma salle ». */
+  function assureMonClub(nom){
+    if (!client) return Promise.resolve(null);
+    return monClub().then(function (club){
+      if (club) return club;
+      return client.auth.getUser().then(function (u){
+        var moi = u && u.data && u.data.user;
+        if (!moi) return null;
+        var n = nom || (moi.user_metadata && moi.user_metadata.nom_salle) || 'Ma salle';
+        return client.rpc('creer_mon_club', { nom_salle: n }).then(function (r){
+          if (r.error) throw r.error;
+          return monClub();
+        });
+      });
+    });
+  }
+
   /* ---- le profil du compte ----
      Amaury, 23/09/2026 : un compte doit etre un vrai compte, « au moins qu'il
      ait un profil de compte et qu'il soit enregistre quelque part », meme en
@@ -391,6 +412,7 @@ window.MCC = (function (){
 
   return {
     client: client, prete: prete, session: session, monClub: monClub,
+    assureMonClub: assureMonClub,
     monProfil: monProfil, poseProfil: poseProfil, estAdmin: estAdmin,
     deconnexion: deconnexion,
     dire: dire, exigeCompte: exigeCompte, URL_BASE: URL_BASE,

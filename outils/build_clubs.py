@@ -27,7 +27,7 @@ import sys, compte
 # compte, et les deux pages legales (Google les exige pour la connexion). Elles partagent en-tete, pied de page et CSS, donc elles ne peuvent pas
 # diverger de l'accueil.
 PAGES = ['clubs', 'referencer', 'espace-club', 'admin', 'motdepasse', 'mon-compte',
-         'confidentialite', 'conditions']
+         'confidentialite', 'conditions', 'acquisition']
 QUI = 'clubs'
 for _p in PAGES:
     if '--' + _p in sys.argv: QUI = _p
@@ -36,7 +36,8 @@ CORPS = {'clubs': '_clubs.body.html', 'referencer': '_referencer.body.html',
          'motdepasse': '_motdepasse.body.html',
          'mon-compte': '_mon_compte.body.html',
          'confidentialite': '_confidentialite.body.html',
-         'conditions': '_conditions.body.html'}
+         'conditions': '_conditions.body.html',
+         'acquisition': '_acquisition.body.html'}
 body   = R(CORPS[QUI])
 
 # depuis la page clubs, les liens du menu et du pied de page renvoient a l'accueil
@@ -140,7 +141,8 @@ TITRE = {'clubs': 'Référencer ma salle | Mon Club Combat',
          'motdepasse': 'Nouveau mot de passe | Mon Club Combat',
          'mon-compte': 'Mon compte | Mon Club Combat',
          'confidentialite': 'Politique de confidentialité | Mon Club Combat',
-         'conditions': "Conditions d'utilisation | Mon Club Combat"}[QUI]
+         'conditions': "Conditions d'utilisation | Mon Club Combat",
+         'acquisition': 'Acquisition de leads | Mon Club Combat'}[QUI]
 
 page = (
 '''<title>''' + TITRE + '''</title>
@@ -162,7 +164,8 @@ page = compte.pose(page)
 # le script propre a la page, pose apres la fenetre : il compte sur window.MCC,
 # que compte.pose() vient de charger
 APRES = {'referencer': '_referencer.sb.js', 'espace-club': '_espace.js', 'admin': '_admin.js',
-         'motdepasse': '_motdepasse.js', 'mon-compte': '_mon_compte.js'}
+         'motdepasse': '_motdepasse.js', 'mon-compte': '_mon_compte.js',
+         'acquisition': '_acquisition.js'}
 if QUI in APRES:
     page = page + '\n<script>\n' + R(APRES[QUI]) + '</script>\n'
 # le rail en dernier : il lit window.MCC, pose par compte.pose(), et n'a besoin

@@ -279,33 +279,26 @@ ok "si l'envoi echoue, la demande s'enregistre quand meme" \
 ok "personne n'appelle l'envoi a la main" \
    "$(q "set role anon; select previent_le_club();" | cut -c1-5)" "ERROR"
 
-# Les relances du matin (24/09/2026) : un e-mail par club Pro, avec les prospects
-# dont la date de rappel est passee ou tombe aujourd'hui.
-q "create or replace function net.http_post(url text, body jsonb default '{}', params jsonb default '{}', headers jsonb default '{}', timeout_milliseconds int default 5000) returns bigint language sql as \$\$ insert into net.envois values (url, headers, body); select 1::bigint \$\$; delete from net.envois;" >/dev/null
-J="(now() at time zone 'Europe/Paris')::date"
-q "update demande set relance = $J where nom in ('<b>Zoé</b>','Paul');
-   update demande set relance = $J - 3 where nom = 'Jean';
-   update demande set relance = $J + 1 where nom = 'Lea';
-   update demande set relance = $J, statut = 'adherent' where nom = 'Nadia';" >/dev/null
-ok "le visiteur ne declenche pas les relances" \
-   "$(q "set role anon; select relances_du_jour();" | cut -c1-5)" "ERROR"
-ok "un gerant non plus" \
-   "$(q "$(cnx $B) select relances_du_jour();" | cut -c1-5)" "ERROR"
-ok "un seul e-mail part : le club gratuit n'en recoit pas" \
-   "$(q "select relances_du_jour();")" "1 "
-ok "au gerant du club Pro" \
-   "$(q "select body->'to' from net.envois;")" "[\"gerant-b@ex.fr\"] "
-ok "avec les deux prospects dus, dans le sujet" \
-   "$(q "select body->>'subject' from net.envois;")" "2 prospects à rappeler aujourd'hui "
-ok "le retard est signale, le futur et l'adherent sont laisses" \
-   "$(q "select (body->>'html') like '%Jean%prévu le%' and (body->>'html') not like '%Lea%' and (body->>'html') not like '%Nadia%' from net.envois;")" "t "
-ok "les noms restent echappes" \
-   "$(q "select (body->>'html') like '%&lt;b&gt;Zoé%' from net.envois;")" "t "
-q "delete from vault.decrypted_secrets;" >/dev/null
-ok "sans cle, les relances ne partent pas" \
-   "$(q "select relances_du_jour();")" "0 "
 ok "la creation de club reste fermee au visiteur" \
    "$(q "set role anon; select creer_mon_club('X');" | cut -c1-5)" "ERROR"
+
+# La page acquisition (24/09/2026) : un club laisse ses coordonnees, l'equipe
+# seule les lit, et recoit un e-mail.
+q "create or replace function net.http_post(url text, body jsonb default '{}', params jsonb default '{}', headers jsonb default '{}', timeout_milliseconds int default 5000) returns bigint language sql as \$\$ insert into net.envois values (url, headers, body); select 1::bigint \$\$; delete from net.envois;" >/dev/null
+ok "un visiteur depose une demande d'acquisition" \
+   "$(q "set role anon; insert into contact_acquisition (club,ville,nom,mail,pack) values ('Fight Club','Lyon','Sam','sam@ex.fr','boost'); select 1;")" "1 "
+ok "l'equipe est prevenue sur contact@, et repond au club" \
+   "$(q "select (body->'to')::text || ' ' || (body->>'reply_to') from net.envois;")" "[\"contact@monclubcombat.fr\"] sam@ex.fr "
+ok "le visiteur ne relit pas les demandes" \
+   "$(q "set role anon; select count(*) from contact_acquisition;")" "0 "
+ok "un gerant non plus" \
+   "$(q "$(cnx $A) select count(*) from contact_acquisition;")" "0 "
+ok "l'equipe les lit" \
+   "$(q "$(cnx $AD) select count(*) from contact_acquisition;")" "1 "
+ok "un visiteur ne se marque pas deja traite" \
+   "$(q "set role anon; insert into contact_acquisition (club,ville,nom,mail,traite_le) values ('X','Y','Z','z@ex.fr',now());" | cut -c1-5)" "ERROR"
+ok "une offre inventee est refusee" \
+   "$(q "set role anon; insert into contact_acquisition (club,ville,nom,mail,pack) values ('X','Y','Z','z@ex.fr','gratuit');" | cut -c1-5)" "ERROR"
 
 echo
 [ $RATES -eq 0 ] && echo "tout passe" || { echo "$RATES echec(s)"; exit 1; }

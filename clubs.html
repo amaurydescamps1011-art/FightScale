@@ -953,6 +953,103 @@
   .legal a{color:var(--texte); text-decoration:underline; text-underline-offset:3px;
     text-decoration-thickness:1px; overflow-wrap:anywhere}
   .legal a:hover{color:var(--rouge-lien)}
+
+  /* ---------- la page acquisition ---------- */
+  .acq-titre{max-width:17ch; margin-inline:auto}
+  .acq-hero .hero-club-actions{display:flex; flex-wrap:wrap; justify-content:center; gap:12px}
+  .acq-hero .hero-club-actions .btn-grand{margin-top:0}
+  @media (max-width:560px){ .acq-hero .hero-club-actions{flex-direction:column; align-items:stretch; max-width:340px; margin-inline:auto} }
+
+  .acq-compte .section-chapo b{color:var(--texte)}
+  .acq-chemin{margin-top:clamp(24px,3vw,36px); padding:0; list-style:none; display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
+  .acq-chemin li{display:flex; align-items:center; gap:12px; min-height:72px; padding:14px 16px;
+    border:1px solid var(--bord); border-radius:var(--r-l, 12px); background:var(--surface);
+    font-size:14.5px; font-weight:700; line-height:1.4; color:var(--texte-2)}
+  .acq-chemin span{flex-shrink:0; font-size:24px; line-height:1; color:var(--texte-4)}
+  .acq-chemin .acq-compte-ici{border-color:rgba(220,18,41,.45); background:rgba(236,22,46,.05);
+    color:var(--texte)}
+  .acq-chemin .acq-compte-ici span{color:var(--rouge-500)}
+  @media (max-width:820px){ .acq-chemin{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (max-width:460px){ .acq-chemin{grid-template-columns:1fr} .acq-chemin li{min-height:0} }
+
+  .acq-etapes{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .acq-etapes li{padding-right:18px}
+  .acq-etapes li + li{padding-left:clamp(16px,1.6vw,24px)}
+  .acq-etapes li + li::before{left:clamp(16px,1.6vw,24px)}
+  @media (max-width:1080px){
+    .acq-etapes{grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:clamp(24px,3vw,40px)}
+    .acq-etapes li, .acq-etapes li + li{padding-left:0; border-left:0}
+    .acq-etapes li + li::before{left:0}
+  }
+  @media (max-width:620px){ .acq-etapes{grid-template-columns:1fr} }
+
+  .acq-duree{margin-top:clamp(22px,2.6vw,30px); display:inline-flex; flex-wrap:wrap; gap:4px;
+    padding:4px; border:1px solid var(--bord-2); border-radius:999px; background:var(--surface)}
+  .acq-duree button{min-height:44px; padding:0 18px; border:0; border-radius:999px;
+    background:transparent; font:inherit; font-size:14px; font-weight:700; color:var(--texte-2);
+    cursor:pointer; transition:background-color .15s ease, color .15s ease}
+  .acq-duree button b{color:var(--rouge-lien); font-weight:800}
+  .acq-duree button[aria-checked="true"]{background:var(--texte); color:#fff}
+  .acq-duree button[aria-checked="true"] b{color:#fff}
+  .acq-duree button:focus-visible{outline:2px solid var(--rouge-500); outline-offset:2px}
+
+  .acq-packs{margin-top:18px; padding:0; list-style:none; display:grid; gap:12px;
+    grid-template-columns:repeat(3,minmax(0,1fr))}
+  .acq-packs li{display:flex; flex-direction:column; gap:6px; padding:22px 22px 20px;
+    border:1px solid var(--bord); border-radius:var(--r-l, 12px); background:var(--surface)}
+  .acq-pack{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--rouge-lien)}
+  .acq-nb{font-size:15px; font-weight:600; color:var(--texte-2)}
+  .acq-nb b{font-family:Anton,Impact,sans-serif; font-weight:400; font-size:34px; line-height:1;
+    color:var(--texte); margin-right:4px}
+  .acq-prix{margin-top:8px; padding-top:12px; border-top:1px solid var(--bord);
+    font-size:13.5px; font-weight:600; color:var(--texte-3)}
+  .acq-prix b{font-size:20px; font-weight:800; color:var(--texte); margin-right:4px;
+    font-variant-numeric:tabular-nums; white-space:nowrap}
+  .acq-note{margin-top:16px; font-size:13.5px; line-height:1.6; color:var(--texte-3)}
+  @media (max-width:900px){ .acq-packs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (max-width:560px){
+    /* trois boutons egaux sur une ligne ; la remise passe sous la duree */
+    .acq-duree{display:flex; flex-wrap:nowrap; width:100%; border-radius:16px}
+    .acq-duree button{flex:1 1 0; min-width:0; min-height:52px; padding:6px 6px; border-radius:12px;
+      font-size:13px; line-height:1.2}
+    .acq-duree button b{display:block; font-size:12px}
+    .acq-packs{grid-template-columns:1fr; gap:8px}
+    .acq-packs li{display:grid; grid-template-columns:1fr auto; align-items:baseline;
+      gap:4px 12px; padding:16px 18px}
+    .acq-pack{grid-column:1 / -1}
+    .acq-nb{white-space:nowrap}
+    .acq-nb b{font-size:28px}
+    .acq-prix{margin:0; padding:0; border:0; text-align:right; line-height:1.3}
+    .acq-prix b{display:block; margin:0}
+  }
+
+  .acq-parler-bloc{background:var(--surface); border-top:1px solid var(--bord)}
+  .acq-parler{display:grid; gap:clamp(28px,4vw,64px); align-items:start;
+    grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+  .acq-ou{margin-top:16px; font-size:14.5px; color:var(--texte-2)}
+  .acq-ou a, .acq-legal a{color:var(--texte); text-decoration:underline; text-underline-offset:3px}
+  .acq-form{display:grid; gap:14px; padding:clamp(20px,2.4vw,28px);
+    border:1px solid var(--bord); border-radius:var(--r-l, 12px); background:var(--fond)}
+  .acq-2{display:grid; gap:14px; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .acq-form .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .acq-form .champ select{width:100%; min-height:48px; padding:12px 14px;
+    border:1px solid var(--bord-2); border-radius:var(--r-m); background:var(--surface);
+    color:var(--texte); font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600}
+  .acq-form .champ input{background:var(--surface)}
+  .acq-form .champ textarea{background:var(--surface)}
+  .acq-form .champ.manque input{border-color:rgba(236,22,46,.7)}
+  .acq-form .btn-rouge{min-height:52px}
+  .acq-legal{font-size:12.5px; line-height:1.55; color:var(--texte-4)}
+  .acq-merci{grid-column:2; padding:22px; border:1px solid var(--bord); border-radius:var(--r-l, 12px);
+    background:var(--fond); font-size:15px; line-height:1.6; color:var(--texte-2)}
+  .acq-merci b{color:var(--texte)}
+  @media (max-width:860px){
+    .acq-parler{grid-template-columns:1fr}
+    .acq-merci{grid-column:auto}
+  }
+  @media (max-width:520px){ .acq-2{grid-template-columns:1fr} }
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -1099,16 +1196,14 @@
           <div class="nav-col">
             <p class="nav-col-t">Parcourir</p>
             <ul>
-              <li><a href="recherche.html">Toutes les salles</a></li>
-              <li><a href="index.html#villes">Toutes les villes</a></li>
-              <li><a href="index.html#salles">Les salles à découvrir</a></li>
+              <li><a href="recherche.html">Toutes les salles, sur la carte</a></li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="nav-item">
-        <a class="nav-link" href="index.html#disciplines" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <a class="nav-link" href="recherche.html" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         <div class="nav-menu" aria-label="Disciplines">
           <div class="nav-col">
             <p class="nav-col-t">Les plus pratiquées</p>
@@ -1122,19 +1217,23 @@
       </div>
 
       <div class="nav-item">
-        <a class="nav-link" href="clubs.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <a class="nav-link" href="#creer" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         <div class="nav-menu nav-menu-1" aria-label="Pro">
           <div class="nav-col">
             <ul>
-              <li><a href="clubs.html#pro">Accès pro</a></li>
-              <li><a href="#creer">Référencer ma salle</a></li>
-              <li><a href="index.html#acquisition">Acquisition</a></li>
+              <!-- Amaury, 24/09/2026 : accès pro et référencement ouvrent la
+                   création de compte, puis l'espace club ; jamais un morceau
+                   de la page d'accueil -->
+              <li><a href="#creer" data-compte="connexion">Accès pro</a></li>
+              <li><a href="#creer" data-compte>Référencer ma salle</a></li>
+              <li><a href="clubs.html#pro">Offres et tarifs</a></li>
+              <li><a href="acquisition.html">Acquisition</a></li>
             </ul>
           </div>
         </div>
       </div>
 
-      <a class="btn btn-rouge" href="#creer"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+      <a class="btn btn-rouge" href="#creer" data-compte><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>
   </div>
 </header>
@@ -1289,7 +1388,7 @@
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Votre téléphone, votre e-mail, votre site et vos réseaux affichés</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>La réservation de séance d'essai, sur vos vrais cours</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Le suivi de vos prospects, de la demande à l'adhésion</li>
-            <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Chaque demande et chaque rappel du jour par e-mail</li>
+            <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Chaque nouvelle demande reçue aussi par e-mail</li>
             <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Votre salle mise en avant dans les résultats</li>
           </ul>
           <button class="btn btn-rouge" type="button" data-compte>Passer au Pro</button>
@@ -1315,46 +1414,33 @@
       </a>
       <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
         les clubs qui veulent remplir leurs séances d'essai.</p>
-      <div class="reseaux">
-        <a href="index.html#instagram" aria-label="Mon Club Combat sur Instagram">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a href="index.html#tiktok" aria-label="Mon Club Combat sur TikTok">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.2 4v10.4a3.6 3.6 0 1 1-3.6-3.6"/><path d="M14.2 4.4c.5 2.4 2.2 4 4.6 4.2"/></svg>
-        </a>
-        <a href="index.html#facebook" aria-label="Mon Club Combat sur Facebook">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.8 21v-7.4h2.6l.4-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.5V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H9.2v3h2.6V21"/></svg>
-        </a>
-      </div>
+      <!-- les icones de reseaux reviendront avec les comptes : un lien mort est pire que rien -->
     </div>
 
     <nav class="footer-col" aria-labelledby="f-prat">
       <h2 id="f-prat">Pratiquants</h2>
       <ul>
-        <li><a href="index.html#recherche">Rechercher une salle</a></li>
-        <li><a href="index.html#disciplines">Toutes les disciplines</a></li>
-        <li><a href="index.html#villes">Salles par ville</a></li>
-        <li><a href="index.html#seance-essai">Réserver une séance d'essai</a></li>
+        <li><a href="recherche.html">Rechercher une salle</a></li>
+        <li><a href="recherche.html">Réserver une séance d'essai</a></li>
       </ul>
     </nav>
 
     <nav class="footer-col" aria-labelledby="f-clubs">
       <h2 id="f-clubs">Clubs</h2>
       <ul>
-        <li><a href="#creer">Référencer ma salle</a></li>
-        <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
-        <li><a href="index.html#acquisition">Acquisition de leads</a></li>
-        <li><a href="espace-club.html">Espace club</a></li>
+        <li><a href="#creer" data-compte>Référencer ma salle</a></li>
+        <li><a href="#creer" data-compte="connexion">Espace club</a></li>
+        <li><a href="clubs.html#pro">Offres et tarifs</a></li>
+        <li><a href="acquisition.html">Acquisition de leads</a></li>
       </ul>
     </nav>
 
     <nav class="footer-col" aria-labelledby="f-fs">
       <h2 id="f-fs">Mon Club Combat</h2>
       <ul>
-        <li><a href="index.html#a-propos">À propos</a></li>
-        <li><a href="index.html#contact">Contact</a></li>
-        <li><a href="index.html#aide">Aide</a></li>
-        <li><a href="index.html#presse">Presse</a></li>
+        <li><a href="mailto:contact@monclubcombat.fr">Nous écrire</a></li>
+        <li><a href="conditions.html">Conditions d'utilisation</a></li>
+        <li><a href="confidentialite.html">Confidentialité</a></li>
       </ul>
     </nav>
   </div>
@@ -1399,10 +1485,10 @@
       aria-label="Mon Club Combat">
       <use href="#mcc-mono-m" fill="currentColor"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
     </svg>
-    <p class="eyebrow" id="fen-etape">Étape 1 sur 2</p>
+    <p class="eyebrow" id="fen-etape">Espace club</p>
     <h2 class="fen-titre display" id="fen-titre">Créez votre espace club</h2>
-    <p class="fen-mot" id="fen-mot">Vous y modifierez votre fiche et vous y recevrez les demandes de séance
-      d'essai. La fiche de votre salle se remplit juste après.</p>
+    <p class="fen-mot" id="fen-mot">Vous y remplirez la fiche de votre salle et vous y recevrez les
+      demandes de séance d'essai.</p>
 
     <!-- Le chemin le plus court en premier : pas de mot de passe a inventer, pas
          d'e-mail a confirmer, et une adresse dont on sait qu'elle existe.
@@ -1435,7 +1521,7 @@
       </div>
       <!-- l'erreur renvoyee par le serveur, en francais -->
       <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
-      <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
+      <button class="btn btn-rouge" type="submit" id="fen-envoi">Créer mon espace club</button>
       <p class="fen-note" id="fen-note">Gratuit, sans carte bancaire. Nous vérifions chaque fiche
         avant de la publier, et vos coordonnées ne servent qu'à votre salle. En continuant, vous
         acceptez les <a href="conditions.html" target="_blank" rel="noopener">conditions
@@ -1476,7 +1562,11 @@
 /* ---- la fenetre de creation de l'espace club ----
    Presente sur toutes les pages. Tout element portant data-compte l'ouvre :
    boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
-   Seul le bouton du bandeau reste un lien vers la page de vente.
+   Le bouton du bandeau aussi, depuis le 24/09/2026 (Amaury : « ca doit envoyer
+   directement le pop-up pour creer un compte et ensuite ca ouvrira l'espace
+   club »). Une fois le compte cree, on arrive sur l'espace club, pas sur la
+   fiche : c'est lui qui dit ce qu'il reste a faire. Deja connecte, le meme
+   bouton ouvre l'espace club dans un onglet a lui.
 
    Depuis le 23/09/2026 elle cree un vrai compte. Deux chemins possibles selon
    le reglage de Supabase :
@@ -1515,10 +1605,12 @@
   }
   /* la recherche et l'annuaire reecrivent leurs resultats : on ecoute le document
      plutot que chaque bouton, pour que ceux crees plus tard marchent aussi */
+  var connecte = false;
   document.addEventListener('click', function (e){
     var d = e.target.closest ? e.target.closest('[data-compte]') : null;
     if (!d) return;
     e.preventDefault();
+    if (connecte) { window.open('espace-club.html', '_blank', 'noopener'); return; }
     bascule(d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation');
     ouvre();
   });
@@ -1562,7 +1654,7 @@
       SB.client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: location.href.replace(/[^/]*$/, '') + 'referencer.html',
+          redirectTo: location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html',
           /* on ne demande que l'identite : ni contacts, ni agenda, ni rien qui
              ferait hesiter un gerant devant l'ecran d'autorisation */
           scopes: 'email profile'
@@ -1585,12 +1677,12 @@
     var creation = mode === 'creation';
     champNom.hidden = !creation;
     document.getElementById('k-nom').required = creation;
-    document.getElementById('fen-etape').textContent = creation ? 'Étape 1 sur 2' : 'Espace club';
+    document.getElementById('fen-etape').textContent = 'Espace club';
     document.getElementById('fen-titre').textContent = creation ? 'Créez votre espace club' : 'Connectez-vous';
     document.getElementById('fen-mot').textContent = creation
-      ? 'Vous y modifierez votre fiche et vous y recevrez les demandes de séance d’essai. La fiche de votre salle se remplit juste après.'
+      ? 'Vous y remplirez la fiche de votre salle et vous y recevrez les demandes de séance d’essai.'
       : 'Retrouvez votre fiche et les demandes de séance d’essai reçues.';
-    document.getElementById('fen-envoi').textContent = creation ? 'Continuer vers ma fiche' : 'Se connecter';
+    document.getElementById('fen-envoi').textContent = creation ? 'Créer mon espace club' : 'Se connecter';
     document.getElementById('k-mdp').setAttribute('autocomplete', creation ? 'new-password' : 'current-password');
     document.getElementById('k-mdp-aide').hidden = !creation;
     document.getElementById('fen-note').hidden = !creation;
@@ -1629,7 +1721,7 @@
   function occupe(oui){
     envoi.disabled = oui;
     envoi.textContent = oui ? 'Un instant…'
-      : (mode === 'creation' ? 'Continuer vers ma fiche' : 'Se connecter');
+      : (mode === 'creation' ? 'Créer mon espace club' : 'Se connecter');
   }
 
   form.addEventListener('submit', function (e){
@@ -1651,11 +1743,15 @@
 
     /* pas de base joignable : la maquette garde son comportement d'avant */
     if (!reel) { location.href = 'referencer.html?nom=' + encodeURIComponent(nom); return; }
+    var arrivee = location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html'
+                + (nom ? '?nom=' + encodeURIComponent(nom) : '');
 
     occupe(true);
     var sb = SB.client;
     var p = mode === 'creation'
-      ? sb.auth.signUp({ email: mail, password: mdp, options: { data: { nom_salle: nom } } })
+      ? sb.auth.signUp({ email: mail, password: mdp,
+          /* le lien de confirmation ramene aussi a l'espace club */
+          options: { data: { nom_salle: nom }, emailRedirectTo: arrivee } })
       : sb.auth.signInWithPassword({ email: mail, password: mdp });
 
     p.then(function (r){
@@ -1668,9 +1764,8 @@
         document.getElementById('fen-verif').hidden = false;
         return;
       }
-      /* le nom saisi amorce la fiche ; le club lui-meme est cree par referencer.html,
-         qui est le seul endroit ou l'on sait s'il en existe deja un */
-      location.href = 'referencer.html' + (nom ? '?nom=' + encodeURIComponent(nom) : '');
+      /* l'espace club cree le club au premier passage, avec le nom saisi */
+      location.href = arrivee;
     }).catch(function (err){
       occupe(false);
       montre(SB.dire(err));
@@ -1722,10 +1817,9 @@
     if (!bandeau) return;
     var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon espace';
     var neuves = infos.neuves || 0;
-    /* sans club, il n'y a pas encore d'espace club : le bouton mene a la fiche a
-       remplir, qui est la premiere chose a faire */
-    var ou = infos.club ? 'espace-club.html' : 'referencer.html';
-    var quoi = infos.club ? 'Mon espace club' : 'Créer la fiche de ma salle';
+    /* sans club aussi : l'espace club le cree a l'arrivee */
+    var ou = 'espace-club.html';
+    var quoi = 'Mon espace club';
 
     var zone = document.createElement('div');
     zone.className = 'nav-compte';
@@ -1749,6 +1843,7 @@
   if (reel && bandeau) {
     SB.session().then(function (s){
       if (!s) return;
+      connecte = true;
       var mail = (s.user && s.user.email) || '';
       return Promise.all([SB.monClub(), SB.monProfil(), SB.estAdmin()])
         .then(function (r){

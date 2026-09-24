@@ -60,12 +60,15 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.fill('#k-mail', 'contact@ouragan.fr');
   await pg.fill('#k-mdp', 'motdepasse1');
   await pg.click('#fen-envoi');
-  await pg.waitForURL(/referencer\.html/, { timeout: 5000 });
+  await pg.waitForURL(/espace-club\.html/, { timeout: 5000 });
   await pg.waitForTimeout(600);
-  ok('on arrive sur la fiche', /referencer\.html/.test(pg.url()), true);
+  ok('on arrive dans l\'espace club', /espace-club\.html/.test(pg.url()), true);
   ok('le club est cree', await pg.evaluate(() => window.__FAUX__.club.length), 1);
   ok('et le compte en est le gerant',
      await pg.evaluate(() => window.__FAUX__.club_membre.length), 1);
+  await garde();
+  await aller('referencer.html');
+  await pg.waitForTimeout(400);
   ok('le nom est repris dans la fiche', await pg.inputValue('#c-nom'), 'Team Ouragan Boxe');
   await garde();
 
@@ -572,6 +575,29 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   ok('des inscriptions fermees aussi',
      await pg.evaluate(() => window.MCC.dire({ message: 'Signups not allowed for this instance' })),
      'Les inscriptions sont fermées pour l’instant. Réessayez plus tard.');
+
+  // ---------- 10. la page acquisition ----------
+  await aller('acquisition.html');
+  await pg.click('.acq-duree [data-remise="20"]');
+  ok('six mois : le pack Start passe a 240 €',
+     await pg.textContent('.acq-packs [data-base="300"]'), '240 €');
+  ok('et la seance a 12 €', await pg.textContent('.acq-offres-bloc .section-titre'),
+     '12 € la séance d’essai confirmée');
+  await pg.click('#a-envoi');
+  await pg.waitForTimeout(200);
+  ok('un formulaire vide ne part pas',
+     await pg.evaluate(() => window.__FAUX__.contact_acquisition.length), 0);
+  await pg.fill('#a-club', 'Team Ouragan Boxe');
+  await pg.fill('#a-ville', 'Marseille');
+  await pg.fill('#a-nom', 'Amaury');
+  await pg.fill('#a-mail', 'contact@ouragan.fr');
+  await pg.selectOption('#a-pack', 'grow');
+  await pg.click('#a-envoi');
+  await pg.waitForTimeout(400);
+  ok('la demande de rappel est deposee',
+     await pg.evaluate(() => window.__FAUX__.contact_acquisition.map(x => [x.club, x.pack])),
+     [['Team Ouragan Boxe', 'grow']]);
+  ok('et la page remercie', await pg.isVisible('#acq-merci'), true);
 
   console.log('');
   if (erreurs.length) {

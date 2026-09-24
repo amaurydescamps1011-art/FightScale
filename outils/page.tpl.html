@@ -588,16 +588,14 @@
           <div class="nav-col">
             <p class="nav-col-t">Parcourir</p>
             <ul>
-              <li><a href="recherche.html">Toutes les salles</a></li>
-              <li><a href="#villes">Toutes les villes</a></li>
-              <li><a href="#salles">Les salles à découvrir</a></li>
+              <li><a href="recherche.html">Toutes les salles, sur la carte</a></li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="nav-item">
-        <a class="nav-link" href="#disciplines" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <a class="nav-link" href="recherche.html" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         <div class="nav-menu" aria-label="Disciplines">
           <div class="nav-col">
             <p class="nav-col-t">Les plus pratiquées</p>
@@ -611,19 +609,23 @@
       </div>
 
       <div class="nav-item">
-        <a class="nav-link" href="clubs.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <a class="nav-link" href="clubs.html" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         <div class="nav-menu nav-menu-1" aria-label="Pro">
           <div class="nav-col">
             <ul>
-              <li><a href="clubs.html#pro">Accès pro</a></li>
-              <li><a href="clubs.html">Référencer ma salle</a></li>
-              <li><a href="#acquisition">Acquisition</a></li>
+              <!-- Amaury, 24/09/2026 : accès pro et référencement ouvrent la
+                   création de compte, puis l'espace club ; jamais un morceau
+                   de la page d'accueil -->
+              <li><a href="clubs.html" data-compte="connexion">Accès pro</a></li>
+              <li><a href="clubs.html" data-compte>Référencer ma salle</a></li>
+              <li><a href="clubs.html#pro">Offres et tarifs</a></li>
+              <li><a href="acquisition.html">Acquisition</a></li>
             </ul>
           </div>
         </div>
       </div>
 
-      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+      <a class="btn btn-rouge" href="clubs.html" data-compte><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>
   </div>
 </header>
@@ -813,46 +815,33 @@
       </a>
       <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
         les clubs qui veulent remplir leurs séances d'essai.</p>
-      <div class="reseaux">
-        <a href="#instagram" aria-label="Mon Club Combat sur Instagram">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a href="#tiktok" aria-label="Mon Club Combat sur TikTok">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.2 4v10.4a3.6 3.6 0 1 1-3.6-3.6"/><path d="M14.2 4.4c.5 2.4 2.2 4 4.6 4.2"/></svg>
-        </a>
-        <a href="#facebook" aria-label="Mon Club Combat sur Facebook">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.8 21v-7.4h2.6l.4-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.5V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H9.2v3h2.6V21"/></svg>
-        </a>
-      </div>
+      <!-- les icones de reseaux reviendront avec les comptes : un lien mort est pire que rien -->
     </div>
 
     <nav class="footer-col" aria-labelledby="f-prat">
       <h2 id="f-prat">Pratiquants</h2>
       <ul>
-        <li><a href="#recherche">Rechercher une salle</a></li>
-        <li><a href="#disciplines">Toutes les disciplines</a></li>
-        <li><a href="#villes">Salles par ville</a></li>
-        <li><a href="#seance-essai">Réserver une séance d'essai</a></li>
+        <li><a href="recherche.html">Rechercher une salle</a></li>
+        <li><a href="recherche.html">Réserver une séance d'essai</a></li>
       </ul>
     </nav>
 
     <nav class="footer-col" aria-labelledby="f-clubs">
       <h2 id="f-clubs">Clubs</h2>
       <ul>
-        <li><a href="clubs.html">Référencer ma salle</a></li>
-        <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
-        <li><a href="#acquisition">Acquisition de leads</a></li>
-        <li><a href="espace-club.html">Espace club</a></li>
+        <li><a href="clubs.html" data-compte>Référencer ma salle</a></li>
+        <li><a href="clubs.html" data-compte="connexion">Espace club</a></li>
+        <li><a href="clubs.html#pro">Offres et tarifs</a></li>
+        <li><a href="acquisition.html">Acquisition de leads</a></li>
       </ul>
     </nav>
 
     <nav class="footer-col" aria-labelledby="f-fs">
       <h2 id="f-fs">Mon Club Combat</h2>
       <ul>
-        <li><a href="#a-propos">À propos</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="#aide">Aide</a></li>
-        <li><a href="#presse">Presse</a></li>
+        <li><a href="mailto:contact@monclubcombat.fr">Nous écrire</a></li>
+        <li><a href="conditions.html">Conditions d'utilisation</a></li>
+        <li><a href="confidentialite.html">Confidentialité</a></li>
       </ul>
     </nav>
   </div>

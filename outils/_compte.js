@@ -1,7 +1,11 @@
 /* ---- la fenetre de creation de l'espace club ----
    Presente sur toutes les pages. Tout element portant data-compte l'ouvre :
    boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
-   Seul le bouton du bandeau reste un lien vers la page de vente.
+   Le bouton du bandeau aussi, depuis le 24/09/2026 (Amaury : « ca doit envoyer
+   directement le pop-up pour creer un compte et ensuite ca ouvrira l'espace
+   club »). Une fois le compte cree, on arrive sur l'espace club, pas sur la
+   fiche : c'est lui qui dit ce qu'il reste a faire. Deja connecte, le meme
+   bouton ouvre l'espace club dans un onglet a lui.
 
    Depuis le 23/09/2026 elle cree un vrai compte. Deux chemins possibles selon
    le reglage de Supabase :
@@ -40,10 +44,12 @@
   }
   /* la recherche et l'annuaire reecrivent leurs resultats : on ecoute le document
      plutot que chaque bouton, pour que ceux crees plus tard marchent aussi */
+  var connecte = false;
   document.addEventListener('click', function (e){
     var d = e.target.closest ? e.target.closest('[data-compte]') : null;
     if (!d) return;
     e.preventDefault();
+    if (connecte) { window.open('espace-club.html', '_blank', 'noopener'); return; }
     bascule(d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation');
     ouvre();
   });
@@ -87,7 +93,7 @@
       SB.client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: location.href.replace(/[^/]*$/, '') + 'referencer.html',
+          redirectTo: location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html',
           /* on ne demande que l'identite : ni contacts, ni agenda, ni rien qui
              ferait hesiter un gerant devant l'ecran d'autorisation */
           scopes: 'email profile'
@@ -110,12 +116,12 @@
     var creation = mode === 'creation';
     champNom.hidden = !creation;
     document.getElementById('k-nom').required = creation;
-    document.getElementById('fen-etape').textContent = creation ? 'Étape 1 sur 2' : 'Espace club';
+    document.getElementById('fen-etape').textContent = 'Espace club';
     document.getElementById('fen-titre').textContent = creation ? 'Créez votre espace club' : 'Connectez-vous';
     document.getElementById('fen-mot').textContent = creation
-      ? 'Vous y modifierez votre fiche et vous y recevrez les demandes de séance d’essai. La fiche de votre salle se remplit juste après.'
+      ? 'Vous y remplirez la fiche de votre salle et vous y recevrez les demandes de séance d’essai.'
       : 'Retrouvez votre fiche et les demandes de séance d’essai reçues.';
-    document.getElementById('fen-envoi').textContent = creation ? 'Continuer vers ma fiche' : 'Se connecter';
+    document.getElementById('fen-envoi').textContent = creation ? 'Créer mon espace club' : 'Se connecter';
     document.getElementById('k-mdp').setAttribute('autocomplete', creation ? 'new-password' : 'current-password');
     document.getElementById('k-mdp-aide').hidden = !creation;
     document.getElementById('fen-note').hidden = !creation;
@@ -154,7 +160,7 @@
   function occupe(oui){
     envoi.disabled = oui;
     envoi.textContent = oui ? 'Un instant…'
-      : (mode === 'creation' ? 'Continuer vers ma fiche' : 'Se connecter');
+      : (mode === 'creation' ? 'Créer mon espace club' : 'Se connecter');
   }
 
   form.addEventListener('submit', function (e){
@@ -176,11 +182,15 @@
 
     /* pas de base joignable : la maquette garde son comportement d'avant */
     if (!reel) { location.href = 'referencer.html?nom=' + encodeURIComponent(nom); return; }
+    var arrivee = location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html'
+                + (nom ? '?nom=' + encodeURIComponent(nom) : '');
 
     occupe(true);
     var sb = SB.client;
     var p = mode === 'creation'
-      ? sb.auth.signUp({ email: mail, password: mdp, options: { data: { nom_salle: nom } } })
+      ? sb.auth.signUp({ email: mail, password: mdp,
+          /* le lien de confirmation ramene aussi a l'espace club */
+          options: { data: { nom_salle: nom }, emailRedirectTo: arrivee } })
       : sb.auth.signInWithPassword({ email: mail, password: mdp });
 
     p.then(function (r){
@@ -193,9 +203,8 @@
         document.getElementById('fen-verif').hidden = false;
         return;
       }
-      /* le nom saisi amorce la fiche ; le club lui-meme est cree par referencer.html,
-         qui est le seul endroit ou l'on sait s'il en existe deja un */
-      location.href = 'referencer.html' + (nom ? '?nom=' + encodeURIComponent(nom) : '');
+      /* l'espace club cree le club au premier passage, avec le nom saisi */
+      location.href = arrivee;
     }).catch(function (err){
       occupe(false);
       montre(SB.dire(err));
@@ -247,10 +256,9 @@
     if (!bandeau) return;
     var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon espace';
     var neuves = infos.neuves || 0;
-    /* sans club, il n'y a pas encore d'espace club : le bouton mene a la fiche a
-       remplir, qui est la premiere chose a faire */
-    var ou = infos.club ? 'espace-club.html' : 'referencer.html';
-    var quoi = infos.club ? 'Mon espace club' : 'Créer la fiche de ma salle';
+    /* sans club aussi : l'espace club le cree a l'arrivee */
+    var ou = 'espace-club.html';
+    var quoi = 'Mon espace club';
 
     var zone = document.createElement('div');
     zone.className = 'nav-compte';
@@ -274,6 +282,7 @@
   if (reel && bandeau) {
     SB.session().then(function (s){
       if (!s) return;
+      connecte = true;
       var mail = (s.user && s.user.email) || '';
       return Promise.all([SB.monClub(), SB.monProfil(), SB.estAdmin()])
         .then(function (r){

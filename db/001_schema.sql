@@ -421,83 +421,80 @@ drop trigger if exists demande_previent on demande;
 create trigger demande_previent after insert on demande
   for each row execute function previent_le_club();
 
--- ------------------------------------------ les relances, chaque matin
--- Le suivi de l'espace club porte une date « rappeler le » par prospect. Un
--- gerant n'ouvre pas son espace tous les jours : chaque matin, il recoit la
--- liste de ceux qu'il devait rappeler, et rien les jours ou il n'y en a pas.
--- C'est une fonction du Pro. Meme regle que la page : une date passee ou du
--- jour, sur un prospect qui n'est ni adherent ni annule.
-create or replace function relances_du_jour() returns integer
+-- ------------------------------------ les clubs qui veulent l'acquisition
+-- La page acquisition.html : un club laisse ses coordonnees pour etre rappele.
+-- N'importe qui peut en deposer une, personne d'autre que l'equipe ne les lit,
+-- et l'equipe est prevenue par e-mail sur contact@monclubcombat.fr.
+create table if not exists contact_acquisition (
+  id        uuid primary key default gen_random_uuid(),
+  cree_le   timestamptz not null default now(),
+  club      text not null check (length(club) between 1 and 200),
+  ville     text not null check (length(ville) between 1 and 120),
+  nom       text not null check (length(nom) between 1 and 160),
+  mail      text not null check (mail like '%_@_%' and length(mail) <= 254),
+  tel       text check (length(tel) <= 40),
+  pack      text check (pack in ('start', 'grow', 'boost', 'scale', 'pro', 'custom')),
+  message   text check (length(message) <= 4000),
+  traite_le timestamptz
+);
+alter table contact_acquisition enable row level security;
+
+drop policy if exists acq_depot on contact_acquisition;
+create policy acq_depot on contact_acquisition
+  for insert to anon, authenticated
+  with check (traite_le is null);
+drop policy if exists acq_equipe on contact_acquisition;
+create policy acq_equipe on contact_acquisition
+  for select to authenticated using (est_admin());
+drop policy if exists acq_traite on contact_acquisition;
+create policy acq_traite on contact_acquisition
+  for update to authenticated using (est_admin()) with check (est_admin());
+
+create or replace function previent_l_equipe() returns trigger
   language plpgsql security definer set search_path = public, pg_temp as
 $$
-declare
-  jour  date := (now() at time zone 'Europe/Paris')::date;
-  c     record;
-  d     record;
-  lignes text;
-  texte  text;
-  n      integer;
-  partis integer := 0;
 begin
-  for c in
-    select cl.id, cl.nom from club cl
-     where cl.offre = 'pro'
-       and exists (select 1 from demande x where x.club_id = cl.id
-                     and x.relance <= jour and x.statut::text not in ('adherent', 'annulee'))
-  loop
-    lignes := ''; texte := ''; n := 0;
-    for d in
-      select nom, mail, tel, relance, notes from demande
-       where club_id = c.id and relance <= jour and statut::text not in ('adherent', 'annulee')
-       order by relance, cree_le
-    loop
-      n := n + 1;
-      lignes := lignes
-        || '<tr><td style="padding:10px 0;border-top:1px solid #E8E5DF;font-size:15px;line-height:1.5">'
-        || '<b>' || html_sur(d.nom) || '</b>'
-        || case when d.relance < jour then ' <span style="color:#B10E21;font-size:13px">prévu le '
-             || to_char(d.relance, 'DD/MM') || '</span>' else '' end
-        || '<br>'
-        || case when coalesce(d.tel, '') <> '' then '<a href="tel:' || html_sur(regexp_replace(d.tel, '[^0-9+]', '', 'g'))
-             || '" style="color:#BB0F22">' || html_sur(d.tel) || '</a> · ' else '' end
-        || '<a href="mailto:' || html_sur(d.mail) || '" style="color:#BB0F22">' || html_sur(d.mail) || '</a>'
-        || case when coalesce(d.notes, '') <> '' then '<br><span style="color:#6F6B66;font-size:14px">'
-             || html_sur(left(d.notes, 200)) || '</span>' else '' end
-        || '</td></tr>';
-      texte := texte || '- ' || d.nom
-        || case when d.relance < jour then ' (prévu le ' || to_char(d.relance, 'DD/MM') || ')' else '' end
-        || ' : ' || coalesce(nullif(d.tel, '') || ', ', '') || d.mail || E'\n';
-    end loop;
-    if envoie_mail(
-         destinataires_du_club(c.id),
-         case when n = 1 then '1 prospect à rappeler aujourd''hui'
-              else n || ' prospects à rappeler aujourd''hui' end,
-         cadre_mail(
-           case when n = 1 then 'Un prospect à rappeler aujourd''hui'
-                else n || ' prospects à rappeler aujourd''hui' end,
-           'Les rappels que vous avez notés pour ' || html_sur(c.nom) || ' arrivent à échéance.',
-           '<table style="border-collapse:collapse;width:100%">' || lignes || '</table>',
-           'Une fois rappelé, changez son étape ou sa date dans votre espace : il sort de cette liste.'),
-         'Prospects à rappeler aujourd''hui pour ' || c.nom || E'\n\n' || texte
-           || E'\nOuvrir mon espace club : https://monclubcombat.fr/espace-club.html')
-    then partis := partis + 1; end if;
-  end loop;
-  return partis;
+  perform envoie_mail(
+    jsonb_build_array('contact@monclubcombat.fr'),
+    'Acquisition : ' || new.club || ', ' || new.ville,
+    cadre_mail(
+      'Un club veut l''acquisition',
+      html_sur(new.nom) || ', de ' || html_sur(new.club) || ' à ' || html_sur(new.ville)
+        || ', demande à être rappelé.',
+      '<table style="border-collapse:collapse;font-size:15px;line-height:1.5">'
+        || ligne_mail('Club', '<b>' || html_sur(new.club) || '</b>')
+        || ligne_mail('Ville', html_sur(new.ville))
+        || ligne_mail('Contact', html_sur(new.nom))
+        || ligne_mail('E-mail', '<a href="mailto:' || html_sur(new.mail) || '" style="color:#BB0F22">' || html_sur(new.mail) || '</a>')
+        || ligne_mail('Téléphone', html_sur(new.tel))
+        || ligne_mail('Offre', html_sur(initcap(new.pack)))
+        || '</table>'
+        || case when coalesce(new.message, '') <> '' then
+           '<p style="margin:18px 0 0;padding:12px 14px;background:#F7F6F3;border-radius:8px;font-size:15px;line-height:1.6;white-space:pre-wrap">' || html_sur(new.message) || '</p>' else '' end,
+      'Répondez à cet e-mail pour lui écrire.'),
+    'Un club veut l''acquisition' || E'\n\n'
+      || 'Club : ' || new.club || E'\n' || 'Ville : ' || new.ville || E'\n'
+      || 'Contact : ' || new.nom || E'\n' || 'E-mail : ' || new.mail || E'\n'
+      || coalesce('Téléphone : ' || nullif(new.tel, '') || E'\n', '')
+      || coalesce('Offre : ' || new.pack || E'\n', '')
+      || coalesce(E'\n' || nullif(new.message, '') || E'\n', ''),
+    new.mail);
+  return new;
 end
 $$;
-revoke all on function relances_du_jour() from public, anon, authenticated;
+revoke all on function previent_l_equipe() from public, anon, authenticated;
+drop trigger if exists acquisition_previent on contact_acquisition;
+create trigger acquisition_previent after insert on contact_acquisition
+  for each row execute function previent_l_equipe();
 
--- Tous les jours a 6 h UTC, soit 8 h a Paris l'ete et 7 h l'hiver, par pg_cron
--- (fourni par Supabase). Rejouable : la tache est reposee a l'identique.
-do $$ begin
-  create extension if not exists pg_cron;
-exception when others then null; end $$;
+-- Un envoi quotidien aux clubs (« prospects a rappeler aujourd'hui ») a existe
+-- quelques minutes le 24/09/2026. Amaury n'en veut pas : des e-mails pour rien.
+-- Les relances qu'il veut vont au pratiquant, avant sa seance. On retire la
+-- tache et la fonction pour qui aurait deja colle cette version.
 do $$ begin
   perform cron.unschedule('relances-du-jour');
 exception when others then null; end $$;
-do $$ begin
-  perform cron.schedule('relances-du-jour', '0 6 * * *', 'select public.relances_du_jour()');
-exception when others then null; end $$;
+drop function if exists relances_du_jour();
 
 -- --------------------------------------------- les vues d'une fiche de club
 -- Amaury, 23/09/2026 : « dans l'espace club, il n'y a rien, donc faut le build.

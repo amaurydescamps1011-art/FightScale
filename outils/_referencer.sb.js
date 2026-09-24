@@ -20,19 +20,8 @@
   /* ---------- au chargement : session, puis club ---------- */
   SB.session().then(function (s){
     if (!s) { SB.exigeCompte('referencer.html'); return; }
-    return SB.monClub().then(function (club){
-      if (club) return club;
-      /* pas encore de club : on le cree ici, et seulement ici. Le nom vient du
-         ?nom= laisse par la fenetre d'inscription, ou du nom saisi a l'instant. */
-      var nom = new URLSearchParams(location.search).get('nom')
-             || (s.user && s.user.user_metadata && s.user.user_metadata.nom_salle)
-             || 'Ma salle';
-      return sb.rpc('creer_mon_club', { nom_salle: nom })
-        .then(function (r){
-          if (r.error) throw r.error;
-          return SB.monClub();
-        });
-    });
+    /* pas encore de club : il est cree ici, avec le nom saisi a l'inscription */
+    return SB.assureMonClub(new URLSearchParams(location.search).get('nom'));
   }).then(function (club){
     if (!club) return;
     clubId = club.id;

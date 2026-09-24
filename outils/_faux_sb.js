@@ -24,6 +24,8 @@ window.supabase = {
       interet_pro: [],
       /* `annuaire` est une vue, pas une table : elle est calculee a la lecture */
       annuaire: [],
+      /* « etre rappele », depuis la page acquisition : on y ecrit sans lire */
+      contact_acquisition: [],
       fichiers: []
     };
     /* Les jeux d'essai des tests posent leur propre etat dans sessionStorage, et
@@ -31,7 +33,7 @@ window.supabase = {
        defaut, une lecture sur une table absente casse la page entiere -- c'est
        ce qui est arrive a la fiche le jour ou `vue_fiche` est apparue. */
     ['users', 'club', 'club_membre', 'demande', 'equipe', 'profil', 'vue_fiche',
-     'interet_pro', 'annuaire', 'fichiers'].forEach(function (t){
+     'interet_pro', 'annuaire', 'contact_acquisition', 'fichiers'].forEach(function (t){
       if (!S[t]) S[t] = (t === 'users') ? {} : [];
     });
     var sauve = window.__FAUX_ECRIT__;
@@ -84,6 +86,22 @@ window.supabase = {
             }
             sauve();
             res({ data: f.un ? deja : [deja], error: null });
+            return;
+          }
+          if (f.op === 'insert' && f.table === 'contact_acquisition') {
+            /* comme la politique acq_depot et les check de la table : n'importe
+               qui depose, rien de deja traite, et les champs obligatoires */
+            var a = f.champs;
+            if (a.traite_le || !a.club || !a.ville || !a.nom || !/.@./.test(a.mail || '')) {
+              res({ data: null, error: { message: 'new row violates row-level security policy' } });
+              return;
+            }
+            var la = {};
+            Object.keys(a).forEach(function (k){ la[k] = a[k]; });
+            la.id = neuf(); la.cree_le = new Date().toISOString(); la.traite_le = null;
+            S.contact_acquisition.push(la);
+            sauve();
+            res({ data: null, error: null });
             return;
           }
           if (f.op === 'insert' && f.table === 'interet_pro') {

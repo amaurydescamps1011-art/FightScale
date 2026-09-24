@@ -595,7 +595,7 @@
           <div class="nav-col"><ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul></div>
         </div>
       </div>
-      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+      <a class="btn btn-rouge" href="clubs.html" data-compte><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
     </nav>
   </div>
 </header>
@@ -668,46 +668,33 @@
       </a>
       <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
         les clubs qui veulent remplir leurs séances d'essai.</p>
-      <div class="reseaux">
-        <a href="index.html#instagram" aria-label="Mon Club Combat sur Instagram">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a href="index.html#tiktok" aria-label="Mon Club Combat sur TikTok">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.2 4v10.4a3.6 3.6 0 1 1-3.6-3.6"/><path d="M14.2 4.4c.5 2.4 2.2 4 4.6 4.2"/></svg>
-        </a>
-        <a href="index.html#facebook" aria-label="Mon Club Combat sur Facebook">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.8 21v-7.4h2.6l.4-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.5V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H9.2v3h2.6V21"/></svg>
-        </a>
-      </div>
+      <!-- les icones de reseaux reviendront avec les comptes : un lien mort est pire que rien -->
     </div>
 
     <nav class="footer-col" aria-labelledby="f-prat">
       <h2 id="f-prat">Pratiquants</h2>
       <ul>
-        <li><a href="index.html#recherche">Rechercher une salle</a></li>
-        <li><a href="index.html#disciplines">Toutes les disciplines</a></li>
-        <li><a href="index.html#villes">Salles par ville</a></li>
-        <li><a href="index.html#seance-essai">Réserver une séance d'essai</a></li>
+        <li><a href="recherche.html">Rechercher une salle</a></li>
+        <li><a href="recherche.html">Réserver une séance d'essai</a></li>
       </ul>
     </nav>
 
     <nav class="footer-col" aria-labelledby="f-clubs">
       <h2 id="f-clubs">Clubs</h2>
       <ul>
-        <li><a href="clubs.html">Référencer ma salle</a></li>
-        <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
-        <li><a href="index.html#acquisition">Acquisition de leads</a></li>
-        <li><a href="espace-club.html">Espace club</a></li>
+        <li><a href="clubs.html" data-compte>Référencer ma salle</a></li>
+        <li><a href="clubs.html" data-compte="connexion">Espace club</a></li>
+        <li><a href="clubs.html#pro">Offres et tarifs</a></li>
+        <li><a href="acquisition.html">Acquisition de leads</a></li>
       </ul>
     </nav>
 
     <nav class="footer-col" aria-labelledby="f-fs">
       <h2 id="f-fs">Mon Club Combat</h2>
       <ul>
-        <li><a href="index.html#a-propos">À propos</a></li>
-        <li><a href="index.html#contact">Contact</a></li>
-        <li><a href="index.html#aide">Aide</a></li>
-        <li><a href="index.html#presse">Presse</a></li>
+        <li><a href="mailto:contact@monclubcombat.fr">Nous écrire</a></li>
+        <li><a href="conditions.html">Conditions d'utilisation</a></li>
+        <li><a href="confidentialite.html">Confidentialité</a></li>
       </ul>
     </nav>
   </div>
@@ -1834,10 +1821,10 @@ if (!CALME) requestAnimationFrame(boucle);
       aria-label="Mon Club Combat">
       <use href="#mcc-mono-m" fill="currentColor"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
     </svg>
-    <p class="eyebrow" id="fen-etape">Étape 1 sur 2</p>
+    <p class="eyebrow" id="fen-etape">Espace club</p>
     <h2 class="fen-titre display" id="fen-titre">Créez votre espace club</h2>
-    <p class="fen-mot" id="fen-mot">Vous y modifierez votre fiche et vous y recevrez les demandes de séance
-      d'essai. La fiche de votre salle se remplit juste après.</p>
+    <p class="fen-mot" id="fen-mot">Vous y remplirez la fiche de votre salle et vous y recevrez les
+      demandes de séance d'essai.</p>
 
     <!-- Le chemin le plus court en premier : pas de mot de passe a inventer, pas
          d'e-mail a confirmer, et une adresse dont on sait qu'elle existe.
@@ -1870,7 +1857,7 @@ if (!CALME) requestAnimationFrame(boucle);
       </div>
       <!-- l'erreur renvoyee par le serveur, en francais -->
       <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
-      <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
+      <button class="btn btn-rouge" type="submit" id="fen-envoi">Créer mon espace club</button>
       <p class="fen-note" id="fen-note">Gratuit, sans carte bancaire. Nous vérifions chaque fiche
         avant de la publier, et vos coordonnées ne servent qu'à votre salle. En continuant, vous
         acceptez les <a href="conditions.html" target="_blank" rel="noopener">conditions
@@ -1911,7 +1898,11 @@ if (!CALME) requestAnimationFrame(boucle);
 /* ---- la fenetre de creation de l'espace club ----
    Presente sur toutes les pages. Tout element portant data-compte l'ouvre :
    boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
-   Seul le bouton du bandeau reste un lien vers la page de vente.
+   Le bouton du bandeau aussi, depuis le 24/09/2026 (Amaury : « ca doit envoyer
+   directement le pop-up pour creer un compte et ensuite ca ouvrira l'espace
+   club »). Une fois le compte cree, on arrive sur l'espace club, pas sur la
+   fiche : c'est lui qui dit ce qu'il reste a faire. Deja connecte, le meme
+   bouton ouvre l'espace club dans un onglet a lui.
 
    Depuis le 23/09/2026 elle cree un vrai compte. Deux chemins possibles selon
    le reglage de Supabase :
@@ -1950,10 +1941,12 @@ if (!CALME) requestAnimationFrame(boucle);
   }
   /* la recherche et l'annuaire reecrivent leurs resultats : on ecoute le document
      plutot que chaque bouton, pour que ceux crees plus tard marchent aussi */
+  var connecte = false;
   document.addEventListener('click', function (e){
     var d = e.target.closest ? e.target.closest('[data-compte]') : null;
     if (!d) return;
     e.preventDefault();
+    if (connecte) { window.open('espace-club.html', '_blank', 'noopener'); return; }
     bascule(d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation');
     ouvre();
   });
@@ -1997,7 +1990,7 @@ if (!CALME) requestAnimationFrame(boucle);
       SB.client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: location.href.replace(/[^/]*$/, '') + 'referencer.html',
+          redirectTo: location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html',
           /* on ne demande que l'identite : ni contacts, ni agenda, ni rien qui
              ferait hesiter un gerant devant l'ecran d'autorisation */
           scopes: 'email profile'
@@ -2020,12 +2013,12 @@ if (!CALME) requestAnimationFrame(boucle);
     var creation = mode === 'creation';
     champNom.hidden = !creation;
     document.getElementById('k-nom').required = creation;
-    document.getElementById('fen-etape').textContent = creation ? 'Étape 1 sur 2' : 'Espace club';
+    document.getElementById('fen-etape').textContent = 'Espace club';
     document.getElementById('fen-titre').textContent = creation ? 'Créez votre espace club' : 'Connectez-vous';
     document.getElementById('fen-mot').textContent = creation
-      ? 'Vous y modifierez votre fiche et vous y recevrez les demandes de séance d’essai. La fiche de votre salle se remplit juste après.'
+      ? 'Vous y remplirez la fiche de votre salle et vous y recevrez les demandes de séance d’essai.'
       : 'Retrouvez votre fiche et les demandes de séance d’essai reçues.';
-    document.getElementById('fen-envoi').textContent = creation ? 'Continuer vers ma fiche' : 'Se connecter';
+    document.getElementById('fen-envoi').textContent = creation ? 'Créer mon espace club' : 'Se connecter';
     document.getElementById('k-mdp').setAttribute('autocomplete', creation ? 'new-password' : 'current-password');
     document.getElementById('k-mdp-aide').hidden = !creation;
     document.getElementById('fen-note').hidden = !creation;
@@ -2064,7 +2057,7 @@ if (!CALME) requestAnimationFrame(boucle);
   function occupe(oui){
     envoi.disabled = oui;
     envoi.textContent = oui ? 'Un instant…'
-      : (mode === 'creation' ? 'Continuer vers ma fiche' : 'Se connecter');
+      : (mode === 'creation' ? 'Créer mon espace club' : 'Se connecter');
   }
 
   form.addEventListener('submit', function (e){
@@ -2086,11 +2079,15 @@ if (!CALME) requestAnimationFrame(boucle);
 
     /* pas de base joignable : la maquette garde son comportement d'avant */
     if (!reel) { location.href = 'referencer.html?nom=' + encodeURIComponent(nom); return; }
+    var arrivee = location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html'
+                + (nom ? '?nom=' + encodeURIComponent(nom) : '');
 
     occupe(true);
     var sb = SB.client;
     var p = mode === 'creation'
-      ? sb.auth.signUp({ email: mail, password: mdp, options: { data: { nom_salle: nom } } })
+      ? sb.auth.signUp({ email: mail, password: mdp,
+          /* le lien de confirmation ramene aussi a l'espace club */
+          options: { data: { nom_salle: nom }, emailRedirectTo: arrivee } })
       : sb.auth.signInWithPassword({ email: mail, password: mdp });
 
     p.then(function (r){
@@ -2103,9 +2100,8 @@ if (!CALME) requestAnimationFrame(boucle);
         document.getElementById('fen-verif').hidden = false;
         return;
       }
-      /* le nom saisi amorce la fiche ; le club lui-meme est cree par referencer.html,
-         qui est le seul endroit ou l'on sait s'il en existe deja un */
-      location.href = 'referencer.html' + (nom ? '?nom=' + encodeURIComponent(nom) : '');
+      /* l'espace club cree le club au premier passage, avec le nom saisi */
+      location.href = arrivee;
     }).catch(function (err){
       occupe(false);
       montre(SB.dire(err));
@@ -2157,10 +2153,9 @@ if (!CALME) requestAnimationFrame(boucle);
     if (!bandeau) return;
     var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon espace';
     var neuves = infos.neuves || 0;
-    /* sans club, il n'y a pas encore d'espace club : le bouton mene a la fiche a
-       remplir, qui est la premiere chose a faire */
-    var ou = infos.club ? 'espace-club.html' : 'referencer.html';
-    var quoi = infos.club ? 'Mon espace club' : 'Créer la fiche de ma salle';
+    /* sans club aussi : l'espace club le cree a l'arrivee */
+    var ou = 'espace-club.html';
+    var quoi = 'Mon espace club';
 
     var zone = document.createElement('div');
     zone.className = 'nav-compte';
@@ -2184,6 +2179,7 @@ if (!CALME) requestAnimationFrame(boucle);
   if (reel && bandeau) {
     SB.session().then(function (s){
       if (!s) return;
+      connecte = true;
       var mail = (s.user && s.user.email) || '';
       return Promise.all([SB.monClub(), SB.monProfil(), SB.estAdmin()])
         .then(function (r){

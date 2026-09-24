@@ -35,6 +35,8 @@ DESCR = {
    "Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps."),
  'conditions.html': ("Conditions d'utilisation | Mon Club Combat",
    "Les règles d'utilisation de Mon Club Combat, pour les pratiquants et les clubs."),
+ 'acquisition.html': ("Acquisition de leads | Mon Club Combat",
+   "Des publicités pour votre club, payées à la séance d'essai confirmée."),
 }
 
 # Pages sans interet pour un moteur : un formulaire ne se lit pas dans un resultat,
