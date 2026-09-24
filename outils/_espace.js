@@ -333,8 +333,8 @@
      'De la demande à l’adhésion, avec vos notes et la date à laquelle le rappeler.'],
     ['L’export de vos prospects',
      'Toute votre liste en un fichier, pour votre logiciel ou votre comptable.'],
-    ['Votre salle mise en avant',
-     'Plus haut dans les résultats de votre ville et de vos disciplines.']
+    ['Votre salle prioritaire dans les recherches',
+     'Affichée avant les fiches gratuites de votre ville et de vos disciplines.']
   ];
 
   function verrou(club){
@@ -447,7 +447,7 @@
       pro ? 'Mon Club Combat Pro' : 'Fiche gratuite';
     var lignes = pro
       ? [[1, 'Votre fiche, vos photos et votre planning dans l’annuaire'],
-         [1, 'Votre salle mise en avant dans les résultats'],
+         [1, 'Votre salle prioritaire dans les recherches'],
          [1, 'Téléphone, e-mail, site et réseaux visibles'],
          [1, 'Réservation de séance d’essai sur vos vrais cours'],
          [1, 'Le suivi de vos prospects, de la demande à l’adhésion'],
@@ -458,7 +458,7 @@
          [0, 'Votre téléphone, votre e-mail, votre site et vos réseaux'],
          [0, 'La réservation de séance d’essai, sur vos vrais cours'],
          [0, 'Le suivi de vos prospects, de la demande à l’adhésion'],
-         [0, 'Votre salle mise en avant dans les résultats']];
+         [0, 'Votre salle prioritaire dans les recherches']];
     /* Un manque n'est pas une croix : c'est une porte fermee. Elle se montre
        grisee, avec son cadenas, pour qu'il voie ce qu'il n'a pas plutot que de
        lire une liste barree. */
