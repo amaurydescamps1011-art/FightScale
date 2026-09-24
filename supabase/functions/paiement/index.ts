@@ -105,22 +105,26 @@ async function clubDuGerant(uid: string): Promise<string | null> {
   return l?.[0]?.club_id ?? null;
 }
 
-/** Le `sub` du jeton. La plateforme a deja verifie la signature (verify_jwt),
- *  donc on se contente de lire la charge utile -- la verifier une seconde fois
- *  demanderait le secret JWT du projet dans les secrets de la fonction.
- *  Avec les cles `sb_publishable_…`, supabase-js envoie le jeton de session du
- *  gerant connecte : c'est bien un JWT, qui porte son `sub`. Un visiteur non
- *  connecte n'envoie que la cle publiable, que la plateforme refuse avant
- *  meme d'arriver ici. */
-function gerantDuJeton(req: Request): string | null {
+/** Le compte du gerant connecte, verifie par Supabase Auth lui-meme.
+ *  On ne se fie plus a l'interrupteur « Verify JWT » de la plateforme :
+ *  Supabase le deconseille (il ne connait que l'ancien secret JWT, pas les
+ *  nouvelles cles de signature). La fonction demande donc a /auth/v1/user
+ *  qui porte ce jeton : un jeton faux, expire ou la simple cle publiable
+ *  d'un visiteur sont refuses la-bas, et on renvoie 401. */
+async function gerantDuJeton(req: Request): Promise<string | null> {
   const h = req.headers.get('Authorization') || '';
   const jwt = h.replace(/^Bearer\s+/i, '');
-  const part = jwt.split('.')[1];
-  if (!part) return null;
-  try {
-    const p = JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
-    return p.sub || null;
-  } catch { return null; }
+  if (jwt.split('.').length !== 3) return null;
+  /* la cle publiable que le site envoie deja (en-tete `apikey`), a defaut
+     celle que Supabase injecte dans la fonction */
+  const cle = req.headers.get('apikey') || Deno.env.get('SUPABASE_ANON_KEY')
+    || env('SUPABASE_SERVICE_ROLE_KEY');
+  const r = await fetch(env('SUPABASE_URL') + '/auth/v1/user', {
+    headers: { 'apikey': cle, 'Authorization': 'Bearer ' + jwt },
+  });
+  if (!r.ok) return null;
+  const u = await r.json().catch(() => null);
+  return u?.id || null;
 }
 
 /* ------------------------------------------------------------ l'appel */
@@ -140,7 +144,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
 
   try {
-    const uid = gerantDuJeton(req);
+    const uid = await gerantDuJeton(req);
     if (!uid) return json({ erreur: 'connexion requise' }, 401);
 
     const { action } = await req.json().catch(() => ({ action: '' }));

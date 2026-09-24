@@ -3,8 +3,9 @@
 # Dans le tableau de bord, `verify_jwt` s'appelle « Enforce JWT verification ».
 
 [functions.paiement]
-# appelee par le gerant depuis son espace : son jeton Supabase fait foi
-verify_jwt = true
+# appelee par le gerant depuis son espace ; la fonction verifie elle-meme son
+# jeton aupres de Supabase Auth (/auth/v1/user), comme Supabase le recommande
+verify_jwt = false
 
 [functions.paiement-stripe]
 # Stripe n'a pas de jeton Supabase. C'est la signature Stripe, verifiee dans

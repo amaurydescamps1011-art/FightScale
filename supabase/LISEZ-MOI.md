@@ -90,9 +90,9 @@ entier, comme d'habitude (il est rejouable, rien ne s'efface) :
 Chaque fonction tient dans **un seul fichier `index.ts`**, à coller tel quel.
 Pour chacune des trois, dans cet ordre :
 
-| Nom exact de la fonction | Fichier à copier | « Enforce JWT verification » |
+| Nom exact de la fonction | Fichier à copier | « Verify JWT » (ou « Enforce JWT verification ») |
 |---|---|---|
-| `paiement` | https://raw.githubusercontent.com/amaurydescamps1011-art/FightScale/main/supabase/functions/paiement/index.ts | **laisser allumé** |
+| `paiement` | https://raw.githubusercontent.com/amaurydescamps1011-art/FightScale/main/supabase/functions/paiement/index.ts | **éteindre** |
 | `achat-pack` | https://raw.githubusercontent.com/amaurydescamps1011-art/FightScale/main/supabase/functions/achat-pack/index.ts | **éteindre** |
 | `paiement-stripe` | https://raw.githubusercontent.com/amaurydescamps1011-art/FightScale/main/supabase/functions/paiement-stripe/index.ts | **éteindre** |
 
@@ -107,14 +107,16 @@ Les gestes, pour une fonction :
    `achat-pack` ou `paiement-stripe` — tout en minuscules, avec le tiret). C'est
    ce nom qui fait l'adresse ; un autre nom et le site ne la trouve pas.
 5. **Deploy function**. Attends le message de succès.
-6. Pour **`achat-pack`** et **`paiement-stripe`** seulement : ouvre la fonction
-   → onglet **Details** (ou *Settings*) → **Enforce JWT Verification** →
-   **éteins** → **Save**.
+6. Pour **les trois** : ouvre la fonction → onglet **Details** (ou
+   *Settings*) → **Verify JWT with legacy secret** (ancien nom : *Enforce JWT
+   Verification*) → **éteins** → **Save**. C'est ce que Supabase recommande :
+   chaque fonction fait sa propre vérification.
    - `paiement-stripe` : c'est Stripe qui appelle, il n'a pas de compte
      Supabase. La fonction vérifie elle-même la signature de Stripe.
    - `achat-pack` : c'est un visiteur sans compte. La fonction ne fait
      qu'ouvrir une page de paiement, au prix qu'elle calcule elle-même.
-   - `paiement` doit **rester allumée** : seul un gérant connecté l'appelle.
+   - `paiement` : elle vérifie elle-même, auprès de Supabase, que l'appel vient
+     d'un gérant connecté, et refuse tout le reste.
 
 **Pour mettre à jour une fonction plus tard** : ouvre-la → onglet **Code** →
 remplace tout par la nouvelle version → **Deploy updates**. Vérifie ensuite que
