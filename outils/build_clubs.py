@@ -59,6 +59,12 @@ ANCRE = '#creer' if QUI == 'clubs' else 'clubs.html'
 header = header.replace('href="clubs.html"', 'href="%s"' % ANCRE)
 footer = vers_accueil(footer, {'top': 'index.html'})
 footer = footer.replace('href="clubs.html"', 'href="%s"' % ANCRE)
+# Amaury, 24/09/2026 : sur la page Referencer votre salle, « Referencer ma
+# salle » demande tout de suite de creer le compte, bandeau et pied compris.
+if QUI == 'clubs':
+    header = header.replace('href="#creer"><span class="l-long">', 'href="#creer" data-compte><span class="l-long">')
+    header = header.replace('<a href="#creer">Référencer ma salle</a>', '<a href="#creer" data-compte>Référencer ma salle</a>')
+    footer = footer.replace('<a href="#creer">Référencer ma salle</a>', '<a href="#creer" data-compte>Référencer ma salle</a>')
 import build_annuaire as ann
 footer = ann.reseau(footer)
 header = ann.reseau(header)
