@@ -60,13 +60,18 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.fill('#k-mail', 'contact@ouragan.fr');
   await pg.fill('#k-mdp', 'motdepasse1');
   await pg.click('#fen-envoi');
-  await pg.waitForURL(/espace-club\.html/, { timeout: 5000 });
+  /* Amaury, 24/09/2026 : « Referencer » mene droit a Ma fiche, pas au tableau de bord */
+  await pg.waitForURL(/referencer\.html/, { timeout: 5000 });
   await pg.waitForTimeout(600);
-  ok('on arrive dans l\'espace club', /espace-club\.html/.test(pg.url()), true);
+  ok('on arrive sur Ma fiche', /referencer\.html/.test(pg.url()), true);
   ok('le club est cree', await pg.evaluate(() => window.__FAUX__.club.length), 1);
   ok('et le compte en est le gerant',
      await pg.evaluate(() => window.__FAUX__.club_membre.length), 1);
   await garde();
+  await aller('index.html');
+  await pg.waitForTimeout(600);
+  ok('fiche pas encore envoyee : le bandeau mene a Ma fiche',
+     await pg.getAttribute('.nav-compte .cpt-bouton', 'href'), 'referencer.html');
   await aller('referencer.html');
   await pg.waitForTimeout(400);
   ok('le nom est repris dans la fiche', await pg.inputValue('#c-nom'), 'Team Ouragan Boxe');
@@ -565,6 +570,11 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.waitForTimeout(400);
   ok('un mauvais mot de passe est explique',
      await pg.textContent('#fen-erreur'), 'Adresse e-mail ou mot de passe incorrect.');
+  /* fiche envoyee : la connexion mene au tableau de bord */
+  await pg.fill('#k-mdp', 'motdepasse1');
+  await pg.click('#fen-envoi');
+  await pg.waitForURL(/espace-club\.html/, { timeout: 5000 });
+  ok('la connexion mene a l\'espace club', /espace-club\.html/.test(pg.url()), true);
 
   /* Amaury, 23/09/2026 : en cherchant le reglage de la confirmation il a eteint
      le fournisseur e-mail, et Supabase a repondu « Email signups are disabled »,
@@ -581,8 +591,7 @@ const FAUX = fs.readFileSync(path.join(D, '_faux_sb.js'), 'utf8');
   await pg.click('.acq-duree [data-remise="20"]');
   ok('six mois : le pack Start passe a 240 €',
      await pg.textContent('.acq-packs [data-base="300"]'), '240 €');
-  ok('et la seance a 12 €', await pg.textContent('.acq-offres-bloc .section-titre'),
-     '12 € la séance d’essai confirmée');
+  ok('et la seance a 12 €', await pg.textContent('#acq-unite'), '12 €');
   await pg.click('#a-envoi');
   await pg.waitForTimeout(200);
   ok('un formulaire vide ne part pas',

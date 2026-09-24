@@ -121,6 +121,26 @@ ICONES = {
                       '<path d="M15.2 16.4 19.6 12l-4.4-4.4"/><path d="M19.6 12H9.6"/>'),
 }
 
+# L'espace agence a son bandeau et son pied a lui (Amaury, 24/09/2026 : « c'est
+# encore un autre espace, c'est l'espace agence »)
+if QUI == 'acquisition':
+    header = R('_agence_tete.html')
+    footer = R('_agence_pied.html')
+    clubc = clubc + R('_agence.css')
+    trait = lambda d: ('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+                       'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                       + d + '</svg>')
+    AGENCE = {
+        'FLECHE': trait('<path d="M7 17 17 7"/><path d="M8 7h9v9"/>'),
+        'COCHE': trait('<path d="m5 12.5 4.2 4.2L19 7"/>'),
+        'I_AGENDA': trait('<rect x="3.5" y="5" width="17" height="15.5" rx="2.2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'
+                          '<path d="m9 15 2 2 4-4"/>'),
+        'I_SUIVI': trait('<circle cx="9" cy="8" r="3.4"/><path d="M3 20c.6-3.3 3-5.2 6-5.2s5.4 1.9 6 5.2"/>'
+                         '<path d="m15.5 11.5 2 2 3.5-3.8"/>'),
+    }
+    for k, v in AGENCE.items():
+        body = body.replace('%%' + k + '%%', v)
+
 if QUI in PRO:
     coque = R('_pro.html')
     for k, v in ICONES.items():

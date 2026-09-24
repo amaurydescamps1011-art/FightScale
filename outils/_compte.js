@@ -3,9 +3,13 @@
    boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
    Le bouton du bandeau aussi, depuis le 24/09/2026 (Amaury : « ca doit envoyer
    directement le pop-up pour creer un compte et ensuite ca ouvrira l'espace
-   club »). Une fois le compte cree, on arrive sur l'espace club, pas sur la
-   fiche : c'est lui qui dit ce qu'il reste a faire. Deja connecte, le meme
-   bouton ouvre l'espace club dans un onglet a lui.
+   club »). Amaury, le meme jour, une heure plus tard : « quand il a clique sur
+   referencer, ca le met directement sur la page Espace Pro Ma fiche », et
+   « ca renvoie tout le temps sur le dashboard, meme quand ca ne fait pas sens ».
+   D'ou une seule regle, destination() : tant que la fiche n'est pas envoyee
+   (pas de club, ou club en brouillon), on arrive sur Ma fiche ; ensuite, sur
+   l'espace club. « Referencer ma salle » mene toujours a Ma fiche. Deja
+   connecte, le meme bouton ouvre cette page dans un onglet a elle.
 
    Depuis le 23/09/2026 elle cree un vrai compte. Deux chemins possibles selon
    le reglage de Supabase :
@@ -29,6 +33,33 @@
   var SB = window.MCC || null;
   var reel = !!(SB && SB.prete());
 
+  var BASE = location.href.replace(/[^/?#]*([?#].*)?$/, '');
+  /* ou mener un gerant connecte : Ma fiche tant qu'elle n'est pas envoyee */
+  function selonClub(club){
+    return (!club || club.statut === 'brouillon') ? 'referencer.html' : 'espace-club.html';
+  }
+  function destination(voulu){
+    if (voulu === 'creation') return Promise.resolve('referencer.html');
+    return SB.monClub().then(selonClub, function (){ return 'espace-club.html'; });
+  }
+  /* Le retour de Google n'arrive pas toujours sur redirectTo : si l'adresse
+     manque aux Redirect URLs de Supabase, il tombe sur l'accueil, connecte mais
+     sur le site public. On note avant de partir ou il voulait aller, et la page
+     ou il atterrit, quelle qu'elle soit, l'y emmene. */
+  var CLE_APRES = 'mcc_apres_google';
+  function lit(k){ try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function note(k, v){ try { v === null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} }
+  if (reel && lit(CLE_APRES)) {
+    SB.session().then(function (s){
+      if (!s) return;
+      var voulu = lit(CLE_APRES);
+      note(CLE_APRES, null);
+      return destination(voulu).then(function (ou){
+        if (location.pathname.split('/').pop() !== ou) location.replace(BASE + ou);
+      });
+    }).catch(function (){});
+  }
+
   /* ---------- ouverture et fermeture ---------- */
   function ouvre(){
     rendu = document.activeElement;
@@ -49,8 +80,18 @@
     var d = e.target.closest ? e.target.closest('[data-compte]') : null;
     if (!d) return;
     e.preventDefault();
-    if (connecte) { window.open('espace-club.html', '_blank', 'noopener'); return; }
-    bascule(d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation');
+    var voulu = d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation';
+    if (connecte) {
+      /* l'onglet s'ouvre tout de suite (sinon le navigateur le bloque), puis
+         prend la bonne adresse */
+      var onglet = window.open('about:blank', '_blank');
+      destination(voulu).then(function (ou){
+        if (onglet) { onglet.opener = null; onglet.location = BASE + ou; }
+        else location.href = BASE + ou;
+      });
+      return;
+    }
+    bascule(voulu);
     ouvre();
   });
 
@@ -90,10 +131,13 @@
       if (!reel) { montre('La connexion Google a besoin du serveur. Sur le site en ligne, ce bouton vous y emmène.'); return; }
       google.disabled = true;
       document.getElementById('fen-google-mot').textContent = 'Ouverture de Google…';
+      note(CLE_APRES, mode);
       SB.client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html',
+          /* Ma fiche : elle cree le club au premier passage ; un gerant deja
+             publie qui se connecte en est renvoye sur l'espace club (plus haut) */
+          redirectTo: BASE + (mode === 'creation' ? 'referencer.html' : 'espace-club.html'),
           /* on ne demande que l'identite : ni contacts, ni agenda, ni rien qui
              ferait hesiter un gerant devant l'ecran d'autorisation */
           scopes: 'email profile'
@@ -182,14 +226,14 @@
 
     /* pas de base joignable : la maquette garde son comportement d'avant */
     if (!reel) { location.href = 'referencer.html?nom=' + encodeURIComponent(nom); return; }
-    var arrivee = location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html'
-                + (nom ? '?nom=' + encodeURIComponent(nom) : '');
+    /* a l'inscription, Ma fiche, qui cree le club avec le nom saisi */
+    var arrivee = BASE + 'referencer.html' + (nom ? '?nom=' + encodeURIComponent(nom) : '');
 
     occupe(true);
     var sb = SB.client;
     var p = mode === 'creation'
       ? sb.auth.signUp({ email: mail, password: mdp,
-          /* le lien de confirmation ramene aussi a l'espace club */
+          /* le lien de confirmation ramene aussi a Ma fiche */
           options: { data: { nom_salle: nom }, emailRedirectTo: arrivee } })
       : sb.auth.signInWithPassword({ email: mail, password: mdp });
 
@@ -203,8 +247,9 @@
         document.getElementById('fen-verif').hidden = false;
         return;
       }
-      /* l'espace club cree le club au premier passage, avec le nom saisi */
-      location.href = arrivee;
+      if (mode === 'creation') { location.href = arrivee; return; }
+      /* a la connexion : Ma fiche si elle n'est pas envoyee, sinon l'espace club */
+      destination('connexion').then(function (ou){ location.href = BASE + ou; });
     }).catch(function (err){
       occupe(false);
       montre(SB.dire(err));
@@ -256,8 +301,8 @@
     if (!bandeau) return;
     var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon espace';
     var neuves = infos.neuves || 0;
-    /* sans club aussi : l'espace club le cree a l'arrivee */
-    var ou = 'espace-club.html';
+    /* fiche pas encore envoyee : le bouton mene a Ma fiche, pas aux chiffres */
+    var ou = selonClub(infos.club);
     var quoi = 'Mon espace club';
 
     var zone = document.createElement('div');

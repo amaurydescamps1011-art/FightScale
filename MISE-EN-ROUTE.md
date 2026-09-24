@@ -324,7 +324,7 @@ s'enregistrent quand même. Pour changer la clé plus tard :
    « Référencer ma salle » dans le bandeau.
 2. → une fenêtre s'ouvre tout de suite, avec **Continuer avec Google** en premier.
 3. Cliquer Continuer avec Google, choisir un compte.
-   → arrivée dans l'espace club, connecté, le club déjà créé. Cliquer « Ma fiche ».
+   → arrivée sur « Ma fiche » dans l’espace pro, connecté, le club déjà créé.
 4. Remplir la fiche : nom, adresse, ville, code postal, présentation, disciplines,
    photos, horaires d'ouverture.
 5. **Ajouter deux ou trois cours** dans « Vos cours » : le jour, l'heure de début

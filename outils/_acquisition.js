@@ -17,13 +17,31 @@
     Array.prototype.forEach.call(boutons, function (x){
       x.setAttribute('aria-checked', String(Number(x.getAttribute('data-remise')) === remise));
     });
-    var unite = euros(15 * (100 - remise) / 100);
-    var t = document.querySelector('.acq-offres-bloc .section-titre');
-    if (t) t.textContent = unite + ' la séance d’essai confirmée';
+    var u = document.getElementById('acq-unite');
+    if (u) u.textContent = euros(15 * (100 - remise) / 100);
   }
   Array.prototype.forEach.call(boutons, function (x){
     x.addEventListener('click', function (){ applique(Number(x.getAttribute('data-remise'))); });
   });
+
+  /* ---------- le bouton flottant ----------
+     Il suit la lecture et s'efface quand le formulaire est a l'ecran : inutile
+     d'inviter a prendre contact sous les yeux du formulaire. */
+  var flottant = document.querySelector('.ag-flottant');
+  var fin = document.getElementById('contact');
+  var heros = document.querySelector('.ag-heros');
+  if (flottant && fin && 'IntersectionObserver' in window) {
+    var vus = { fin: false, heros: true };
+    var maj = function (){ flottant.classList.toggle('cache', vus.fin || vus.heros); };
+    new IntersectionObserver(function (es){
+      es.forEach(function (e){ vus[e.target === fin ? 'fin' : 'heros'] = e.isIntersecting; });
+      maj();
+    }, { threshold: 0.05 }).observe(fin);
+    if (heros) new IntersectionObserver(function (es){
+      vus.heros = es[0].isIntersecting; maj();
+    }, { rootMargin: '-60% 0px 0px 0px' }).observe(heros);
+    maj();
+  }
 
   /* ---------- le formulaire ---------- */
   var form = document.getElementById('acq-form');

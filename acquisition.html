@@ -953,103 +953,225 @@
   .legal a{color:var(--texte); text-decoration:underline; text-underline-offset:3px;
     text-decoration-thickness:1px; overflow-wrap:anywhere}
   .legal a:hover{color:var(--rouge-lien)}
+  /* ---------- l'espace agence (acquisition.html) ----------
+     Calque sur club.masalledesport.com/agence (relevee le 24/09/2026) : fond
+     presque blanc, halo rouge en haut, bandeau en pilule qui flotte, grands
+     titres en graisse moyenne, cartes blanches tres arrondies. Les couleurs et
+     la typo restent celles de Mon Club Combat : c'est un autre espace, pas une
+     autre marque. */
+  body:has(.ag){background:#FAFAF9}
+  .ag{--ag-bord:#ECEAE6; --ag-ombre:0 1px 2px rgba(22,22,15,.04), 0 8px 28px rgba(22,22,15,.06);
+    position:relative; overflow-x:clip;
+    background:radial-gradient(70% 620px at 50% -120px, rgba(236,22,46,.14), rgba(236,22,46,0) 72%) no-repeat}
 
-  /* ---------- la page acquisition ---------- */
-  .acq-titre{max-width:17ch; margin-inline:auto}
-  .acq-hero .hero-club-actions{display:flex; flex-wrap:wrap; justify-content:center; gap:12px}
-  .acq-hero .hero-club-actions .btn-grand{margin-top:0}
-  @media (max-width:560px){ .acq-hero .hero-club-actions{flex-direction:column; align-items:stretch; max-width:340px; margin-inline:auto} }
-
-  .acq-compte .section-chapo b{color:var(--texte)}
-  .acq-chemin{margin-top:clamp(24px,3vw,36px); padding:0; list-style:none; display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
-  .acq-chemin li{display:flex; align-items:center; gap:12px; min-height:72px; padding:14px 16px;
-    border:1px solid var(--bord); border-radius:var(--r-l, 12px); background:var(--surface);
-    font-size:14.5px; font-weight:700; line-height:1.4; color:var(--texte-2)}
-  .acq-chemin span{flex-shrink:0; font-size:24px; line-height:1; color:var(--texte-4)}
-  .acq-chemin .acq-compte-ici{border-color:rgba(220,18,41,.45); background:rgba(236,22,46,.05);
-    color:var(--texte)}
-  .acq-chemin .acq-compte-ici span{color:var(--rouge-500)}
-  @media (max-width:820px){ .acq-chemin{grid-template-columns:repeat(2,minmax(0,1fr))} }
-  @media (max-width:460px){ .acq-chemin{grid-template-columns:1fr} .acq-chemin li{min-height:0} }
-
-  .acq-etapes{grid-template-columns:repeat(5,minmax(0,1fr))}
-  .acq-etapes li{padding-right:18px}
-  .acq-etapes li + li{padding-left:clamp(16px,1.6vw,24px)}
-  .acq-etapes li + li::before{left:clamp(16px,1.6vw,24px)}
-  @media (max-width:1080px){
-    .acq-etapes{grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:clamp(24px,3vw,40px)}
-    .acq-etapes li, .acq-etapes li + li{padding-left:0; border-left:0}
-    .acq-etapes li + li::before{left:0}
+  /* le bandeau : une pilule blanche qui reste en haut */
+  .ag-tete{position:sticky; top:12px; z-index:40; padding:0 16px; margin-top:12px; height:0}
+  .ag-tete-in{max-width:880px; margin:0 auto; display:flex; align-items:center; gap:20px;
+    min-height:52px; padding:6px 8px 6px 16px; border:1px solid var(--ag-bord, #ECEAE6);
+    border-radius:14px; background:rgba(255,255,255,.86);
+    -webkit-backdrop-filter:saturate(1.4) blur(12px); backdrop-filter:saturate(1.4) blur(12px);
+    box-shadow:0 1px 2px rgba(22,22,15,.05), 0 6px 22px rgba(22,22,15,.07)}
+  .ag-marque{display:inline-flex; align-items:center; gap:9px; text-decoration:none; color:var(--texte)}
+  .ag-marque-agence{padding:3px 8px; border-radius:6px; background:rgba(236,22,46,.09);
+    color:var(--rouge-lien); font-size:12px; font-weight:800; letter-spacing:.02em}
+  .ag-nav{display:flex; gap:22px; margin-left:auto}
+  .ag-nav a{font-size:14px; font-weight:600; color:var(--texte-3); text-decoration:none; white-space:nowrap}
+  .ag-nav a:hover{color:var(--texte)}
+  .ag-tete-cta{white-space:nowrap; min-height:40px !important; padding:0 14px !important; font-size:13.5px !important}
+  @media (max-width:760px){
+    .ag-nav{display:none}
+    .ag-tete-cta{margin-left:auto}
+    .ag-marque-mot{display:none}
   }
-  @media (max-width:620px){ .acq-etapes{grid-template-columns:1fr} }
 
-  .acq-duree{margin-top:clamp(22px,2.6vw,30px); display:inline-flex; flex-wrap:wrap; gap:4px;
-    padding:4px; border:1px solid var(--bord-2); border-radius:999px; background:var(--surface)}
-  .acq-duree button{min-height:44px; padding:0 18px; border:0; border-radius:999px;
-    background:transparent; font:inherit; font-size:14px; font-weight:700; color:var(--texte-2);
-    cursor:pointer; transition:background-color .15s ease, color .15s ease}
+  /* boutons */
+  .ag-btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:44px;
+    padding:0 16px; border-radius:8px; font-size:15px; font-weight:700; text-decoration:none;
+    border:1px solid transparent; cursor:pointer; font-family:inherit;
+    transition:background-color .15s ease, border-color .15s ease, transform .15s ease}
+  .ag-btn svg{flex-shrink:0}
+  .ag-btn-rouge{background:var(--rouge-500); color:#fff; box-shadow:0 6px 18px rgba(236,22,46,.22)}
+  .ag-btn-rouge:hover{background:var(--rouge-600)}
+  .ag-btn-ligne{background:#fff; color:var(--texte); border-color:#DEDBD5}
+  .ag-btn-ligne:hover{border-color:var(--texte-4)}
+  .ag-btn-plein{width:100%; min-height:52px}
+
+  /* titres */
+  .ag-h1, .ag-h2{font-family:Manrope,system-ui,sans-serif; font-weight:600; color:var(--texte);
+    letter-spacing:-.035em; text-transform:none}
+  .ag-h1{font-size:clamp(38px,4.6vw,58px); line-height:1.04}
+  .ag-h2{font-size:clamp(30px,3.6vw,46px); line-height:1.08}
+  .ag-chapo{margin-top:16px; font-size:clamp(16px,1.4vw,17.5px); line-height:1.6; color:var(--texte-3)}
+  .ag-sur{font-size:18px; font-weight:600; color:var(--texte); letter-spacing:-.01em}
+  .ag-sur-rouge{font-size:15px; font-weight:700; color:var(--rouge-lien); margin-bottom:14px}
+  .ag-sous-rouge{margin-top:18px; font-size:18px; font-weight:600; color:var(--rouge-lien)}
+  .ag-centre{max-width:680px; margin:0 auto; text-align:center}
+  .ag-etroit{max-width:880px; margin:0 auto}
+  .ag-section{padding:clamp(72px,9vw,120px) clamp(16px,4vw,40px) 0}
+
+  /* heros */
+  .ag-heros{padding:clamp(108px,11vw,132px) clamp(16px,4vw,40px) 0}
+  .ag-heros-in{max-width:980px; margin:0 auto; display:grid; align-items:center;
+    gap:clamp(28px,5vw,64px); grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+  .ag-heros .ag-h1{margin-top:16px}
+  .ag-plateformes{margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px;
+    font-size:14px; color:var(--texte-3)}
+  .ag-plateformes b{font-size:15px; font-weight:800; color:var(--texte-2); letter-spacing:-.01em}
+  .ag-actions{margin-top:30px; display:flex; flex-wrap:wrap; gap:10px}
+  .ag-heros-photo{position:relative; margin:0}
+  .ag-heros-photo img{display:block; width:100%; height:auto; aspect-ratio:4 / 5; object-fit:cover;
+    object-position:38% 50%; border-radius:16px; border:1px solid rgba(22,22,15,.08);
+    box-shadow:0 20px 50px rgba(22,22,15,.14)}
+  .ag-bulle{position:absolute; left:-22px; bottom:28px; display:flex; align-items:center; gap:10px;
+    padding:10px 14px 10px 10px; border-radius:12px; background:#fff; border:1px solid var(--ag-bord);
+    box-shadow:var(--ag-ombre); font-size:13px; color:var(--texte-3); line-height:1.35}
+  .ag-bulle b{display:block; color:var(--texte); font-size:13.5px}
+  .ag-bulle-ok{display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+    background:#E4F6E6; color:#1E8A3A}
+  @media (max-width:820px){
+    .ag-heros-in{grid-template-columns:1fr}
+    .ag-heros-photo img{aspect-ratio:16 / 10}
+    .ag-bulle{left:12px; bottom:12px}
+  }
+
+  /* les trois chiffres, filet dessous comme chez eux */
+  .ag-chiffres{max-width:1180px; margin:clamp(56px,7vw,80px) auto 0; padding:0; list-style:none;
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(16px,3vw,48px)}
+  .ag-chiffres li{text-align:center}
+  .ag-chiffres b{display:block; padding-bottom:10px; border-bottom:1px solid #E2DFD9;
+    font-size:clamp(40px,5vw,58px); font-weight:600; letter-spacing:-.04em; line-height:1.05; color:var(--texte)}
+  .ag-chiffres span{display:block; margin-top:12px; font-size:14px; font-weight:700; color:var(--texte-2)}
+  @media (max-width:620px){ .ag-chiffres{grid-template-columns:1fr; gap:28px} }
+
+  /* l'accompagnement : cinq cartes centrees, l'une sous l'autre */
+  .ag-cartes{max-width:800px; margin:clamp(40px,5vw,60px) auto 0; padding:0; list-style:none;
+    display:grid; gap:20px}
+  .ag-carte{padding:clamp(28px,3.4vw,40px) clamp(20px,4vw,56px); border-radius:32px; text-align:center;
+    background:#fff; border:1px solid var(--ag-bord); box-shadow:var(--ag-ombre)}
+  .ag-nb{display:block; font-size:34px; font-weight:800; line-height:1; letter-spacing:-.02em;
+    background:linear-gradient(180deg, var(--rouge-500), rgba(236,22,46,.45));
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .ag-carte h3{margin-top:18px; font-size:clamp(22px,2.4vw,28px); font-weight:600; letter-spacing:-.03em;
+    line-height:1.15; color:var(--texte)}
+  .ag-carte p{max-width:560px; margin:12px auto 0; font-size:16.5px; line-height:1.65; color:var(--texte-3)}
+  .ag-carte p b{color:var(--texte); font-weight:700}
+  .ag-courbe{display:block; width:200px; height:60px; margin:22px auto 0; color:var(--rouge-500); opacity:.7}
+
+  /* le planning qui se remplit */
+  .ag-planning{max-width:1180px; margin:0 auto; display:grid; align-items:center;
+    gap:clamp(32px,5vw,72px); grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+  .ag-atouts{margin-top:30px; padding:0; list-style:none; display:grid; gap:18px;
+    grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ag-atouts li{display:flex; gap:10px; font-size:15px; font-weight:600; line-height:1.4; color:var(--texte)}
+  .ag-atouts svg{flex-shrink:0; margin-top:1px; color:var(--rouge-500)}
+  .ag-ecran{margin:0; border-radius:14px; overflow:hidden; background:#fff;
+    border:1px solid #DDD9D2; box-shadow:0 24px 60px rgba(22,22,15,.12)}
+  .ag-ecran-barre{display:flex; align-items:center; gap:12px; padding:10px 14px;
+    border-bottom:1px solid var(--ag-bord); background:#F6F5F2}
+  .ag-ecran-pts{display:flex; gap:6px}
+  .ag-ecran-pts i{width:10px; height:10px; border-radius:50%; background:#DCD8D1}
+  .ag-ecran-url{margin-left:auto; margin-right:auto; padding:4px 12px; border-radius:6px; background:#fff;
+    border:1px solid var(--ag-bord); font-size:12.5px; color:var(--texte-3)}
+  .ag-agenda{display:grid; grid-template-columns:48px repeat(3,minmax(0,1fr)); gap:6px; padding:14px}
+  .ag-h{font-size:12px; font-weight:700; color:var(--texte-4); padding-top:8px}
+  .ag-j{font-size:12.5px; font-weight:800; color:var(--texte-2); text-align:center; padding-bottom:4px}
+  .ag-c{min-height:78px; padding:8px 10px; border-radius:8px; font-size:12.5px; line-height:1.35;
+    color:var(--texte-2); border:1px solid transparent}
+  .ag-c b{display:block; font-size:11.5px; font-weight:800}
+  .ag-c i{display:block; margin-top:4px; font-style:normal; font-weight:700; color:var(--texte)}
+  .ag-essai{background:#E6F6E8; border-color:#BFE6C6}
+  .ag-essai b{color:#1E7A35}
+  .ag-attente{background:#FFF4E2; border-color:#F5D9A8}
+  .ag-attente b{color:#9A5B00}
+  .ag-cours{background:#F4F3F0; border-color:#E6E3DD}
+  .ag-cours b{color:var(--texte-3)}
+  @media (max-width:900px){ .ag-planning{grid-template-columns:1fr} }
+  @media (max-width:480px){
+    .ag-atouts{grid-template-columns:1fr}
+    .ag-agenda{grid-template-columns:34px repeat(3,minmax(0,1fr)); gap:4px; padding:10px}
+    .ag-c{min-height:70px; padding:6px; font-size:11px}
+    .ag-c b{font-size:10.5px}
+  }
+
+  /* les offres */
+  .ag-pastille{display:inline-block; margin-bottom:22px; padding:6px 12px; border-radius:8px;
+    background:#fff; border:1px solid #E2DFD9; font-size:13px; font-weight:700; color:var(--texte)}
+  .ag-offres-bloc .acq-duree{margin-top:28px; display:inline-flex; gap:4px; padding:4px;
+    border:1px solid #E2DFD9; border-radius:12px; background:#fff}
+  .acq-duree button{min-height:40px; padding:0 16px; border:0; border-radius:8px; background:transparent;
+    font:inherit; font-size:14px; font-weight:700; color:var(--texte-2); cursor:pointer;
+    transition:background-color .15s ease, color .15s ease}
   .acq-duree button b{color:var(--rouge-lien); font-weight:800}
   .acq-duree button[aria-checked="true"]{background:var(--texte); color:#fff}
   .acq-duree button[aria-checked="true"] b{color:#fff}
-  .acq-duree button:focus-visible{outline:2px solid var(--rouge-500); outline-offset:2px}
-
-  .acq-packs{margin-top:18px; padding:0; list-style:none; display:grid; gap:12px;
+  .ag-packs{margin-top:16px; padding:0; list-style:none; display:grid; gap:12px;
     grid-template-columns:repeat(3,minmax(0,1fr))}
-  .acq-packs li{display:flex; flex-direction:column; gap:6px; padding:22px 22px 20px;
-    border:1px solid var(--bord); border-radius:var(--r-l, 12px); background:var(--surface)}
-  .acq-pack{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--rouge-lien)}
-  .acq-nb{font-size:15px; font-weight:600; color:var(--texte-2)}
-  .acq-nb b{font-family:Anton,Impact,sans-serif; font-weight:400; font-size:34px; line-height:1;
-    color:var(--texte); margin-right:4px}
-  .acq-prix{margin-top:8px; padding-top:12px; border-top:1px solid var(--bord);
-    font-size:13.5px; font-weight:600; color:var(--texte-3)}
-  .acq-prix b{font-size:20px; font-weight:800; color:var(--texte); margin-right:4px;
-    font-variant-numeric:tabular-nums; white-space:nowrap}
-  .acq-note{margin-top:16px; font-size:13.5px; line-height:1.6; color:var(--texte-3)}
-  @media (max-width:900px){ .acq-packs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  .ag-packs li{padding:20px; border-radius:16px; background:#fff; border:1px solid #E6E3DD;
+    display:flex; flex-direction:column; gap:6px}
+  .ag-pack{font-size:14.5px; font-weight:700; color:var(--rouge-lien)}
+  .acq-prix{font-size:16px; font-weight:700; color:var(--texte); letter-spacing:-.02em}
+  .acq-prix b{font-size:30px; font-weight:800; letter-spacing:-.035em; white-space:nowrap;
+    font-variant-numeric:tabular-nums}
+  .ag-pack-nb{font-size:14.5px; color:var(--texte-3)}
+  .ag-inclus{margin-top:12px; padding:20px; border-radius:16px; background:#fff; border:1px solid #E6E3DD}
+  .ag-inclus ul{margin-top:10px; padding:0; list-style:none; display:grid; gap:8px 24px;
+    grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ag-inclus li{display:flex; gap:10px; font-size:15px; line-height:1.45; color:var(--texte-3)}
+  .ag-inclus li svg{flex-shrink:0; margin-top:3px; color:var(--texte-4)}
+  .acq-note{margin-top:14px; font-size:13.5px; line-height:1.6; color:var(--texte-4)}
+  @media (max-width:820px){ .ag-packs{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (max-width:560px){
-    /* trois boutons egaux sur une ligne ; la remise passe sous la duree */
-    .acq-duree{display:flex; flex-wrap:nowrap; width:100%; border-radius:16px}
-    .acq-duree button{flex:1 1 0; min-width:0; min-height:52px; padding:6px 6px; border-radius:12px;
-      font-size:13px; line-height:1.2}
+    .ag-offres-bloc .acq-duree{display:flex; width:100%}
+    .acq-duree button{flex:1 1 0; min-width:0; min-height:50px; padding:4px; font-size:13px; line-height:1.2}
     .acq-duree button b{display:block; font-size:12px}
-    .acq-packs{grid-template-columns:1fr; gap:8px}
-    .acq-packs li{display:grid; grid-template-columns:1fr auto; align-items:baseline;
-      gap:4px 12px; padding:16px 18px}
-    .acq-pack{grid-column:1 / -1}
-    .acq-nb{white-space:nowrap}
-    .acq-nb b{font-size:28px}
-    .acq-prix{margin:0; padding:0; border:0; text-align:right; line-height:1.3}
-    .acq-prix b{display:block; margin:0}
+    .ag-packs{grid-template-columns:1fr 1fr; gap:8px}
+    .ag-packs li{padding:14px}
+    .acq-prix b{font-size:24px}
+    .ag-pack-nb{font-size:13px}
+    .ag-inclus ul{grid-template-columns:1fr}
   }
 
-  .acq-parler-bloc{background:var(--surface); border-top:1px solid var(--bord)}
-  .acq-parler{display:grid; gap:clamp(28px,4vw,64px); align-items:start;
-    grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
-  .acq-ou{margin-top:16px; font-size:14.5px; color:var(--texte-2)}
-  .acq-ou a, .acq-legal a{color:var(--texte); text-decoration:underline; text-underline-offset:3px}
-  .acq-form{display:grid; gap:14px; padding:clamp(20px,2.4vw,28px);
-    border:1px solid var(--bord); border-radius:var(--r-l, 12px); background:var(--fond)}
+  /* le rendez-vous */
+  .ag-fin{padding-bottom:clamp(80px,10vw,120px)}
+  .ag-rdv{max-width:560px; margin:clamp(32px,4vw,44px) auto 0}
+  .ag-form{display:grid; gap:14px; padding:clamp(20px,3vw,32px); border-radius:20px; background:#fff;
+    border:1px solid #E6E3DD; box-shadow:var(--ag-ombre)}
+  .ag-form-t{font-size:22px; font-weight:700; letter-spacing:-.025em; color:var(--texte)}
+  .ag-form-mot{margin-top:-6px; font-size:14.5px; line-height:1.55; color:var(--texte-3)}
   .acq-2{display:grid; gap:14px; grid-template-columns:repeat(2,minmax(0,1fr))}
-  .acq-form .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
-  .acq-form .champ select{width:100%; min-height:48px; padding:12px 14px;
-    border:1px solid var(--bord-2); border-radius:var(--r-m); background:var(--surface);
-    color:var(--texte); font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:600}
-  .acq-form .champ input{background:var(--surface)}
-  .acq-form .champ textarea{background:var(--surface)}
-  .acq-form .champ.manque input{border-color:rgba(236,22,46,.7)}
-  .acq-form .btn-rouge{min-height:52px}
-  .acq-legal{font-size:12.5px; line-height:1.55; color:var(--texte-4)}
-  .acq-merci{grid-column:2; padding:22px; border:1px solid var(--bord); border-radius:var(--r-l, 12px);
-    background:var(--fond); font-size:15px; line-height:1.6; color:var(--texte-2)}
-  .acq-merci b{color:var(--texte)}
-  @media (max-width:860px){
-    .acq-parler{grid-template-columns:1fr}
-    .acq-merci{grid-column:auto}
-  }
+  .ag-form .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .ag-form .champ input, .ag-form .champ textarea{background:#fff}
+  .ag-form .champ select{width:100%; min-height:48px; padding:12px 14px; border:1px solid var(--bord-2);
+    border-radius:var(--r-m); background:#fff; color:var(--texte);
+    font-family:Manrope,system-ui,sans-serif; font-size:15px; font-weight:500}
+  .ag-form .champ.manque input{border-color:rgba(236,22,46,.7)}
+  .acq-legal{font-size:12.5px; line-height:1.6; color:var(--texte-4); text-align:center}
+  .acq-legal a{color:var(--texte-3); text-decoration:underline; text-underline-offset:3px}
+  .ag-merci{padding:24px; border-radius:20px; background:#fff; border:1px solid #E6E3DD;
+    font-size:16px; line-height:1.6; color:var(--texte-2); text-align:center}
+  .ag-merci b{color:var(--texte)}
   @media (max-width:520px){ .acq-2{grid-template-columns:1fr} }
+
+  /* le bouton qui suit la lecture */
+  .ag-flottant{position:fixed; right:20px; bottom:20px; z-index:30; display:inline-flex; align-items:center;
+    gap:10px; min-height:44px; padding:0 16px; border-radius:10px; background:var(--rouge-500); color:#fff;
+    font-size:14.5px; font-weight:700; text-decoration:none; box-shadow:0 10px 28px rgba(236,22,46,.3);
+    transition:opacity .2s ease, transform .2s ease}
+  .ag-flottant.cache{opacity:0; transform:translateY(12px); pointer-events:none}
+  @media (max-width:520px){ .ag-flottant{right:12px; bottom:12px} }
+
+  /* le pied de l'agence */
+  .ag-pied{border-top:1px solid #E6E3DD; background:#fff; padding:48px clamp(16px,4vw,40px) 28px}
+  .ag-pied-in{max-width:1080px; margin:0 auto; display:grid; gap:32px;
+    grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,1fr))}
+  .ag-pied-marque p{margin-top:14px; max-width:300px; font-size:14px; line-height:1.6; color:var(--texte-3)}
+  .ag-pied-col{display:flex; flex-direction:column; gap:10px}
+  .ag-pied-col h2{font-size:13px; font-weight:800; color:var(--texte); margin-bottom:4px}
+  .ag-pied-col a{font-size:14px; color:var(--texte-3); text-decoration:none}
+  .ag-pied-col a:hover{color:var(--texte)}
+  .ag-pied-bas{max-width:1080px; margin:36px auto 0; font-size:13px; color:var(--texte-4)}
+  @media (max-width:720px){ .ag-pied-in{grid-template-columns:1fr} }
+  @media (max-width:520px){ .ag-actions .ag-btn{flex:1 1 100%} }
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -1172,159 +1294,168 @@
 <path id="mcc-mot-mon" fill-rule="evenodd" d="M656.2 827.7L683.6 722.3L726.8 722.4L746.6 767.1L791.3 722.4L836.2 722.4L809.3 828.0L772.0 828.0L770.7 827.0L786.5 769.3L745.0 811.5L730.0 811.5L727.6 809.0L709.5 769.1L694.6 827.8L656.2 827.7ZM973.5 734.1L976.4 741.8L976.2 751.4L963.9 801.9L957.7 814.0L947.9 822.1L936.3 826.4L924.2 828.2L858.7 828.2L843.8 824.7L834.9 816.9L831.7 807.2L831.9 797.9L843.1 751.9L848.9 739.4L858.1 730.6L868.0 725.5L881.0 722.2L949.7 722.2L961.4 724.9L968.2 728.5L973.5 734.1ZM1126.6 722.5L1099.0 828.0L1056.5 828.0L1024.6 768.5L1009.9 828.0L971.2 828.0L998.7 722.5L1041.4 722.4L1072.8 781.1L1088.8 722.4L1126.6 722.5ZM1291.6 722.1L1283.8 752.6L1219.1 752.7L1213.0 753.7L1208.2 756.8L1205.6 760.8L1198.6 788.9L1198.6 794.2L1202.4 797.2L1273.4 797.1L1265.7 827.5L1182.2 827.5L1169.1 823.7L1161.1 817.6L1157.6 810.0C1157.0 807.9 1157.0 807.8 1157.0 805.0L1158.0 792.9L1169.3 749.9L1175.4 738.3L1182.0 731.6L1191.4 726.3L1206.2 722.2L1291.6 722.1ZM1376.1 827.4L1278.1 827.4L1305.8 722.2L1343.9 722.3L1324.1 797.4L1383.5 797.4L1376.1 827.4ZM1534.6 722.2L1513.3 804.7L1509.3 812.3L1502.1 819.4L1492.0 824.5L1479.0 827.4L1423.7 827.4L1409.0 824.9L1400.1 820.5L1395.6 815.7L1392.3 807.9L1392.7 794.8L1411.6 722.2L1450.1 722.3L1432.7 790.3L1434.8 796.3L1439.1 797.6L1469.0 797.6C1474.7 797.3 1471.6 797.2 1473.0 796.2L1477.4 791.8L1495.2 722.2L1534.6 722.2ZM1521.4 827.5L1549.0 722.2L1634.2 722.2L1647.2 725.6L1655.5 732.2L1658.1 741.9L1655.4 753.9L1649.1 763.4L1639.2 770.0L1648.7 775.9L1652.3 781.9L1653.6 788.3L1652.5 798.0L1648.6 808.7L1640.6 818.2L1628.3 824.5L1613.4 827.5L1521.4 827.5ZM1574.9 761.7L1611.2 761.7L1615.7 759.0L1617.6 753.0L1614.1 749.4L1578.4 749.2L1574.9 761.7ZM934.3 756.0L932.0 753.7C930.9 753.1 935.1 752.9 928.0 752.7L889.5 752.7L883.5 754.9L879.8 759.8L873.0 787.0L872.4 792.0L873.9 796.0L878.0 798.3C879.3 798.7 875.4 798.4 882.0 798.4L917.9 798.4L923.1 796.4L926.1 793.0L928.4 787.0L934.6 761.8L934.3 756.0ZM1565.1 800.3L1607.7 800.0L1611.8 796.1L1612.8 788.7L1607.9 785.7L1570.0 785.7L1568.5 787.0L1565.1 800.3Z"/>
 <path id="mcc-mot-combat" fill-rule="evenodd" d="M1832.0 722.1L1831.3 729.0L1825.3 752.3L1755.1 752.3L1748.1 754.2L1743.5 758.4L1741.3 765.0L1735.2 789.9L1736.5 795.0L1739.0 796.9L1813.7 797.4L1805.6 827.4L1718.8 827.4L1704.4 823.6L1697.5 817.8L1693.5 807.2L1694.4 796.6L1705.9 750.9L1711.6 739.3L1718.3 731.4L1730.1 725.2L1748.3 722.0L1832.0 722.1ZM1830.7 816.8L1827.5 809.8L1827.5 798.3L1840.1 749.2L1847.5 736.2L1858.0 728.1L1869.4 723.8L1881.5 722.2L1948.1 722.3L1960.9 725.2L1968.8 730.5L1973.2 737.2L1974.2 744.7L1973.2 753.6L1960.5 802.4L1955.0 812.8L1945.7 820.8L1935.5 825.0L1923.8 827.4L1853.1 827.4L1838.1 823.5L1830.7 816.8ZM2149.6 722.2L2146.4 737.2L2122.0 827.4L2087.0 827.4L2084.0 826.2L2099.7 769.0L2057.7 811.5L2048.8 811.8L2038.8 811.4L2021.7 768.7L2005.6 827.5L1968.3 827.5L1996.7 722.5L2039.1 722.5L2058.5 768.3L2104.5 722.3L2149.6 722.2ZM2138.5 827.4L2166.3 725.0L2167.9 722.3L2257.3 722.2L2272.1 725.3L2279.4 731.9L2281.9 741.9L2279.4 752.9L2273.3 761.9L2262.2 769.7L2270.5 774.0L2275.1 780.6L2276.2 788.2L2275.2 798.9L2270.7 809.7L2261.6 819.1L2248.8 824.8L2235.7 827.4L2138.5 827.4ZM2270.4 827.4L2351.0 723.4L2355.0 722.3L2400.3 722.3L2425.9 827.4L2382.6 827.4L2368.6 760.0L2367.0 757.4L2314.4 827.4L2270.4 827.4ZM2539.4 722.3L2537.0 733.9L2532.0 751.7L2503.0 751.8L2500.4 753.0L2480.4 827.5L2442.6 827.5L2463.5 753.0L2462.0 751.8L2428.6 751.7L2437.4 722.2L2539.4 722.3ZM2194.6 761.6L2234.2 761.7L2239.1 758.1L2239.7 752.0L2237.0 749.4L2233.0 748.8L2198.2 748.6L2194.6 761.6ZM1869.6 794.9L1873.0 797.6C1874.2 798.1 1870.2 797.9 1877.0 798.0L1913.6 798.0L1919.4 796.8L1924.3 790.5L1931.9 761.0L1931.2 754.8L1927.2 752.3L1921.4 752.0L1886.9 752.0L1881.0 754.3L1877.5 758.1L1875.7 763.8L1869.1 789.0L1869.6 794.9ZM2184.4 799.0L2187.0 800.0L2229.2 799.8L2233.9 796.3L2234.6 789.0L2233.0 786.8L2229.0 785.4L2187.7 785.3L2184.4 799.0ZM2328.4 827.4L2350.6 797.9L2361.8 797.8L2369.5 827.3L2328.4 827.4Z"/>
 </defs></svg>
-<a class="skip" href="#parler">Aller au formulaire</a>
+<a class="skip" href="#contenu">Aller au contenu</a>
 
-<header class="site-header">
-  <div class="wrap header-in">
-    <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
-      <svg viewBox="212 589 389 369" width="38" height="36" role="img" aria-label="Mon Club Combat">
+<!-- L'espace agence a son bandeau a lui, comme l'agence de masalledesport
+     (club.masalledesport.com/agence) a le sien : Amaury, 24/09/2026, « c'est
+     encore un autre espace, c'est l'espace agence ». Il s'ouvre dans un onglet
+     a part depuis le site public, et ne reprend ni ses menus ni son pied. -->
+<header class="ag-tete">
+  <div class="ag-tete-in">
+    <a class="ag-marque" href="acquisition.html" aria-label="Mon Club Combat Agence, accueil de l'agence">
+      <svg viewBox="212 589 389 369" width="30" height="28" aria-hidden="true">
         <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
       </svg>
-      <svg class="brand-mot" viewBox="657 722 1883 107" width="194" height="11" aria-hidden="true">
+      <svg class="ag-marque-mot" viewBox="657 722 1883 107" width="150" height="9" aria-hidden="true">
         <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
       </svg>
+      <span class="ag-marque-agence">Agence</span>
     </a>
-    <nav class="site-nav" aria-label="Navigation principale">
-      <div class="nav-item">
-        <a class="nav-link" href="recherche.html" aria-haspopup="true">Clubs <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
-        <div class="nav-menu" aria-label="Clubs">
-          <div class="nav-col">
-            <p class="nav-col-t">Par ville</p>
-            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
-          </div>
-          <div class="nav-col">
-            <p class="nav-col-t">Parcourir</p>
-            <ul>
-              <li><a href="recherche.html">Toutes les salles, sur la carte</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="nav-item">
-        <a class="nav-link" href="recherche.html" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
-        <div class="nav-menu" aria-label="Disciplines">
-          <div class="nav-col">
-            <p class="nav-col-t">Les plus pratiquées</p>
-            <ul><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li></ul>
-          </div>
-          <div class="nav-col">
-            <p class="nav-col-t">Autres disciplines</p>
-            <ul><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li><li><a href="lutte.html">Lutte</a></li><li><a href="self-defense.html">Self-défense</a></li></ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="nav-item">
-        <a class="nav-link" href="clubs.html" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
-        <div class="nav-menu nav-menu-1" aria-label="Pro">
-          <div class="nav-col">
-            <ul>
-              <!-- Amaury, 24/09/2026 : accès pro et référencement ouvrent la
-                   création de compte, puis l'espace club ; jamais un morceau
-                   de la page d'accueil -->
-              <li><a href="clubs.html" data-compte="connexion">Accès pro</a></li>
-              <li><a href="clubs.html" data-compte>Référencer ma salle</a></li>
-              <li><a href="clubs.html#pro">Offres et tarifs</a></li>
-              <li><a href="acquisition.html">Acquisition</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <a class="btn btn-rouge" href="clubs.html" data-compte><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+    <nav class="ag-nav" aria-label="L'agence">
+      <a href="#accompagnement">Accompagnement</a>
+      <a href="#offres">Offres</a>
+      <a href="index.html">Le site</a>
     </nav>
+    <a class="ag-btn ag-btn-ligne ag-tete-cta" href="#contact">Prendre rendez-vous</a>
   </div>
 </header>
 
-<main id="contenu">
 
-  <!-- Amaury, 24/09/2026 : « la partie acquisition, elle doit ouvrir une page un
-       peu comme celle-ci » (club.masalledesport.com/agence). Meme ossature : la
-       promesse, la methode en etapes, les offres, puis la prise de contact. Sans
-       ses chiffres ni ses temoignages : nous n'en avons pas encore, et un chiffre
-       invente se voit. Les packs sont ceux du business plan d'Amaury. -->
-  <section class="hero-club acq-hero">
-    <div class="wrap hero-club-in">
-      <span class="eyebrow">Acquisition</span>
-      <h1 class="display acq-titre">Des séances d'essai confirmées, pas des clics</h1>
-      <p class="hero-sous">Nous créons et pilotons les publicités de votre club sur Instagram,
-        Facebook et Google. Les personnes intéressées réservent une séance d'essai sur vos
-        vrais cours, et arrivent directement dans votre espace club.</p>
-      <ul class="rassure">
-        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Vous ne payez que les séances confirmées</li>
-        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Vos créneaux, votre quartier, vos disciplines</li>
-        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.6 9.6 17.7 19.5 6.9"/></svg>Chaque prospect suivi dans votre espace club</li>
-      </ul>
-      <div class="hero-club-actions">
-        <a class="btn btn-rouge btn-grand" href="#parler">Parler de mon club</a>
-        <a class="btn btn-ligne btn-grand" href="#offres">Voir les offres</a>
+<main id="contenu" class="ag">
+
+  <!-- Amaury, 24/09/2026 : « acquisition, ca doit ouvrir une page un peu comme
+       celle-ci » (club.masalledesport.com/agence), puis « tu as tres mal copie ».
+       Refaite section par section sur leur page, relevee en captures le 24/09 :
+       bandeau flottant, heros photo, trois chiffres, l'accompagnement en cinq
+       cartes centrees, le planning qui se remplit, les offres, le rendez-vous.
+       Leurs temoignages et leurs cas clients ne sont pas repris : nous n'en avons
+       pas encore, et les inventer se verrait. -->
+  <section class="ag-heros">
+    <div class="ag-heros-in">
+      <div class="ag-heros-dit">
+        <p class="ag-sur">L'Agence Mon Club Combat</p>
+        <h1 class="ag-h1">Des séances d'essai qui deviennent vos futurs adhérents</h1>
+        <p class="ag-chapo">Nous remplissons vos cours d'essai avec des campagnes publicitaires
+          sur-mesure, faites avec les images de votre salle et à l'image de votre club.</p>
+        <p class="ag-plateformes"><span>Vos publicités sur</span>
+          <b>Instagram</b><b>Facebook</b><b>Google</b></p>
+        <div class="ag-actions">
+          <a class="ag-btn ag-btn-rouge" href="#contact">Prendre contact <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+          <a class="ag-btn ag-btn-ligne" href="#offres">Voir les offres <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
+        </div>
       </div>
+      <figure class="ag-heros-photo">
+        <img src="photos/salle-exemple-2.webp" alt="Un ring de boxe dans une salle de sports de combat"
+             width="1600" height="800" fetchpriority="high">
+        <figcaption class="ag-bulle">
+          <span class="ag-bulle-ok" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg></span>
+          <span><b>Séance d'essai confirmée</b>Boxe anglaise, mardi 19 h</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <ul class="ag-chiffres">
+      <li><b>15 €</b><span>la séance d'essai confirmée</span></li>
+      <li><b>0 €</b><span>pour un prospect qui ne vient pas</span></li>
+      <li><b>100 %</b><span>dédiée aux sports de combat</span></li>
+    </ul>
+  </section>
+
+  <section class="ag-section" id="accompagnement">
+    <div class="ag-centre">
+      <h2 class="ag-h2">Notre accompagnement en détail</h2>
+      <p class="ag-chapo">Nous ne travaillons que pour des clubs de sports de combat : nous
+        connaissons vos disciplines, vos publics et le rythme de vos saisons.</p>
+    </div>
+    <ol class="ag-cartes">
+      <li class="ag-carte">
+        <span class="ag-nb" aria-hidden="true">1</span>
+        <h3>Brief et lancement</h3>
+        <p>Un rendez-vous pour parler de votre club : vos disciplines, votre public, les
+          créneaux où il reste de la place et ce qui vous distingue des salles voisines. Nous
+          en tirons <b>une stratégie à l'image de votre club</b>.</p>
+      </li>
+      <li class="ag-carte">
+        <span class="ag-nb" aria-hidden="true">2</span>
+        <h3>Stratégie sur-mesure et audit publicitaire</h3>
+        <p>Nous analysons vos comptes publicitaires s'ils existent, puis nous fixons
+          <b>la zone autour de votre salle, les personnes à toucher, les cours à mettre en
+          avant</b> et le budget.</p>
+      </li>
+      <li class="ag-carte">
+        <span class="ag-nb" aria-hidden="true">3</span>
+        <h3>Création des publicités</h3>
+        <p>Nous imaginons <b>des visuels et des vidéos</b> à partir des images de votre salle,
+          pour des débutants comme pour des pratiquants confirmés. <b>Nous faisons le
+          montage</b>, vous n'avez qu'à filmer selon nos consignes.</p>
+      </li>
+      <li class="ag-carte">
+        <span class="ag-nb" aria-hidden="true">4</span>
+        <h3>Réservation sur vos vrais cours</h3>
+        <p>Chaque publicité mène à votre fiche Mon Club Combat, où l'on réserve <b>une séance
+          d'essai sur un cours de votre planning</b>. Pas de formulaire perdu, pas de numéro
+          à rappeler.</p>
+      </li>
+      <li class="ag-carte">
+        <span class="ag-nb" aria-hidden="true">5</span>
+        <h3>Suivi et ajustement des campagnes</h3>
+        <p>Chaque demande arrive <b>dans votre espace club et par e-mail</b>. Vous confirmez la
+          séance, vous suivez le prospect jusqu'à l'adhésion, et nous ajustons les campagnes
+          sur ce qui remplit vraiment vos cours.</p>
+        <svg class="ag-courbe" viewBox="0 0 200 60" aria-hidden="true">
+          <path d="M4 52 18 44 32 30 46 38 60 33 74 40 88 38 102 41 116 34 130 14 144 26 158 17"
+                fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+      </li>
+    </ol>
+  </section>
+
+  <section class="ag-section ag-planning-bloc">
+    <div class="ag-planning">
+      <div class="ag-planning-dit">
+        <p class="ag-sur-rouge">Des séances d'essai réservées</p>
+        <h2 class="ag-h2">Un planning plein, de prospects motivés</h2>
+        <p class="ag-chapo">Les personnes intéressées choisissent un créneau dans votre planning.
+          Vous n'avez plus qu'à confirmer, puis à les accueillir sur le tapis.</p>
+        <ul class="ag-atouts">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></svg><span>Des séances d'essai réservées sur vos cours, grâce à nos
+            campagnes</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M3 20c.6-3.3 3-5.2 6-5.2s5.4 1.9 6 5.2"/><path d="m15.5 11.5 2 2 3.5-3.8"/></svg><span>Chaque prospect suivi dans votre espace club, jusqu'à
+            l'adhésion</span></li>
+        </ul>
+      </div>
+      <!-- une illustration, pas une capture : les noms et les cours sont des exemples -->
+      <figure class="ag-ecran" aria-label="Exemple de planning d'un club, avec des séances d'essai réservées">
+        <div class="ag-ecran-barre" aria-hidden="true">
+          <span class="ag-ecran-pts"><i></i><i></i><i></i></span>
+          <span class="ag-ecran-url">monclubcombat.fr/espace-club</span>
+        </div>
+        <div class="ag-agenda" aria-hidden="true">
+          <span class="ag-h"></span><span class="ag-j">Lun.</span><span class="ag-j">Mar.</span><span class="ag-j">Mer.</span>
+          <span class="ag-h">18 h</span>
+          <span class="ag-c ag-essai"><b>Séance d'essai</b>MMA débutants<i>Karim B.</i></span>
+          <span class="ag-c ag-cours"><b>Cours</b>Boxe anglaise</span>
+          <span class="ag-c ag-essai"><b>Séance d'essai</b>Jiu-jitsu brésilien<i>Léa M.</i></span>
+          <span class="ag-h">19 h</span>
+          <span class="ag-c ag-cours"><b>Cours</b>Grappling</span>
+          <span class="ag-c ag-essai"><b>Séance d'essai</b>Boxe anglaise<i>Thomas R.</i></span>
+          <span class="ag-c ag-attente"><b>À confirmer</b>Muay-thaï<i>Inès K.</i></span>
+          <span class="ag-h">20 h</span>
+          <span class="ag-c ag-attente"><b>À confirmer</b>Kickboxing<i>Yanis F.</i></span>
+          <span class="ag-c ag-essai"><b>Séance d'essai</b>MMA confirmés<i>Sofiane D.</i></span>
+          <span class="ag-c ag-cours"><b>Cours</b>Lutte</span>
+        </div>
+      </figure>
     </div>
   </section>
 
-  <section class="section acq-compte-bloc">
-    <div class="wrap acq-compte">
-      <p class="eyebrow">Ce que nous comptons</p>
-      <h2 class="section-titre display">Un lead, c'est quelqu'un qui vient</h2>
-      <p class="section-chapo">Une agence classique vous facture des clics, des vues ou des
-        formulaires remplis, et vous laisse rappeler des numéros qui ne répondent pas. Chez Mon
-        Club Combat, un lead est une <b>séance d'essai réservée sur l'un de vos cours et
-        confirmée par votre club</b>. C'est la seule chose que vous payez.</p>
-      <ol class="acq-chemin">
-        <li><span class="display">1</span>La personne voit votre publicité</li>
-        <li><span class="display">2</span>Elle choisit un cours de votre planning</li>
-        <li><span class="display">3</span>Vous confirmez sa séance d'essai</li>
-        <li class="acq-compte-ici"><span class="display">4</span>C'est un lead, et seulement là</li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="section etapes-bloc">
-    <div class="wrap">
-      <p class="eyebrow">Comment ça se passe</p>
-      <h2 class="section-titre display">Cinq étapes, et vous gardez la main</h2>
-      <ol class="etapes acq-etapes">
-        <li>
-          <span class="et-nb display">1</span>
-          <h3 class="et-titre">Le brief</h3>
-          <p>Un échange sur votre club : vos disciplines, votre public, les créneaux où il reste
-            de la place, ce qui vous distingue des salles voisines.</p>
-        </li>
-        <li>
-          <span class="et-nb display">2</span>
-          <h3 class="et-titre">La stratégie</h3>
-          <p>La zone autour de votre salle, les personnes à toucher, les cours à mettre en avant
-            et le rythme de diffusion.</p>
-        </li>
-        <li>
-          <span class="et-nb display">3</span>
-          <h3 class="et-titre">Les publicités</h3>
-          <p>Des visuels et des vidéos faits avec les images de votre salle, écrits pour des
-            débutants comme pour des pratiquants confirmés.</p>
-        </li>
-        <li>
-          <span class="et-nb display">4</span>
-          <h3 class="et-titre">La réservation</h3>
-          <p>Chaque publicité mène à votre fiche Mon Club Combat, où l'on réserve une séance
-            d'essai sur un cours qui existe vraiment.</p>
-        </li>
-        <li>
-          <span class="et-nb display">5</span>
-          <h3 class="et-titre">Le suivi</h3>
-          <p>Chaque demande arrive dans votre espace club et par e-mail. Vous suivez chaque
-            prospect jusqu'à l'adhésion.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="section acq-offres-bloc" id="offres">
-    <div class="wrap">
-      <p class="eyebrow">Les offres</p>
-      <h2 class="section-titre display">15 € la séance d'essai confirmée</h2>
-      <p class="section-chapo">Choisissez le nombre de séances d'essai que vous voulez
-        recevoir chaque mois. Plus vous vous engagez longtemps, moins chaque séance vous coûte.</p>
+  <section class="ag-section ag-offres-bloc acq-offres-bloc" id="offres">
+    <div class="ag-etroit">
+      <p class="ag-pastille">Découvrez nos offres</p>
+      <h2 class="ag-h2 section-titre"><span id="acq-unite">15 €</span> la séance d’essai confirmée,
+        rien d'autre</h2>
+      <p class="ag-chapo">Choisissez le nombre de séances d'essai que vous voulez recevoir chaque
+        mois. Plus vous vous engagez longtemps, moins chaque séance vous coûte.</p>
 
       <div class="acq-duree" role="radiogroup" aria-label="Durée d'engagement">
         <button type="button" role="radio" aria-checked="true" data-remise="0">Sans engagement</button>
@@ -1332,31 +1463,41 @@
         <button type="button" role="radio" aria-checked="false" data-remise="20">6 mois <b>−20 %</b></button>
       </div>
 
-      <ul class="acq-packs">
-        <li data-nb="20"><span class="acq-pack">Start</span><span class="acq-nb"><b>20</b> séances d'essai</span><span class="acq-prix"><b data-base="300">300 €</b> par mois</span></li>
-        <li data-nb="40"><span class="acq-pack">Grow</span><span class="acq-nb"><b>40</b> séances d'essai</span><span class="acq-prix"><b data-base="600">600 €</b> par mois</span></li>
-        <li data-nb="60"><span class="acq-pack">Boost</span><span class="acq-nb"><b>60</b> séances d'essai</span><span class="acq-prix"><b data-base="900">900 €</b> par mois</span></li>
-        <li data-nb="100"><span class="acq-pack">Scale</span><span class="acq-nb"><b>100</b> séances d'essai</span><span class="acq-prix"><b data-base="1500">1 500 €</b> par mois</span></li>
-        <li data-nb="150"><span class="acq-pack">Pro</span><span class="acq-nb"><b>150</b> séances d'essai</span><span class="acq-prix"><b data-base="2250">2 250 €</b> par mois</span></li>
-        <li data-nb="200"><span class="acq-pack">Custom</span><span class="acq-nb"><b>200</b> séances d'essai</span><span class="acq-prix"><b data-base="3000">3 000 €</b> par mois</span></li>
+      <ul class="acq-packs ag-packs">
+        <li><span class="ag-pack">Start</span><span class="acq-prix"><b data-base="300">300 €</b>/mois</span><span class="ag-pack-nb">20 séances d'essai confirmées</span></li>
+        <li><span class="ag-pack">Grow</span><span class="acq-prix"><b data-base="600">600 €</b>/mois</span><span class="ag-pack-nb">40 séances d'essai confirmées</span></li>
+        <li><span class="ag-pack">Boost</span><span class="acq-prix"><b data-base="900">900 €</b>/mois</span><span class="ag-pack-nb">60 séances d'essai confirmées</span></li>
+        <li><span class="ag-pack">Scale</span><span class="acq-prix"><b data-base="1500">1 500 €</b>/mois</span><span class="ag-pack-nb">100 séances d'essai confirmées</span></li>
+        <li><span class="ag-pack">Pro</span><span class="acq-prix"><b data-base="2250">2 250 €</b>/mois</span><span class="ag-pack-nb">150 séances d'essai confirmées</span></li>
+        <li><span class="ag-pack">Custom</span><span class="acq-prix"><b data-base="3000">3 000 €</b>/mois</span><span class="ag-pack-nb">200 séances d'essai confirmées</span></li>
       </ul>
-      <p class="acq-note" id="acq-note">Prix hors taxes. Au-delà de 200 séances par mois, ou
-        pour plusieurs salles, parlons-en.</p>
+
+      <div class="ag-inclus">
+        <p class="ag-pack">Dans chaque offre</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>Rendez-vous de brief</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>Audit de vos comptes publicitaires</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>Stratégie publicitaire et créative</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>Création et montage des publicités</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>Mise en ligne, suivi et optimisation des campagnes</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>Réservation sur vos cours et suivi dans l'espace club</li>
+        </ul>
+      </div>
+      <p class="acq-note">Prix hors taxes. Au-delà de 200 séances par mois, ou pour plusieurs
+        salles, parlons-en.</p>
     </div>
   </section>
 
-  <section class="section acq-parler-bloc" id="parler">
-    <div class="wrap acq-parler">
-      <div class="acq-parler-dit">
-        <p class="eyebrow">On en parle</p>
-        <h2 class="section-titre display">Parlez-nous de votre club</h2>
-        <p class="section-chapo">Laissez vos coordonnées : nous vous rappelons pour le brief,
+  <section class="ag-section ag-fin" id="contact">
+    <div class="ag-centre">
+      <h2 class="ag-h2">Prêt à remplir vos cours d'essai ?</h2>
+      <p class="ag-sous-rouge">Laissez-nous gérer votre acquisition de A à Z.</p>
+    </div>
+    <div class="ag-rdv" id="parler">
+      <form class="acq-form ag-form" id="acq-form" novalidate>
+        <p class="ag-form-t">Prendre rendez-vous</p>
+        <p class="ag-form-mot">Laissez vos coordonnées : nous vous rappelons pour le brief,
           sans engagement. Rien n'est lancé sans votre accord sur la stratégie et le budget.</p>
-        <p class="acq-ou">Ou écrivez-nous à
-          <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a>.</p>
-      </div>
-
-      <form class="acq-form" id="acq-form" novalidate>
         <div class="acq-2">
           <label class="champ"><span>Nom du club</span>
             <input id="a-club" name="club" required autocomplete="organization"></label>
@@ -1385,81 +1526,50 @@
           <textarea id="a-mot" name="message" rows="3"
             placeholder="Vos disciplines, vos créneaux à remplir…"></textarea></label>
         <p class="form-erreur" id="a-erreur" hidden role="alert"></p>
-        <button class="btn btn-rouge" type="submit" id="a-envoi">Être rappelé</button>
+        <button class="ag-btn ag-btn-rouge ag-btn-plein" type="submit" id="a-envoi">Être rappelé</button>
         <p class="acq-legal">Vos coordonnées ne servent qu'à vous recontacter.
-          <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>
+          <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a>
+          · Ou écrivez-nous à <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a></p>
       </form>
-      <p class="acq-merci" id="acq-merci" hidden><b>C'est noté.</b> Nous vous rappelons
+      <p class="acq-merci ag-merci" id="acq-merci" hidden><b>C'est noté.</b> Nous vous rappelons
         rapidement pour parler de votre club.</p>
     </div>
   </section>
+
+  <!-- le bouton qui suit la lecture, comme leur « Votre audit offert » -->
+  <a class="ag-flottant" href="#contact">Parler de mon club <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>
 </main>
 
-<footer class="site-footer">
-  <div class="wrap footer-haut">
-    <div class="footer-marque">
-      <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
-        <svg viewBox="212 589 389 369" width="36" height="34" role="img" aria-label="Mon Club Combat">
+<footer class="ag-pied">
+  <div class="ag-pied-in">
+    <div class="ag-pied-marque">
+      <a class="ag-marque" href="acquisition.html" aria-label="Mon Club Combat Agence">
+        <svg viewBox="212 589 389 369" width="30" height="28" aria-hidden="true">
           <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
         </svg>
-        <svg viewBox="657 722 1883 107" width="184" height="10.5" aria-hidden="true">
+        <svg class="ag-marque-mot" viewBox="657 722 1883 107" width="150" height="9" aria-hidden="true">
           <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
         </svg>
+        <span class="ag-marque-agence">Agence</span>
       </a>
-      <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
-        les clubs qui veulent remplir leurs séances d'essai.</p>
-      <!-- les icones de reseaux reviendront avec les comptes : un lien mort est pire que rien -->
+      <p>L'acquisition de pratiquants pour les clubs de sports de combat.</p>
     </div>
-
-    <nav class="footer-col" aria-labelledby="f-prat">
-      <h2 id="f-prat">Pratiquants</h2>
-      <ul>
-        <li><a href="recherche.html">Rechercher une salle</a></li>
-        <li><a href="recherche.html">Réserver une séance d'essai</a></li>
-      </ul>
+    <nav class="ag-pied-col" aria-labelledby="ag-p1">
+      <h2 id="ag-p1">Mon Club Combat</h2>
+      <a href="index.html">Le site</a>
+      <a href="clubs.html">Référencer ma salle</a>
+      <a href="espace-club.html">Espace club</a>
     </nav>
-
-    <nav class="footer-col" aria-labelledby="f-clubs">
-      <h2 id="f-clubs">Clubs</h2>
-      <ul>
-        <li><a href="clubs.html" data-compte>Référencer ma salle</a></li>
-        <li><a href="clubs.html" data-compte="connexion">Espace club</a></li>
-        <li><a href="clubs.html#pro">Offres et tarifs</a></li>
-        <li><a href="acquisition.html">Acquisition de leads</a></li>
-      </ul>
-    </nav>
-
-    <nav class="footer-col" aria-labelledby="f-fs">
-      <h2 id="f-fs">Mon Club Combat</h2>
-      <ul>
-        <li><a href="mailto:contact@monclubcombat.fr">Nous écrire</a></li>
-        <li><a href="conditions.html">Conditions d'utilisation</a></li>
-        <li><a href="confidentialite.html">Confidentialité</a></li>
-      </ul>
-    </nav>
-  </div>
-
-  <div class="wrap footer-reseau">
-    <section aria-labelledby="f-villes">
-      <h2 id="f-villes">Salles de sports de combat par ville</h2>
-      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Sports de combat à Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Sports de combat à Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a></li><li><a href="sports-de-combat-lille.html">Sports de combat à Lille</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Sports de combat à Nantes</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-rennes.html">Sports de combat à Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Sports de combat à Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
-    </section>
-    <section aria-labelledby="f-disc">
-      <h2 id="f-disc">Salles par discipline</h2>
-      <ul class="f-liens"><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li><li><a href="lutte.html">Lutte</a></li><li><a href="self-defense.html">Self-défense</a></li></ul>
-    </section>
-  </div>
-
-  <div class="wrap footer-bas">
-    <p>© 2026 Mon Club Combat. Tous droits réservés.</p>
-    <nav class="footer-legal" aria-label="Informations légales">
-      <a href="conditions.html#editeur">Mentions légales</a>
+    <nav class="ag-pied-col" aria-labelledby="ag-p2">
+      <h2 id="ag-p2">Informations</h2>
+      <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a>
       <a href="conditions.html">Conditions d'utilisation</a>
       <a href="confidentialite.html">Confidentialité</a>
-      <a href="confidentialite.html#traceurs">Cookies</a>
     </nav>
   </div>
+  <p class="ag-pied-bas">© 2026 Mon Club Combat</p>
 </footer>
+
 
 <!-- La creation de l'espace club se fait dans une fenetre, pas dans la page : le gerant
      voit ce qu'on lui demande avant de s'engager, et le formulaire de la fiche l'attend
@@ -1558,9 +1668,13 @@
    boutons de l'accueil, des pages d'annuaire, de la recherche, de la fiche.
    Le bouton du bandeau aussi, depuis le 24/09/2026 (Amaury : « ca doit envoyer
    directement le pop-up pour creer un compte et ensuite ca ouvrira l'espace
-   club »). Une fois le compte cree, on arrive sur l'espace club, pas sur la
-   fiche : c'est lui qui dit ce qu'il reste a faire. Deja connecte, le meme
-   bouton ouvre l'espace club dans un onglet a lui.
+   club »). Amaury, le meme jour, une heure plus tard : « quand il a clique sur
+   referencer, ca le met directement sur la page Espace Pro Ma fiche », et
+   « ca renvoie tout le temps sur le dashboard, meme quand ca ne fait pas sens ».
+   D'ou une seule regle, destination() : tant que la fiche n'est pas envoyee
+   (pas de club, ou club en brouillon), on arrive sur Ma fiche ; ensuite, sur
+   l'espace club. « Referencer ma salle » mene toujours a Ma fiche. Deja
+   connecte, le meme bouton ouvre cette page dans un onglet a elle.
 
    Depuis le 23/09/2026 elle cree un vrai compte. Deux chemins possibles selon
    le reglage de Supabase :
@@ -1584,6 +1698,33 @@
   var SB = window.MCC || null;
   var reel = !!(SB && SB.prete());
 
+  var BASE = location.href.replace(/[^/?#]*([?#].*)?$/, '');
+  /* ou mener un gerant connecte : Ma fiche tant qu'elle n'est pas envoyee */
+  function selonClub(club){
+    return (!club || club.statut === 'brouillon') ? 'referencer.html' : 'espace-club.html';
+  }
+  function destination(voulu){
+    if (voulu === 'creation') return Promise.resolve('referencer.html');
+    return SB.monClub().then(selonClub, function (){ return 'espace-club.html'; });
+  }
+  /* Le retour de Google n'arrive pas toujours sur redirectTo : si l'adresse
+     manque aux Redirect URLs de Supabase, il tombe sur l'accueil, connecte mais
+     sur le site public. On note avant de partir ou il voulait aller, et la page
+     ou il atterrit, quelle qu'elle soit, l'y emmene. */
+  var CLE_APRES = 'mcc_apres_google';
+  function lit(k){ try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function note(k, v){ try { v === null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} }
+  if (reel && lit(CLE_APRES)) {
+    SB.session().then(function (s){
+      if (!s) return;
+      var voulu = lit(CLE_APRES);
+      note(CLE_APRES, null);
+      return destination(voulu).then(function (ou){
+        if (location.pathname.split('/').pop() !== ou) location.replace(BASE + ou);
+      });
+    }).catch(function (){});
+  }
+
   /* ---------- ouverture et fermeture ---------- */
   function ouvre(){
     rendu = document.activeElement;
@@ -1604,8 +1745,18 @@
     var d = e.target.closest ? e.target.closest('[data-compte]') : null;
     if (!d) return;
     e.preventDefault();
-    if (connecte) { window.open('espace-club.html', '_blank', 'noopener'); return; }
-    bascule(d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation');
+    var voulu = d.getAttribute('data-compte') === 'connexion' ? 'connexion' : 'creation';
+    if (connecte) {
+      /* l'onglet s'ouvre tout de suite (sinon le navigateur le bloque), puis
+         prend la bonne adresse */
+      var onglet = window.open('about:blank', '_blank');
+      destination(voulu).then(function (ou){
+        if (onglet) { onglet.opener = null; onglet.location = BASE + ou; }
+        else location.href = BASE + ou;
+      });
+      return;
+    }
+    bascule(voulu);
     ouvre();
   });
 
@@ -1645,10 +1796,13 @@
       if (!reel) { montre('La connexion Google a besoin du serveur. Sur le site en ligne, ce bouton vous y emmène.'); return; }
       google.disabled = true;
       document.getElementById('fen-google-mot').textContent = 'Ouverture de Google…';
+      note(CLE_APRES, mode);
       SB.client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html',
+          /* Ma fiche : elle cree le club au premier passage ; un gerant deja
+             publie qui se connecte en est renvoye sur l'espace club (plus haut) */
+          redirectTo: BASE + (mode === 'creation' ? 'referencer.html' : 'espace-club.html'),
           /* on ne demande que l'identite : ni contacts, ni agenda, ni rien qui
              ferait hesiter un gerant devant l'ecran d'autorisation */
           scopes: 'email profile'
@@ -1737,14 +1891,14 @@
 
     /* pas de base joignable : la maquette garde son comportement d'avant */
     if (!reel) { location.href = 'referencer.html?nom=' + encodeURIComponent(nom); return; }
-    var arrivee = location.href.replace(/[^/?#]*([?#].*)?$/, '') + 'espace-club.html'
-                + (nom ? '?nom=' + encodeURIComponent(nom) : '');
+    /* a l'inscription, Ma fiche, qui cree le club avec le nom saisi */
+    var arrivee = BASE + 'referencer.html' + (nom ? '?nom=' + encodeURIComponent(nom) : '');
 
     occupe(true);
     var sb = SB.client;
     var p = mode === 'creation'
       ? sb.auth.signUp({ email: mail, password: mdp,
-          /* le lien de confirmation ramene aussi a l'espace club */
+          /* le lien de confirmation ramene aussi a Ma fiche */
           options: { data: { nom_salle: nom }, emailRedirectTo: arrivee } })
       : sb.auth.signInWithPassword({ email: mail, password: mdp });
 
@@ -1758,8 +1912,9 @@
         document.getElementById('fen-verif').hidden = false;
         return;
       }
-      /* l'espace club cree le club au premier passage, avec le nom saisi */
-      location.href = arrivee;
+      if (mode === 'creation') { location.href = arrivee; return; }
+      /* a la connexion : Ma fiche si elle n'est pas envoyee, sinon l'espace club */
+      destination('connexion').then(function (ou){ location.href = BASE + ou; });
     }).catch(function (err){
       occupe(false);
       montre(SB.dire(err));
@@ -1811,8 +1966,8 @@
     if (!bandeau) return;
     var nom = infos.club ? infos.club.nom : (infos.profil && infos.profil.nom) || 'Mon espace';
     var neuves = infos.neuves || 0;
-    /* sans club aussi : l'espace club le cree a l'arrivee */
-    var ou = 'espace-club.html';
+    /* fiche pas encore envoyee : le bouton mene a Ma fiche, pas aux chiffres */
+    var ou = selonClub(infos.club);
     var quoi = 'Mon espace club';
 
     var zone = document.createElement('div');
@@ -1873,13 +2028,31 @@
     Array.prototype.forEach.call(boutons, function (x){
       x.setAttribute('aria-checked', String(Number(x.getAttribute('data-remise')) === remise));
     });
-    var unite = euros(15 * (100 - remise) / 100);
-    var t = document.querySelector('.acq-offres-bloc .section-titre');
-    if (t) t.textContent = unite + ' la séance d’essai confirmée';
+    var u = document.getElementById('acq-unite');
+    if (u) u.textContent = euros(15 * (100 - remise) / 100);
   }
   Array.prototype.forEach.call(boutons, function (x){
     x.addEventListener('click', function (){ applique(Number(x.getAttribute('data-remise'))); });
   });
+
+  /* ---------- le bouton flottant ----------
+     Il suit la lecture et s'efface quand le formulaire est a l'ecran : inutile
+     d'inviter a prendre contact sous les yeux du formulaire. */
+  var flottant = document.querySelector('.ag-flottant');
+  var fin = document.getElementById('contact');
+  var heros = document.querySelector('.ag-heros');
+  if (flottant && fin && 'IntersectionObserver' in window) {
+    var vus = { fin: false, heros: true };
+    var maj = function (){ flottant.classList.toggle('cache', vus.fin || vus.heros); };
+    new IntersectionObserver(function (es){
+      es.forEach(function (e){ vus[e.target === fin ? 'fin' : 'heros'] = e.isIntersecting; });
+      maj();
+    }, { threshold: 0.05 }).observe(fin);
+    if (heros) new IntersectionObserver(function (es){
+      vus.heros = es[0].isIntersecting; maj();
+    }, { rootMargin: '-60% 0px 0px 0px' }).observe(heros);
+    maj();
+  }
 
   /* ---------- le formulaire ---------- */
   var form = document.getElementById('acq-form');
