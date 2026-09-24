@@ -545,6 +545,7 @@
     .cpt-bouton{padding:5px; gap:0; min-height:40px}
     .cpt-bouton .nav-chev{display:none}
   }
+  .fen-note a{color:inherit; text-decoration:underline; text-underline-offset:2px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -725,11 +726,10 @@
   <div class="wrap footer-bas">
     <p>© 2026 Mon Club Combat. Tous droits réservés.</p>
     <nav class="footer-legal" aria-label="Informations légales">
-      <a href="index.html#mentions">Mentions légales</a>
-      <a href="index.html#cgu">CGU</a>
-      <a href="index.html#cgv">CGV</a>
-      <a href="index.html#confidentialite">Confidentialité</a>
-      <a href="index.html#cookies">Cookies</a>
+      <a href="conditions.html#editeur">Mentions légales</a>
+      <a href="conditions.html">Conditions d'utilisation</a>
+      <a href="confidentialite.html">Confidentialité</a>
+      <a href="confidentialite.html#traceurs">Cookies</a>
     </nav>
   </div>
 </footer>
@@ -1872,7 +1872,10 @@ if (!CALME) requestAnimationFrame(boucle);
       <p class="fen-erreur" id="fen-erreur" hidden role="alert"></p>
       <button class="btn btn-rouge" type="submit" id="fen-envoi">Continuer vers ma fiche</button>
       <p class="fen-note" id="fen-note">Gratuit, sans carte bancaire. Nous vérifions chaque fiche
-        avant de la publier, et vos coordonnées ne servent qu'à votre salle.</p>
+        avant de la publier, et vos coordonnées ne servent qu'à votre salle. En continuant, vous
+        acceptez les <a href="conditions.html" target="_blank" rel="noopener">conditions
+        d'utilisation</a> et la <a href="confidentialite.html" target="_blank"
+        rel="noopener">politique de confidentialité</a>.</p>
       <!-- Un gerant qui revient trois mois plus tard a oublie son mot de passe.
            Sans ce lien, il n'a aucun moyen de rentrer dans son espace. -->
       <p class="fen-bascule" data-mode="connexion" hidden>

@@ -258,3 +258,4 @@
     font-size:14px; line-height:1.6; color:var(--texte-2)}
   .essai-merci b{color:var(--vert)}
   .mini-carte[hidden]{display:none}
+  .cote-note a{color:inherit; text-decoration:underline; text-underline-offset:2px}

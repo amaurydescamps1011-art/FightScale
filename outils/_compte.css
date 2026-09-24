@@ -111,3 +111,4 @@
     .cpt-bouton{padding:5px; gap:0; min-height:40px}
     .cpt-bouton .nav-chev{display:none}
   }
+  .fen-note a{color:inherit; text-decoration:underline; text-underline-offset:2px}

@@ -22,18 +22,21 @@ defs   = R('defs.svg')
 header = bloc('<header class="site-header">', '</header>')
 footer = bloc('<footer class="site-footer">', '</footer>')
 import sys, compte
-# Six pages sortent du meme assemblage : la page de vente, le formulaire de la
-# fiche, l'espace club, le back-office, le nouveau mot de passe et la page du
-# compte. Elles partagent en-tete, pied de page et CSS, donc elles ne peuvent pas
+# Huit pages sortent du meme assemblage : la page de vente, le formulaire de la
+# fiche, l'espace club, le back-office, le nouveau mot de passe, la page du
+# compte, et les deux pages legales (Google les exige pour la connexion). Elles partagent en-tete, pied de page et CSS, donc elles ne peuvent pas
 # diverger de l'accueil.
-PAGES = ['clubs', 'referencer', 'espace-club', 'admin', 'motdepasse', 'mon-compte']
+PAGES = ['clubs', 'referencer', 'espace-club', 'admin', 'motdepasse', 'mon-compte',
+         'confidentialite', 'conditions']
 QUI = 'clubs'
 for _p in PAGES:
     if '--' + _p in sys.argv: QUI = _p
 CORPS = {'clubs': '_clubs.body.html', 'referencer': '_referencer.body.html',
          'espace-club': '_espace.body.html', 'admin': '_admin.body.html',
          'motdepasse': '_motdepasse.body.html',
-         'mon-compte': '_mon_compte.body.html'}
+         'mon-compte': '_mon_compte.body.html',
+         'confidentialite': '_confidentialite.body.html',
+         'conditions': '_conditions.body.html'}
 body   = R(CORPS[QUI])
 
 # depuis la page clubs, les liens du menu et du pied de page renvoient a l'accueil
@@ -135,7 +138,9 @@ TITRE = {'clubs': 'Référencer ma salle | Mon Club Combat',
          'espace-club': 'Mon espace club | Mon Club Combat',
          'admin': 'Back-office | Mon Club Combat',
          'motdepasse': 'Nouveau mot de passe | Mon Club Combat',
-         'mon-compte': 'Mon compte | Mon Club Combat'}[QUI]
+         'mon-compte': 'Mon compte | Mon Club Combat',
+         'confidentialite': 'Politique de confidentialité | Mon Club Combat',
+         'conditions': "Conditions d'utilisation | Mon Club Combat"}[QUI]
 
 page = (
 '''<title>''' + TITRE + '''</title>

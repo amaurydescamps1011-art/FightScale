@@ -3,13 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex, follow">
-<meta name="description" content="Vos informations, votre salle et votre mot de passe.">
+<meta name="description" content="Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps.">
 <meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mon Club Combat">
-<meta property="og:title" content="Mon compte | Mon Club Combat">
-<meta property="og:description" content="Vos informations, votre salle et votre mot de passe.">
+<meta property="og:title" content="Politique de confidentialité | Mon Club Combat">
+<meta property="og:description" content="Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
@@ -20,7 +19,7 @@
   img{max-width:100%}
   [hidden]{display:none !important}
 </style>
-<title>Mon compte | Mon Club Combat</title>
+<title>Politique de confidentialité | Mon Club Combat</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
 <style>
@@ -954,128 +953,6 @@
   .legal a{color:var(--texte); text-decoration:underline; text-underline-offset:3px;
     text-decoration-thickness:1px; overflow-wrap:anywhere}
   .legal a:hover{color:var(--rouge-lien)}
-  /* ---------- la coque de l'espace pro ----------
-     Un logiciel, pas une page : le rail tient a gauche et ne bouge pas quand le
-     contenu defile, la tete reste en haut. A 900 px le rail ne peut plus etre
-     une colonne -- il deviendrait un tiroir a ouvrir, donc un geste de plus avant
-     chaque navigation. Il passe en bande de pastilles sous la tete : toujours
-     visible, atteignable au pouce, et rien a ouvrir ni a refermer. */
-  /* Le fond peint la colonne du rail sur toute la hauteur : le rail lui-meme est
-     colle en haut et ne descend pas jusqu'au pied, et sans ce degrade sa colonne
-     se coupait net au milieu de la page. */
-  .pro{min-height:100vh; display:grid;
-    grid-template-columns:250px minmax(0,1fr); grid-template-rows:auto minmax(0,1fr);
-    background:linear-gradient(to right, var(--surface) 0 250px, var(--fond) 250px)}
-  .pro-tete{grid-column:1 / -1; position:sticky; top:0; z-index:40;
-    display:flex; align-items:center; gap:16px; min-height:62px;
-    padding:10px clamp(16px,2.4vw,26px);
-    background:var(--surface); border-bottom:1px solid var(--bord)}
-  .pro-marque{display:inline-flex; align-items:center; gap:10px; text-decoration:none;
-    flex-shrink:0}
-  .pro-marque-mot{font-size:12px; font-weight:800; letter-spacing:.14em;
-    text-transform:uppercase; color:var(--texte-4)}
-  .pro-salle{margin:0 auto 0 8px; min-width:0; font-size:15px; font-weight:800;
-    color:var(--texte); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .pro-sortir{flex-shrink:0; font-size:13.5px; font-weight:700; color:var(--texte-2);
-    text-decoration:none; border-bottom:1px solid var(--bord-3); padding-bottom:1px}
-  .pro-sortir:hover{color:var(--rouge-700); border-color:currentColor}
-  .pro-sortir[hidden]{display:none}
-
-  /* Le rail tient toute la hauteur meme quand il a peu de liens : sans cela son
-     fond blanc s'arretait au milieu de la page et la colonne de gauche se
-     coupait en deux. */
-  .pro-rail{grid-row:2; position:sticky; top:62px; align-self:start;
-    min-height:calc(100vh - 62px); max-height:calc(100vh - 62px); overflow:auto;
-    display:flex; flex-direction:column; gap:8px;
-    padding:16px 12px; border-right:1px solid var(--bord); background:var(--surface)}
-  .pro-liens{margin:0; padding:0; list-style:none; display:grid; gap:2px}
-  .pro-liens a{display:flex; align-items:center; gap:11px; padding:10px 12px;
-    border-radius:var(--r-m); font-size:14.5px; font-weight:700;
-    color:var(--texte-2); text-decoration:none}
-  .pro-liens a svg{width:18px; height:18px; flex-shrink:0; opacity:.75}
-  .pro-liens a span{flex:1; min-width:0}
-  .pro-liens a:hover{background:var(--surface-2); color:var(--texte)}
-  /* La page ouverte se marque par un aplat et un filet rouge, pas par une
-     couleur de texte seule : d'un coup d'oeil il sait ou il est. */
-  .pro-liens a[aria-current="page"]{background:rgba(236,22,46,.08);
-    color:var(--rouge-700); box-shadow:inset 3px 0 0 var(--rouge-600)}
-  .pro-liens a[aria-current="page"] svg{opacity:1}
-  .pro-liens li[hidden]{display:none}
-  /* Le groupe de l'equipe : un titre et un filet, pour qu'on voie d'un coup
-     d'oeil que ce n'est pas un espace du gerant. */
-  .pro-equipe{margin-top:10px; padding-top:12px; border-top:1px solid var(--bord)}
-  .pro-equipe[hidden]{display:none}
-  .pro-groupe{margin:0 0 6px; padding-inline:12px; font-size:10.5px; font-weight:800;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--texte-4)}
-  .pro-pastille{display:inline-flex; align-items:center; justify-content:center;
-    min-width:19px; height:19px; padding:0 6px; border-radius:999px;
-    background:var(--rouge-600); color:#fff; font-size:11.5px; font-weight:800;
-    line-height:1}
-  .pro-pastille[hidden]{display:none}
-
-  .pro-palier{margin-top:auto; padding:14px; border-radius:var(--r-l);
-    background:var(--surface-2); border:1px solid var(--bord)}
-  .pro-palier[hidden]{display:none}
-  .pro-palier-t{margin:0; font-size:13px; font-weight:800; color:var(--texte)}
-  .pro-palier-m{margin:5px 0 11px; font-size:12.5px; line-height:1.5; color:var(--texte-4)}
-  .pro-palier .btn{width:100%; justify-content:center}
-
-  .pro-quitter{display:flex; align-items:center; gap:11px; width:100%;
-    padding:10px 12px; border:0; border-radius:var(--r-m); background:none;
-    cursor:pointer; text-align:left;
-    font-family:Manrope,system-ui,sans-serif; font-size:14.5px; font-weight:700;
-    color:var(--texte-4)}
-  .pro-quitter svg{width:18px; height:18px; opacity:.75}
-  .pro-quitter:hover{background:var(--surface-2); color:var(--rouge-700)}
-
-  .pro-vue{grid-row:2; min-width:0}
-  /* Les sections de ces pages viennent du site public, ou elles sont centrees
-     dans une colonne de 1180 px. Ici elles vivent a droite du rail : la colonne
-     se cale a gauche et respire moins haut, comme un ecran de logiciel. */
-  .pro-vue .wrap{margin-inline:0; max-width:none; padding-inline:clamp(16px,2.6vw,34px)}
-  .pro-vue .section{padding-block:clamp(22px,2.6vw,32px)}
-  .pro-vue .sous-bandeau{padding-top:clamp(24px,3vw,36px)}
-  .pro-vue .section-titre{font-size:clamp(23px,2.6vw,31px)}
-  .pro-pied{grid-column:2; margin:0; padding:20px clamp(16px,2.6vw,34px) 28px;
-    font-size:12.5px; color:var(--texte-4)}
-  .pro-pied a{color:var(--texte-2); font-weight:700}
-
-  @media (max-width:900px){
-    .pro{grid-template-columns:minmax(0,1fr); background:var(--fond)}
-    .pro-tete{min-height:56px}
-    .pro-marque-mot{display:none}
-    .pro-salle{margin-left:4px}
-    /* La grille n'a plus qu'une colonne : chaque bloc reprend sa place dans
-       l'ordre du document. Sans remettre `grid-row` a auto, la vue restait sur
-       la ligne 2 et la bande de navigation tombait en bas de page. */
-    .pro-tete, .pro-rail, .pro-vue, .pro-pied{grid-row:auto}
-    .pro-rail{position:sticky; top:56px; min-height:0; max-height:none;
-      flex-direction:row; align-items:center; gap:6px; overflow-x:auto;
-      padding:8px clamp(12px,3vw,16px);
-      border-right:0; border-bottom:1px solid var(--bord);
-      scrollbar-width:none}
-    .pro-rail::-webkit-scrollbar{display:none}
-    .pro-liens{grid-auto-flow:column; gap:6px}
-    /* en bande, le titre du groupe ne tient pas : le filet vertical suffit */
-    .pro-equipe{margin:0; padding:0 0 0 6px; border-top:0; border-left:1px solid var(--bord)}
-    .pro-groupe{display:none}
-    .pro-liens a{padding:8px 13px; border-radius:999px; white-space:nowrap;
-      background:var(--surface-2)}
-    .pro-liens a[aria-current="page"]{box-shadow:none; background:var(--rouge-600);
-      color:#fff}
-    .pro-liens a[aria-current="page"] svg{opacity:1}
-    .pro-liens a svg{width:16px; height:16px}
-    .pro-pastille{background:var(--texte)}
-    .pro-liens a[aria-current="page"] .pro-pastille{background:#fff; color:var(--rouge-700)}
-    /* au telephone le rappel du palier quitte le rail -- l'espace club le porte
-       deja en grand. La deconnexion reste, en derniere pastille : c'est le seul
-       endroit d'ou elle est atteignable. */
-    .pro-palier{display:none}
-    .pro-quitter{width:auto; flex-shrink:0; padding:8px 13px; border-radius:999px;
-      background:var(--surface-2); white-space:nowrap}
-    .pro-quitter span{display:none}
-    .pro-pied{grid-column:1}
-  }
   /* ---------- la fenetre de creation de l'espace club ---------- */
   /* Posee sur toutes les pages : partout sauf le bandeau, « Referencer ma salle »
      ouvre cette fenetre au lieu d'aller a la page de vente. Les styles de champ
@@ -1198,174 +1075,246 @@
 <path id="mcc-mot-mon" fill-rule="evenodd" d="M656.2 827.7L683.6 722.3L726.8 722.4L746.6 767.1L791.3 722.4L836.2 722.4L809.3 828.0L772.0 828.0L770.7 827.0L786.5 769.3L745.0 811.5L730.0 811.5L727.6 809.0L709.5 769.1L694.6 827.8L656.2 827.7ZM973.5 734.1L976.4 741.8L976.2 751.4L963.9 801.9L957.7 814.0L947.9 822.1L936.3 826.4L924.2 828.2L858.7 828.2L843.8 824.7L834.9 816.9L831.7 807.2L831.9 797.9L843.1 751.9L848.9 739.4L858.1 730.6L868.0 725.5L881.0 722.2L949.7 722.2L961.4 724.9L968.2 728.5L973.5 734.1ZM1126.6 722.5L1099.0 828.0L1056.5 828.0L1024.6 768.5L1009.9 828.0L971.2 828.0L998.7 722.5L1041.4 722.4L1072.8 781.1L1088.8 722.4L1126.6 722.5ZM1291.6 722.1L1283.8 752.6L1219.1 752.7L1213.0 753.7L1208.2 756.8L1205.6 760.8L1198.6 788.9L1198.6 794.2L1202.4 797.2L1273.4 797.1L1265.7 827.5L1182.2 827.5L1169.1 823.7L1161.1 817.6L1157.6 810.0C1157.0 807.9 1157.0 807.8 1157.0 805.0L1158.0 792.9L1169.3 749.9L1175.4 738.3L1182.0 731.6L1191.4 726.3L1206.2 722.2L1291.6 722.1ZM1376.1 827.4L1278.1 827.4L1305.8 722.2L1343.9 722.3L1324.1 797.4L1383.5 797.4L1376.1 827.4ZM1534.6 722.2L1513.3 804.7L1509.3 812.3L1502.1 819.4L1492.0 824.5L1479.0 827.4L1423.7 827.4L1409.0 824.9L1400.1 820.5L1395.6 815.7L1392.3 807.9L1392.7 794.8L1411.6 722.2L1450.1 722.3L1432.7 790.3L1434.8 796.3L1439.1 797.6L1469.0 797.6C1474.7 797.3 1471.6 797.2 1473.0 796.2L1477.4 791.8L1495.2 722.2L1534.6 722.2ZM1521.4 827.5L1549.0 722.2L1634.2 722.2L1647.2 725.6L1655.5 732.2L1658.1 741.9L1655.4 753.9L1649.1 763.4L1639.2 770.0L1648.7 775.9L1652.3 781.9L1653.6 788.3L1652.5 798.0L1648.6 808.7L1640.6 818.2L1628.3 824.5L1613.4 827.5L1521.4 827.5ZM1574.9 761.7L1611.2 761.7L1615.7 759.0L1617.6 753.0L1614.1 749.4L1578.4 749.2L1574.9 761.7ZM934.3 756.0L932.0 753.7C930.9 753.1 935.1 752.9 928.0 752.7L889.5 752.7L883.5 754.9L879.8 759.8L873.0 787.0L872.4 792.0L873.9 796.0L878.0 798.3C879.3 798.7 875.4 798.4 882.0 798.4L917.9 798.4L923.1 796.4L926.1 793.0L928.4 787.0L934.6 761.8L934.3 756.0ZM1565.1 800.3L1607.7 800.0L1611.8 796.1L1612.8 788.7L1607.9 785.7L1570.0 785.7L1568.5 787.0L1565.1 800.3Z"/>
 <path id="mcc-mot-combat" fill-rule="evenodd" d="M1832.0 722.1L1831.3 729.0L1825.3 752.3L1755.1 752.3L1748.1 754.2L1743.5 758.4L1741.3 765.0L1735.2 789.9L1736.5 795.0L1739.0 796.9L1813.7 797.4L1805.6 827.4L1718.8 827.4L1704.4 823.6L1697.5 817.8L1693.5 807.2L1694.4 796.6L1705.9 750.9L1711.6 739.3L1718.3 731.4L1730.1 725.2L1748.3 722.0L1832.0 722.1ZM1830.7 816.8L1827.5 809.8L1827.5 798.3L1840.1 749.2L1847.5 736.2L1858.0 728.1L1869.4 723.8L1881.5 722.2L1948.1 722.3L1960.9 725.2L1968.8 730.5L1973.2 737.2L1974.2 744.7L1973.2 753.6L1960.5 802.4L1955.0 812.8L1945.7 820.8L1935.5 825.0L1923.8 827.4L1853.1 827.4L1838.1 823.5L1830.7 816.8ZM2149.6 722.2L2146.4 737.2L2122.0 827.4L2087.0 827.4L2084.0 826.2L2099.7 769.0L2057.7 811.5L2048.8 811.8L2038.8 811.4L2021.7 768.7L2005.6 827.5L1968.3 827.5L1996.7 722.5L2039.1 722.5L2058.5 768.3L2104.5 722.3L2149.6 722.2ZM2138.5 827.4L2166.3 725.0L2167.9 722.3L2257.3 722.2L2272.1 725.3L2279.4 731.9L2281.9 741.9L2279.4 752.9L2273.3 761.9L2262.2 769.7L2270.5 774.0L2275.1 780.6L2276.2 788.2L2275.2 798.9L2270.7 809.7L2261.6 819.1L2248.8 824.8L2235.7 827.4L2138.5 827.4ZM2270.4 827.4L2351.0 723.4L2355.0 722.3L2400.3 722.3L2425.9 827.4L2382.6 827.4L2368.6 760.0L2367.0 757.4L2314.4 827.4L2270.4 827.4ZM2539.4 722.3L2537.0 733.9L2532.0 751.7L2503.0 751.8L2500.4 753.0L2480.4 827.5L2442.6 827.5L2463.5 753.0L2462.0 751.8L2428.6 751.7L2437.4 722.2L2539.4 722.3ZM2194.6 761.6L2234.2 761.7L2239.1 758.1L2239.7 752.0L2237.0 749.4L2233.0 748.8L2198.2 748.6L2194.6 761.6ZM1869.6 794.9L1873.0 797.6C1874.2 798.1 1870.2 797.9 1877.0 798.0L1913.6 798.0L1919.4 796.8L1924.3 790.5L1931.9 761.0L1931.2 754.8L1927.2 752.3L1921.4 752.0L1886.9 752.0L1881.0 754.3L1877.5 758.1L1875.7 763.8L1869.1 789.0L1869.6 794.9ZM2184.4 799.0L2187.0 800.0L2229.2 799.8L2233.9 796.3L2234.6 789.0L2233.0 786.8L2229.0 785.4L2187.7 785.3L2184.4 799.0ZM2328.4 827.4L2350.6 797.9L2361.8 797.8L2369.5 827.3L2328.4 827.4Z"/>
 </defs></svg>
-<a class="skip" href="#mc-form">Aller à mes informations</a>
-
-<!-- La coque de l'espace pro.
-
-     Amaury, 23/09/2026 : « c'est comme si c'etait un peu deux sites differents.
-     Donc tu as le site B2C et le site B2B (...) ca doit etre comme un logiciel,
-     avec sur le cote : l'espace club, modifie ma fiche, mon compte, back-office
-     (...) il peut naviguer entre les differents espaces comme ca. »
-
-     Les pages restent quatre pages -- le site est statique, et un panneau qui se
-     charge tout seul ne se verrait pas plus vite -- mais elles partagent la meme
-     coque : le meme rail a gauche, la meme tete, la meme place pour le contenu.
-     Le bandeau public (Clubs, Disciplines, Pro) et le pied de page a liens de
-     villes n'y sont plus : ils s'adressent aux pratiquants, pas aux gerants.
-
-     Ce qui est ecrit ici est un squelette : le nom de la salle, la ligne du
-     back-office, le lien vers la fiche en ligne et la pastille des demandes sont
-     poses par _pro.js, une fois la session lue. -->
-<div class="pro">
-  <header class="pro-tete">
-    <a class="pro-marque" href="espace-club.html" aria-label="Espace pro, accueil">
-      <svg viewBox="212 589 389 369" width="30" height="28" role="img" aria-label="Mon Club Combat">
+<header class="site-header">
+  <div class="wrap header-in">
+    <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
+      <svg viewBox="212 589 389 369" width="38" height="36" role="img" aria-label="Mon Club Combat">
         <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
       </svg>
-      <span class="pro-marque-mot">Espace pro</span>
+      <svg class="brand-mot" viewBox="657 722 1883 107" width="194" height="11" aria-hidden="true">
+        <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
+      </svg>
     </a>
-    <p class="pro-salle" id="pro-salle"></p>
-    <a class="pro-sortir" href="index.html" id="pro-voir" hidden>Voir ma fiche en ligne</a>
-  </header>
-
-  <nav class="pro-rail" id="pro-rail" aria-label="Votre espace">
-    <ul class="pro-liens">
-      <li><a href="espace-club.html" data-page="espace-club"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.4" y="3.4" width="7.4" height="7.4" rx="1.6"/><rect x="13.2" y="3.4" width="7.4" height="7.4" rx="1.6"/><rect x="3.4" y="13.2" width="7.4" height="7.4" rx="1.6"/><rect x="13.2" y="13.2" width="7.4" height="7.4" rx="1.6"/></svg><span>Espace club</span>
-        <b class="pro-pastille" id="pro-pastille" hidden></b></a></li>
-      <li><a href="referencer.html" data-page="referencer"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.8H6.6A1.8 1.8 0 0 0 4.8 4.6v14.8a1.8 1.8 0 0 0 1.8 1.8h10.8a1.8 1.8 0 0 0 1.8-1.8V7.6Z"/><path d="M14 2.8v4.8h5.2"/><path d="M8.4 12.6h7.2M8.4 16.6h7.2"/></svg><span>Ma fiche</span></a></li>
-      <li><a href="mon-compte.html" data-page="mon-compte"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.4a7.2 7.2 0 0 1 14.4 0"/></svg><span>Mon compte</span></a></li>
-    </ul>
-
-    <!-- Le back-office n'appartient pas au gerant : c'est l'outil de l'equipe Mon
-         Club Combat, qui verifie et publie les fiches de TOUS les clubs. Un
-         gerant ordinaire ne le voit jamais. Il se detache donc du rail sous son
-         propre titre, pour qu'on ne le lise pas comme un espace de plus. -->
-    <div class="pro-equipe" id="pro-admin" hidden>
-      <p class="pro-groupe">Équipe Mon Club Combat</p>
-      <ul class="pro-liens">
-        <li><a href="admin.html" data-page="admin"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7.2h10M18 7.2h2M4 16.8h2M10 16.8h10"/><circle cx="16" cy="7.2" r="2.2"/><circle cx="8" cy="16.8" r="2.2"/></svg><span>Back-office</span></a></li>
-      </ul>
-    </div>
-
-    <!-- Le rappel du palier, au pied du rail : il suit le gerant de page en page
-         sans jamais couper ce qu'il est en train de faire. -->
-    <div class="pro-palier" id="pro-palier" hidden>
-      <p class="pro-palier-t" id="pro-palier-t">Fiche gratuite</p>
-      <p class="pro-palier-m" id="pro-palier-m"></p>
-      <a class="btn btn-rouge btn-mini" href="espace-club.html#esp-verrou-bloc"
-         id="pro-palier-a">Passer au Pro</a>
-    </div>
-
-    <button type="button" class="pro-quitter" id="pro-quitter"
-      aria-label="Se déconnecter"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.6 20.4H5.8A1.8 1.8 0 0 1 4 18.6V5.4a1.8 1.8 0 0 1 1.8-1.8h3.8"/><path d="M15.2 16.4 19.6 12l-4.4-4.4"/><path d="M19.6 12H9.6"/></svg><span>Se déconnecter</span></button>
-  </nav>
-
-  <div class="pro-vue">
-
-
-<main id="contenu">
-  <section class="section sous-bandeau">
-    <div class="wrap">
-      <div class="fil">
-        <p class="eyebrow">Mon compte</p>
-        <h1 class="fil-titre display">Mon compte</h1>
-        <!-- Ce que le gerant vient y faire : corriger ce qui le concerne, retrouver
-             sa salle, changer son mot de passe, partir. Rien d'autre. -->
-        <p class="fil-mot">Vos informations, votre salle et votre mot de passe. Tout ce
-          que vous écrivez ici est enregistré sur votre compte.</p>
-      </div>
-    </div>
-
-    <div class="wrap grille-form">
-      <div class="mc-colonne">
-        <!-- tant que la session n'est pas lue, on n'affiche aucun champ : un
-             formulaire vide qui se remplit ensuite se lit comme un bug -->
-        <p class="form-etat" id="mc-charge">Chargement…</p>
-        <p class="form-erreur" id="mc-erreur" hidden role="alert"></p>
-
-        <form class="carte-form" id="mc-form" hidden novalidate>
-          <div class="bloc">
-            <h2 class="bloc-titre">Vous</h2>
-            <div class="champs">
-              <div class="champ">
-                <label for="mc-nom">Votre nom</label>
-                <input id="mc-nom" name="nom" autocomplete="name" placeholder="Karim Bentaleb">
-              </div>
-              <div class="champ">
-                <label for="mc-tel">Votre téléphone <span class="opt">(facultatif)</span></label>
-                <input id="mc-tel" name="tel" type="tel" autocomplete="tel" placeholder="06 12 34 56 78">
-                <span class="champ-aide">Pour que nous puissions vous joindre. Il n'est
-                  jamais affiché sur votre fiche.</span>
-              </div>
-              <div class="champ large">
-                <label for="mc-fonction">Votre rôle dans la salle <span class="opt">(facultatif)</span></label>
-                <input id="mc-fonction" name="fonction" placeholder="Gérant, coach, président de l'association…">
-              </div>
-              <div class="champ large">
-                <label for="mc-mail">Votre e-mail de connexion</label>
-                <input id="mc-mail" name="mail" type="email" readonly>
-                <span class="champ-aide">C'est avec cette adresse que vous vous connectez.
-                  Écrivez-nous pour la changer.</span>
-              </div>
-            </div>
-            <div class="form-pied">
-              <button class="btn btn-rouge" type="submit" id="mc-envoi">Enregistrer</button>
-              <p class="form-note" id="mc-fait" hidden>Enregistré.</p>
-            </div>
+    <nav class="site-nav" aria-label="Navigation principale">
+      <div class="nav-item">
+        <a class="nav-link" href="recherche.html" aria-haspopup="true">Clubs <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Clubs">
+          <div class="nav-col">
+            <p class="nav-col-t">Par ville</p>
+            <ul class="nav-2col"><li><a href="sports-de-combat-aix-en-provence.html">Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Grenoble</a></li><li><a href="sports-de-combat-lille.html">Lille</a></li><li><a href="sports-de-combat-lyon.html">Lyon</a></li><li><a href="sports-de-combat-marseille.html">Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Nantes</a></li><li><a href="sports-de-combat-nice.html">Nice</a></li><li><a href="sports-de-combat-paris.html">Paris</a></li><li><a href="sports-de-combat-rennes.html">Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Toulouse</a></li></ul>
           </div>
-        </form>
-
-        <form class="carte-form mc-suite" id="mc-mdp-form" hidden novalidate>
-          <div class="bloc">
-            <h2 class="bloc-titre">Mot de passe</h2>
-            <div class="champs">
-              <div class="champ">
-                <label for="mc-mdp">Nouveau mot de passe</label>
-                <input id="mc-mdp" type="password" minlength="8" autocomplete="new-password">
-                <span class="champ-aide">Huit caractères au minimum.</span>
-              </div>
-              <div class="champ">
-                <label for="mc-mdp2">Répétez-le</label>
-                <input id="mc-mdp2" type="password" minlength="8" autocomplete="new-password">
-              </div>
-            </div>
-            <p class="fen-erreur" id="mc-mdp-err" hidden role="alert"></p>
-            <div class="form-pied">
-              <button class="btn btn-ligne" type="submit" id="mc-mdp-envoi">Changer mon mot de passe</button>
-              <p class="form-note" id="mc-mdp-fait" hidden>Votre mot de passe est changé.</p>
-            </div>
-          </div>
-        </form>
-
-        <div class="carte-form mc-suite" id="mc-sortie-bloc" hidden>
-          <div class="bloc">
-            <h2 class="bloc-titre">Cette session</h2>
-            <p class="mc-ligne" id="mc-depuis"></p>
-            <div class="form-pied">
-              <button class="btn btn-ligne" type="button" id="mc-sortie">Se déconnecter</button>
-            </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Parcourir</p>
+            <ul>
+              <li><a href="recherche.html">Toutes les salles</a></li>
+              <li><a href="index.html#villes">Toutes les villes</a></li>
+              <li><a href="index.html#salles">Les salles à découvrir</a></li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <!-- Le rappel de la salle, meme en gratuit : un compte qui ne montre rien de
-           ce qu'on a rempli ne ressemble pas a un compte. -->
-      <aside class="panneau" id="mc-panneau" hidden>
-        <p class="eyebrow">Ma salle</p>
-        <h2 id="mc-club">Votre salle</h2>
-        <p class="esp-etat" id="mc-etat" hidden><span id="mc-statut"></span></p>
-        <ul class="mc-faits" id="mc-faits"></ul>
-        <div class="esp-actions" id="mc-liens"></div>
-        <p class="pro-note" id="mc-offre" hidden></p>
-      </aside>
+      <div class="nav-item">
+        <a class="nav-link" href="index.html#disciplines" aria-haspopup="true">Disciplines <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu" aria-label="Disciplines">
+          <div class="nav-col">
+            <p class="nav-col-t">Les plus pratiquées</p>
+            <ul><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li></ul>
+          </div>
+          <div class="nav-col">
+            <p class="nav-col-t">Autres disciplines</p>
+            <ul><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li><li><a href="lutte.html">Lutte</a></li><li><a href="self-defense.html">Self-défense</a></li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <a class="nav-link" href="clubs.html#pro" aria-haspopup="true">Pro <svg class="nav-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+        <div class="nav-menu nav-menu-1" aria-label="Pro">
+          <div class="nav-col">
+            <ul>
+              <li><a href="clubs.html#pro">Accès pro</a></li>
+              <li><a href="clubs.html">Référencer ma salle</a></li>
+              <li><a href="index.html#acquisition">Acquisition</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <a class="btn btn-rouge" href="clubs.html"><span class="l-long">Référencer ma salle</span><span class="l-court">Référencer</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+  <section class="section sous-bandeau">
+    <div class="wrap legal">
+      <div class="fil">
+        <p class="eyebrow">Informations légales</p>
+        <h1 class="fil-titre display">Politique de confidentialité</h1>
+        <p class="fil-mot">Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de
+          temps. En vigueur au 24 septembre 2026.</p>
+      </div>
+
+      <h2 id="responsable">Qui est responsable de vos données</h2>
+      <p>Le responsable du traitement est l'éditeur de Mon Club Combat, présenté dans les
+        <a href="conditions.html#editeur">conditions d'utilisation</a>. Pour toute question sur
+        vos données, écrivez à <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a>.</p>
+
+      <h2 id="collecte">Ce que nous enregistrons</h2>
+      <h3>Si vous cherchez une salle</h3>
+      <p>Chercher une salle ne demande aucun compte et n'enregistre rien sur vous. Quand vous
+        ouvrez la fiche d'une salle, nous ajoutons une unité au nombre de vues de cette fiche pour
+        la journée. Ce compteur ne contient ni votre adresse IP, ni votre identité : c'est un
+        chiffre par salle et par jour, que la salle voit dans son espace.</p>
+
+      <h3>Si vous demandez une séance d'essai</h3>
+      <p>Le formulaire enregistre votre nom, votre e-mail, votre téléphone si vous le donnez,
+        la discipline ou le cours choisi, le moment qui vous arrange et le mot que vous laissez.
+        Ces informations sont transmises <b>à cette salle seulement</b>, pour qu'elle vous
+        réponde. Nous ne les vendons pas et ne les utilisons pas pour vous envoyer de publicité.</p>
+
+      <h3>Si vous gérez un club</h3>
+      <p>Votre compte enregistre votre e-mail, et votre mot de passe sous une forme chiffrée que
+        personne ne peut relire. Si vous vous connectez avec Google, Google nous transmet votre
+        nom et votre adresse e-mail, rien d'autre. Dans « Mon compte », vous pouvez ajouter votre
+        nom, votre téléphone et votre rôle au club.</p>
+      <p>La fiche de votre salle (nom, adresse, présentation, disciplines, horaires, cours,
+        photos, coordonnées) est faite pour être publiée : elle est visible de tous une fois que
+        nous l'avons vérifiée. Vos coordonnées personnelles de compte, elles, ne sont jamais
+        affichées.</p>
+
+      <h2 id="pourquoi">Pourquoi, et sur quelle base</h2>
+      <ul>
+        <li><b>Faire marcher le service</b> que vous demandez : publier une fiche, transmettre une
+          demande d'essai, vous connecter. C'est l'exécution du service que vous utilisez.</li>
+        <li><b>Vous écrire au sujet de votre compte</b> : confirmation d'adresse, mot de passe
+          oublié, nouvelle demande d'essai reçue. Même base.</li>
+        <li><b>Protéger le service</b> : vérifier chaque fiche avant publication, empêcher qu'un
+          compte prenne la main sur la salle d'un autre. C'est notre intérêt légitime.</li>
+      </ul>
+
+      <h2 id="acces">Qui y a accès</h2>
+      <p>Chaque salle ne voit que ses propres demandes et ses propres chiffres. L'équipe de Mon
+        Club Combat y a accès pour vérifier les fiches et aider les clubs. Nous nous appuyons sur
+        des prestataires techniques, qui traitent les données pour notre compte seulement :</p>
+      <ul>
+        <li><b>Supabase</b> : la base de données et les comptes ;</li>
+        <li><b>Vercel</b> : l'hébergement du site ;</li>
+        <li><b>Resend</b> : l'envoi des e-mails, depuis l'Union européenne ;</li>
+        <li><b>Google</b> : la connexion avec un compte Google, si vous la choisissez, et les
+          polices de caractères du site ;</li>
+        <li><b>jsDelivr</b> : la distribution d'une bibliothèque de code utilisée par le site.</li>
+      </ul>
+      <p>Certains sont établis aux États-Unis. Ces transferts sont encadrés par les clauses
+        contractuelles types de la Commission européenne ou par le cadre de protection des données
+        UE–États-Unis.</p>
+
+      <h2 id="duree">Combien de temps</h2>
+      <ul>
+        <li>Un compte et la fiche de sa salle : tant que le compte existe. Supprimé à votre
+          demande, il disparaît avec la fiche et ses demandes.</li>
+        <li>Une demande de séance d'essai : trois ans après son envoi, puis elle est effacée.</li>
+        <li>Les compteurs de vues : ce ne sont pas des données personnelles, ils sont gardés
+          pour les statistiques de la salle.</li>
+      </ul>
+
+      <h2 id="traceurs">Cookies et stockage dans le navigateur</h2>
+      <p>Le site ne pose <b>aucun cookie publicitaire ni de mesure d'audience</b>, et ne vous
+        suit pas d'un site à l'autre. Il garde seulement dans votre navigateur :</p>
+      <ul>
+        <li>votre session, si vous êtes connecté, pour ne pas vous redemander votre mot de passe
+          à chaque page ;</li>
+        <li>une marque indiquant que vous avez déjà vu une fiche aujourd'hui, pour ne la compter
+          qu'une fois.</li>
+      </ul>
+      <p>Ces éléments sont nécessaires au fonctionnement du site et ne demandent donc pas votre
+        accord. Vous pouvez les effacer à tout moment depuis les réglages de votre navigateur.</p>
+
+      <h2 id="droits">Vos droits</h2>
+      <p>Vous pouvez accéder à vos données, les corriger, les faire effacer, en demander une
+        copie, vous opposer à leur utilisation ou la faire limiter. Écrivez à
+        <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a> : nous répondons
+        sous un mois. Une grande partie se fait aussi seul, depuis « Mon compte » et la fiche de
+        votre salle.</p>
+      <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez vous adresser à la
+        CNIL, sur <a href="https://www.cnil.fr" rel="noopener">cnil.fr</a>.</p>
+
+      <h2 id="changements">Si cette politique change</h2>
+      <p>La date en haut de cette page indique la dernière version. Si un changement touche à
+        l'usage de vos données, nous prévenons les clubs par e-mail avant qu'il s'applique.</p>
     </div>
   </section>
 </main>
 
-  </div><!-- /.pro-vue -->
-  <p class="pro-pied">Mon Club Combat · <a href="index.html">le site public</a></p>
-</div><!-- /.pro -->
+<footer class="site-footer">
+  <div class="wrap footer-haut">
+    <div class="footer-marque">
+      <a class="brand" href="index.html" aria-label="Mon Club Combat, accueil">
+        <svg viewBox="212 589 389 369" width="36" height="34" role="img" aria-label="Mon Club Combat">
+          <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+        </svg>
+        <svg viewBox="657 722 1883 107" width="184" height="10.5" aria-hidden="true">
+          <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
+        </svg>
+      </a>
+      <p>L'annuaire des salles de sports de combat en France, et les outils qui vont avec pour
+        les clubs qui veulent remplir leurs séances d'essai.</p>
+      <div class="reseaux">
+        <a href="index.html#instagram" aria-label="Mon Club Combat sur Instagram">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="index.html#tiktok" aria-label="Mon Club Combat sur TikTok">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.2 4v10.4a3.6 3.6 0 1 1-3.6-3.6"/><path d="M14.2 4.4c.5 2.4 2.2 4 4.6 4.2"/></svg>
+        </a>
+        <a href="index.html#facebook" aria-label="Mon Club Combat sur Facebook">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.8 21v-7.4h2.6l.4-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.5V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H9.2v3h2.6V21"/></svg>
+        </a>
+      </div>
+    </div>
 
+    <nav class="footer-col" aria-labelledby="f-prat">
+      <h2 id="f-prat">Pratiquants</h2>
+      <ul>
+        <li><a href="index.html#recherche">Rechercher une salle</a></li>
+        <li><a href="index.html#disciplines">Toutes les disciplines</a></li>
+        <li><a href="index.html#villes">Salles par ville</a></li>
+        <li><a href="index.html#seance-essai">Réserver une séance d'essai</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-clubs">
+      <h2 id="f-clubs">Clubs</h2>
+      <ul>
+        <li><a href="clubs.html">Référencer ma salle</a></li>
+        <li><a href="clubs.html#pro">Mon Club Combat Pro</a></li>
+        <li><a href="index.html#acquisition">Acquisition de leads</a></li>
+        <li><a href="espace-club.html">Espace club</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-labelledby="f-fs">
+      <h2 id="f-fs">Mon Club Combat</h2>
+      <ul>
+        <li><a href="index.html#a-propos">À propos</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="index.html#aide">Aide</a></li>
+        <li><a href="index.html#presse">Presse</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="wrap footer-reseau">
+    <section aria-labelledby="f-villes">
+      <h2 id="f-villes">Salles de sports de combat par ville</h2>
+      <ul class="f-liens"><li><a href="sports-de-combat-aix-en-provence.html">Sports de combat à Aix-en-Provence</a></li><li><a href="sports-de-combat-angers.html">Sports de combat à Angers</a></li><li><a href="sports-de-combat-bordeaux.html">Sports de combat à Bordeaux</a></li><li><a href="sports-de-combat-dijon.html">Sports de combat à Dijon</a></li><li><a href="sports-de-combat-grenoble.html">Sports de combat à Grenoble</a></li><li><a href="sports-de-combat-lille.html">Sports de combat à Lille</a></li><li><a href="sports-de-combat-lyon.html">Sports de combat à Lyon</a></li><li><a href="sports-de-combat-marseille.html">Sports de combat à Marseille</a></li><li><a href="sports-de-combat-montpellier.html">Sports de combat à Montpellier</a></li><li><a href="sports-de-combat-nantes.html">Sports de combat à Nantes</a></li><li><a href="sports-de-combat-nice.html">Sports de combat à Nice</a></li><li><a href="sports-de-combat-paris.html">Sports de combat à Paris</a></li><li><a href="sports-de-combat-rennes.html">Sports de combat à Rennes</a></li><li><a href="sports-de-combat-strasbourg.html">Sports de combat à Strasbourg</a></li><li><a href="sports-de-combat-toulon.html">Sports de combat à Toulon</a></li><li><a href="sports-de-combat-toulouse.html">Sports de combat à Toulouse</a></li></ul>
+    </section>
+    <section aria-labelledby="f-disc">
+      <h2 id="f-disc">Salles par discipline</h2>
+      <ul class="f-liens"><li><a href="mma.html">MMA</a></li><li><a href="boxe-anglaise.html">Boxe anglaise</a></li><li><a href="kickboxing.html">Kickboxing</a></li><li><a href="muay-thai.html">Muay Thaï</a></li><li><a href="jiu-jitsu-bresilien.html">Jiu-jitsu brésilien</a></li><li><a href="grappling.html">Grappling</a></li><li><a href="karate.html">Karaté</a></li><li><a href="judo.html">Judo</a></li><li><a href="lutte.html">Lutte</a></li><li><a href="self-defense.html">Self-défense</a></li></ul>
+    </section>
+  </div>
+
+  <div class="wrap footer-bas">
+    <p>© 2026 Mon Club Combat. Tous droits réservés.</p>
+    <nav class="footer-legal" aria-label="Informations légales">
+      <a href="conditions.html#editeur">Mentions légales</a>
+      <a href="conditions.html">Conditions d'utilisation</a>
+      <a href="confidentialite.html">Confidentialité</a>
+      <a href="confidentialite.html#traceurs">Cookies</a>
+    </nav>
+  </div>
+</footer>
 
 <!-- La creation de l'espace club se fait dans une fenetre, pas dans la page : le gerant
      voit ce qu'on lui demande avant de s'engager, et le formulaire de la fiche l'attend
@@ -1746,282 +1695,6 @@
           });
         });
     }).catch(function (){ /* le bandeau reste celui d'un visiteur */ });
-  }
-})();
-</script>
-
-<script>
-/* ---- Mon compte ----
-   Amaury, 23/09/2026 : « je veux que ca cree un vrai compte. Ca ouvre une
-   nouvelle page ou il y a un vrai profil de compte, etc. Genre, l'impression
-   d'un vrai compte, pas que ca ouvre une page fichue sale et qu'apres il ne
-   puisse plus rien faire, plus avoir aucune data. Je veux quand meme que, meme
-   le mec gratuit qui a cree un compte, il y ait un minimum de data, au moins
-   qu'il ait un profil de compte et qu'il soit enregistre quelque part. »
-
-   D'ou cette page : ce que la personne ecrit sur elle-meme va dans la table
-   `profil` (une ligne par compte, que seul son proprietaire lit et ecrit), le
-   rappel de sa salle vient de `club`, et le mot de passe passe par Supabase.
-   Rien n'est decoratif : tout ce qui s'affiche ici sort de la base, et tout ce
-   qu'on y tape y retourne. */
-(function (){
-  var SB = window.MCC;
-  var charge = document.getElementById('mc-charge');
-  var erreur = document.getElementById('mc-erreur');
-
-  function dit(m){ charge.textContent = m; charge.hidden = false; }
-  function rate(m){ charge.hidden = true; erreur.textContent = m; erreur.hidden = false; }
-
-  if (!SB || !SB.prete()) {
-    rate('Cette page a besoin d’une connexion au serveur, qui n’est pas disponible ici. ' +
-         'Ouvrez le site en ligne pour y accéder.');
-    return;
-  }
-
-  var ech = function (t){
-    return String(t == null ? '' : t)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  };
-  var MOT = {
-    brouillon:  'Brouillon',
-    en_attente: 'En vérification',
-    publie:     'En ligne',
-    refuse:     'À corriger',
-    suspendu:   'Suspendue'
-  };
-  function leJour(t){
-    if (!t) return '';
-    return new Date(t).toLocaleDateString('fr-FR',
-      { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
-  var moi = null;
-
-  SB.session().then(function (s){
-    if (!s) {
-      SB.exigeCompte();
-      dit('Connectez-vous pour voir votre compte.');
-      return null;
-    }
-    moi = s.user || null;
-    return Promise.all([SB.monProfil(), SB.monClub()]);
-  }).then(function (r){
-    if (!r) return;
-    charge.hidden = true;
-    remplit(r[0] || {}, r[1]);
-  }).catch(function (e){ rate(SB.dire(e)); });
-
-  /* ---------- l'affichage ---------- */
-  function remplit(profil, club){
-    document.getElementById('mc-form').hidden = false;
-    document.getElementById('mc-mdp-form').hidden = false;
-    document.getElementById('mc-sortie-bloc').hidden = false;
-
-    document.getElementById('mc-nom').value      = profil.nom || '';
-    document.getElementById('mc-tel').value      = profil.tel || '';
-    document.getElementById('mc-fonction').value = profil.fonction || '';
-    document.getElementById('mc-mail').value     = (moi && moi.email) || '';
-
-    var depuis = document.getElementById('mc-depuis');
-    var ne = leJour(moi && moi.created_at);
-    depuis.textContent = ne
-      ? 'Vous êtes connecté avec ' + (moi.email || 'ce compte') + ', créé le ' + ne + '.'
-      : 'Vous êtes connecté avec ' + ((moi && moi.email) || 'ce compte') + '.';
-
-    panneau(club);
-  }
-
-  function panneau(club){
-    var p = document.getElementById('mc-panneau');
-    p.hidden = false;
-    var faits = document.getElementById('mc-faits');
-    var liens = document.getElementById('mc-liens');
-    var offre = document.getElementById('mc-offre');
-
-    if (!club) {
-      /* Un compte sans salle n'est pas une erreur : c'est quelqu'un qui s'est
-         inscrit et n'a pas fini. On lui dit ou reprendre. */
-      document.getElementById('mc-club').textContent = 'Pas encore de salle';
-      faits.innerHTML = '<li>Votre compte existe, votre fiche reste à remplir.</li>';
-      liens.innerHTML = '<a class="btn btn-rouge" href="referencer.html">Créer la fiche de ma salle</a>';
-      return;
-    }
-
-    document.getElementById('mc-club').textContent = club.nom || 'Votre salle';
-    var pastille = document.getElementById('mc-etat');
-    document.getElementById('mc-statut').textContent = MOT[club.statut] || '—';
-    pastille.className = 'esp-etat esp-' + club.statut;
-    pastille.hidden = false;
-
-    var l = [];
-    if (club.ville) l.push('À ' + club.ville);
-    var d = club.disciplines || [];
-    if (d.length) l.push(d.length === 1 ? d[0] : d.length + ' disciplines');
-    var ph = club.photos || [];
-    l.push(ph.length ? (ph.length === 1 ? 'Une photo' : ph.length + ' photos') : 'Aucune photo');
-    var co = club.cours || [];
-    l.push(co.length ? (co.length === 1 ? 'Un cours au planning' : co.length + ' cours au planning')
-                     : 'Planning à remplir');
-    if (club.cree_le) l.push('Fiche créée le ' + leJour(club.cree_le));
-    faits.innerHTML = l.map(function (x){ return '<li>' + ech(x) + '</li>'; }).join('');
-
-    var boutons = ['<a class="btn btn-rouge" href="espace-club.html">Mon espace club</a>',
-                   '<a class="btn btn-ligne" href="referencer.html">Modifier ma fiche</a>'];
-    if (club.statut === 'publie' && club.slug)
-      boutons.push('<a class="btn btn-ligne" href="salle.html?s=' +
-        encodeURIComponent(club.slug) + '">Voir ma fiche en ligne</a>');
-    liens.innerHTML = boutons.join('');
-
-    offre.hidden = false;
-    offre.innerHTML = (club.offre === 'pro')
-      ? '<b>Mon Club Combat Pro</b><span>Votre fiche est mise en avant, vos coordonnées ' +
-        'sont visibles et vous recevez les réservations de séance d’essai.</span>'
-      : '<b>Formule gratuite</b><span>Votre fiche est visible, mais elle ne montre ni votre ' +
-        'téléphone ni votre e-mail et ne prend pas de réservation. ' +
-        '<a href="clubs.html#pro">Voir ce que le Pro ajoute</a>.</span>';
-  }
-
-  /* ---------- enregistrer le profil ---------- */
-  document.getElementById('mc-form').addEventListener('submit', function (e){
-    e.preventDefault();
-    erreur.hidden = true;
-    var bouton = document.getElementById('mc-envoi');
-    var fait = document.getElementById('mc-fait');
-    fait.hidden = true;
-    bouton.disabled = true;
-    bouton.textContent = 'Enregistrement…';
-    SB.poseProfil({
-      nom:      document.getElementById('mc-nom').value.trim() || null,
-      tel:      document.getElementById('mc-tel').value.trim() || null,
-      fonction: document.getElementById('mc-fonction').value.trim() || null
-    }).then(function (ligne){
-      bouton.disabled = false;
-      bouton.textContent = 'Enregistrer';
-      /* on reaffiche ce que la base a garde, pas ce qui a ete tape */
-      document.getElementById('mc-nom').value      = ligne.nom || '';
-      document.getElementById('mc-tel').value      = ligne.tel || '';
-      document.getElementById('mc-fonction').value = ligne.fonction || '';
-      fait.hidden = false;
-    }).catch(function (err){
-      bouton.disabled = false;
-      bouton.textContent = 'Enregistrer';
-      rate(SB.dire(err));
-    });
-  });
-
-  /* ---------- changer le mot de passe ----------
-     Il n'y a pas d'e-mail a envoyer ici : la session est deja ouverte, donc
-     Supabase accepte le changement directement. C'est le seul chemin qui marche
-     tant que nous n'avons pas d'expediteur d'e-mails a nous. */
-  var mdpForm = document.getElementById('mc-mdp-form');
-  mdpForm.addEventListener('submit', function (e){
-    e.preventDefault();
-    var err = document.getElementById('mc-mdp-err');
-    var fait = document.getElementById('mc-mdp-fait');
-    var bouton = document.getElementById('mc-mdp-envoi');
-    var a = document.getElementById('mc-mdp').value;
-    var b = document.getElementById('mc-mdp2').value;
-    fait.hidden = true;
-    function dis(m){ err.textContent = m; err.hidden = !m; }
-    if (a.length < 8) { dis('Huit caractères au minimum.'); document.getElementById('mc-mdp').focus(); return; }
-    if (a !== b) { dis('Les deux mots de passe ne sont pas les mêmes.'); document.getElementById('mc-mdp2').focus(); return; }
-    dis('');
-    bouton.disabled = true;
-    bouton.textContent = 'Un instant…';
-    SB.client.auth.updateUser({ password: a }).then(function (r){
-      bouton.disabled = false;
-      bouton.textContent = 'Changer mon mot de passe';
-      if (r.error) { dis(SB.dire(r.error)); return; }
-      document.getElementById('mc-mdp').value = '';
-      document.getElementById('mc-mdp2').value = '';
-      fait.hidden = false;
-    }).catch(function (e2){
-      bouton.disabled = false;
-      bouton.textContent = 'Changer mon mot de passe';
-      dis(SB.dire(e2));
-    });
-  });
-
-  /* ---------- se deconnecter ---------- */
-  document.getElementById('mc-sortie').addEventListener('click', function (){
-    var b = document.getElementById('mc-sortie');
-    b.disabled = true;
-    b.textContent = 'Déconnexion…';
-    SB.deconnexion().then(function (){ location.href = 'index.html'; });
-  });
-})();
-</script>
-
-<script>
-/* ---- le rail de l'espace pro ----
-   Il porte ce qui ne change pas d'une page a l'autre : ou on est, le nom de la
-   salle, la pastille des demandes en attente, le back-office pour l'equipe, le
-   rappel du palier et la deconnexion.
-
-   Il se remplit apres la session, donc apres coup : le squelette est deja a
-   l'ecran et ne clignote pas. Sans serveur (la maquette en Artifact), il reste
-   tel quel plutot que de disparaitre -- c'est une coque, pas une information. */
-(function (){
-  var rail = document.getElementById('pro-rail');
-  if (!rail) return;
-
-  /* La page ouverte, tiree du nom du fichier : le rail est le meme partout, donc
-     c'est lui qui doit savoir ou il est, pas le build. */
-  var ici = (location.pathname.split('/').pop() || 'espace-club.html')
-    .replace(/\.html$/, '') || 'espace-club';
-  var lien = rail.querySelector('[data-page="' + ici + '"]');
-  if (lien) lien.setAttribute('aria-current', 'page');
-
-  var SB = window.MCC;
-  if (!SB || !SB.prete()) return;
-
-  document.getElementById('pro-quitter').addEventListener('click', function (b){
-    var q = document.getElementById('pro-quitter');
-    q.disabled = true;
-    SB.deconnexion().then(function (){ location.href = 'index.html'; });
-  });
-
-  SB.session().then(function (s){
-    if (!s) return null;
-    return Promise.all([SB.monClub(), SB.estAdmin()]);
-  }).then(function (r){
-    if (!r) return null;
-    var club = r[0], admin = r[1];
-    if (admin) document.getElementById('pro-admin').hidden = false;
-    if (!club) return null;
-
-    document.getElementById('pro-salle').textContent = club.nom || '';
-
-    if (club.statut === 'publie' && club.slug) {
-      var v = document.getElementById('pro-voir');
-      v.href = 'salle.html?s=' + encodeURIComponent(club.slug);
-      v.hidden = false;
-    }
-
-    palier(club);
-    return SB.nouvellesDemandes ? SB.nouvellesDemandes(club.id) : 0;
-  }).then(function (n){
-    if (!n) return;
-    var p = document.getElementById('pro-pastille');
-    p.textContent = n > 9 ? '9+' : n;
-    p.hidden = false;
-    var a = rail.querySelector('[data-page="espace-club"]');
-    if (a) a.setAttribute('aria-label', 'Espace club, ' + n +
-      (n === 1 ? ' nouvelle demande' : ' nouvelles demandes'));
-  }).catch(function (){ /* le rail reste un rail */ });
-
-  /* Le rappel du palier suit le gerant de page en page. Pour un Pro c'est une
-     ligne qui confirme ; pour un gratuit, la porte vers l'abonnement. */
-  function palier(club){
-    var pro = (club.offre || 'gratuit') === 'pro';
-    var bloc = document.getElementById('pro-palier');
-    document.getElementById('pro-palier-t').textContent =
-      pro ? 'Mon Club Combat Pro' : 'Fiche gratuite';
-    document.getElementById('pro-palier-m').textContent = pro
-      ? 'Vos coordonnées sont visibles et vous recevez les réservations.'
-      : 'Vos coordonnées sont masquées et votre fiche ne prend pas de réservation.';
-    document.getElementById('pro-palier-a').hidden = pro;
-    bloc.hidden = false;
   }
 })();
 </script>

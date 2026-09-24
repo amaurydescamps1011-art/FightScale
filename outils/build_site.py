@@ -31,6 +31,10 @@ DESCR = {
    "Choisissez un nouveau mot de passe pour votre espace club."),
  'mon-compte.html': ("Mon compte | Mon Club Combat",
    "Vos informations, votre salle et votre mot de passe."),
+ 'confidentialite.html': ("Politique de confidentialité | Mon Club Combat",
+   "Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps."),
+ 'conditions.html': ("Conditions d'utilisation | Mon Club Combat",
+   "Les règles d'utilisation de Mon Club Combat, pour les pratiquants et les clubs."),
 }
 
 # Pages sans interet pour un moteur : un formulaire ne se lit pas dans un resultat,
