@@ -1559,9 +1559,25 @@
     }).catch(function (){});
   }
 
+  /* Le nom de la salle peut arriver dans le lien (?nom=Fight Club Lille) :
+     l'outil d'envoi de la campagne e-mail le met pour chaque club (Amaury,
+     28/09/2026). On le garde le temps de la visite, et la fenetre l'affiche deja
+     rempli. Rien n'est pose si le gerant a commence a ecrire. */
+  var CLE_NOM = 'mcc_nom_salle';
+  try {
+    var nomLien = new URLSearchParams(location.search).get('nom');
+    if (nomLien && nomLien.trim()) sessionStorage.setItem(CLE_NOM, nomLien.trim().slice(0, 120));
+  } catch (e) {}
+  function preremplit(){
+    var champ = document.getElementById('k-nom');
+    var n = lit(CLE_NOM);
+    if (champ && n && !champ.value.trim()) champ.value = n;
+  }
+
   /* ---------- ouverture et fermeture ---------- */
   function ouvre(){
     rendu = document.activeElement;
+    preremplit();
     voile.hidden = false;
     document.body.classList.add('fige');
     (mode === 'creation' ? document.getElementById('k-nom')
@@ -1733,7 +1749,7 @@
     var p = mode === 'creation'
       ? sb.auth.signUp({ email: mail, password: mdp,
           /* le lien de confirmation ramene aussi a Ma fiche */
-          options: { data: { nom_salle: nom }, emailRedirectTo: arrivee } })
+          options: { data: { nom_salle: nom, source: SB.source ? SB.source() : null }, emailRedirectTo: arrivee } })
       : sb.auth.signInWithPassword({ email: mail, password: mdp });
 
     p.then(function (r){

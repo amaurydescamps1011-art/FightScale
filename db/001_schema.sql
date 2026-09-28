@@ -171,11 +171,21 @@ $$ select exists (
 -- security definer : la fonction ecrit les deux lignes hors RLS, donc il n'existe
 -- aucun instant ou le club est cree sans gerant. Elle refuse un compte qui gere
 -- deja un club : un gerant, un club, tant qu'on n'a pas besoin du contraire.
-create or replace function creer_mon_club(nom_salle text)
+-- La source du lien qui a amene le gerant (?src= ou utm_source), gardee par le
+-- navigateur jusqu'a l'inscription : c'est elle qui dit si un club vient de la
+-- campagne e-mail (Amaury, 28/09/2026). Nettoyee ici, jamais affichee en public.
+alter table club add column if not exists source text;
+alter table club drop constraint if exists club_source_courte;
+alter table club add constraint club_source_courte check (source is null or length(source) <= 60);
+
+-- l'ancienne signature a un seul argument ferait doublon avec la nouvelle
+drop function if exists creer_mon_club(text);
+create or replace function creer_mon_club(nom_salle text, source_lien text default null)
   returns uuid
   language plpgsql security definer set search_path = public, auth as
 $$
 declare nouveau uuid;
+declare src text := nullif(left(regexp_replace(lower(coalesce(source_lien, '')), '[^a-z0-9_:.-]', '', 'g'), 60), '');
 begin
   if auth.uid() is null then
     raise exception 'Il faut etre connecte pour creer un club.';
@@ -187,15 +197,15 @@ begin
     raise exception 'Le nom de la salle est obligatoire.';
   end if;
 
-  insert into club (nom, statut) values (trim(nom_salle), 'brouillon')
+  insert into club (nom, statut, source) values (trim(nom_salle), 'brouillon', src)
     returning id into nouveau;
   insert into club_membre (club_id, membre_id) values (nouveau, auth.uid());
   return nouveau;
 end
 $$;
 
-revoke all on function creer_mon_club(text) from public, anon;
-grant execute on function creer_mon_club(text) to authenticated;
+revoke all on function creer_mon_club(text, text) from public, anon;
+grant execute on function creer_mon_club(text, text) to authenticated;
 
 -- -------------------------------------------- les demandes de seance d'essai
 -- La regle metier d'Amaury : un lead n'est compte que si la reservation est

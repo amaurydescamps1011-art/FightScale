@@ -25,6 +25,27 @@ window.MCC = (function (){
 
   function prete(){ return !!client; }
 
+  /* D'ou vient le visiteur. Amaury, 28/09/2026 : savoir quels clubs arrivent
+     par la campagne e-mail. Le lien porte ?src=mail (ou utm_source, et
+     utm_campaign s'il y en a une) ; on le garde dans le navigateur, puisque
+     l'inscription peut venir trois pages plus loin, et c'est la creation du
+     club qui l'enregistre. Premier lien gagnant : un clic plus tard sur le
+     site n'efface pas la campagne. */
+  var CLE_SOURCE = 'mcc_source';
+  (function (){
+    try {
+      var q = new URLSearchParams(location.search);
+      var src = q.get('src') || q.get('utm_source');
+      if (!src || localStorage.getItem(CLE_SOURCE)) return;
+      var camp = q.get('utm_campaign');
+      src = (src + (camp ? ':' + camp : '')).toLowerCase().replace(/[^a-z0-9_:.-]/g, '').slice(0, 60);
+      if (src) localStorage.setItem(CLE_SOURCE, src);
+    } catch (e) {}
+  })();
+  function source(){
+    try { return localStorage.getItem(CLE_SOURCE) || null; } catch (e) { return null; }
+  }
+
   /* La session du navigateur, ou null. Toutes les pages protegees passent par la. */
   function session(){
     if (!client) return Promise.resolve(null);
@@ -57,8 +78,9 @@ window.MCC = (function (){
       return client.auth.getUser().then(function (u){
         var moi = u && u.data && u.data.user;
         if (!moi) return null;
-        var n = nom || (moi.user_metadata && moi.user_metadata.nom_salle) || 'Ma salle';
-        return client.rpc('creer_mon_club', { nom_salle: n }).then(function (r){
+        var meta = moi.user_metadata || {};
+        var n = nom || meta.nom_salle || 'Ma salle';
+        return client.rpc('creer_mon_club', { nom_salle: n, source_lien: meta.source || source() }).then(function (r){
           if (r.error) throw r.error;
           return monClub();
         });
@@ -467,7 +489,7 @@ window.MCC = (function (){
 
   return {
     client: client, prete: prete, session: session, monClub: monClub,
-    assureMonClub: assureMonClub,
+    assureMonClub: assureMonClub, source: source,
     monProfil: monProfil, poseProfil: poseProfil, estAdmin: estAdmin,
     deconnexion: deconnexion,
     dire: dire, exigeCompte: exigeCompte, URL_BASE: URL_BASE,

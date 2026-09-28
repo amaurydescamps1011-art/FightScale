@@ -99,6 +99,8 @@
         '<li>' + ((c.photos || []).length) + ' photo' + ((c.photos || []).length > 1 ? 's' : '') + '</li>' +
         '<li>' + ech(c.tel || c.mail || 'Aucune coordonnée') + '</li>' +
         '<li>' + (c.offre === 'pro' ? 'Abonné Pro' : 'Fiche gratuite') + '</li>' +
+        /* le lien qui a amene le gerant (campagne e-mail, pub...), s'il en portait un */
+        (c.source ? '<li>Venu par « ' + ech(c.source) + ' »</li>' : '') +
       '</ul>' +
       (c.presentation ? '<p class="fiche-mot">' + ech(c.presentation) + '</p>' : '') +
       '<div class="fiche-actions">' +

@@ -57,7 +57,8 @@ insert into auth.users (id, raw_user_meta_data, email) values
   ('11111111-1111-1111-1111-111111111111', '{"full_name":"Alain"}'::jsonb, 'alain@ex.fr'),
   ('22222222-2222-2222-2222-222222222222', '{}'::jsonb, 'gerant-b@ex.fr'),
   ('33333333-3333-3333-3333-333333333333', '{}'::jsonb, null),
-  ('44444444-4444-4444-4444-444444444444', '{}'::jsonb, null);
+  ('44444444-4444-4444-4444-444444444444', '{}'::jsonb, null),
+  ('55555555-5555-5555-5555-555555555555', '{}'::jsonb, null);
 insert into equipe (membre_id) values ('33333333-3333-3333-3333-333333333333');
 insert into club (id, nom, ville, statut, offre, tel, mail, instagram) values
   ('aaaaaaaa-0000-0000-0000-000000000001', 'Club A', 'Marseille', 'en_attente', 'gratuit', '0491000001', 'a@ex.fr', 'club_a'),
@@ -79,6 +80,7 @@ A=11111111-1111-1111-1111-111111111111
 B=22222222-2222-2222-2222-222222222222
 AD=33333333-3333-3333-3333-333333333333
 N=44444444-4444-4444-4444-444444444444
+S=55555555-5555-5555-5555-555555555555
 RATES=0
 ok(){ if [ "$2" = "$3" ]; then echo "  ok     $1"; else echo "  ECHEC  $1 -> [$2] au lieu de [$3]"; RATES=$((RATES+1)); fi; }
 cnx(){ echo "set role authenticated; set request.jwt.claim.sub='$1';"; }
@@ -120,10 +122,14 @@ ok "il n'insere pas un club directement" \
    "$(q "$(cnx $A) insert into club (nom, statut) values ('Direct','publie');" | cut -c1-5)" "ERROR"
 ok "un nouveau compte cree son club" \
    "$(q "$(cnx $N) select creer_mon_club('Ma Nouvelle Salle') is not null;")" "t "
+ok "le club garde la source nettoyee du lien" \
+   "$(q "select source from club where nom='Ma Nouvelle Salle';")" " "
 ok "et en est le gerant" \
    "$(q "$(cnx $N) select count(*) from club_membre where membre_id='$N';")" "1 "
 ok "mais pas un deuxieme" \
    "$(q "$(cnx $N) select creer_mon_club('Une Deuxieme');" | cut -c1-5)" "ERROR"
+ok "la source du lien est nettoyee et bornee" \
+   "$(q "$(cnx $S) select creer_mon_club('Salle Source', 'Mail:Rentree 2026<script>') is not null;" >/dev/null; q "select source from club where nom='Salle Source';")" "mail:rentree2026script "
 ok "un visiteur ne cree pas de club" \
    "$(q "set role anon; select creer_mon_club('Anonyme');" | cut -c1-5)" "ERROR"
 ok "l'equipe publie une fiche" \
@@ -180,7 +186,7 @@ ok "un autre gerant n'y touche pas" \
 # compte et qu'il soit enregistre quelque part »). Il existe des l'inscription,
 # meme sans club, et chacun ne voit que le sien.
 ok "le profil nait avec le compte" \
-   "$(q "select count(*) from profil;")" "4 "
+   "$(q "select count(*) from profil;")" "5 "
 ok "et il porte le nom donne a l'inscription" \
    "$(q "select nom from profil where membre_id='$A';")" "Alain "
 ok "un compte ecrit son profil" \
