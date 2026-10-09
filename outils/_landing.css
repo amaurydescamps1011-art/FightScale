@@ -64,6 +64,7 @@
   .lp-chiffres b{font-family:Anton,Impact,sans-serif; font-weight:400; font-size:clamp(34px,4vw,44px);
     line-height:1; color:var(--rouge-500)}
   .lp-chiffres li > span, .lp-gota-dit > span{font-size:14.5px; line-height:1.4; font-weight:700; color:var(--texte-2)}
+  .lp-chiffres small{display:block; margin-top:3px; font-size:13px; font-weight:600; color:var(--texte-4)}
   .lp-chiffres .lp-gota{flex-direction:row; align-items:center; gap:16px}
   .lp-gota-logo{flex:none; display:grid; place-items:center; width:76px; height:76px; border-radius:14px; background:#000}
   .lp-gota-logo img{width:50px; height:auto}
@@ -130,9 +131,11 @@
     .lp-suite{text-align:left}
   }
   @media (max-width:760px){
-    .lp-chiffres{grid-template-columns:1fr 1fr}
-    .lp-chiffres .lp-gota{grid-column:1 / -1}
-    .lp-chiffres > li{padding:16px}
+    /* une ligne par preuve : le chiffre a gauche, sa phrase a droite */
+    .lp-chiffres{grid-template-columns:1fr; gap:10px}
+    .lp-chiffres > li{flex-direction:row; align-items:center; gap:16px; padding:14px 16px}
+    .lp-chiffres > li > b{flex:none; width:96px; text-align:center; white-space:nowrap; font-size:31px}
+    .lp-chiffres .lp-gota-logo{width:72px; height:72px; margin:0 12px}
   }
   @media (max-width:620px){
     .lp-marque-mot{width:132px}
