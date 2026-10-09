@@ -37,6 +37,9 @@ DESCR = {
    "Les règles d'utilisation de Mon Club Combat, pour les pratiquants et les clubs."),
  'acquisition.html': ("Acquisition de leads | Mon Club Combat",
    "Des publicités pour votre club, payées à la séance d'essai confirmée."),
+ 'agence.html': ("Remplissez votre salle | Mon Club Combat",
+   "Mon Club Combat remplit votre salle de sports de combat : chaque mois, vous savez "
+   "combien de personnes veulent venir essayer vos cours."),
 }
 
 # Pages sans interet pour un moteur : un formulaire ne se lit pas dans un resultat,
@@ -128,7 +131,9 @@ for f in ('carte.js', 'geo.js', 'sb.js'):
 import tuiles, gen_salles
 # La photo de l'agence (Amaury, 24/09/2026 : « on remplace l'image principale
 # de la page agence par celle que je te mets »).
-AGENCE = ['photos/agence-heros.webp', 'photos/agence-heros-700.webp']
+AGENCE = ['photos/agence-heros.webp', 'photos/agence-heros-700.webp',
+          # la page agence.html : le logo de Gota (Amaury, 08/10/2026) et la VSL
+          'photos/gota-logo.webp', 'video/vsl-agence.mp4', 'video/vsl-agence-affiche.webp']
 for rel in tuiles.photos_deposees() + [x for x in gen_salles.photos_exemple() if x] + AGENCE:
     dest = os.path.join(SORTIE, rel)
     os.makedirs(os.path.dirname(dest), exist_ok=True)

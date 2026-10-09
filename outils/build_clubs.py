@@ -27,7 +27,7 @@ import sys, compte
 # compte, et les deux pages legales (Google les exige pour la connexion). Elles partagent en-tete, pied de page et CSS, donc elles ne peuvent pas
 # diverger de l'accueil.
 PAGES = ['clubs', 'referencer', 'espace-club', 'admin', 'motdepasse', 'mon-compte',
-         'confidentialite', 'conditions', 'acquisition']
+         'confidentialite', 'conditions', 'acquisition', 'agence']
 QUI = 'clubs'
 for _p in PAGES:
     if '--' + _p in sys.argv: QUI = _p
@@ -37,7 +37,8 @@ CORPS = {'clubs': '_clubs.body.html', 'referencer': '_referencer.body.html',
          'mon-compte': '_mon_compte.body.html',
          'confidentialite': '_confidentialite.body.html',
          'conditions': '_conditions.body.html',
-         'acquisition': '_acquisition.body.html'}
+         'acquisition': '_acquisition.body.html',
+         'agence': '_landing.body.html'}
 body   = R(CORPS[QUI])
 
 # depuis la page clubs, les liens du menu et du pied de page renvoient a l'accueil
@@ -154,6 +155,32 @@ if QUI == 'acquisition':
     for k, v in AGENCE.items():
         body = body.replace('%%' + k + '%%', v)
 
+# La page de conversion de l'agence (Amaury, 09/10/2026 : « une landing page
+# simple basee sur la conversion ») : son bandeau sans menu et son pied sont
+# dans son corps, un seul but, reserver un appel.
+if QUI == 'agence':
+    header = footer = ''
+    clubc = clubc + R('_agence.css') + R('_landing.css')
+    trait = lambda d, w=16: ('<svg width="%d" height="%d" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+                             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                             % (w, w) + d + '</svg>')
+    # icones Lucide : megaphone, smartphone, calendar-check, bell-ring, shield-check
+    LANDING = {
+        'FLECHE': trait('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 18),
+        'COCHE': trait('<path d="M20 6 9 17l-5-5"/>'),
+        'I_PUB': trait('<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 22),
+        'I_PAGE': trait('<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>', 22),
+        'I_RESA': trait('<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/>'
+                        '<path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>', 22),
+        'I_RAPPEL': trait('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
+                          '<path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/>', 22),
+        'I_BOUCLIER': trait('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1'
+                            'c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'
+                            '<path d="m9 12 2 2 4-4"/>', 26),
+    }
+    for k, v in LANDING.items():
+        body = body.replace('%%' + k + '%%', v)
+
 if QUI in PRO:
     coque = R('_pro.html')
     for k, v in ICONES.items():
@@ -175,7 +202,8 @@ TITRE = {'clubs': 'Référencer ma salle | Mon Club Combat',
          'mon-compte': 'Mon compte | Mon Club Combat',
          'confidentialite': 'Politique de confidentialité | Mon Club Combat',
          'conditions': "Conditions d'utilisation | Mon Club Combat",
-         'acquisition': 'Acquisition de leads | Mon Club Combat'}[QUI]
+         'acquisition': 'Acquisition de leads | Mon Club Combat',
+         'agence': 'Remplissez votre salle | Mon Club Combat'}[QUI]
 
 page = (
 '''<title>''' + TITRE + '''</title>
@@ -198,7 +226,7 @@ page = compte.pose(page)
 # que compte.pose() vient de charger
 APRES = {'referencer': '_referencer.sb.js', 'espace-club': '_espace.js', 'admin': '_admin.js',
          'motdepasse': '_motdepasse.js', 'mon-compte': '_mon_compte.js',
-         'acquisition': '_acquisition.js'}
+         'acquisition': '_acquisition.js', 'agence': '_landing.js'}
 if QUI in APRES:
     page = page + '\n<script>\n' + R(APRES[QUI]) + '</script>\n'
 # le rail en dernier : il lit window.MCC, pose par compte.pose(), et n'a besoin
