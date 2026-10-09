@@ -42,7 +42,18 @@
   .lp-lecture-rond{display:grid; place-items:center; width:42px; height:42px; border-radius:50%;
     background:#fff; color:var(--rouge-500); padding-left:3px}
   .lp-lecture-mot{font-size:15.5px; font-weight:800; letter-spacing:-.01em}
-  .lp-lecture-mot span{font-weight:600; opacity:.85; margin-left:6px}
+  .lp-lecture-rond{padding-left:0}
+  .lp-ico-lire{margin-left:3px}
+  /* en muet : « Activer le son » ; lecture automatique refusee : « Regarder la video » */
+  .lp-ico-lire, .lp-mot-lire{display:none}
+  /* en muet, la pilule se range dans le coin haut gauche pour ne pas cacher
+     les mots de la video ; tout le cadre reste cliquable */
+  .lp-video:not(.bloque) .lp-lecture{align-items:flex-start; justify-content:flex-start;
+    padding:clamp(10px,2vw,18px)}
+  .lp-video:not(.bloque) .lp-lecture-pil{min-height:60px; padding-right:26px}
+  .lp-video:not(.bloque) .lp-lecture-mot{font-size:17px}
+  .lp-video.bloque .lp-ico-son, .lp-video.bloque .lp-mot-son{display:none}
+  .lp-video.bloque .lp-ico-lire, .lp-video.bloque .lp-mot-lire{display:inline}
   .lp-video.joue .lp-lecture{display:none}
   @media (prefers-reduced-motion:no-preference){
     .lp-lecture-pil{animation:lp-pouls 2.4s ease-out infinite}
@@ -143,11 +154,14 @@
     .lp-h1{font-size:clamp(31px,8.6vw,40px); margin-top:12px}
     .lp-chapo{font-size:16px; margin-top:12px}
     .lp-video{margin-inline:-4px; border-radius:14px}
-    .lp-lecture{padding-bottom:8px}
-    .lp-lecture-pil{min-height:40px; padding:0 14px 0 5px; gap:8px}
-    .lp-lecture-rond{width:30px; height:30px}
-    .lp-lecture-rond svg{width:18px; height:18px}
-    .lp-lecture-mot{font-size:13px}
+    .lp-lecture-pil{min-height:46px; padding:0 18px 0 6px; gap:10px}
+    .lp-lecture-rond{width:34px; height:34px}
+    .lp-lecture-rond svg{width:20px; height:20px}
+    .lp-lecture-mot{font-size:15px}
+    .lp-video:not(.bloque) .lp-lecture{padding:8px}
+    .lp-video:not(.bloque) .lp-lecture-pil{min-height:40px; padding:0 14px 0 4px; gap:8px}
+    .lp-video:not(.bloque) .lp-lecture-rond{width:32px; height:32px}
+    .lp-video:not(.bloque) .lp-lecture-mot{font-size:14px}
     .lp-btn-xl{width:100%; max-width:380px}
     .lp-preuves{padding-top:32px}
     .lp-section{padding-top:48px}

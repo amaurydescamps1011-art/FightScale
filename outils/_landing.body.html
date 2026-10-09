@@ -28,15 +28,23 @@
     <p class="lp-chapo">Comme sur Amazon : vous commandez, et des prospects prêts à s'engager
       viennent jusqu'à votre salle.</p>
 
+    <!-- Amaury, 09/10/2026 : la video part toute seule en muet, un bouton bien
+         visible active le son, et le son la relance depuis le debut. Si le
+         navigateur refuse la lecture automatique, le meme bouton devient
+         « Regarder la video ». -->
     <div class="lp-video" id="lp-video">
       <video id="lp-vsl" src="video/vsl-agence.mp4" poster="video/vsl-agence-affiche.webp"
-             preload="none" playsinline width="1280" height="720"
+             muted autoplay loop playsinline preload="auto" width="1280" height="720"
              aria-label="Vidéo : comment Mon Club Combat remplit votre salle"></video>
-      <button class="lp-lecture" type="button" id="lp-lecture" aria-label="Lancer la vidéo">
-        <span class="lp-lecture-pil"><span class="lp-lecture-rond" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="currentColor" d="M8 5.6v12.8a1 1 0 0 0 1.5.86l10.4-6.4a1 1 0 0 0 0-1.72L9.5 4.74A1 1 0 0 0 8 5.6Z"/></svg>
+      <button class="lp-lecture" type="button" id="lp-lecture" aria-label="Activer le son et revoir la vidéo depuis le début">
+        <span class="lp-lecture-pil">
+          <span class="lp-lecture-rond" aria-hidden="true">
+            <svg class="lp-ico-son" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M22 9 16 15"/><path d="M16 9 22 15"/></svg>
+            <svg class="lp-ico-lire" viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M8 5.6v12.8a1 1 0 0 0 1.5.86l10.4-6.4a1 1 0 0 0 0-1.72L9.5 4.74A1 1 0 0 0 8 5.6Z"/></svg>
+          </span>
+          <span class="lp-lecture-mot"><span class="lp-mot-son">Activer le son</span><span class="lp-mot-lire">Regarder la vidéo</span></span>
         </span>
-        <span class="lp-lecture-mot">Regarder la vidéo <span>1 min 25</span></span></span>
       </button>
     </div>
 

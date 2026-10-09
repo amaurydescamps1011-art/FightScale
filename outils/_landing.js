@@ -7,13 +7,30 @@
   var SB = window.MCC || null;
   var $ = function (id){ return document.getElementById(id); };
 
-  /* ---------- la video ---------- */
+  /* ---------- la video ----------
+     Elle part seule, en muet et en boucle (Amaury, 09/10/2026). Le bouton
+     « Activer le son » la remet a zero, coupe la boucle et rend les commandes.
+     Si le navigateur refuse la lecture automatique (economie de donnees,
+     reduction des animations), le bouton devient « Regarder la video » et fait
+     la meme chose. */
   var cadre = $('lp-video'), video = $('lp-vsl'), lecture = $('lp-lecture');
   if (video && lecture) {
+    var bloque = function (){
+      cadre.classList.add('bloque');
+      lecture.setAttribute('aria-label', 'Lancer la vidéo avec le son');
+    };
+    var calme = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (calme) { video.removeAttribute('autoplay'); video.pause(); bloque(); }
+    else {
+      var p0 = video.play();
+      if (p0 && p0.catch) p0.catch(bloque);
+    }
     lecture.addEventListener('click', function (){
       cadre.classList.add('joue');
+      video.loop = false;
+      video.muted = false;
       video.controls = true;
-      video.preload = 'auto';
+      try { video.currentTime = 0; } catch (e) {}
       var p = video.play();
       if (p && p.catch) p.catch(function (){});
       video.focus({ preventScroll: true });
