@@ -181,6 +181,22 @@ if QUI == 'agence':
     for k, v in LANDING.items():
         body = body.replace('%%' + k + '%%', v)
 
+# Depuis le 18/10/2026 le site ne porte plus que l'agence (Amaury : « le truc
+# principal maintenant c'est vraiment l'agence (...) enleve les autres pages ») :
+# les pages legales prennent le bandeau et le pied de la page agence, pour ne
+# renvoyer nulle part ailleurs qu'a elle.
+if QUI in ('confidentialite', 'conditions'):
+    LP = R('_landing.body.html')
+    i = LP.index('<header class="lp-tete">'); j = LP.index('</header>', i) + len('</header>')
+    header = (LP[i:j].replace('href="#contenu"', 'href="/"')
+                     .replace('href="#appel" data-appel', 'href="/#appel"'))
+    i = LP.index('<footer class="lp-pied">'); j = LP.index('</footer>', i) + len('</footer>')
+    footer = LP[i:j]
+    # le bandeau de l'agence suit le texte au lieu de le recouvrir : plus besoin
+    # de la marge prevue pour le bandeau flottant du site public
+    clubc = (clubc + R('_agence.css') + R('_landing.css')
+             + '  .sous-bandeau{padding-top:clamp(36px,5vw,56px)}\n')
+
 if QUI in PRO:
     coque = R('_pro.html')
     for k, v in ICONES.items():

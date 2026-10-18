@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Emballe les trois pages de l'Artifact en vrai site statique déployable.
+"""Emballe les pages construites en vrai site statique déployable.
 
 Dans un Artifact, l'hôte ajoute lui-même <!doctype>, <html>, <head> et la balise
 viewport ; hors Artifact il faut les écrire, plus lang, la description et de quoi
@@ -7,59 +7,28 @@ partager proprement."""
 import os, re, shutil
 
 SORTIE = 'site'
+# Depuis le 18/10/2026 le site ne porte que l'agence (Amaury : « le truc principal
+# maintenant c'est vraiment l'agence »). Sa page est servie a la racine du domaine ;
+# les pages legales restent, le formulaire de rappel collectant des donnees
+# personnelles. Le site complet d'avant vit sur la branche
+# sauvegarde-site-complet-2026-10-18.
+#   page construite -> (fichier servi, titre, description)
 DESCR = {
- 'index.html': ("Mon Club Combat : trouvez la salle de sports de combat près de chez vous",
-   "L'annuaire des salles de sports de combat en France : MMA, boxe anglaise, "
-   "kickboxing, Muay Thaï, jiu-jitsu brésilien, grappling, karaté et judo."),
- 'recherche.html': ("Salles de sports de combat | Mon Club Combat",
-   "Cherchez une salle de sports de combat par ville et par discipline, sur la carte."),
- 'salle.html': ("Salle de sports de combat | Mon Club Combat",
-   "La fiche d'une salle de sports de combat : disciplines, planning des cours, "
-   "adresse, horaires et coordonnées."),
- 'clubs.html': ("Référencer ma salle | Mon Club Combat",
-   "Référencez gratuitement votre salle de sports de combat sur Mon Club Combat "
-   "et recevez des demandes de séances d'essai."),
- # la fiche se remplit sur sa propre page, derriere la creation de l'espace club :
- # elle n'a rien a faire dans un resultat de recherche
- 'referencer.html': ("La fiche de votre salle | Mon Club Combat",
-   "Remplissez la fiche de votre salle de sports de combat."),
- 'espace-club.html': ("Mon espace club | Mon Club Combat",
-   "Suivez votre fiche et vos demandes de séance d'essai."),
- 'admin.html': ("Back-office | Mon Club Combat",
-   "Vérification des fiches de club."),
- 'motdepasse.html': ("Nouveau mot de passe | Mon Club Combat",
-   "Choisissez un nouveau mot de passe pour votre espace club."),
- 'mon-compte.html': ("Mon compte | Mon Club Combat",
-   "Vos informations, votre salle et votre mot de passe."),
- 'confidentialite.html': ("Politique de confidentialité | Mon Club Combat",
-   "Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps."),
- 'conditions.html': ("Conditions d'utilisation | Mon Club Combat",
-   "Les règles d'utilisation de Mon Club Combat, pour les pratiquants et les clubs."),
- 'acquisition.html': ("Acquisition de leads | Mon Club Combat",
-   "Des publicités pour votre club, payées à la séance d'essai confirmée."),
- 'agence.html': ("Remplissez votre salle | Mon Club Combat",
+ 'agence.html': ('index.html', "Mon Club Combat | L'agence qui remplit votre salle",
    "Mon Club Combat remplit votre salle de sports de combat : chaque mois, vous savez "
    "combien de personnes veulent venir essayer vos cours."),
+ 'confidentialite.html': ('confidentialite.html', "Politique de confidentialité | Mon Club Combat",
+   "Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps."),
+ 'conditions.html': ('conditions.html', "Conditions d'utilisation | Mon Club Combat",
+   "Les règles d'utilisation de Mon Club Combat."),
 }
 
-# Pages sans interet pour un moteur : un formulaire ne se lit pas dans un resultat,
-# et l'espace club comme le back-office sont derriere une session. Le noindex n'est
-# pas ce qui les protege — c'est le RLS ; il evite seulement qu'ils soient indexes.
-SANS_INDEX = {'referencer.html', 'espace-club.html', 'admin.html', 'motdepasse.html',
-              'mon-compte.html'}
-
-# Les pages d'annuaire (une par discipline, une par ville) sont generees a part.
-import build_annuaire as ann
-for d in ann.DISCIPLINES:
-    DESCR[ann.fichier_disc(d)] = (
-        '%s : salles et clubs en France | Mon Club Combat' % d,
-        'Toutes les salles de %s référencées sur Mon Club Combat : horaires, planning '
-        'des cours, adresse et contact direct.' % d)
-for v in ann.VILLES:
-    DESCR[ann.fichier_ville(v)] = (
-        'Salles de sports de combat à %s | Mon Club Combat' % v,
-        'Les salles de sports de combat à %s : MMA, boxe, kickboxing, Muay Thaï, '
-        'JJB, grappling. Horaires, planning et contact direct.' % v)
+# Les adresses de l'ancien site renvoient sur la page agence plutot que sur une
+# page introuvable : des liens deja partages (pubs, e-mails aux clubs) y menent.
+ANCIENNES = ['agence', 'recherche', 'salle', 'clubs', 'referencer', 'espace-club', 'admin',
+             'motdepasse', 'mon-compte', 'acquisition',
+             'mma', 'boxe-anglaise', 'kickboxing', 'muay-thai', 'jiu-jitsu-bresilien',
+             'grappling', 'karate', 'judo', 'lutte', 'self-defense', 'sports-de-combat-:ville']
 
 GABARIT = '''<!doctype html>
 <html lang="fr">
@@ -111,30 +80,22 @@ open(os.path.join(SORTIE, 'favicon.svg'), 'w', encoding='utf-8').write(
                '<path fill-rule="evenodd" d="%s" fill="#EC162E"/>'
                % (trace('mcc-mono-m'), trace('mcc-mono-c'))))
 
-for nom, (titre, descr) in DESCR.items():
-    corps = ann.ECRITS.get(nom) or open(nom, encoding='utf-8').read()
+for nom, (servi, titre, descr) in DESCR.items():
+    corps = open(nom, encoding='utf-8').read()
     assert '<!doctype' not in corps.lower()
     # le <title> de l'Artifact sert de titre de page, on le remplace par le nôtre
     corps = re.sub(r'<title>.*?</title>', '<title>' + titre + '</title>', corps, count=1)
     page = GABARIT % {'titre': titre, 'descr': descr, 'corps': corps}
-    if nom in SANS_INDEX:
-        page = page.replace('<meta name="description"',
-                            '<meta name="robots" content="noindex, follow">\n<meta name="description"', 1)
-    open(os.path.join(SORTIE, nom), 'w', encoding='utf-8').write(page)
+    open(os.path.join(SORTIE, servi), 'w', encoding='utf-8').write(page)
 
-# ces trois-la sont servis par le site, donc ils vivent a la racine du depot
+# le client de la base est servi par le site, donc il vit a la racine du depot
 DEPOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-for f in ('carte.js', 'geo.js', 'sb.js'):
+for f in ('sb.js',):
     shutil.copy(os.path.join(DEPOT, f), os.path.join(SORTIE, f))
 
-# Les photos de villes et celles de la fiche d'exemple, quand elles existent.
-import tuiles, gen_salles
-# La photo de l'agence (Amaury, 24/09/2026 : « on remplace l'image principale
-# de la page agence par celle que je te mets »).
-AGENCE = ['photos/agence-heros.webp', 'photos/agence-heros-700.webp',
-          # la page agence.html : le logo de Gota (Amaury, 08/10/2026) et la VSL
-          'photos/gota-logo.webp', 'video/vsl-agence.mp4', 'video/vsl-agence-affiche.webp']
-for rel in tuiles.photos_deposees() + [x for x in gen_salles.photos_exemple() if x] + AGENCE:
+# Le logo de Gota (Amaury, 08/10/2026) et la VSL de la page agence.
+AGENCE = ['photos/gota-logo.webp', 'video/vsl-agence.mp4', 'video/vsl-agence-affiche.webp']
+for rel in AGENCE:
     dest = os.path.join(SORTIE, rel)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     shutil.copy(os.path.join(DEPOT, rel), dest)
@@ -143,21 +104,15 @@ for rel in tuiles.photos_deposees() + [x for x in gen_salles.photos_exemple() if
 open(os.path.join(SORTIE, 'robots.txt'), 'w', encoding='utf-8').write(
     "# Maquette de travail : contenu fictif, pas d'indexation.\nUser-agent: *\nDisallow: /\n")
 
-open(os.path.join(SORTIE, 'vercel.json'), 'w', encoding='utf-8').write('''{
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "headers": [
-    {
-      "source": "/geo.js",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    }
-  ]
-}
-''')
+import json
+REDIR = [{'source': '/' + a, 'destination': '/', 'permanent': False} for a in ANCIENNES]
+REDIR += [{'source': '/' + a + '.html', 'destination': '/', 'permanent': False} for a in ANCIENNES]
+open(os.path.join(SORTIE, 'vercel.json'), 'w', encoding='utf-8').write(json.dumps({
+  'cleanUrls': True,
+  'trailingSlash': False,
+  'redirects': REDIR,
+  'headers': [{'source': '/(.*)', 'headers': [{'key': 'X-Robots-Tag', 'value': 'noindex, nofollow'}]}],
+}, indent=2, ensure_ascii=False) + '\n')
 
 for f in sorted(os.listdir(SORTIE)):
     print('%-16s %8d' % (f, os.path.getsize(os.path.join(SORTIE, f))))

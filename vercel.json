@@ -1,14 +1,227 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "headers": [
+  "redirects": [
     {
-      "source": "/geo.js",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/agence",
+      "destination": "/",
+      "permanent": false
     },
     {
+      "source": "/recherche",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/salle",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/clubs",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/referencer",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/espace-club",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/admin",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/motdepasse",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/mon-compte",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/acquisition",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/mma",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/boxe-anglaise",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/kickboxing",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/muay-thai",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/jiu-jitsu-bresilien",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/grappling",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/karate",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/judo",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lutte",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/self-defense",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/sports-de-combat-:ville",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/agence.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/recherche.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/salle.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/clubs.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/referencer.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/espace-club.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/admin.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/motdepasse.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/mon-compte.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/acquisition.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/mma.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/boxe-anglaise.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/kickboxing.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/muay-thai.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/jiu-jitsu-bresilien.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/grappling.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/karate.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/judo.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lutte.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/self-defense.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/sports-de-combat-:ville.html",
+      "destination": "/",
+      "permanent": false
+    }
+  ],
+  "headers": [
+    {
       "source": "/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }

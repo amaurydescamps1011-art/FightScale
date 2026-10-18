@@ -1,5 +1,15 @@
 # Les outils qui fabriquent le site
 
+**Depuis le 18/10/2026, le site ne porte que l'agence.** `rebatir.sh` ne
+fabrique plus que la page agence, servie en `index.html` à la racine du
+domaine, et les deux pages légales. Les anciennes adresses (`/agence`, l'annuaire,
+les fiches, l'espace club, le back-office) renvoient sur la page agence, par
+`vercel.json`. Le site complet d'avant est sur la branche
+`sauvegarde-site-complet-2026-10-18` : pour le retrouver, repartir de cette
+branche. Les scripts et les tests qui le fabriquaient sont restés dans ce
+dossier sans être lancés, et le workflow horaire qui rebâtissait l'annuaire est
+retiré. Ce qui suit décrit le site complet.
+
 Le site servi par Vercel est à la racine du dépôt : des pages HTML complètes,
 sans build et sans dépendance. Ces pages ne s'écrivent pas à la main, elles sont
 assemblées par les scripts de ce dossier. Sans eux, la moindre correction de

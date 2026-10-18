@@ -1,16 +1,13 @@
 #!/bin/sh
-# Reconstruit le site en entier, dans l'ordre. L'ordre n'est pas negociable :
-# chaque etape lit ce que la precedente a ecrit.
+# Reconstruit le site en entier, dans l'ordre : build_site.py emballe les pages
+# que build_clubs.py vient d'ecrire.
 #
-#   ./rebatir.sh              le site tel quel, sans toucher a la base
-#   MCC_BASE=1 ./rebatir.sh   en relisant les clubs publies dans Supabase
-#                             (SUPABASE_URL et SUPABASE_CLE doivent etre poses)
+#   ./rebatir.sh
 set -e
 cd "$(dirname "$0")"
-python3 gen_salles.py
-for p in clubs referencer espace-club admin motdepasse mon-compte confidentialite conditions acquisition agence; do python3 build_clubs.py --"$p"; done
-python3 build_recherche.py
-python3 build_salle.py
-python3 build.py
-python3 build_annuaire.py
+# Depuis le 18/10/2026 le site ne porte que la page agence (servie a la racine)
+# et les deux pages legales. Le site complet d'avant (annuaire, fiches, espace
+# club, back-office) est garde sur la branche sauvegarde-site-complet-2026-10-18 ;
+# les scripts qui le fabriquaient sont restes dans ce dossier, sans etre lances.
+for p in confidentialite conditions agence; do python3 build_clubs.py --"$p"; done
 python3 build_site.py
