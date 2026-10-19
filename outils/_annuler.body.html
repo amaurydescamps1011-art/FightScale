@@ -6,7 +6,7 @@
      annule, deja annule, ou introuvable. Vercel la sert sur /annuler
      (cleanUrls). Les textes viennent du plan de textes final (rdv-textes.json). -->
 <main id="contenu" class="ag lp">
-  <section class="lp-section lp-annuler" aria-labelledby="annuler-titre">
+  <section class="lp-annuler" aria-labelledby="annuler-titre">
     <div class="lp-rdv lp-annuler-carte" id="annuler" data-etat="attente">
       <span class="lp-rdv-ok" id="annuler-ico-attente" aria-hidden="true"><span class="lp-rdv-spin"></span></span>
       <span class="lp-rdv-ok" id="annuler-ico-ok" aria-hidden="true" hidden>%%I_RDV_OK%%</span>
@@ -19,9 +19,9 @@
 </main>
 
 <script>
-/* L'annulation se joue des que la page est lue : sb.js, pose en fin de page,
-   donne l'adresse de l'API (MCC.RDV_API) ; les tests la surchargent par
-   window.MCC_RDV_API. */
+/* L'annulation se joue des que la page est lue : window.MCC, pose en fin de
+   page par build_clubs.py, donne l'adresse de l'API (MCC.RDV_API) ; les tests
+   la surchargent par window.MCC_RDV_API. */
 (function (){
   var $ = function (id){ return document.getElementById(id); };
   var fmtLong = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', weekday: 'long',

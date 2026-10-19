@@ -5,7 +5,7 @@
      faire la landing page »). Meme structure, section par section : la promesse
      du titre, trois telephones, quatre chiffres, le constat 01 02 03, la
      pastille de preuve, la video « Comment ca marche ? », le schema « qui fait
-     quoi », le bandeau de clients, les recits de resultats, la garantie, la FAQ
+     quoi », les recits de resultats, la garantie, la FAQ
      longue, l'appel. Les textes viennent du plan de textes final
      (scratchpad/squale-textes.json). Deux blocs sont repris tels quels de la
      page d'avant : le lecteur video (#lp-video) et le widget de rendez-vous
@@ -136,7 +136,7 @@
     <div class="lp-wrap lp-chiffres">
       <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Salles</p><p class="lp-chiffre-val">+20</p><p class="lp-chiffre-leg">Salles de sports de combat accompagnées</p></article>
       <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Réservations</p><p class="lp-chiffre-val est-mot">Des milliers</p><p class="lp-chiffre-leg">Séances d’essai réservées chez nos clients</p></article>
-      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Pour 1&nbsp;€ dépensé</p><p class="lp-chiffre-val">8&nbsp;€</p><p class="lp-chiffre-leg">d’adhésions en moyenne, chez nos clients</p></article>
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">ROI moyen</p><p class="lp-chiffre-val">×8</p><p class="lp-chiffre-leg">Pour 1&nbsp;€ dépensé, 8&nbsp;€ d’adhésions</p></article>
       <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Adhérents</p><p class="lp-chiffre-val">×2</p><p class="lp-chiffre-leg">Adhérents doublés en un mois chez Gota</p></article>
     </div>
   </section>
@@ -237,22 +237,12 @@
     </div>
   </section>
 
-  <!-- le bandeau qui defile : Gota, puis deux cartes agregees, faute d'autres
-       clubs nommes (squale-manques.md). _landing.js repete les cartes pour
-       remplir l'ecran et double la liste pour boucler. -->
-  <section class="lp-bandeau reveal" aria-labelledby="lp-bandeau-t">
-    <p class="lp-sur lp-bandeau-sur" id="lp-bandeau-t">Résultats clients</p>
-    <div class="lp-bandeau-piste" id="lp-bandeau-piste">
-      <ul class="lp-bandeau-liste">
-        <li class="lp-bandeau-carte"><span class="lp-avatar est-gota"><img src="photos/gota-logo.webp" alt="" width="227" height="240" loading="lazy"></span><div><p class="lp-bandeau-nom">Gota</p><p class="lp-bandeau-res"><strong>×2 adhérents</strong> en 1 mois</p></div></li>
-        <li class="lp-bandeau-carte"><span class="lp-avatar" aria-hidden="true">%%I_COURBE%%</span><div><p class="lp-bandeau-nom">Nos clients, en moyenne</p><p class="lp-bandeau-res"><strong>8 € d’adhésions</strong> pour 1 € dépensé</p><p class="lp-bandeau-sub">Sur l’ensemble de nos clients</p></div></li>
-        <li class="lp-bandeau-carte"><span class="lp-avatar" aria-hidden="true">%%I_GENS%%</span><div><p class="lp-bandeau-nom">Plus de 20 salles</p><p class="lp-bandeau-res"><strong>Des milliers</strong> de séances d’essai réservées</p><p class="lp-bandeau-sub">MMA, boxe, kickboxing, Muay Thaï, JJB, judo, karaté, lutte</p></div></li>
-      </ul>
-    </div>
-  </section>
-
+  <!-- nos resultats : un kicker, deux cartes recit (Gota, puis la moyenne de nos
+       clients). Le bandeau de clients qui defilait a ete retire le 19/10 : une
+       seule salle nommee, les doublons se voyaient a 1280 px (squale-manques.md). -->
   <section class="lp-resultats" id="resultats" aria-labelledby="lp-resultats-t">
     <div class="lp-wrap">
+      <p class="lp-sur lp-resultats-sur reveal">Résultats</p>
       <h2 class="lp-h2 lp-h2-sm reveal" id="lp-resultats-t">Nos résultats</h2>
       <div class="lp-recits">
         <article class="lp-recit reveal">
@@ -396,7 +386,7 @@
              Les textes viennent du plan de textes final (rdv-textes.json). -->
         <div class="lp-rdv" id="rdv">
           <div class="lp-rdv-tete">
-            <p class="lp-rdv-etiq"><span aria-hidden="true">%%I_RDV_HORLOGE%%</span>Appel de 15 min</p>
+            <p class="lp-rdv-etiq"><span aria-hidden="true">%%I_RDV_HORLOGE%%</span>Appel de 15 min · offert</p>
             <p class="lp-rdv-titre">Réservez votre appel.</p>
             <p class="lp-rdv-sous">Trois questions sur votre salle, puis le jour et l’heure qui vous arrangent.</p>
           </div>
@@ -508,7 +498,6 @@
                 <button type="button" class="lp-rdv-retour" data-retour>%%I_RDV_RETOUR%%Retour</button>
                 <button class="ag-btn ag-btn-rouge" type="submit" id="rdv-confirmer">Confirmer le RDV</button>
               </div>
-              <p class="lp-rassure">Rien à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après.</p>
               <p class="acq-legal lp-rdv-legal">Vos coordonnées ne servent qu’à organiser cet appel.
                 <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>
             </form>

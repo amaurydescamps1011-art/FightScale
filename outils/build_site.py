@@ -98,10 +98,9 @@ for nom, (servi, titre, descr) in DESCR.items():
     page = GABARIT % {'titre': titre, 'descr': descr, 'tete': corps[:k].rstrip(), 'corps': corps[k:]}
     open(os.path.join(SORTIE, servi), 'w', encoding='utf-8').write(page)
 
-# le client de la base est servi par le site, donc il vit a la racine du depot
+# sb.js n'est plus servi : les quatre pages posent elles-memes les deux
+# constantes qu'elles en lisaient (build_clubs.py, pages legeres)
 DEPOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-for f in ('sb.js',):
-    shutil.copy(os.path.join(DEPOT, f), os.path.join(SORTIE, f))
 
 # Le logo de Gota (Amaury, 08/10/2026), la photo des telephones dessines du heros
 # (19/10/2026) et la VSL de la page agence.

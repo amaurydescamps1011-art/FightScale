@@ -40,7 +40,7 @@
 
   /* le procede « texte en degrade » : toutes les touches de rouge dans le texte */
   .lp-hl, .lp-accent, .lp-chapo, .lp-chiffre-val, .lp-arg h3 em, .lp-h2 em, .lp-garantie-grand, .lp-recit-etiq,
-  .lp-bandeau-res, .lp-schema-cap, .lp-pastille-gros, .lp-clip-etiq, .lp-clips-sur{
+  .lp-schema-cap, .lp-pastille-gros, .lp-clip-etiq, .lp-clips-sur{
     background:var(--sq-grad-text); -webkit-background-clip:text; background-clip:text;
     -webkit-text-fill-color:transparent; color:transparent}
 
@@ -84,7 +84,7 @@
   .lp-plus a:hover{text-decoration-color:var(--sq-tint)}
   .lp-sur{font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--sq-dim); margin-bottom:14px}
   .lp-clips-sur{position:relative; z-index:1; margin:0 0 30px; padding:0 var(--sq-gut); text-align:center}
-  .lp-bandeau-sur{margin:0 0 28px; padding:0 var(--sq-gut); text-align:center}
+  .lp-resultats-sur{text-align:center; margin:0 0 16px}
 
   /* ---------- le heros ---------- */
   .lp-heros{position:relative; padding:clamp(52px,7vw,92px) var(--sq-gut) 0; text-align:center; isolation:isolate}
@@ -264,7 +264,7 @@
   .lp-video:not(.bloque) .lp-lecture:hover .lp-lecture-pil{transform:none; background:rgba(8,9,11,.86)}
   .lp-video:not(.bloque) .lp-lecture-rond{width:22px; height:22px; background:transparent; color:#fff}
   .lp-video:not(.bloque) .lp-lecture-rond svg{width:15px; height:15px}
-  .lp-video:not(.bloque) .lp-lecture-mot{font-size:11.5px; font-weight:600; letter-spacing:0}
+  .lp-video:not(.bloque) .lp-lecture-mot{font-size:12px; font-weight:600; letter-spacing:0}
   .lp-video.bloque .lp-ico-son, .lp-video.bloque .lp-mot-son{display:none}
   .lp-video.bloque .lp-ico-lire, .lp-video.bloque .lp-mot-lire{display:inline}
   .lp-video.joue .lp-lecture{display:none}
@@ -309,27 +309,6 @@
   .lp-hub-nom{font-size:8.5px; font-weight:800; letter-spacing:.16em; text-indent:.16em; text-transform:uppercase; color:#fff; white-space:nowrap}
   .lp-toit .lp-plus{margin-top:22px}
   .lp-toit .lp-cta{display:block; width:max-content; margin:30px auto 0}
-
-  /* ---------- le bandeau de clients ---------- */
-  .lp-bandeau{padding:56px 0; overflow:hidden;
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-  .lp-bandeau.est-fixe{-webkit-mask-image:none; mask-image:none}
-  .lp-bandeau-piste{display:flex; width:max-content; max-width:100%; margin:0 auto}
-  .lp-bandeau-piste.defile{margin:0; animation:lp-defile 52s linear infinite}
-  .lp-bandeau-piste.defile:hover{animation-play-state:paused}
-  @keyframes lp-defile{to{transform:translateX(-50%)}}
-  .lp-bandeau-liste{display:flex; gap:16px; padding:0 8px; margin:0; list-style:none}
-  .lp-bandeau-carte{flex:none; display:flex; align-items:center; gap:14px; width:272px; padding:16px 18px; background:#fff;
-    border:1px solid rgba(200,30,50,.12); border-radius:14px; box-shadow:0 14px 30px -22px rgba(170,20,40,.35)}
-  .lp-avatar{display:grid; place-items:center; flex:none; width:46px; height:46px; border-radius:50%; background:#FFF0F1; color:var(--sq-core);
-    box-shadow:0 0 0 1px rgba(200,30,50,.14); overflow:hidden}
-  .lp-avatar svg{width:22px; height:22px}
-  .lp-avatar.est-gota{background:#0B0B0B}
-  .lp-avatar.est-gota img{width:26px; height:auto; display:block}
-  .lp-bandeau-nom{margin:0; font-size:13.5px; font-weight:700; line-height:1.3}
-  .lp-bandeau-res{margin:0; font-size:12px; line-height:1.35}
-  .lp-bandeau-res strong{font-weight:800}
-  .lp-bandeau-sub{margin:2px 0 0; font-size:11px; line-height:1.3; color:var(--sq-dim)}
 
   /* ---------- nos resultats ---------- */
   .lp-resultats{padding:0 0 140px}
@@ -486,7 +465,6 @@
     font-weight:700; cursor:pointer; white-space:nowrap; transition:color .15s ease, background-color .15s ease}
   .lp-rdv-retour:hover{color:var(--texte); background:#FFF3F4}
   .lp-rdv-legal{color:var(--texte-3)}
-  .lp-rassure{margin:4px 0 0; font-size:13px; line-height:1.5; color:var(--texte-3); text-align:center; font-weight:600}
 
   /* le calendrier : le bandeau des jours qui defile, la grille des heures */
   .lp-rdv-cal{margin-top:14px}
@@ -546,7 +524,8 @@
   .lp-annuler-btn{margin-top:14px; min-height:50px; padding:0 22px}
   .lp-annuler-btn[hidden]{display:none}
 
-  /* la barre du bas, au telephone */
+  /* la barre du bas : au telephone seulement (<= 680 px, meme seuil que le reste de la mise en page
+     mobile), et jamais sur un bouton de section ni sur la carte de rendez-vous (_landing.js) */
   .lp-barre{display:none}
 
   /* ---------- le pied de page ---------- */
@@ -564,7 +543,7 @@
   @media (prefers-reduced-motion:reduce){
     .js .reveal{opacity:1; transform:none; transition:none}
     .lp-rai, .lp-clips-grid::before, .lp-tel, .lp-tel-anneau::before, .lp-schema-hub::before, .lp-hub-anneau, .lp-hub-pouls,
-    .lp-trait-flux, .lp-bandeau-piste.defile{animation:none}
+    .lp-trait-flux{animation:none}
   }
 
   /* ---------- ecrans moyens ---------- */
@@ -697,16 +676,17 @@
     .lp-hub-nom{font-size:5.5px; letter-spacing:.1em}
     .lp-toit .lp-plus{margin-top:14px}
     .lp-toit .lp-cta{margin-top:22px}
-    /* le bandeau */
-    .lp-bandeau{padding:30px 0}
-    .lp-bandeau-carte{width:230px; padding:14px 16px}
     /* les resultats */
     .lp-resultats{padding-bottom:64px}
     .lp-recits{grid-template-columns:1fr; gap:12px}
     .lp-recit{padding:22px 20px 20px}
     .lp-recit-corps{font-size:14px; margin-bottom:18px}
     .lp-recits-pied{margin-top:32px}
-    /* la garantie */
+    /* la garantie : les boutons de section restent (comme chez Squale), avec leur propre lueur ;
+       la grande lueur de section, calee sur le bas de la section, tombait entre le lien et le
+       titre de la FAQ en une tache rose : au telephone elle s'efface */
+    .lp-lueur{width:290px; height:76px; filter:blur(16px)}
+    .lp-garantie-lueur{display:none}
     .lp-garantie{padding:72px var(--sq-gut) 80px}
     .lp-garantie-grand{font-size:clamp(60px,20vw,92px); margin-bottom:10px}
     .lp-garantie-t{font-size:clamp(28px,8vw,36px); margin-bottom:18px}
@@ -735,6 +715,13 @@
     .lp-appel{padding-bottom:40px}
     .lp-appel-in{gap:22px}
     .lp-appel-texte{font-size:15px}
+    /* la barre du bas */
+    .lp-barre{display:block; position:fixed; left:0; right:0; bottom:0; z-index:45;
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)); background:rgba(255,255,255,.94);
+      -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-top:1px solid var(--sq-bord);
+      transform:translateY(110%); transition:transform .25s ease}
+    .lp-barre.vue{transform:none}
+    .lp-barre .ag-btn{min-height:50px}
     /* le pied */
     .lp-pied{padding:44px 0 32px}
     .lp-pied-cols{grid-template-columns:1fr; gap:28px; padding-bottom:28px}
@@ -759,11 +746,5 @@
     .lp-rdv-heure{min-height:48px; font-size:15.5px}
     .lp-rdv-jour{min-width:72px}
     .lp-rdv-succes-t{font-size:23px}
-    .lp-barre{display:block; position:fixed; left:0; right:0; bottom:0; z-index:45;
-      padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)); background:rgba(255,255,255,.94);
-      -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-top:1px solid var(--sq-bord);
-      transform:translateY(110%); transition:transform .25s ease}
-    .lp-barre.vue{transform:none}
-    .lp-barre .ag-btn{min-height:50px}
   }
   @media (max-width:360px){ .lp-tete-cta{padding:0 12px !important; font-size:10px !important} .lp-marque-mot{display:none} .lp-tel{--k:.4} }

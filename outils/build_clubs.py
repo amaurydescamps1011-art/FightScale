@@ -240,8 +240,10 @@ LANDING = {
 # Les quatre pages de l'agence (la page elle-meme, les deux pages legales et
 # l'annulation du rendez-vous) ne portent ni la fenetre du compte, ni le client
 # Supabase, ni la CSS du site public : elles n'en ont pas besoin, et la page
-# agence pesait 268 Ko (relecture du 19/10/2026). Elles gardent sb.js, qui donne
-# l'adresse de l'API de rendez-vous et marche sans window.supabase.
+# agence pesait 268 Ko (relecture du 19/10/2026). De sb.js, la page agence et
+# la page d'annulation n'utilisent que MCC.RDV_API et MCC.CLE_PUBLIQUE : un
+# script en ligne de trois lignes les pose (constantes lues dans sb.js, pour
+# n'avoir qu'une source), et sb.js n'est plus charge.
 LEGER = QUI in ('agence', 'confidentialite', 'conditions', 'annuler')
 if LEGER:
     clubc = ''
@@ -329,14 +331,20 @@ page = (
 # session (lien recu par e-mail, onglet rouvert le lendemain) : MCC.exigeCompte()
 # l'ouvre en mode connexion au lieu de renvoyer sur une page de plus.
 if LEGER:
-    # sb.js seul, avant le script de la page : il pose window.MCC (adresse de
-    # l'API, cle publique) sans client Supabase
+    # window.MCC reduit a ce que la page agence et la page d'annulation lisent :
+    # l'adresse de l'API de rendez-vous (les tests posent window.MCC_RDV_API
+    # avant, pour viser un serveur local) et la cle publique, lues dans sb.js
     if QUI in ('agence', 'annuler'):
-        page = page + '\n<script src="sb.js"></script>\n'
+        import os
+        sbjs = R(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'sb.js'))
+        url_base = re.search(r"var URL_BASE = '([^']+)'", sbjs).group(1)
+        cle = re.search(r"var CLE = '([^']+)'", sbjs).group(1)
+        page = page + ('\n<script>\nwindow.MCC = { RDV_API: window.MCC_RDV_API || %r, CLE_PUBLIQUE: %r };\n</script>\n'
+                       % (url_base + '/functions/v1/rdv', cle))
 else:
     page = compte.pose(page)
 # le script propre a la page, pose apres la fenetre : il compte sur window.MCC,
-# que compte.pose() (ou sb.js seul) vient de charger
+# que compte.pose() (ou le script en ligne des pages legeres) vient de poser
 APRES = {'referencer': '_referencer.sb.js', 'espace-club': '_espace.js', 'admin': '_admin.js',
          'motdepasse': '_motdepasse.js', 'mon-compte': '_mon_compte.js',
          'acquisition': '_acquisition.js', 'agence': '_landing.js'}

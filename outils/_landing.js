@@ -5,8 +5,8 @@
    mecanique que la page « reserver » de GenIA (Amaury, 19/10/2026), qui parle
    a la fonction Supabase `rdv` en simple fetch. Depuis la refonte sur le
    modele Squale (19/10/2026), la page porte aussi un peu de mouvement : la
-   variante du heros, le bandeau de clients qui defile, les apparitions au
-   defilement et les traits du schema « qui fait quoi ». */
+   variante du heros, les apparitions au defilement, les liens vers une
+   question de la FAQ et les traits du schema « qui fait quoi ». */
 (function (){
   var SB = window.MCC || null;
   var $ = function (id){ return document.getElementById(id); };
@@ -52,66 +52,36 @@
     blocs.forEach(function (el){ el.classList.add('in'); });
   }
 
-  /* ---------- le bandeau de clients ----------
-     Trois cartes seulement (Gota, puis deux cartes agregees). Tant qu'Amaury
-     n'a pas d'autres salles nommees, un defilement montrerait deux fois la
-     meme carte cote a cote sur un grand ecran : quand les trois tiennent dans
-     la zone nette du bandeau, elles restent fixes et centrees. Sinon (au
-     telephone) on les repete jusqu'a couvrir l'ecran, puis on double la liste
-     pour que la boucle soit continue (la piste glisse de -50 %) ; les copies
-     sont cachees aux lecteurs d'ecran, qui n'ont que les trois vraies. */
-  var piste = $('lp-bandeau-piste');
-  if (piste) {
-    var liste = piste.querySelector('.lp-bandeau-liste');
-    var cartes = Array.prototype.slice.call(liste.children);
-    var bandeau = piste.parentElement, mode = '';
-    var regle = function (){
-      if (!cartes.length) return;
-      /* la largeur des trois vraies cartes (les clones, s'il y en a, suivent) face a la zone nette du bandeau, qui masque 8 % de chaque bord */
-      var naturel = cartes[cartes.length - 1].getBoundingClientRect().right - liste.getBoundingClientRect().left + 8;
-      var tient = naturel <= bandeau.clientWidth * 0.84;
-      if ((tient ? 'fixe' : 'defile') === mode) return;
-      mode = tient ? 'fixe' : 'defile';
-      Array.prototype.slice.call(piste.querySelectorAll('[data-clone]')).forEach(function (c){ c.parentNode.removeChild(c); });
-      piste.classList.remove('defile');
-      bandeau.classList.toggle('est-fixe', tient);
-      if (tient) return;
-      var n = 0, cible = Math.max(window.innerWidth, 1440) * 1.05;
-      while (liste.scrollWidth < cible && n < 40) {
-        var c = cartes[n % cartes.length].cloneNode(true);
-        c.setAttribute('aria-hidden', 'true'); c.setAttribute('data-clone', '');
-        liste.appendChild(c); n++;
-      }
-      var copie = liste.cloneNode(true);
-      copie.setAttribute('aria-hidden', 'true'); copie.setAttribute('data-clone', '');
-      piste.appendChild(copie);
-      if (!calme) piste.classList.add('defile');
-    };
-    regle();
-    var attente = null;
-    window.addEventListener('resize', function (){ clearTimeout(attente); attente = setTimeout(regle, 150); });
-  }
-
   /* ---------- les liens vers une question de la FAQ ----------
      « Comprendre en detail comment ca marche », « Voir qui fait quoi »,
      « Ce qui est garanti » menent a un <details> : ferme a l'arrivee, il ne
      dirait rien. On l'ouvre avant d'y descendre, au clic comme a l'arrivee
      avec #faq-... dans l'adresse ou au retour arriere ; scroll-margin-top
-     (CSS) cale la question sous le bandeau collant. */
+     (CSS) cale la question sous le bandeau collant. Une cible qui n'est pas
+     encore apparue (.reveal) est decalee de 24 px : on la met en place avant
+     de defiler, sinon elle remonte de 24 px une fois arrivee a l'ecran et
+     passe sous le bandeau. */
+  var enPlace = function (el){
+    if (el && el.classList.contains('reveal')) { el.style.transition = 'none'; el.classList.add('in'); }
+  };
   var ouvreQuestion = function (hash, defile){
     var id = String(hash || '').replace(/^#/, '');
     if (!/^faq-/.test(id)) return false;
     var q = $(id);
     if (!q || q.tagName !== 'DETAILS') return false;
     q.open = true;
+    enPlace(q);
     if (defile) q.scrollIntoView({ behavior: calme ? 'auto' : 'smooth', block: 'start' });
     return true;
   };
   document.addEventListener('click', function (e){
-    var a = e.target && e.target.closest ? e.target.closest('a[href^="#faq-"]') : null;
-    if (!a || !ouvreQuestion(a.getAttribute('href'), true)) return;
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (!/^#faq-/.test(href)) { enPlace($(href.slice(1))); return; }
+    if (!ouvreQuestion(href, true)) return;
     e.preventDefault();
-    if (history.pushState) history.pushState(null, '', a.getAttribute('href'));
+    if (history.pushState) history.pushState(null, '', href);
   });
   window.addEventListener('hashchange', function (){ ouvreQuestion(location.hash, true); });
   if (location.hash) ouvreQuestion(location.hash, true);
