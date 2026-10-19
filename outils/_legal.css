@@ -1,0 +1,22 @@
+  /* ---------- pages legales : un texte a lire, pas une page a vendre ----------
+     Elles portent la coque de la page agence (bandeau, pied, polices) ; ces
+     regles sont les seules qu'elles prenaient encore a l'ancien site public. */
+  .section{padding-block:clamp(44px,5.4vw,72px)}
+  .sous-bandeau{padding-top:clamp(36px,5vw,56px)}
+  .fil{max-width:72ch; margin-bottom:clamp(24px,2.8vw,36px)}
+  .fil-titre{margin-top:12px; font-size:clamp(26px,3.4vw,40px); line-height:1.12; color:var(--texte)}
+  /* le titre suit la police de la page agence, pas l'Anton de l'ancien site */
+  .fil-titre.display{font-family:var(--sq-font); font-weight:800; letter-spacing:-.04em; text-transform:none}
+  .fil-mot{margin-top:14px; font-size:15px; line-height:1.68; color:var(--texte-2)}
+  .legal{max-width:760px}
+  .legal h2{margin-top:clamp(30px,3.4vw,40px); font-size:19px; line-height:1.3;
+    font-weight:800; letter-spacing:-.005em; color:var(--texte)}
+  .legal h3{margin-top:20px; font-size:15.5px; font-weight:800; color:var(--texte)}
+  .legal p, .legal li{font-size:15px; line-height:1.72; color:var(--texte-2)}
+  .legal p{margin-top:10px}
+  .legal ul{margin-top:10px; padding-left:20px; display:grid; gap:7px}
+  .legal li::marker{color:var(--rouge-500)}
+  .legal b{color:var(--texte); font-weight:700}
+  .legal a{color:var(--texte); text-decoration:underline; text-underline-offset:3px;
+    text-decoration-thickness:1px; overflow-wrap:anywhere}
+  .legal a:hover{color:var(--rouge-lien)}

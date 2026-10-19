@@ -3,31 +3,192 @@
    barre du bas suit la lecture au telephone et s'efface sur la carte de
    rendez-vous, et la carte porte le tunnel de prise de rendez-vous, meme
    mecanique que la page « reserver » de GenIA (Amaury, 19/10/2026), qui parle
-   a la fonction Supabase `rdv` en simple fetch. */
+   a la fonction Supabase `rdv` en simple fetch. Depuis la refonte sur le
+   modele Squale (19/10/2026), la page porte aussi un peu de mouvement : la
+   variante du heros, le bandeau de clients qui defile, les apparitions au
+   defilement et les traits du schema « qui fait quoi ». */
 (function (){
   var SB = window.MCC || null;
   var $ = function (id){ return document.getElementById(id); };
+  var calme = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  /* la CSS ne cache les blocs a faire apparaitre que si le script tourne */
+  document.documentElement.classList.add('js');
+
+  /* ---------- la variante du heros ----------
+     Deux titres (brief du 19/10/2026) : A avec un chiffre d'exemple a
+     confirmer, B sans chiffre. La page sert A ; ?heros=B remplace le titre et
+     le sous-titre par ceux du gabarit <template>. */
+  var heros = $('lp-heros'), gabaritB = $('lp-heros-B');
+  if (heros && gabaritB && gabaritB.content) {
+    var variante = (new URLSearchParams(location.search).get('heros') || 'A').toUpperCase();
+    if (variante === 'B') {
+      var h1 = heros.querySelector('.lp-h1'), chapo = heros.querySelector('.lp-chapo');
+      var h1B = gabaritB.content.querySelector('.lp-h1'), chapoB = gabaritB.content.querySelector('.lp-chapo');
+      if (h1 && h1B) h1.innerHTML = h1B.innerHTML;
+      if (chapo && chapoB) chapo.textContent = chapoB.textContent;
+      heros.setAttribute('data-variante', 'B');
+    }
+  }
+
+  /* ---------- les apparitions au defilement ----------
+     Comme chez Squale : un bloc .reveal glisse en place quand il arrive a
+     l'ecran, les freres en cascade (80 ms par rang, cinq au plus). Sans
+     IntersectionObserver, ou si le visiteur prefere moins de mouvement, tout
+     est visible tout de suite. */
+  var blocs = document.querySelectorAll('.reveal');
+  if (!calme && 'IntersectionObserver' in window) {
+    var apparition = new IntersectionObserver(function (entrees){
+      entrees.forEach(function (e){
+        if (!e.isIntersecting) return;
+        var el = e.target, rang = 0, frere = el;
+        while ((frere = frere.previousElementSibling) && rang < 5) if (frere.classList.contains('reveal')) rang++;
+        el.style.transitionDelay = (rang * 80) + 'ms';
+        el.classList.add('in');
+        apparition.unobserve(el);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+    blocs.forEach(function (el){ apparition.observe(el); });
+  } else {
+    blocs.forEach(function (el){ el.classList.add('in'); });
+  }
+
+  /* ---------- le bandeau de clients ----------
+     Trois cartes seulement (Gota, puis deux cartes agregees). Tant qu'Amaury
+     n'a pas d'autres salles nommees, un defilement montrerait deux fois la
+     meme carte cote a cote sur un grand ecran : quand les trois tiennent dans
+     la zone nette du bandeau, elles restent fixes et centrees. Sinon (au
+     telephone) on les repete jusqu'a couvrir l'ecran, puis on double la liste
+     pour que la boucle soit continue (la piste glisse de -50 %) ; les copies
+     sont cachees aux lecteurs d'ecran, qui n'ont que les trois vraies. */
+  var piste = $('lp-bandeau-piste');
+  if (piste) {
+    var liste = piste.querySelector('.lp-bandeau-liste');
+    var cartes = Array.prototype.slice.call(liste.children);
+    var bandeau = piste.parentElement, mode = '';
+    var regle = function (){
+      if (!cartes.length) return;
+      /* la largeur des trois vraies cartes (les clones, s'il y en a, suivent) face a la zone nette du bandeau, qui masque 8 % de chaque bord */
+      var naturel = cartes[cartes.length - 1].getBoundingClientRect().right - liste.getBoundingClientRect().left + 8;
+      var tient = naturel <= bandeau.clientWidth * 0.84;
+      if ((tient ? 'fixe' : 'defile') === mode) return;
+      mode = tient ? 'fixe' : 'defile';
+      Array.prototype.slice.call(piste.querySelectorAll('[data-clone]')).forEach(function (c){ c.parentNode.removeChild(c); });
+      piste.classList.remove('defile');
+      bandeau.classList.toggle('est-fixe', tient);
+      if (tient) return;
+      var n = 0, cible = Math.max(window.innerWidth, 1440) * 1.05;
+      while (liste.scrollWidth < cible && n < 40) {
+        var c = cartes[n % cartes.length].cloneNode(true);
+        c.setAttribute('aria-hidden', 'true'); c.setAttribute('data-clone', '');
+        liste.appendChild(c); n++;
+      }
+      var copie = liste.cloneNode(true);
+      copie.setAttribute('aria-hidden', 'true'); copie.setAttribute('data-clone', '');
+      piste.appendChild(copie);
+      if (!calme) piste.classList.add('defile');
+    };
+    regle();
+    var attente = null;
+    window.addEventListener('resize', function (){ clearTimeout(attente); attente = setTimeout(regle, 150); });
+  }
+
+  /* ---------- les liens vers une question de la FAQ ----------
+     « Comprendre en detail comment ca marche », « Voir qui fait quoi »,
+     « Ce qui est garanti » menent a un <details> : ferme a l'arrivee, il ne
+     dirait rien. On l'ouvre avant d'y descendre, au clic comme a l'arrivee
+     avec #faq-... dans l'adresse ou au retour arriere ; scroll-margin-top
+     (CSS) cale la question sous le bandeau collant. */
+  var ouvreQuestion = function (hash, defile){
+    var id = String(hash || '').replace(/^#/, '');
+    if (!/^faq-/.test(id)) return false;
+    var q = $(id);
+    if (!q || q.tagName !== 'DETAILS') return false;
+    q.open = true;
+    if (defile) q.scrollIntoView({ behavior: calme ? 'auto' : 'smooth', block: 'start' });
+    return true;
+  };
+  document.addEventListener('click', function (e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#faq-"]') : null;
+    if (!a || !ouvreQuestion(a.getAttribute('href'), true)) return;
+    e.preventDefault();
+    if (history.pushState) history.pushState(null, '', a.getAttribute('href'));
+  });
+  window.addEventListener('hashchange', function (){ ouvreQuestion(location.hash, true); });
+  if (location.hash) ouvreQuestion(location.hash, true);
+
+  /* ---------- les traits du schema « qui fait quoi » ----------
+     Une courbe du bord de chaque pilule vers le centre de la marque, un trait
+     fin plus un pointille qui coule vers le milieu ; redessines a chaque
+     changement de largeur et une fois les polices chargees. */
+  var schema = $('lp-schema');
+  if (schema) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var traits = schema.querySelector('.lp-schema-traits');
+    var trace = function (){
+      var boite = schema.getBoundingClientRect();
+      var badge = schema.querySelector('.lp-hub-badge');
+      if (!boite.width || !badge) return;
+      var h = badge.getBoundingClientRect();
+      var cx = h.left + h.width / 2 - boite.left, cy = h.top + h.height / 2 - boite.top;
+      var d = '', points = [];
+      schema.querySelectorAll('.lp-pilule').forEach(function (p){
+        var r = p.getBoundingClientRect();
+        var aGauche = r.left + r.width / 2 < boite.left + boite.width / 2;
+        var x = (aGauche ? r.right : r.left) - boite.left, y = r.top + r.height / 2 - boite.top;
+        var dx = (cx - x) * 0.5;
+        d += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' C' + (x + dx).toFixed(1) + ' ' + y.toFixed(1) + ' '
+          + (cx - dx).toFixed(1) + ' ' + cy.toFixed(1) + ' ' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ';
+        points.push([x, y]);
+      });
+      traits.setAttribute('viewBox', '0 0 ' + boite.width.toFixed(1) + ' ' + boite.height.toFixed(1));
+      while (traits.firstChild) traits.removeChild(traits.firstChild);
+      [['lp-trait-base'], ['lp-trait-flux']].forEach(function (c){
+        var el = document.createElementNS(NS, 'path');
+        el.setAttribute('class', c[0]); el.setAttribute('d', d);
+        traits.appendChild(el);
+      });
+      points.forEach(function (pt){
+        var c = document.createElementNS(NS, 'circle');
+        c.setAttribute('class', 'lp-trait-point'); c.setAttribute('r', '3.6');
+        c.setAttribute('cx', pt[0].toFixed(1)); c.setAttribute('cy', pt[1].toFixed(1));
+        traits.appendChild(c);
+      });
+    };
+    trace();
+    window.addEventListener('resize', trace);
+    window.addEventListener('load', trace);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(trace);
+  }
 
   /* ---------- la video ----------
-     Elle part seule, en muet et en boucle (Amaury, 09/10/2026). Le bouton
-     « Activer le son » la remet a zero, coupe la boucle et rend les commandes.
-     Si le navigateur refuse la lecture automatique (economie de donnees,
-     reduction des animations), le bouton devient « Regarder la video » et fait
-     la meme chose. */
-  var cadre = $('lp-video'), video = $('lp-vsl'), lecture = $('lp-lecture');
+     Elle part seule, en muet et en boucle (Amaury, 09/10/2026), mais pas
+     avant d'etre a l'ecran : elle pese 8 Mo et le HTML ne precharge que ses
+     metadonnees, c'est l'approche (40 % visible) qui la lance, et elle se met
+     en pause hors ecran. Le bouton « Activer le son » la remet a zero, coupe
+     la boucle et rend les commandes. Si le navigateur refuse la lecture
+     automatique (economie de donnees, reduction des animations), le bouton
+     devient « Regarder la video » et fait la meme chose. */
+  var cadreVideo = $('lp-video'), video = $('lp-vsl'), lecture = $('lp-lecture');
   if (video && lecture) {
     var bloque = function (){
-      cadre.classList.add('bloque');
+      cadreVideo.classList.add('bloque');
       lecture.setAttribute('aria-label', 'Lancer la vidéo avec le son');
     };
-    var calme = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (calme) { video.removeAttribute('autoplay'); video.pause(); bloque(); }
-    else {
+    var lance = function (){
       var p0 = video.play();
       if (p0 && p0.catch) p0.catch(bloque);
-    }
+    };
+    if (calme) { video.pause(); bloque(); }
+    else if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es){
+        var e = es[es.length - 1];
+        if (cadreVideo.classList.contains('joue')) { if (!e.isIntersecting) video.pause(); return; }
+        if (cadreVideo.classList.contains('bloque')) return;
+        if (e.isIntersecting) lance(); else video.pause();
+      }, { threshold: 0.4 }).observe(cadreVideo);
+    } else lance();
     lecture.addEventListener('click', function (){
-      cadre.classList.add('joue');
+      cadreVideo.classList.add('joue');
       video.loop = false;
       video.muted = false;
       video.controls = true;

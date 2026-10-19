@@ -55,6 +55,9 @@ GABARIT = '''<!doctype html>
   img{max-width:100%%}
   [hidden]{display:none !important}
 </style>
+%(tete)s
+</head>
+<body>
 %(corps)s
 </body>
 </html>
@@ -89,7 +92,10 @@ for nom, (servi, titre, descr) in DESCR.items():
     assert '<!doctype' not in corps.lower()
     # le <title> de l'Artifact sert de titre de page, on le remplace par le nôtre
     corps = re.sub(r'<title>.*?</title>', '<title>' + titre + '</title>', corps, count=1)
-    page = GABARIT % {'titre': titre, 'descr': descr, 'corps': corps}
+    # le corps assemble commence par le titre, les polices et la feuille de style,
+    # qui vont dans <head> ; le reste (symboles du logo, page) va dans <body>
+    k = corps.index('<svg width="0" height="0"')
+    page = GABARIT % {'titre': titre, 'descr': descr, 'tete': corps[:k].rstrip(), 'corps': corps[k:]}
     open(os.path.join(SORTIE, servi), 'w', encoding='utf-8').write(page)
 
 # le client de la base est servi par le site, donc il vit a la racine du depot
@@ -97,8 +103,9 @@ DEPOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 for f in ('sb.js',):
     shutil.copy(os.path.join(DEPOT, f), os.path.join(SORTIE, f))
 
-# Le logo de Gota (Amaury, 08/10/2026) et la VSL de la page agence.
-AGENCE = ['photos/gota-logo.webp', 'video/vsl-agence.mp4', 'video/vsl-agence-affiche.webp']
+# Le logo de Gota (Amaury, 08/10/2026), la photo des telephones dessines du heros
+# (19/10/2026) et la VSL de la page agence.
+AGENCE = ['photos/gota-logo.webp', 'photos/agence-heros.webp', 'video/vsl-agence.mp4', 'video/vsl-agence-affiche.webp']
 for rel in AGENCE:
     dest = os.path.join(SORTIE, rel)
     os.makedirs(os.path.dirname(dest), exist_ok=True)

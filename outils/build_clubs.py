@@ -53,6 +53,12 @@ def vers_accueil(html, local):
         return 'href="%s"' % (local[a] if a in local else 'index.html#' + a)
     return re.sub(r'href="#([a-z0-9\-]+)"', sub, html)
 
+# Depuis les pages legales, les ancres de la page agence remontent a sa racine ;
+# les <use href="#mcc-..."> du logo pointent sur un trace, pas sur une page.
+def vers_racine(html):
+    return re.sub(r'href="#([a-z0-9\-]+)"',
+                  lambda m: m.group(0) if m.group(1) in SYMBOLES else 'href="/#%s"' % m.group(1), html)
+
 header = vers_accueil(header, {'top': 'index.html'})
 # on est deja sur la page clubs : le bouton du menu descend au bloc de creation
 # sur la page de vente le bouton descend au bloc de creation ; sur la page de la fiche
@@ -163,26 +169,48 @@ trait = lambda d, w=16: ('<svg width="%d" height="%d" viewBox="0 0 24 24" fill="
                          % (w, w) + d + '</svg>')
 LANDING = {
     'FLECHE': trait('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 18),
-    'COCHE': trait('<path d="M20 6 9 17l-5-5"/>'),
-    # icones Lucide des sections du 19/10/2026 : x, check, shield-check, user-check,
-    # phone-call, mouse-pointer-click, megaphone, bell-ring, chevron-down
-    'I_X': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 20),
-    'I_CHECK': trait('<path d="M20 6 9 17l-5-5"/>', 20),
-    'I_BOUCLIER20': trait('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1'
-                          'c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'
-                          '<path d="m9 12 2 2 4-4"/>', 20),
-    'I_ADHERENT': trait('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'
-                        '<path d="m16 11 2 2 4-4"/>', 20),
-    'I_APPEL': trait('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 '
-                     '19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 '
-                     '2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 '
-                     '2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14.05 2a9 9 0 0 1 8 7.94"/><path d="M14.05 6A5 5 0 0 1 18 10"/>', 20),
-    'I_CLIC': trait('<path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/>'
-                    '<path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/>', 20),
-    'I_PUB20': trait('<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 20),
-    'I_RAPPEL20': trait('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
-                        '<path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/>', 20),
-    'I_CHEVRON': trait('<path d="m6 9 6 6 6-6"/>', 18),
+    # icones Lucide de la page refaite sur le modele Squale (19/10/2026) :
+    # megaphone, message-circle, calendar-check (le constat 01 02 03), hand-fist
+    # (le poing : logo de la salle dans les telephones, pastille, bandeau),
+    # layout-template, mail-check, phone-call, mouse-pointer-click, handshake
+    # (le schema « qui fait quoi »), heart, send, bookmark, chevron-right, check,
+    # trending-up, users (les ecrans dessines et les avatars du bandeau)
+    'I_MEGAPHONE': trait('<path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/>'
+                         '<path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/>', 24),
+    'I_MESSAGE': trait('<path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 '
+                       '10 10 0 1 0-4.777-4.719"/>', 24),
+    'I_CALCHECK': trait('<path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/>'
+                        '<path d="m9 15 2 2 4-4"/>', 24),
+    'I_POING': trait('<path d="M12.035 17.012a3 3 0 0 0-3-3l-.311-.002a.72.72 0 0 1-.505-1.229l1.195-1.195A2 2 0 0 1 10.828 11H12'
+                     'a2 2 0 0 0 0-4H9.243a3 3 0 0 0-2.122.879l-2.707 2.707A4.83 4.83 0 0 0 3 14a8 8 0 0 0 8 8h2a8 8 0 0 0 8-8V7'
+                     'a2 2 0 1 0-4 0v2a2 2 0 1 0 4 0"/><path d="M13.888 9.662A2 2 0 0 0 17 8V5A2 2 0 1 0 13 5"/>'
+                     '<path d="M9 5A2 2 0 1 0 5 5V10"/><path d="M9 7V4A2 2 0 1 1 13 4V7.268"/>', 24),
+    'I_PAGE': trait('<rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/>'
+                    '<rect width="5" height="7" x="16" y="14" rx="1"/>', 24),
+    'I_MAILCHECK': trait('<path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/>'
+                         '<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/>', 24),
+    'I_APPEL': trait('<path d="M13 2a9 9 0 0 1 9 9"/><path d="M13 6a5 5 0 0 1 5 5"/>'
+                     '<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2'
+                     'A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 '
+                     '14 14 0 0 0 6.392 6.384"/>', 24),
+    'I_CLIC': trait('<path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/>'
+                    '<path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739'
+                    'l-1.04 4.35a.5.5 0 0 1-.95.074z"/>', 24),
+    'I_POIGNEE': trait('<path d="m11 17 2 2a1 1 0 1 0 3-3"/>'
+                       '<path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81'
+                       'a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/>'
+                       '<path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/>', 24),
+    'I_COEUR': trait('<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5'
+                     'l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>', 24),
+    'I_ENVOI': trait('<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937'
+                     'l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>', 24),
+    'I_MARQUE': trait('<path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578'
+                      'A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/>', 24),
+    'I_CHEVRON_D': trait('<path d="m9 18 6-6-6-6"/>', 24),
+    'I_CHECK': trait('<path d="M20 6 9 17l-5-5"/>', 24),
+    'I_COURBE': trait('<path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/>', 24),
+    'I_GENS': trait('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/>'
+                    '<path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/>', 24),
     # la prise de rendez-vous (19/10/2026) : clock, check, chevron-left, video, phone,
     # calendar-check, cloud-off, calendar-x, mail, calendar-x2 (page annuler)
     'I_RDV_HORLOGE': trait('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', 14),
@@ -209,9 +237,17 @@ LANDING = {
 # La page de conversion de l'agence (Amaury, 09/10/2026 : « une landing page
 # simple basee sur la conversion ») : son bandeau sans menu et son pied sont
 # dans son corps, un seul but, reserver un appel.
+# Les quatre pages de l'agence (la page elle-meme, les deux pages legales et
+# l'annulation du rendez-vous) ne portent ni la fenetre du compte, ni le client
+# Supabase, ni la CSS du site public : elles n'en ont pas besoin, et la page
+# agence pesait 268 Ko (relecture du 19/10/2026). Elles gardent sb.js, qui donne
+# l'adresse de l'API de rendez-vous et marche sans window.supabase.
+LEGER = QUI in ('agence', 'confidentialite', 'conditions', 'annuler')
+if LEGER:
+    clubc = ''
 if QUI == 'agence':
     header = footer = ''
-    clubc = clubc + R('_agence.css') + R('_landing.css')
+    clubc = R('_agence.css') + R('_landing.css')
     # les notes de travail du corps (<!-- ... -->) restent dans la source, pas dans la page servie
     body = re.sub(r'<!--.*?-->\n?', '', body, flags=re.S)
     for k, v in LANDING.items():
@@ -236,11 +272,8 @@ if QUI in ('confidentialite', 'conditions', 'annuler'):
     header = (LP[i:j].replace('href="#contenu"', 'href="/"')
                      .replace('href="#appel" data-appel', 'href="/#appel"'))
     i = LP.index('<footer class="lp-pied">'); j = LP.index('</footer>', i) + len('</footer>')
-    footer = LP[i:j]
-    # le bandeau de l'agence suit le texte au lieu de le recouvrir : plus besoin
-    # de la marge prevue pour le bandeau flottant du site public
-    clubc = (clubc + R('_agence.css') + R('_landing.css')
-             + '  .sous-bandeau{padding-top:clamp(36px,5vw,56px)}\n')
+    footer = vers_racine(LP[i:j])
+    clubc = R('_agence.css') + R('_landing.css') + R('_legal.css')
 # La page d'annulation du rendez-vous (lien recu par e-mail) : meme coque que les
 # pages legales, et les icones du widget de reservation ; ses notes de travail
 # restent dans la source.
@@ -274,12 +307,17 @@ TITRE = {'clubs': 'Référencer ma salle | Mon Club Combat',
          'agence': 'Remplissez votre salle | Mon Club Combat',
          'annuler': 'Annuler mon rendez-vous | Mon Club Combat'}[QUI]
 
+POLICES = ('https://fonts.googleapis.com/css2?'
+           + ('' if LEGER else 'family=Anton&')
+           + 'family=Manrope:wght@500;600;700;800'
+           + '&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,700;1,800&display=swap')
+CSS = base + eyeb + clubc if LEGER else base + eyeb + footc + clubc + compte.css()
 page = (
 '''<title>''' + TITRE + '''</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="''' + POLICES + '''">
 <style>
-''' + base + eyeb + footc + clubc + compte.css() + '''</style>
+''' + CSS + '''</style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 ''' + defs + '''
@@ -290,9 +328,15 @@ page = (
 # compte ; sur la page de la fiche elle sert de rattrapage quand on arrive sans
 # session (lien recu par e-mail, onglet rouvert le lendemain) : MCC.exigeCompte()
 # l'ouvre en mode connexion au lieu de renvoyer sur une page de plus.
-page = compte.pose(page)
+if LEGER:
+    # sb.js seul, avant le script de la page : il pose window.MCC (adresse de
+    # l'API, cle publique) sans client Supabase
+    if QUI in ('agence', 'annuler'):
+        page = page + '\n<script src="sb.js"></script>\n'
+else:
+    page = compte.pose(page)
 # le script propre a la page, pose apres la fenetre : il compte sur window.MCC,
-# que compte.pose() vient de charger
+# que compte.pose() (ou sb.js seul) vient de charger
 APRES = {'referencer': '_referencer.sb.js', 'espace-club': '_espace.js', 'admin': '_admin.js',
          'motdepasse': '_motdepasse.js', 'mon-compte': '_mon_compte.js',
          'acquisition': '_acquisition.js', 'agence': '_landing.js'}

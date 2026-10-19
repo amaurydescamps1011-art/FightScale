@@ -1,11 +1,15 @@
 <a class="skip" href="#contenu">Aller au contenu</a>
 
-<!-- La page de conversion de l'agence (Amaury, 09/10/2026 : « une landing page
-     simple basee sur la conversion »). Un seul but : reserver un appel. Pas de
-     menu, pas de lien qui sorte de la page, sauf les mentions du pied.
-     Sous la video, les sections reprennent les FAITS de la voix off (doc
-     rev 22), jamais sa formulation (Amaury, 19/10/2026 : « tu reprends
-     litteralement le script de la voix »). On garantit combien de personnes
+<!-- La page de conversion de l'agence, refaite le 19/10/2026 sur le modele de
+     squaleimmobilier.com (Amaury : « base toi sur cette DA et cette maniere de
+     faire la landing page »). Meme structure, section par section : la promesse
+     du titre, trois telephones, quatre chiffres, le constat 01 02 03, la
+     pastille de preuve, la video « Comment ca marche ? », le schema « qui fait
+     quoi », le bandeau de clients, les recits de resultats, la garantie, la FAQ
+     longue, l'appel. Les textes viennent du plan de textes final
+     (scratchpad/squale-textes.json). Deux blocs sont repris tels quels de la
+     page d'avant : le lecteur video (#lp-video) et le widget de rendez-vous
+     (#rdv), que _landing.js fait vivre. On garantit combien de personnes
      RESERVENT, jamais combien viennent ni combien s'inscrivent. -->
 <header class="lp-tete">
   <div class="lp-tete-in">
@@ -23,20 +27,167 @@
 
 <main id="contenu" class="ag lp">
 
-  <section class="lp-heros">
-    <p class="lp-pour">Pour les salles de sports de combat</p>
-    <!-- Amaury, 19/10/2026 : le titre dit tout de suite ce qu'on fait et ce que le club y gagne -->
-    <h1 class="lp-h1">Des séances d’essai <em>réservées chaque&nbsp;mois</em> dans votre club de sports&nbsp;de&nbsp;combat</h1>
-    <p class="lp-chapo">Nous nous occupons de tout pour remplir votre planning, de la pub jusqu’à la relance
-      1 h avant chaque séance. Vous n’avez plus qu’à accueillir vos futurs adhérents.</p>
+  <!-- le heros : une promesse par mois, le mot cle en rouge, un bouton. Deux
+       variantes (brief du 19/10) : A avec un chiffre d'exemple a confirmer, B
+       sans chiffre. La page sert A ; ?heros=B montre B (gabarit <template>),
+       pour les captures et pour qu'Amaury choisisse. -->
+  <section class="lp-heros" aria-labelledby="lp-h1">
+    <div class="lp-heros-fond" aria-hidden="true"><span class="lp-rai lp-rai-1"></span><span class="lp-rai lp-rai-2"></span><span class="lp-rai lp-rai-3"></span></div>
+    <div class="lp-heros-in" id="lp-heros" data-variante="A">
+      <h1 class="lp-h1" id="lp-h1">Nous ajoutons<br><span class="lp-hl">+30 séances d’essai réservées</span><br class="lp-br-large"> par mois à votre planning</h1>
+      <p class="lp-chapo">Pub, page de réservation et relances entièrement gérées, avec un nombre garanti par écrit</p>
+      <span class="lp-cta lp-agir"><a class="lp-btn lp-btn-lg" href="#appel" data-appel>Réserver un appel</a></span>
+    </div>
+    <template id="lp-heros-B">
+      <h1 class="lp-h1">Chaque mois,<br class="lp-br-large"> <span class="lp-hl">des séances d’essai réservées</span><br>dans votre salle, en nombre garanti</h1>
+      <p class="lp-chapo">Pub, page de réservation et relances entièrement gérées, le nombre écrit dans votre abonnement</p>
+    </template>
+    <hr class="lp-filet">
+  </section>
 
-    <!-- Amaury, 09/10/2026 : la video part toute seule en muet, un bouton bien
-         visible active le son, et le son la relance depuis le debut. Si le
-         navigateur refuse la lecture automatique, le meme bouton devient
-         « Regarder la video ». -->
-    <div class="lp-video" id="lp-video">
+  <!-- trois telephones dessines : ce que voit le futur adherent (la pub, la
+       page au nom de la salle, la relance). Pas de videos de clients pour
+       l'instant (squale-manques.md). Les ecrans sont dessines a 234 px de large
+       et mis a l'echelle par la CSS. -->
+  <section class="lp-clips" aria-labelledby="lp-clips-t">
+    <p class="lp-sur lp-clips-sur reveal" id="lp-clips-t">Ce que voit votre futur adhérent</p>
+    <div class="lp-clips-grid reveal">
+      <div class="lp-clip">
+        <div class="lp-clip-cadre" aria-hidden="true">
+          <div class="lp-tel">
+            <span class="lp-tel-anneau"></span>
+            <div class="lp-tel-corps">
+              <div class="lp-tel-ecran">
+                <span class="lp-tel-ilot"></span>
+                <div class="lp-ecran lp-ecran-pub">
+                  <div class="lp-ec-poste"><span class="lp-ec-logo">%%I_POING%%</span><div><b>Votre salle</b><span>Sponsorisé</span></div></div>
+                  <img class="lp-ec-photo" src="photos/agence-heros.webp" alt="" width="1100" height="1650" loading="lazy" decoding="async">
+                  <div class="lp-ec-bouton">Réserver ma séance d’essai %%I_CHEVRON_D%%</div>
+                  <div class="lp-ec-actions">%%I_COEUR%%%%I_MESSAGE%%%%I_ENVOI%%<span class="lp-ec-marque">%%I_MARQUE%%</span></div>
+                  <p class="lp-ec-legende"><b>Votre salle</b> Une séance d’essai à dix minutes de chez vous. Choisissez votre cours.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lp-clip-cap">
+          <p class="lp-clip-etiq">La pub</p>
+          <p class="lp-clip-titre">Facebook et Instagram, autour de votre salle</p>
+          <p class="lp-clip-leg">Vue par les gens qui habitent près de votre salle, pas par toute la France.</p>
+        </div>
+      </div>
+      <div class="lp-clip">
+        <div class="lp-clip-cadre" aria-hidden="true">
+          <div class="lp-tel">
+            <span class="lp-tel-anneau"></span>
+            <div class="lp-tel-corps">
+              <div class="lp-tel-ecran">
+                <span class="lp-tel-ilot"></span>
+                <div class="lp-ecran lp-ecran-page">
+                  <div class="lp-ec-tete"><span class="lp-ec-logo">%%I_POING%%</span><div><b>Votre salle</b><span>Séance d’essai</span></div></div>
+                  <p class="lp-ec-titre">Choisissez votre cours</p>
+                  <ul class="lp-ec-cours">
+                    <li class="est-choisi"><div><b>Boxe anglaise</b><span>Jeudi · 19 h</span></div><i>%%I_CHECK%%</i></li>
+                    <li><div><b>MMA</b><span>Mardi · 20 h</span></div><i></i></li>
+                    <li><div><b>JJB</b><span>Samedi · 10 h</span></div><i></i></li>
+                  </ul>
+                  <div class="lp-ec-champs"><span>Prénom</span><span>E-mail</span></div>
+                  <div class="lp-ec-bouton">Réserver ma séance d’essai</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lp-clip-cap">
+          <p class="lp-clip-etiq">La page à votre nom</p>
+          <p class="lp-clip-titre">La personne choisit un cours et réserve</p>
+          <p class="lp-clip-leg">Boxe anglaise, jeudi 19 h : un cours précis de votre planning, une date.</p>
+        </div>
+      </div>
+      <div class="lp-clip">
+        <div class="lp-clip-cadre" aria-hidden="true">
+          <div class="lp-tel">
+            <span class="lp-tel-anneau"></span>
+            <div class="lp-tel-corps">
+              <div class="lp-tel-ecran">
+                <span class="lp-tel-ilot"></span>
+                <div class="lp-ecran lp-ecran-mail">
+                  <div class="lp-ec-tete"><span class="lp-ec-logo">%%I_POING%%</span><div><b>Votre salle</b><span>À Karim · 18 h 00</span></div></div>
+                  <p class="lp-ec-objet">Votre séance d’essai, c’est dans 1&nbsp;h</p>
+                  <p class="lp-ec-corps">Bonjour Karim,<br>votre séance d’essai de boxe anglaise commence à 19 h. Nous vous attendons.</p>
+                  <div class="lp-ec-rappel"><i>%%I_CALCHECK%%</i><div><b>Boxe anglaise</b><span>Jeudi · 19 h 00</span></div></div>
+                  <p class="lp-ec-corps">À tout à l’heure,<br>Votre salle</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lp-clip-cap">
+          <p class="lp-clip-etiq">La relance</p>
+          <p class="lp-clip-titre">Un e-mail jusqu’à 1&nbsp;h avant la séance</p>
+          <p class="lp-clip-leg">Nos e-mails lui rappellent sa séance d’essai, le dernier une heure avant.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- quatre chiffres : les seules preuves donnees par Amaury (04, 07 et 09/10) -->
+  <section class="lp-chiffres-bande" aria-label="Nos chiffres">
+    <div class="lp-wrap lp-chiffres">
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Salles</p><p class="lp-chiffre-val">+20</p><p class="lp-chiffre-leg">Salles de sports de combat accompagnées</p></article>
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Réservations</p><p class="lp-chiffre-val est-mot">Des milliers</p><p class="lp-chiffre-leg">Séances d’essai réservées chez nos clients</p></article>
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Pour 1&nbsp;€ dépensé</p><p class="lp-chiffre-val">8&nbsp;€</p><p class="lp-chiffre-leg">d’adhésions en moyenne, chez nos clients</p></article>
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Adhérents</p><p class="lp-chiffre-val">×2</p><p class="lp-chiffre-leg">Adhérents doublés en un mois chez Gota</p></article>
+    </div>
+  </section>
+
+  <!-- le constat : une phrase noire, une phrase rouge, trois cartes 01 02 03 -->
+  <section class="lp-constat" aria-labelledby="lp-constat-t">
+    <div class="lp-wrap">
+      <h2 class="lp-constat-t reveal" id="lp-constat-t">Tout le monde «&nbsp;va passer&nbsp;». Personne ne passe.<br><span class="lp-accent">Il ne vous manque pas des curieux. Il vous manque des réservations.</span></h2>
+      <div class="lp-args reveal">
+        <article class="lp-arg reveal">
+          <span class="lp-arg-num" aria-hidden="true">01</span>
+          <span class="lp-arg-ico" aria-hidden="true">%%I_MEGAPHONE%%</span>
+          <h3>Une publication boostée rapporte des vues et des «&nbsp;j’aime&nbsp;», <em>pas un inscrit.</em></h3>
+        </article>
+        <article class="lp-arg reveal">
+          <span class="lp-arg-num" aria-hidden="true">02</span>
+          <span class="lp-arg-fleche" aria-hidden="true">%%FLECHE%%</span>
+          <span class="lp-arg-ico" aria-hidden="true">%%I_MESSAGE%%</span>
+          <h3>«&nbsp;Je passe mardi&nbsp;», promis en message privé. <em>Mardi, personne.</em></h3>
+        </article>
+        <article class="lp-arg reveal">
+          <span class="lp-arg-num" aria-hidden="true">03</span>
+          <span class="lp-arg-fleche" aria-hidden="true">%%FLECHE%%</span>
+          <span class="lp-arg-ico" aria-hidden="true">%%I_CALCHECK%%</span>
+          <h3>Un «&nbsp;ça m’intéresse&nbsp;» ne vaut rien. <em>Une réservation, si.</em></h3>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- la pastille de preuve, puis la video : le lecteur est repris tel quel
+       (Amaury, 09/10/2026 : la video part seule en muet, un bouton active le
+       son et la relance depuis le debut). -->
+  <section class="lp-preuve" aria-labelledby="comment-ca-marche">
+    <div class="lp-wrap lp-preuve-in">
+      <div class="lp-pastille reveal">
+        <div class="lp-pastille-item">
+          <span class="lp-pastille-logo"><img src="photos/gota-logo.webp" alt="Gota" width="227" height="240" loading="lazy"></span>
+          <p class="lp-pastille-ligne"><strong class="lp-pastille-gros">×2</strong>adhérents en un mois chez Gota</p>
+        </div>
+        <span class="lp-pastille-sep" aria-hidden="true"></span>
+        <div class="lp-pastille-item">
+          <span class="lp-pastille-poing" aria-hidden="true">%%I_POING%%</span>
+          <p class="lp-pastille-ligne"><strong class="lp-pastille-gros">+20</strong>salles accompagnées</p>
+        </div>
+      </div>
+      <h2 class="lp-h2 reveal" id="comment-ca-marche">Comment ça marche&nbsp;?</h2>
+      <div class="lp-cadre-video reveal">
+        <div class="lp-video" id="lp-video">
       <video id="lp-vsl" src="video/vsl-agence.mp4?v=%%V_VSL%%" poster="video/vsl-agence-affiche.webp?v=%%V_AFFICHE%%"
-             muted autoplay loop playsinline preload="auto" width="1280" height="720"
+             muted loop playsinline preload="metadata" width="1280" height="720"
              aria-label="Vidéo : comment Mon Club Combat remplit votre salle"></video>
       <button class="lp-lecture" type="button" id="lp-lecture" aria-label="Activer le son et revoir la vidéo depuis le début">
         <span class="lp-lecture-pil">
@@ -49,179 +200,191 @@
         </span>
       </button>
     </div>
-
-    <div class="lp-agir">
-      <a class="ag-btn ag-btn-rouge lp-btn-xl" href="#appel" data-appel>Réserver un appel %%FLECHE%%</a>
-      <p class="lp-agir-mot">Nous verrons ensemble si votre club est éligible.</p>
+      </div>
+      <div class="lp-cta lp-agir-section reveal"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Réserver un appel</a></div>
+      <p class="lp-plus reveal"><a href="#faq-marche">Comprendre en détail comment ça marche&nbsp;→</a></p>
     </div>
   </section>
 
-  <!-- les preuves donnees par Amaury (04 et 07/10/2026), rien d'autre ; le 09/10 le
-       retour sur investissement de 8 pour 1 remplace le taux de conversion de 20 % -->
-  <section class="lp-preuves" aria-label="Nos résultats">
-    <!-- Amaury, 19/10/2026 : un seul bandeau, trois colonnes de meme forme (version A) -->
-    <ul class="lp-chiffres">
-      <li><b>20<i>+</i></b><span class="lp-ch-t"><span class="lp-ch-l">salles accompagnées</span></span></li>
-      <li><b><i>×</i>8</b><span class="lp-ch-t"><span class="lp-ch-l">de retour sur investissement moyen</span><small>Pour 1 € dépensé, nos clients gagnent 8 € en adhésions</small></span></li>
-      <li><b><i>×</i>2</b><span class="lp-ch-t"><span class="lp-ch-l">d’adhérents en un mois</span><small class="lp-chez"><span class="lp-gota-logo"><img src="photos/gota-logo.webp" alt="" width="227" height="240" loading="lazy"></span>chez Gota</small></span></li>
-    </ul>
+  <!-- qui fait quoi : notre part a gauche, la votre a droite, la marque au milieu -->
+  <section class="lp-toit" aria-labelledby="lp-toit-t">
+    <div class="lp-wrap">
+      <h2 class="lp-h2 reveal" id="lp-toit-t">Nous faisons tout, <em>sauf le cours.</em></h2>
+      <div class="lp-schema reveal" id="lp-schema">
+        <svg class="lp-schema-traits" aria-hidden="true" focusable="false"></svg>
+        <div class="lp-schema-col lp-schema-gauche">
+          <p class="lp-schema-cap">Notre part</p>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_MEGAPHONE%%</span>La pub Facebook et Instagram</span>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_PAGE%%</span>La page au nom de votre salle</span>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_MAILCHECK%%</span>Les relances jusqu’à 1&nbsp;h avant</span>
+        </div>
+        <div class="lp-schema-hub" aria-hidden="true">
+          <span class="lp-hub-anneau"></span><span class="lp-hub-anneau lp-hub-anneau-2"></span><span class="lp-hub-pouls"></span>
+          <span class="lp-hub-badge">
+            <svg viewBox="212 589 389 369" width="46" height="44"><use href="#mcc-mono-m" fill="#fff"/><use href="#mcc-mono-c" fill="#fff"/></svg>
+            <span class="lp-hub-nom">Mon Club Combat</span>
+          </span>
+        </div>
+        <div class="lp-schema-col lp-schema-droite">
+          <p class="lp-schema-cap">Votre part</p>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_APPEL%%</span>Un appel de 15&nbsp;min</span>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_CLIC%%</span>Une commande en 3&nbsp;clics</span>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_POIGNEE%%</span>Accueillir et faire signer</span>
+        </div>
+      </div>
+      <p class="lp-plus reveal"><a href="#faq-qui">Voir qui fait quoi, et quand&nbsp;→</a></p>
+      <div class="lp-cta lp-agir-section reveal"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Réserver un appel</a></div>
+    </div>
   </section>
 
-  <!-- Amaury, 19/10/2026 : « tu reprends litteralement le script de la voix ».
-       Les sections du bas reprennent les FAITS de la voix off, jamais sa
-       formulation : douleur du gerant, engagement, qui fait quoi, questions,
-       appel. On garantit combien de personnes RESERVENT, jamais combien
-       viennent ni combien s'inscrivent. -->
-  <section class="lp-section lp-situation" aria-labelledby="lp-situation-t">
-    <div class="lp-etroit">
-      <h2 class="lp-h2" id="lp-situation-t">Tout le monde «&nbsp;va passer&nbsp;». <em>Personne ne passe.</em></h2>
-      <ul class="lp-scenes">
-        <li><span aria-hidden="true">%%I_X%%</span>Vous boostez une publication&nbsp;: des vues, des «&nbsp;j’aime&nbsp;», pas un inscrit.</li>
-        <li><span aria-hidden="true">%%I_X%%</span>On vous demande le prix, puis plus de nouvelles.</li>
-        <li><span aria-hidden="true">%%I_X%%</span>«&nbsp;Je passe mardi&nbsp;», promis en message privé. Mardi, personne.</li>
-        <li><span aria-hidden="true">%%I_X%%</span>La rentrée remplit la salle. Puis ça retombe, chaque année.</li>
+  <!-- le bandeau qui defile : Gota, puis deux cartes agregees, faute d'autres
+       clubs nommes (squale-manques.md). _landing.js repete les cartes pour
+       remplir l'ecran et double la liste pour boucler. -->
+  <section class="lp-bandeau reveal" aria-labelledby="lp-bandeau-t">
+    <p class="lp-sur lp-bandeau-sur" id="lp-bandeau-t">Résultats clients</p>
+    <div class="lp-bandeau-piste" id="lp-bandeau-piste">
+      <ul class="lp-bandeau-liste">
+        <li class="lp-bandeau-carte"><span class="lp-avatar est-gota"><img src="photos/gota-logo.webp" alt="" width="227" height="240" loading="lazy"></span><div><p class="lp-bandeau-nom">Gota</p><p class="lp-bandeau-res"><strong>×2 adhérents</strong> en 1 mois</p></div></li>
+        <li class="lp-bandeau-carte"><span class="lp-avatar" aria-hidden="true">%%I_COURBE%%</span><div><p class="lp-bandeau-nom">Nos clients, en moyenne</p><p class="lp-bandeau-res"><strong>8 € d’adhésions</strong> pour 1 € dépensé</p><p class="lp-bandeau-sub">Sur l’ensemble de nos clients</p></div></li>
+        <li class="lp-bandeau-carte"><span class="lp-avatar" aria-hidden="true">%%I_GENS%%</span><div><p class="lp-bandeau-nom">Plus de 20 salles</p><p class="lp-bandeau-res"><strong>Des milliers</strong> de séances d’essai réservées</p><p class="lp-bandeau-sub">MMA, boxe, kickboxing, Muay Thaï, JJB, judo, karaté, lutte</p></div></li>
       </ul>
-      <p class="lp-bascule">Ce qu’il vous manque, ce ne sont pas des curieux. Ce sont des <b>réservations</b>.</p>
     </div>
   </section>
 
-  <section class="lp-section lp-engagement" aria-labelledby="lp-engagement-t">
-    <div class="lp-etroit">
-      <div class="lp-engage">
-        <p class="lp-sur">Notre engagement</p>
-        <h2 class="lp-h2" id="lp-engagement-t">Des réservations <em>garanties</em>. Pas des <span class="lp-nowrap">«&nbsp;peut-être&nbsp;».</span></h2>
-        <p class="lp-texte">Chaque mois, un nombre garanti de personnes qui ont réservé une séance
-          d’essai sur un cours précis de votre planning. Ce nombre est écrit, et c’est nous qui le tenons.</p>
-        <ul class="lp-paves">
-          <li><span class="lp-pave-ico est-rouge" aria-hidden="true">%%I_CHECK%%</span>
-            <b>Ce que nous comptons</b><p>Une personne, un cours de votre planning, une date confirmée.</p></li>
-          <li><span class="lp-pave-ico" aria-hidden="true">%%I_X%%</span>
-            <b>Ce que nous ne comptons pas</b><p>Un clic, un message, un «&nbsp;ça m’intéresse&nbsp;».</p></li>
-          <li class="lp-pave-large"><span class="lp-pave-ico est-rouge" aria-hidden="true">%%I_BOUCLIER20%%</span>
-            <b>Le nombre, écrit dans votre abonnement</b><p>Nous nous y engageons par écrit, noir sur blanc, avant le premier euro dépensé.</p></li>
-          <li class="lp-pave-limite"><span class="lp-pave-ico" aria-hidden="true">%%I_ADHERENT%%</span>
-            <b>Pas garanti&nbsp;: les adhésions</b><p>Transformer un essai en adhérent, c’est votre cours qui le fait. Chez nos clients,
-            1&nbsp;€ dépensé rapporte <strong>8&nbsp;€ d’adhésions</strong> en moyenne.</p></li>
-        </ul>
+  <section class="lp-resultats" id="resultats" aria-labelledby="lp-resultats-t">
+    <div class="lp-wrap">
+      <h2 class="lp-h2 lp-h2-sm reveal" id="lp-resultats-t">Nos résultats</h2>
+      <div class="lp-recits">
+        <article class="lp-recit reveal">
+          <p class="lp-recit-corps">La pub a tourné autour de la salle, la page à son nom a pris les réservations, nos e-mails ont relancé chaque personne. La salle a accueilli et fait signer. En un mois, <b>le nombre d’adhérents a doublé</b>.</p>
+          <p class="lp-recit-nom">Gota</p>
+          <p class="lp-recit-etiq">Adhérents ×2 en 1 mois</p>
+        </article>
+        <article class="lp-recit reveal">
+          <p class="lp-recit-corps">Pour <b>1 € dépensé</b>, <b>8 € d’adhésions</b> en moyenne, sur <b>plus de 20 salles</b> et des milliers de séances d’essai réservées. Nous garantissons les réservations, pas les adhésions : c’est votre cours qui les fait. Chez nos clients, il les fait bien.</p>
+          <p class="lp-recit-nom">Nos clients, en moyenne</p>
+          <p class="lp-recit-etiq">8 € pour 1 €, sur +20 salles</p>
+        </article>
       </div>
-      <div class="lp-agir lp-agir-section">
-        <a class="ag-btn ag-btn-rouge lp-btn-xl" href="#appel" data-appel>Réserver un appel %%FLECHE%%</a>
-        <p class="lp-agir-mot">Nous vous disons à l’appel si nous pouvons prendre cet engagement pour votre club.</p>
+      <div class="lp-recits-pied reveal">
+        <div class="lp-cta lp-agir-section"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Réserver un appel</a></div>
       </div>
     </div>
   </section>
 
-  <section class="lp-section lp-roles" aria-labelledby="lp-roles-t">
-    <div class="lp-etroit">
-      <p class="lp-sur">Comment nous tenons cet engagement</p>
-      <h2 class="lp-h2" id="lp-roles-t">Nous faisons tout, <em>sauf le cours</em>.</h2>
-      <p class="lp-texte">Il vous reste la porte à ouvrir, le cours à donner et l’inscription à faire signer.
-        Voilà qui fait quoi, et quand.</p>
-      <ol class="lp-frise">
-        <li>
-          <span class="lp-frise-pt" aria-hidden="true">%%I_APPEL%%<i>1</i></span>
-          <div class="lp-frise-carte">
-            <b>L’appel</b>
-            <p>Votre salle, votre planning, votre secteur&nbsp;: nous vous disons si nous pouvons nous engager chez vous.
-              C’est ça, être éligible.</p>
-            <p class="lp-part">Votre part&nbsp;: <b>un appel</b></p>
-          </div>
-        </li>
-        <li>
-          <span class="lp-frise-pt" aria-hidden="true">%%I_CLIC%%<i>2</i></span>
-          <div class="lp-frise-carte">
-            <b>Si c’est oui</b>
-            <p>Vous validez votre abonnement et nous envoyez ce qu’il faut savoir sur votre salle.</p>
-            <p class="lp-part">Votre part&nbsp;: <b>3&nbsp;clics</b></p>
-          </div>
-        </li>
-        <li>
-          <span class="lp-frise-pt" aria-hidden="true">%%I_PUB20%%<i>3</i></span>
-          <div class="lp-frise-carte">
-            <b>Les jours qui suivent</b>
-            <p>Une pub Facebook et Instagram tourne autour de votre salle, vers une page à son nom où l’on choisit
-              un cours et réserve.</p>
-            <p class="lp-part">Votre part&nbsp;: <b>rien</b></p>
-          </div>
-        </li>
-        <li>
-          <span class="lp-frise-pt" aria-hidden="true">%%I_RAPPEL20%%<i>4</i></span>
-          <div class="lp-frise-carte">
-            <b>Avant la séance</b>
-            <p>Chaque personne qui a réservé reçoit nos relances par e-mail, jusqu’à 1&nbsp;h avant.</p>
-            <p class="lp-part">Votre part&nbsp;: <b>accueillir et faire signer</b></p>
-          </div>
-        </li>
-      </ol>
+  <!-- la garantie : reservations, jamais venues ni adhesions, ecrit noir sur blanc -->
+  <section class="lp-garantie" id="garantie" aria-labelledby="lp-garantie-t">
+    <div class="lp-garantie-fond" aria-hidden="true"><span class="lp-garantie-lueur"></span></div>
+    <div class="lp-wrap lp-garantie-in">
+      <p class="lp-garantie-grand">Garanti.</p>
+      <h2 class="lp-h2 lp-garantie-t" id="lp-garantie-t">Un nombre de réservations par mois,<br><em>écrit dans votre abonnement.</em></h2>
+      <p class="lp-garantie-texte">Chaque mois, un nombre de personnes qui ont réservé une séance d’essai sur un cours précis de votre planning. Ce nombre est écrit dans votre abonnement avant que vous ne commandiez, et c’est nous qui le tenons. Pas garanti&nbsp;: les adhésions, c’est votre cours qui les fait.</p>
+      <div class="lp-cta lp-agir-section"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Réserver un appel</a></div>
+      <p class="lp-plus"><a href="#faq-marche-pas">Ce qui est garanti, et ce qui ne l’est pas&nbsp;→</a></p>
     </div>
   </section>
 
-  <section class="lp-section lp-questions" aria-labelledby="lp-questions-t">
-    <div class="lp-etroit">
-      <h2 class="lp-h2" id="lp-questions-t">Vos questions <em>avant d’appeler</em></h2>
-      <div class="lp-faqs">
-        <div class="lp-faq-col">
-          <details class="lp-faq" name="faq">
-            <summary>Les premières réservations, c’est quand&nbsp;?<span aria-hidden="true">%%I_CHEVRON%%</span></summary>
-            <p>Elles arrivent <b>dans les jours et les semaines qui suivent</b> votre commande. La pub démarre,
-              la page est en ligne, et les premières personnes choisissent un cours.</p>
-          </details>
-          <details class="lp-faq" name="faq">
-            <summary>Et si personne ne réserve&nbsp;?<span aria-hidden="true">%%I_CHEVRON%%</span></summary>
-            <p>Le nombre de réservations par mois est <b>écrit dans votre abonnement</b>&nbsp;: s’il n’y est pas,
-              c’est nous qui n’avons pas tenu notre engagement, pas vous. C’est justement pour ne pas en arriver là
-              que nous vérifions à l’appel, salle par salle, si nous pouvons le tenir. Dans le doute, nous ne vous
-              vendons rien.</p>
-          </details>
-          <details class="lp-faq" name="faq">
-            <summary>Et s’ils réservent sans venir&nbsp;?<span aria-hidden="true">%%I_CHEVRON%%</span></summary>
-            <p>C’est pour ça que chaque réservation porte sur un cours précis, à une date précise, et que nous
-              relançons par e-mail jusqu’à <b>1&nbsp;h avant</b> la séance. Notre engagement porte sur les réservations&nbsp;;
-              une fois la personne dans la salle, c’est votre cours qui fait le reste.</p>
-          </details>
-        </div>
-        <div class="lp-faq-col">
-          <details class="lp-faq" name="faq">
-            <summary>J’ai déjà fait de la pub Facebook, ça n’a rien donné.<span aria-hidden="true">%%I_CHEVRON%%</span></summary>
-            <p>Une publication boostée ramène des «&nbsp;j’aime&nbsp;» et des messages à trier. Ici, la pub mène à une page faite pour
-              votre salle, où la personne choisit un cours et réserve&nbsp;: vous ne recevez <b>que des réservations</b>.
-              Et comme elle ne s’affiche qu’aux gens de votre secteur, votre salle gagne en visibilité là où ça compte.</p>
-          </details>
-          <details class="lp-faq" name="faq">
-            <summary>Ma discipline, ma ville&nbsp;: ça marche&nbsp;?<span aria-hidden="true">%%I_CHEVRON%%</span></summary>
-            <p>Nous ne travaillons qu’avec des salles de sports de combat&nbsp;: MMA, boxe anglaise, kickboxing, Muay Thaï,
-              jiu-jitsu brésilien, grappling, karaté, judo, lutte, self-défense. <b>Plus de&nbsp;20 salles</b> nous font déjà
-              confiance. La pub est ciblée autour de votre salle&nbsp;; l’appel sert à vérifier que ça tient pour votre
-              secteur.</p>
-          </details>
-          <details class="lp-faq" name="faq">
-            <summary>Et l’appel, ça m’engage à quoi&nbsp;?<span aria-hidden="true">%%I_CHEVRON%%</span></summary>
-            <p><b>À rien.</b> L’appel sert à vérifier que nous pouvons tenir un nombre de réservations chez vous. Si c’est
-              oui, vous décidez ensuite de commander, ou pas. Si vos cours sont déjà pleins, nous vous le dirons
-              aussi&nbsp;: vous n’avez pas besoin de nous.</p>
-          </details>
-        </div>
+  <!-- la FAQ : accordeon natif (details, un seul ouvert a la fois), les reponses
+       longues et chiffrees du plan de textes, avec leurs tableaux -->
+  <section class="lp-faq" id="faq" aria-labelledby="lp-faq-t">
+    <div class="lp-wrap">
+      <h2 class="lp-h2 reveal" id="lp-faq-t">Mon Club Combat&nbsp;:<br><em>vos questions, nos réponses</em></h2>
+      <div class="lp-accordeon">
+        <details class="lp-q reveal" name="faq" id="faq-quoi">
+          <summary><span>Mon Club Combat, qu’est-ce que c’est, en deux mots&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Et si, pour une fois, c’étaient vos futurs adhérents qui réservaient avant de pousser votre porte&nbsp;? C’est exactement ce que fait Mon Club Combat.</p><p>Votre salle s’affiche sur Facebook et Instagram, auprès des gens qui habitent autour. Ceux qui ont envie d’essayer arrivent sur une page au nom de votre salle, choisissent un cours de votre planning et réservent une séance d’essai. Nous les relançons ensuite par e-mail, jusqu’à 1&nbsp;h avant la séance. Il ne vous reste plus qu’à les accueillir et à faire signer.</p><p>Chaque mois, un nombre de personnes qui ont réservé est garanti. Ce nombre est écrit dans votre abonnement, et c’est nous qui le tenons.</p><p>Nous ne travaillons qu’avec des salles de sports de combat&nbsp;: MMA, boxe anglaise, kickboxing, Muay Thaï, JJB, grappling, karaté, judo, lutte, self-défense.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Qui sommes-nous&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Une agence qui ne fait qu’une chose&nbsp;: remplir les cours des salles de sports de combat avec des séances d’essai réservées. Pas de site vitrine, pas de logo, pas de gestion de vos réseaux sociaux. Des réservations.</p><p>Plus de 20&nbsp;salles nous ont déjà confié leur planning, et des milliers de séances d’essai ont été réservées sur les pages que nous avons mises en ligne pour elles. Chez Gota, les adhérents ont doublé en un mois. En moyenne, chez nos clients, 1&nbsp;€ dépensé rapporte 8&nbsp;€ d’adhésions.</p><p>Nous ne vendons qu’aux salles où nous pouvons tenir notre engagement. C’est pour ça que tout commence par un appel de 15&nbsp;min, pas par un bon de commande.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq" id="faq-marche-pas">
+          <summary><span>Et si ça ne marche pas pour moi&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Le nombre de réservations par mois est écrit dans votre abonnement. S’il n’y est pas, c’est nous qui n’avons pas tenu notre engagement, pas vous. Ce qui se passe dans ce cas, nous vous le disons à l’appel, avant que vous ne commandiez.</p><p>C’est justement pour ne pas en arriver là que nous vérifions avant, salle par salle&nbsp;: votre planning, votre secteur, votre discipline. Si nous avons un doute, nous ne vous vendons rien. Nous préférons refuser une salle que lui écrire un chiffre que nous ne tiendrons pas. Et si vos cours sont déjà pleins, nous vous le dirons aussi&nbsp;: vous n’avez pas besoin de nous.</p><p>Soyons précis sur ce que nous garantissons. <b>Garanti&nbsp;: les réservations.</b> Des personnes qui ont choisi un cours de votre planning et une date, et que nous relançons jusqu’à 1&nbsp;h avant. <b>Pas garanti&nbsp;: les venues, ni les adhésions.</b> Une fois la personne dans votre salle, c’est votre cours qui fait le reste. Chez nos clients, il le fait bien&nbsp;: 1&nbsp;€ dépensé rapporte 8&nbsp;€ d’adhésions en moyenne, et chez Gota, les adhérents ont doublé en un mois.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq" id="faq-marche">
+          <summary><span>Comment ça marche, concrètement&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Nous faisons voir votre salle uniquement aux gens qui habitent autour, et nous ne vous ramenons que des personnes qui ont réservé un cours. Cela se fait en quatre étapes. Vous n’intervenez qu’au début, l’appel et la commande, puis à la porte de votre salle.</p><ol><li><b>Un appel de 15&nbsp;min.</b> Votre salle, votre planning, votre secteur&nbsp;: nous vous disons si nous pouvons nous engager chez vous, et sur quel nombre de réservations par mois.</li><li><b>Si c’est oui, 3&nbsp;clics.</b> Vous validez votre abonnement et nous envoyez ce qu’il faut savoir sur votre salle&nbsp;: vos cours, vos horaires, votre adresse.</li><li><b>Dans les jours qui suivent, la pub tourne.</b> Sur Facebook et Instagram, ciblée autour de votre salle, vers une page à son nom où la personne choisit un cours de votre planning et réserve sa séance d’essai.</li><li><b>Avant chaque séance, nous relançons.</b> Chaque personne qui a réservé reçoit nos e-mails, jusqu’à 1&nbsp;h avant. Vous n’avez qu’à l’accueillir et à lui faire signer son inscription.</li></ol><p><b>Un exemple.</b> Karim, 29&nbsp;ans, habite à dix minutes de votre salle. Un soir, votre pub passe dans son fil Instagram. Il touche, arrive sur la page de votre salle, voit vos cours et réserve la boxe anglaise du jeudi à 19&nbsp;h. Il reçoit nos e-mails de rappel, le dernier une heure avant. Jeudi à 18&nbsp;h&nbsp;55, il pousse votre porte. Vous ne l’avez ni cherché, ni relancé&nbsp;: vous l’accueillez, il fait le cours, vous lui tendez la fiche d’inscription.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Qu’est-ce que vous comptez comme une réservation&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Une personne, un cours de votre planning, une date. Nous ne comptons une réservation que si ces quatre conditions sont remplies&nbsp;:</p><ul><li>la personne a laissé son nom et son e-mail sur la page de votre salle&nbsp;;</li><li>elle a choisi <b>un cours précis</b> de votre planning, pas «&nbsp;un jour dans la semaine&nbsp;»&nbsp;;</li><li>elle a choisi <b>une date et une heure</b>&nbsp;: vous savez quand elle vient&nbsp;;</li><li>elle reçoit nos relances par e-mail, jusqu’à 1&nbsp;h avant la séance.</li></ul><p><b>Ce que nous ne comptons pas&nbsp;:</b> un clic, un «&nbsp;j’aime&nbsp;», un message privé, un «&nbsp;ça m’intéresse&nbsp;», un «&nbsp;je passe mardi&nbsp;», une demande de prix sans suite. Rien de tout cela ne remplit un cours.</p><p>En clair, c’est comme si la personne avait déjà inscrit son nom sur la feuille de présence de votre cours.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Quelle différence avec une publication boostée ou un site de leads&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>C’est le jour et la nuit. Une publication boostée vous vend des vues. Un site de leads vous vend un nom et un numéro. Mon Club Combat vous apporte une personne qui a choisi un cours de votre planning et qui a une date.</p><p>Avec une publication boostée, la seule chose qu’une personne peut faire, c’est aimer, commenter ou vous écrire «&nbsp;c’est combien&nbsp;?&nbsp;», puis plus rien. C’est vous qui triez les messages, et vous ne savez jamais qui va vraiment venir. Avec un site de leads, vous payez chaque fiche, que la personne vienne ou non, et c’est vous qui rappelez des inconnus qui ont souvent oublié avoir laissé leur numéro.</p><p>Chez nous, la pub n’est que le premier maillon&nbsp;: elle mène à une page à votre nom, où la personne choisit un cours et réserve, puis nous la relançons jusqu’à 1&nbsp;h avant. Point par point&nbsp;:</p><div class="lp-tableau lp-tableau-compare lp-tableau-pile"><table><thead><tr><th></th><th>Publication boostée</th><th>Site de leads</th><th>Mon Club Combat</th></tr></thead><tbody><tr><td>Ce que vous recevez</td><td data-th="Publication boostée">Des vues, des «&nbsp;j’aime&nbsp;», des messages</td><td data-th="Site de leads">Un nom et un numéro</td><td data-th="Mon Club Combat">Une personne, un cours, une date</td></tr><tr><td>La personne a choisi un cours de votre planning&nbsp;?</td><td data-th="Publication boostée">Non</td><td data-th="Site de leads">Non</td><td data-th="Mon Club Combat">Oui, sur la page à votre nom</td></tr><tr><td>Qui relance avant la séance&nbsp;?</td><td data-th="Publication boostée">Personne</td><td data-th="Site de leads">Vous</td><td data-th="Mon Club Combat">Nous, par e-mail jusqu’à 1&nbsp;h avant</td></tr><tr><td>Ce qu’il vous reste à faire</td><td data-th="Publication boostée">Trier, répondre, convaincre</td><td data-th="Site de leads">Appeler, rappeler, convaincre</td><td data-th="Mon Club Combat">Accueillir et faire signer</td></tr><tr><td>Fait pour les sports de combat&nbsp;?</td><td data-th="Publication boostée">Non</td><td data-th="Site de leads">Non</td><td data-th="Mon Club Combat">Oui, uniquement</td></tr><tr><td>Un nombre par mois, écrit&nbsp;?</td><td data-th="Publication boostée">Non</td><td data-th="Site de leads">Non</td><td data-th="Mon Club Combat">Oui, dans votre abonnement</td></tr><tr><td>Et si rien ne vient&nbsp;?</td><td data-th="Publication boostée">Le boost est payé</td><td data-th="Site de leads">Les fiches sont payées</td><td data-th="Mon Club Combat">C’est nous qui n’avons pas tenu notre engagement</td></tr></tbody></table></div><p>En clair, vous ne passez plus votre temps à répondre à des curieux. Vous accueillez des personnes qui vous attendent à un cours précis, et vous faites ce que vous faites de mieux&nbsp;: le cours, et l’inscription qui suit.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Ils réservent, d’accord. Mais est-ce qu’ils viennent&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Une partie, oui&nbsp;; une partie, non. Il y aura toujours des absents, comme pour n’importe quel rendez-vous, et nous ne promettons pas le contraire&nbsp;: <b>notre engagement porte sur les réservations, pas sur les venues</b>.</p><p>En revanche, nous faisons tout pour qu’une réservation ne reste pas un «&nbsp;peut-être&nbsp;»&nbsp;:</p><ul><li>elle porte sur un cours précis de votre planning, pas sur «&nbsp;un jour, je passerai&nbsp;»&nbsp;;</li><li>elle a une date et une heure&nbsp;;</li><li>la personne reçoit nos relances par e-mail jusqu’à 1&nbsp;h avant la séance.</li></ul><p>Une personne qui a choisi la boxe du jeudi à 19&nbsp;h et qui vient d’en être rappelée une heure avant, c’est tout autre chose qu’un «&nbsp;je passe mardi&nbsp;» envoyé en message privé, que personne ne relance et que tout le monde oublie.</p><p>Une fois la personne dans la salle, c’est votre cours qui fait le reste. Et il le fait bien&nbsp;: chez nos clients, <b>1&nbsp;€ dépensé rapporte en moyenne 8&nbsp;€ d’adhésions</b>. Chez Gota, le nombre d’adhérents a doublé en un mois.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Combien de réservations vais-je avoir par mois&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Cela dépend de votre salle&nbsp;: votre planning, le nombre de cours à remplir, votre secteur, c’est-à-dire le nombre de personnes qui habitent assez près pour venir s’entraîner chez vous. Il n’y a pas de chiffre valable pour toutes les salles, et nous ne vous en donnons pas un avant d’avoir regardé la vôtre.</p><p>C’est à ça que sert l’appel de 15&nbsp;min. À la fin, vous savez deux choses&nbsp;: si nous pouvons nous engager chez vous, et sur quel nombre. Ce chiffre n’est pas une estimation&nbsp;: <b>il est écrit dans votre abonnement, et nous le tenons chaque mois</b>.</p><p>Ce nombre compte des réservations, pas des adhésions. Pour un ordre de grandeur de ce que ça donne ensuite&nbsp;: chez nos clients, 1&nbsp;€ dépensé rapporte 8&nbsp;€ d’adhésions en moyenne, et chez Gota, les adhérents ont doublé en un mois.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Quels résultats obtiennent vos clients&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Ce que nous pouvons montrer aujourd’hui&nbsp;:</p><div class="lp-tableau"><table><thead><tr><th>Qui</th><th>Résultat</th></tr></thead><tbody><tr><td>Gota</td><td><b>Adhérents doublés</b> en un mois</td></tr><tr><td>Nos clients, en moyenne</td><td>Pour 1&nbsp;€ dépensé, <b>8&nbsp;€ d’adhésions</b></td></tr><tr><td>Toutes salles confondues</td><td><b>Plus de 20&nbsp;salles</b> accompagnées, <b>des milliers</b> de séances d’essai réservées</td></tr></tbody></table></div><p>Les réservations arrivent dans les jours et les semaines qui suivent la commande, et chaque mois le nombre écrit dans votre abonnement est tenu. Ce qui se passe après la séance, l’adhésion, c’est votre cours qui le fait&nbsp;: nous ne le garantissons pas, mais chez nos clients, il le fait bien.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq" id="faq-qui">
+          <summary><span>Qui fait quoi, et quand&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Nous faisons tout, sauf le cours. Voilà qui fait quoi, et quand.</p><div class="lp-tableau lp-tableau-pile"><table><thead><tr><th>Quand</th><th>Nous</th><th>Vous</th></tr></thead><tbody><tr><td>L’appel, 15&nbsp;min</td><td data-th="Nous">Nous regardons votre salle, votre planning, votre secteur, et nous vous disons si nous pouvons nous engager, et sur quel nombre</td><td data-th="Vous">Vous répondez à nos questions</td></tr><tr><td>Si c’est oui</td><td data-th="Nous">Nous écrivons le nombre dans votre abonnement, et nous préparons la page au nom de votre salle et la pub</td><td data-th="Vous">3&nbsp;clics, et vous nous envoyez ce qu’il faut savoir sur votre salle</td></tr><tr><td>Les jours qui suivent</td><td data-th="Nous">La pub tourne sur Facebook et Instagram, autour de votre salle&nbsp;; la page à votre nom prend les réservations</td><td data-th="Vous">Rien</td></tr><tr><td>Avant chaque séance</td><td data-th="Nous">Nous relançons la personne par e-mail, jusqu’à 1&nbsp;h avant</td><td data-th="Vous">Rien</td></tr><tr><td>Le jour de la séance</td><td data-th="Nous">Rien&nbsp;: c’est votre cours</td><td data-th="Vous">Vous accueillez, vous donnez le cours, vous faites signer</td></tr><tr><td>Chaque mois</td><td data-th="Nous">Nous tenons le nombre écrit dans votre abonnement</td><td data-th="Vous">Vous comptez vos nouveaux adhérents</td></tr></tbody></table></div></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Est-ce que ça va me prendre du temps&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Non. Votre part, c’est un appel de 15&nbsp;min, 3&nbsp;clics, et ce qu’il faut savoir sur votre salle. Ensuite, nous nous occupons de tout, et vous n’avez qu’à accueillir les personnes qui ont réservé.</p><p>Pas de logiciel à installer, pas de contenu à publier, pas de messages privés à trier, pas de relances à envoyer. Si vous savez accueillir quelqu’un à la porte de votre salle, vous savez utiliser Mon Club Combat.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>En combien de temps j’ai mes premières réservations&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Dans les jours et les semaines qui suivent votre commande. Voici comment ça se passe&nbsp;:</p><ol><li><b>L’appel de 15&nbsp;min.</b> Nous vérifions que nous pouvons nous engager chez vous.</li><li><b>La commande, en 3&nbsp;clics.</b> Vous nous envoyez ce qu’il faut savoir sur votre salle.</li><li><b>Dans les jours qui suivent.</b> La page à votre nom est en ligne et la pub tourne autour de votre salle.</li><li><b>Les premières réservations tombent.</b> Dans les jours et les semaines qui suivent, les premières personnes choisissent un cours. Vous savez qui vient, à quel cours, et quand.</li></ol><p>Il n’y a pas de rentrée à attendre&nbsp;: la pub tourne tous les mois, et le nombre écrit dans votre abonnement vaut chaque mois, pas seulement en septembre.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Comment je sais qui vient&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Chaque réservation est une personne qui a choisi un cours de votre planning sur la page à votre nom, et une date. Vous savez donc <b>qui vient, à quel cours et quel jour</b>, avant la séance. Pas de message privé à décortiquer, pas de «&nbsp;il m’a dit qu’il passerait peut-être jeudi&nbsp;».</p><p>De notre côté, chaque personne est relancée par e-mail jusqu’à 1&nbsp;h avant sa séance. De votre côté, il reste à l’accueillir et à lui faire signer son inscription à la fin du cours.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Pourquoi c’est moi qui accueille et qui fais signer&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Parce que c’est votre cours qui fait adhérer, et personne ne le fera mieux que vous.</p><p>La personne qui a réservé a déjà fait le plus dur&nbsp;: elle a choisi votre salle, un cours, une date, et elle a reçu nos relances jusqu’à 1&nbsp;h avant. Quand elle pousse la porte, elle vient voir si l’ambiance, le coach et le cours lui plaisent. C’est à ce moment-là que tout se joue, et c’est votre métier.</p><p>Nous nous arrêtons donc à la porte, volontairement. Nous ne garantissons pas les adhésions&nbsp;; nous garantissons que des gens réservent et sont relancés pour venir. Le reste, nos clients le font très bien&nbsp;: <b>1&nbsp;€ dépensé leur rapporte en moyenne 8&nbsp;€ d’adhésions</b>.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Ma discipline, ma ville&nbsp;: ça marche&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Nous ne travaillons qu’avec des salles de sports de combat&nbsp;: MMA, boxe anglaise, kickboxing, Muay Thaï, jiu-jitsu brésilien, grappling, karaté, judo, lutte, self-défense. Plus de 20&nbsp;salles nous font déjà confiance. La mécanique est la même quelle que soit la discipline&nbsp;: c’est votre planning qui est proposé, tel quel, et la personne choisit la boxe du mardi soir ou le JJB du samedi matin.</p><p>Pour la ville, la pub ne s’affiche qu’aux gens qui habitent autour de votre salle, pas à toute la France. Dans une petite ville, elle touche moins de monde, mais elle touche les bonnes personnes&nbsp;: celles qui habitent à côté et n’ont jamais poussé votre porte. C’est ce qui fait qu’elle ramène des gens qui peuvent vraiment venir le jeudi à 19&nbsp;h.</p><p>Votre secteur précis, c’est ce que nous regardons pendant l’appel. Si nous pensons que ça ne tiendra pas chez vous, nous vous le disons, et nous ne vous vendons rien.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Mes cours sont déjà presque pleins.</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Alors dites-le-nous à l’appel, et nous vous dirons sans doute que <b>vous n’avez pas besoin de nous</b>. Nous ne vendons pas de réservations à une salle qui ne peut pas les accueillir.</p><p>Si certains cours sont pleins et d’autres non, dites-le-nous aussi&nbsp;: c’est précisément ce que nous regardons à l’appel, planning en main, avant de nous engager sur un nombre.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Vous travaillez avec la salle d’en face&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>La pub est ciblée autour de votre salle et mène à une page à votre nom, avec vos cours. Une réservation prise sur cette page est une réservation chez vous, pas «&nbsp;chez une salle du coin&nbsp;».</p><p>Pour ce qui est d’accompagner deux salles voisines, posez-nous la question à l’appel&nbsp;: nous vous répondons franchement, salle par salle, et nous ne nous engageons chez vous que si nous pouvons tenir le nombre écrit.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Combien ça coûte&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Nous vous le disons à l’appel, une fois que nous avons regardé votre salle et que nous savons sur quel nombre de réservations nous pouvons nous engager. Nous ne donnons pas de tarif avant d’avoir regardé&nbsp;: ce serait vous vendre une promesse à l’aveugle.</p><p>Ce que nous pouvons vous dire tout de suite&nbsp;:</p><ul><li>c’est un abonnement mensuel, et le nombre de réservations par mois y est <b>écrit</b> avant que vous ne commandiez&nbsp;;</li><li>chez nos clients, <b>1&nbsp;€ dépensé rapporte en moyenne 8&nbsp;€ d’adhésions</b>&nbsp;;</li><li>si nous ne pouvons pas nous engager chez vous, nous ne vous vendons rien.</li></ul><p>Venez à l’appel avec votre planning&nbsp;: vous repartez avec le nombre, et le tarif qui va avec.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Ça m’engage à quoi&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p><b>L’appel, à rien.</b> Il dure 15&nbsp;min et sert à une chose&nbsp;: vérifier que nous pouvons tenir un nombre de réservations chez vous. Rien n’est à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après. Si vos cours sont déjà pleins, nous vous le dirons aussi&nbsp;: vous n’avez pas besoin de nous.</p><p>Si c’est oui et que vous décidez de commander, c’est un <b>abonnement mensuel</b>, avec le nombre de réservations par mois écrit dedans. Les personnes qui réservent, viennent et signent sont vos adhérents, pas les nôtres&nbsp;: elles restent chez vous.</p><p>Pour l’appel, rien à préparer&nbsp;: votre planning, les cours que vous voulez remplir et votre secteur, vous les avez déjà en tête.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Il y a d’autres effets&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Oui. La pub ne s’affiche qu’aux gens de votre secteur, ceux qui peuvent vraiment venir. Votre salle gagne donc en visibilité là où ça compte&nbsp;: à dix minutes de sa porte, auprès de personnes qui ne l’auraient peut-être jamais cherchée.</p><p>Et comme chaque réservation porte sur un cours précis, vous voyez vite quels cours attirent le plus de nouveaux&nbsp;: une information que vous n’aviez pas.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Une question qui n’est pas ici&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Écrivez-nous à contact@monclubcombat.fr, nous vous répondrons rapidement.</p><p>Et bien sûr, pendant l’appel, nous répondons à toutes vos questions sur votre salle, votre planning et votre secteur. Vous saurez tout avant de décider.</p></div>
+        </details>
       </div>
-      <div class="lp-agir lp-agir-section">
-        <a class="ag-btn ag-btn-rouge lp-btn-xl" href="#appel" data-appel>Réserver un appel %%FLECHE%%</a>
-        <p class="lp-agir-mot">Le reste de vos questions, posez-les-nous à l’appel.</p>
-      </div>
+      <p class="lp-plus reveal"><a href="#appel">Le reste de vos questions, posez-les-nous à l’appel&nbsp;→</a></p>
     </div>
   </section>
 
-  <section class="lp-section lp-appel" id="appel" aria-labelledby="lp-appel-t">
+  <section class="lp-appel" id="appel" aria-labelledby="lp-appel-t">
     <div class="lp-appel-in">
       <div class="lp-appel-dit">
         <p class="lp-sur">Ce qui se passe ensuite</p>
-        <h2 class="lp-h2" id="lp-appel-t">Un appel, puis <em class="lp-nowrap">c’est vous qui décidez</em></h2>
-        <ol class="lp-suite">
-          <li><b>Pendant l’appel</b>Nous regardons ensemble vos cours, vos horaires et votre zone, et nous vous
-            répondons franchement&nbsp;: oui, nous pouvons nous engager chez vous, ou non.</li>
-          <li><b>Si c’est oui</b>Vous validez et nous transmettez ce qu’il faut savoir sur votre salle en 3&nbsp;clics&nbsp;;
-            la pub démarre dans votre secteur.</li>
-          <li><b>Ensuite</b>Plus rien à faire de votre côté. Les premières réservations tombent sous quelques jours à
-            quelques semaines&nbsp;; vous n’avez qu’à les accueillir.</li>
-        </ol>
+        <h2 class="lp-h2 lp-h2-sm" id="lp-appel-t">Un appel de 15 min, <em>puis c’est vous qui décidez</em></h2>
+        <p class="lp-appel-texte">Votre salle, votre planning, votre secteur&nbsp;: nous vous disons si nous pouvons nous engager chez vous, et sur quel nombre. Rien à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après.</p>
       </div>
 
       <div class="lp-carte">
@@ -233,7 +396,7 @@
              Les textes viennent du plan de textes final (rdv-textes.json). -->
         <div class="lp-rdv" id="rdv">
           <div class="lp-rdv-tete">
-            <p class="lp-rdv-etiq"><span aria-hidden="true">%%I_RDV_HORLOGE%%</span>Appel de 15 min · offert</p>
+            <p class="lp-rdv-etiq"><span aria-hidden="true">%%I_RDV_HORLOGE%%</span>Appel de 15 min</p>
             <p class="lp-rdv-titre">Réservez votre appel.</p>
             <p class="lp-rdv-sous">Trois questions sur votre salle, puis le jour et l’heure qui vous arrangent.</p>
           </div>
@@ -372,10 +535,37 @@
 </main>
 
 <footer class="lp-pied">
-  <p>© 2026 Mon Club Combat</p>
-  <nav aria-label="Informations">
-    <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a>
-    <a href="conditions.html">Conditions</a>
-    <a href="confidentialite.html">Confidentialité</a>
-  </nav>
+  <div class="lp-pied-in">
+    <div class="lp-pied-cols">
+      <div class="lp-pied-marque">
+        <a class="lp-marque" href="#contenu" aria-label="Mon Club Combat">
+          <svg viewBox="212 589 389 369" width="30" height="28" aria-hidden="true">
+            <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+          </svg>
+          <svg class="lp-marque-mot" viewBox="657 722 1883 107" width="168" height="10" aria-hidden="true">
+            <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
+          </svg>
+        </a>
+        <p class="lp-pied-zones">MMA · Boxe anglaise · Kickboxing · Muay Thaï · JJB · Grappling · Karaté · Judo · Lutte · Self-défense</p>
+      </div>
+      <nav class="lp-pied-col" aria-label="Mon Club Combat">
+        <p class="lp-pied-tete">Mon Club Combat</p>
+        <a href="#comment-ca-marche">Comment ça marche</a>
+        <a href="#resultats">Nos résultats</a>
+        <a href="#garantie">La garantie</a>
+        <a href="#faq">Questions fréquentes</a>
+      </nav>
+      <nav class="lp-pied-col" aria-label="Légal">
+        <p class="lp-pied-tete">Légal</p>
+        <a href="conditions.html">Conditions d’utilisation</a>
+        <a href="confidentialite.html">Politique de confidentialité</a>
+      </nav>
+      <nav class="lp-pied-col" aria-label="Contact">
+        <p class="lp-pied-tete">Contact</p>
+        <a href="#appel">Réserver un appel</a>
+        <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a>
+      </nav>
+    </div>
+    <p class="lp-pied-copie">© 2026 Mon Club Combat. Tous droits réservés.</p>
+  </div>
 </footer>
