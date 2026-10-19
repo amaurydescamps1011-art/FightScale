@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Mon Club Combat remplit votre salle de sports de combat : chaque mois, un nombre garanti de personnes réservent une séance d'essai sur un cours de votre planning. Vous n'avez plus qu'à les accueillir.">
+<meta name="description" content="Mon Club Combat remplit votre salle de sports de combat : chaque mois, un nombre garanti de personnes réservent une séance d’essai sur un cours de votre planning. Vous n’avez plus qu’à les accueillir.">
 <meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mon Club Combat">
 <meta property="og:title" content="Mon Club Combat | L’agence qui remplit votre salle">
-<meta property="og:description" content="Mon Club Combat remplit votre salle de sports de combat : chaque mois, un nombre garanti de personnes réservent une séance d'essai sur un cours de votre planning. Vous n'avez plus qu'à les accueillir.">
+<meta property="og:description" content="Mon Club Combat remplit votre salle de sports de combat : chaque mois, un nombre garanti de personnes réservent une séance d’essai sur un cours de votre planning. Vous n’avez plus qu’à les accueillir.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
@@ -528,7 +528,7 @@
   .lp-plus a{color:var(--sq-tint); text-decoration:underline; text-underline-offset:4px; text-decoration-color:rgba(187,15,34,.35)}
   .lp-plus a:hover{text-decoration-color:var(--sq-tint)}
   .lp-sur{font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--sq-dim); margin-bottom:14px}
-  .lp-clips-sur{position:relative; z-index:1; margin:0 0 30px; padding:0 var(--sq-gut); text-align:center}
+  .lp-clips-sur{position:relative; z-index:1; margin:0 0 58px; padding:0 var(--sq-gut); text-align:center}
   .lp-resultats-sur{text-align:center; margin:0 0 16px}
 
   /* ---------- le heros ---------- */
@@ -751,7 +751,7 @@
     border-radius:28px; background:radial-gradient(circle at 32% 22%, var(--sq-light), var(--sq-core) 72%);
     box-shadow:0 24px 54px -18px rgba(236,22,46,.8), inset 0 1px 0 rgba(255,255,255,.4)}
   .lp-hub-badge svg{width:44px; height:42px; display:block}
-  .lp-hub-nom{font-size:8.5px; font-weight:800; letter-spacing:.16em; text-indent:.16em; text-transform:uppercase; color:#fff; white-space:nowrap}
+  .lp-hub-nom{font-size:8px; font-weight:800; letter-spacing:.11em; text-indent:.11em; text-transform:uppercase; color:#fff; white-space:nowrap}
   .lp-toit .lp-plus{margin-top:22px}
   .lp-toit .lp-cta{display:block; width:max-content; margin:30px auto 0}
 
@@ -1048,7 +1048,7 @@
     .lp-plus{margin-top:26px}
     /* les telephones en eventail, serres, la legende dessous en liste */
     .lp-clips{padding:36px 0 36px}
-    .lp-clips-sur{margin-bottom:22px}
+    .lp-clips-sur{margin-bottom:28px}
     .lp-clips-grid{gap:18px 8px; padding:0 var(--sq-gut); grid-template-rows:auto auto auto auto}
     .lp-clips-grid::before{inset:-6% -6% 46%; filter:blur(22px)}
     .lp-tel{--k:.43}
@@ -1064,10 +1064,10 @@
     .lp-tel-ecran::before{bottom:3px; height:2px}
     .lp-tel-ilot{top:5px; height:7px}
     .lp-clip-cap{grid-column:1 / -1 !important; justify-self:stretch; max-width:none; text-align:left; display:grid;
-      grid-template-columns:auto 1fr; column-gap:12px; align-items:baseline; padding:0 2px}
+      grid-template-columns:118px 1fr; column-gap:12px; align-items:baseline; padding:0 2px}
     .lp-clip:nth-child(1) .lp-clip-cap{grid-row:2} .lp-clip:nth-child(2) .lp-clip-cap{grid-row:3} .lp-clip:nth-child(3) .lp-clip-cap{grid-row:4}
     .lp-clip-cap + .lp-clip-cap{margin-top:-10px}
-    .lp-clip-etiq{grid-row:1 / 3; align-self:start; margin-top:3px; font-size:10px; letter-spacing:.14em; white-space:nowrap; min-width:118px}
+    .lp-clip-etiq{grid-row:1 / 3; align-self:start; margin-top:3px; font-size:10px; letter-spacing:.14em; line-height:1.4; white-space:normal}
     .lp-clip-titre{font-size:15.5px}
     .lp-clip-leg{margin-top:3px; font-size:13px; line-height:1.4}
     .lp-clip:nth-child(1) .lp-clip-cap{margin-top:14px}
@@ -1107,18 +1107,19 @@
     .lp-video:not(.bloque) .lp-lecture{padding:10px}
     /* le schema : trois colonnes serrees, les pilules a la verticale */
     .lp-toit{padding-bottom:64px}
-    .lp-schema{gap:0 8px; padding:34px 0 8px}
+    .lp-schema{gap:0 8px; padding:34px 0 8px; align-items:start}
+    .lp-schema-hub{align-self:center}
     .lp-schema-col{gap:30px}
     .lp-schema-cap{position:static; margin:0 0 -14px; font-size:8.5px; letter-spacing:.12em; text-align:center}
     .lp-pilule, .lp-schema-droite .lp-pilule{flex-direction:column; width:100%; padding:10px 5px 9px; border-radius:16px; gap:7px;
-      font-size:9.5px; letter-spacing:.05em; text-align:center; line-height:1.25}
+      font-size:9.5px; letter-spacing:.05em; text-align:center; line-height:1.25; min-height:96px; justify-content:flex-start}
     .lp-pilule-ico{width:32px; height:32px}
     .lp-pilule-ico svg{width:16px; height:16px}
     .lp-schema-hub{width:118px; height:118px}
     .lp-hub-anneau-2{inset:16px}
-    .lp-hub-badge{width:64px; height:64px; border-radius:18px; gap:3px}
-    .lp-hub-badge svg{width:26px; height:24px}
-    .lp-hub-nom{font-size:5.5px; letter-spacing:.1em}
+    .lp-hub-badge{width:64px; height:64px; border-radius:18px; gap:0}
+    .lp-hub-badge svg{width:30px; height:28px}
+    .lp-hub-nom{display:none}
     .lp-toit .lp-plus{margin-top:14px}
     .lp-toit .lp-cta{margin-top:22px}
     /* les resultats */
@@ -1427,9 +1428,9 @@
           <p class="lp-recit-etiq">Adhérents ×2 en 1 mois</p>
         </article>
         <article class="lp-recit reveal">
-          <p class="lp-recit-corps">Pour <b>1 € dépensé</b>, <b>8 € d’adhésions</b> en moyenne, sur <b>plus de 20 salles</b> et des milliers de séances d’essai réservées. Nous garantissons les réservations, pas les adhésions : c’est votre cours qui les fait. Chez nos clients, il les fait bien.</p>
+          <p class="lp-recit-corps">Pour <b>1 € dépensé</b>, <b>8 € d’adhésions</b> en moyenne chez nos clients. <b>Plus de 20 salles</b> accompagnées, des milliers de séances d’essai réservées. Nous garantissons les réservations, pas les adhésions : c’est votre cours qui les fait. Chez nos clients, il les fait bien.</p>
           <p class="lp-recit-nom">Nos clients, en moyenne</p>
-          <p class="lp-recit-etiq">8 € pour 1 €, sur +20 salles</p>
+          <p class="lp-recit-etiq">8 € pour 1 €, en moyenne</p>
         </article>
       </div>
       <div class="lp-recits-pied reveal">
@@ -1603,7 +1604,7 @@
             <p class="lp-rdv-q" tabindex="-1">Choisissez un créneau</p>
             <p class="lp-rdv-erreur" id="rdv-pris" role="alert" hidden>Ce créneau vient d’être pris. Choisissez-en un autre.</p>
             <div class="lp-rdv-cal" id="rdv-cal">
-              <div class="lp-rdv-attente" id="rdv-attente" role="status"><span class="lp-rdv-spin" aria-hidden="true"></span>Chargement des disponibilités...</div>
+              <div class="lp-rdv-attente" id="rdv-attente" role="status"><span class="lp-rdv-spin" aria-hidden="true"></span>Chargement des disponibilités…</div>
               <div class="lp-rdv-vide" id="rdv-panne" role="alert" hidden>
                 <span class="lp-rdv-vide-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193"/><path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07"/></svg></span>
                 <p>Les disponibilités n’ont pas pu se charger. Cela vient de notre côté, pas du vôtre.</p>

@@ -16,12 +16,12 @@ SORTIE = 'site'
 DESCR = {
  'agence.html': ('index.html', "Mon Club Combat | L’agence qui remplit votre salle",
    "Mon Club Combat remplit votre salle de sports de combat : chaque mois, un nombre garanti "
-   "de personnes réservent une séance d'essai sur un cours de votre planning. Vous n'avez plus "
-   "qu'à les accueillir."),
+   "de personnes réservent une séance d’essai sur un cours de votre planning. Vous n’avez plus "
+   "qu’à les accueillir."),
  'confidentialite.html': ('confidentialite.html', "Politique de confidentialité | Mon Club Combat",
    "Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps."),
- 'conditions.html': ('conditions.html', "Conditions d'utilisation | Mon Club Combat",
-   "Les règles d'utilisation de Mon Club Combat."),
+ 'conditions.html': ('conditions.html', "Conditions d’utilisation | Mon Club Combat",
+   "Les règles d’utilisation de Mon Club Combat."),
  # le lien d'annulation des e-mails de rendez-vous (monclubcombat.fr/annuler?token=...)
  'annuler.html': ('annuler.html', "Annuler mon rendez-vous | Mon Club Combat",
    "Annulez votre appel avec Mon Club Combat, ou réservez un nouveau créneau."),
