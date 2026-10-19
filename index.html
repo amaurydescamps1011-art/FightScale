@@ -3007,7 +3007,11 @@
     telChamp.hidden = v !== 'telephone';
     formats.classList.remove('manque');
     dit('');
-    if (v === 'telephone') setTimeout(function (){ $('rdv-tel').focus(); }, 40);
+    /* le focus va au numero, sauf si le gerant tape deja dans un autre champ */
+    if (v === 'telephone') setTimeout(function (){
+      var a = document.activeElement;
+      if (!a || a.tagName !== 'INPUT' || !form.contains(a)) $('rdv-tel').focus();
+    }, 40);
   });
 
   /* un champ signale en rouge redevient normal des qu'on y ecrit, et le

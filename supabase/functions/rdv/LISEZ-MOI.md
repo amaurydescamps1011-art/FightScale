@@ -206,7 +206,18 @@ curl -s -X POST http://localhost:8768/functions/v1/rdv/reserver -H 'content-type
   et revient au choix du créneau.
 - **Les limites** (3 par e-mail, 10 par adresse, sur 24 h) comptent toutes les
   lignes créées, annulées comprises. L'adresse IP n'est jamais stockée : un
-  SHA-256 salé (`RDV_SEL_IP`) seulement.
+  SHA-256 salé (`RDV_SEL_IP`, à défaut `RDV_CRON_SECRET`) seulement. Sans
+  aucun des deux secrets, l'adresse n'est pas hachée du tout (`ip_hash` reste
+  nul, la limite par adresse est inactive) et le journal le dit : un SHA-256
+  d'IPv4 sans sel se casse par force brute. L'adresse lue est
+  `cf-connecting-ip` (posé par Cloudflare), sinon la **dernière** entrée de
+  `x-forwarded-for`, celle que la passerelle a ajoutée : la première est
+  écrite par le client lui-même et se forge à volonté.
+- **Les champs** sont nettoyés avant tout : les caractères de contrôle (sauts
+  de ligne compris) deviennent une espace dans les champs à une ligne ; seul
+  `projet` garde ses sauts de ligne, rendus en retrait dans les e-mails. Un
+  `\n` glissé dans un prénom ne fabrique donc ni sujet cassé ni fausse ligne
+  « E-mail : … » dans le mail d'Amaury.
 - **Le journal** de la fonction (Edge Functions → Logs) ne porte que des
   identifiants, des dates et des codes d'erreur : jamais un nom, un e-mail, un
   téléphone ni une adresse.
