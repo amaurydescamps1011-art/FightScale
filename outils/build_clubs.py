@@ -180,6 +180,15 @@ if QUI == 'agence':
     }
     for k, v in LANDING.items():
         body = body.replace('%%' + k + '%%', v)
+    # Chaque nouvelle VSL garde le meme nom de fichier : l'adresse porte donc
+    # l'empreinte du fichier, sinon le telephone d'Amaury rejoue l'ancienne
+    # depuis son cache (19/10/2026). Elle change toute seule a chaque version.
+    import hashlib, os
+    def empreinte(rel):
+        f = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', rel)
+        return hashlib.md5(open(f, 'rb').read()).hexdigest()[:10]
+    body = (body.replace('%%V_VSL%%', empreinte('video/vsl-agence.mp4'))
+                .replace('%%V_AFFICHE%%', empreinte('video/vsl-agence-affiche.webp')))
 
 # Depuis le 18/10/2026 le site ne porte plus que l'agence (Amaury : « le truc
 # principal maintenant c'est vraiment l'agence (...) enleve les autres pages ») :
