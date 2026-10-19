@@ -1560,7 +1560,12 @@
   .lp-rdv-succes-mail svg{flex:none; margin-top:2px; color:var(--rouge-500)}
 
   /* la page d'annulation (annuler.html) : une carte seule, au milieu */
-  .lp-annuler{padding:clamp(40px,7vw,80px) 16px clamp(56px,8vw,96px); min-height:48vh}
+  /* la page /annuler est courte : la carte se centre entre le bandeau et le
+     pied de page, qui descend en bas de l'ecran */
+  body:has(.lp-annuler){min-height:100vh; min-height:100dvh; display:flex; flex-direction:column}
+  body:has(.lp-annuler) > main{flex:1 0 auto; display:flex; flex-direction:column}
+  .lp-annuler{flex:1 0 auto; display:flex; flex-direction:column; justify-content:center;
+    padding:clamp(32px,6vw,64px) 16px clamp(48px,8vw,96px)}
   .lp-annuler-carte{max-width:480px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:10px;
     text-align:center; padding:36px clamp(20px,4vw,32px) 32px}
   .lp-annuler-carte .lp-rdv-ok[hidden]{display:none}
@@ -2811,28 +2816,36 @@
      du widget le temps du changement et du defilement, puis on la relache,
      mais seulement de ce que la page peut perdre sans bouger ; le reste tient
      lieu de marge jusqu'au prochain ecran. */
-  var relache = null;
+  /* La hauteur figee se pose sur le cadre (.lp-carte) qui entoure la carte
+     blanche, pas sur la carte : la marge d'attente reste du vide sous la
+     carte fermee, jamais du blanc a l'interieur (sur « C'est confirme ! »,
+     il n'y a plus d'ecran suivant pour la reprendre). */
+  var cadre = rdv.parentElement, relache = null;
   function fige(){
-    rdv.style.minHeight = rdv.offsetHeight + 'px';
+    cadre.style.minHeight = cadre.offsetHeight + 'px';
     clearTimeout(relache);
     relache = setTimeout(ajuste, 700);
   }
   function ajuste(){
-    var ecran = $('rdv-e' + etat.ecran), boite = rdv.getBoundingClientRect();
-    var naturel = ecran.getBoundingClientRect().bottom - boite.top + parseFloat(getComputedStyle(rdv).paddingBottom || '0');
+    var boite = cadre.getBoundingClientRect();
+    var naturel = rdv.getBoundingClientRect().bottom - boite.top;
     var marge = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
     var min = Math.max(naturel, boite.height - Math.max(0, marge));
-    rdv.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
+    cadre.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
   }
   /* comme GenIA, le widget revient en vue a chaque ecran, et la question du
      nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
      repart de la, et le defilement n'en depend pas (preventScroll) */
   function va(n){
-    fige();
+    /* « C'est confirme ! » est le dernier ecran : aucun ecran suivant ne
+       reprendra la marge d'attente, on coupe donc net vers l'etat final (pas
+       de hauteur figee, pas de blanc reserve, pas de defilement anime) */
+    var fin = n >= TOTAL - 1;
+    if (fin) { clearTimeout(relache); cadre.style.minHeight = ''; } else fige();
     montre(n);
     var q = $('rdv-e' + etat.ecran).querySelector('.lp-rdv-q, .lp-rdv-succes-t');
     if (q) { try { q.focus({ preventScroll: true }); } catch (e) { q.focus(); } }
-    rdv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    rdv.scrollIntoView({ behavior: fin ? 'auto' : 'smooth', block: 'start' });
   }
   rdv.querySelectorAll('[data-retour]').forEach(function (b){
     b.addEventListener('click', function (){ va(etat.ecran - 1); });

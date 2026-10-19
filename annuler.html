@@ -1560,7 +1560,12 @@
   .lp-rdv-succes-mail svg{flex:none; margin-top:2px; color:var(--rouge-500)}
 
   /* la page d'annulation (annuler.html) : une carte seule, au milieu */
-  .lp-annuler{padding:clamp(40px,7vw,80px) 16px clamp(56px,8vw,96px); min-height:48vh}
+  /* la page /annuler est courte : la carte se centre entre le bandeau et le
+     pied de page, qui descend en bas de l'ecran */
+  body:has(.lp-annuler){min-height:100vh; min-height:100dvh; display:flex; flex-direction:column}
+  body:has(.lp-annuler) > main{flex:1 0 auto; display:flex; flex-direction:column}
+  .lp-annuler{flex:1 0 auto; display:flex; flex-direction:column; justify-content:center;
+    padding:clamp(32px,6vw,64px) 16px clamp(48px,8vw,96px)}
   .lp-annuler-carte{max-width:480px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:10px;
     text-align:center; padding:36px clamp(20px,4vw,32px) 32px}
   .lp-annuler-carte .lp-rdv-ok[hidden]{display:none}

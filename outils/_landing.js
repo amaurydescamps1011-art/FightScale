@@ -141,28 +141,36 @@
      du widget le temps du changement et du defilement, puis on la relache,
      mais seulement de ce que la page peut perdre sans bouger ; le reste tient
      lieu de marge jusqu'au prochain ecran. */
-  var relache = null;
+  /* La hauteur figee se pose sur le cadre (.lp-carte) qui entoure la carte
+     blanche, pas sur la carte : la marge d'attente reste du vide sous la
+     carte fermee, jamais du blanc a l'interieur (sur « C'est confirme ! »,
+     il n'y a plus d'ecran suivant pour la reprendre). */
+  var cadre = rdv.parentElement, relache = null;
   function fige(){
-    rdv.style.minHeight = rdv.offsetHeight + 'px';
+    cadre.style.minHeight = cadre.offsetHeight + 'px';
     clearTimeout(relache);
     relache = setTimeout(ajuste, 700);
   }
   function ajuste(){
-    var ecran = $('rdv-e' + etat.ecran), boite = rdv.getBoundingClientRect();
-    var naturel = ecran.getBoundingClientRect().bottom - boite.top + parseFloat(getComputedStyle(rdv).paddingBottom || '0');
+    var boite = cadre.getBoundingClientRect();
+    var naturel = rdv.getBoundingClientRect().bottom - boite.top;
     var marge = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
     var min = Math.max(naturel, boite.height - Math.max(0, marge));
-    rdv.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
+    cadre.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
   }
   /* comme GenIA, le widget revient en vue a chaque ecran, et la question du
      nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
      repart de la, et le defilement n'en depend pas (preventScroll) */
   function va(n){
-    fige();
+    /* « C'est confirme ! » est le dernier ecran : aucun ecran suivant ne
+       reprendra la marge d'attente, on coupe donc net vers l'etat final (pas
+       de hauteur figee, pas de blanc reserve, pas de defilement anime) */
+    var fin = n >= TOTAL - 1;
+    if (fin) { clearTimeout(relache); cadre.style.minHeight = ''; } else fige();
     montre(n);
     var q = $('rdv-e' + etat.ecran).querySelector('.lp-rdv-q, .lp-rdv-succes-t');
     if (q) { try { q.focus({ preventScroll: true }); } catch (e) { q.focus(); } }
-    rdv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    rdv.scrollIntoView({ behavior: fin ? 'auto' : 'smooth', block: 'start' });
   }
   rdv.querySelectorAll('[data-retour]').forEach(function (b){
     b.addEventListener('click', function (){ va(etat.ecran - 1); });
