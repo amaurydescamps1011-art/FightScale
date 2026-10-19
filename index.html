@@ -1337,18 +1337,19 @@
 
   /* preuves */
   .lp-preuves{padding:clamp(40px,6vw,64px) 16px 0}
-  .lp-chiffres{max-width:960px; margin:0 auto; display:grid; gap:12px;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr)}
-  .lp-chiffres > li{display:flex; flex-direction:column; justify-content:center; gap:4px;
-    padding:20px 22px; border-radius:16px; background:#fff; border:1px solid #ECEAE6; box-shadow:var(--ag-ombre)}
-  .lp-chiffres b{font-family:Anton,Impact,sans-serif; font-weight:400; font-size:clamp(34px,4vw,44px);
-    line-height:1; color:var(--rouge-500)}
-  .lp-chiffres li > span, .lp-gota-dit > span{font-size:14.5px; line-height:1.4; font-weight:700; color:var(--texte-2)}
-  .lp-chiffres small{display:block; margin-top:3px; font-size:13px; font-weight:600; color:var(--texte-4)}
-  .lp-chiffres .lp-gota{flex-direction:row; align-items:center; gap:16px}
-  .lp-gota-logo{flex:none; display:grid; place-items:center; width:76px; height:76px; border-radius:14px; background:#000}
-  .lp-gota-logo img{width:50px; height:auto}
-  .lp-gota-dit{display:flex; flex-direction:column; gap:4px}
+  .lp-chiffres{max-width:960px; margin:0 auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+    background:#fff; border:1px solid #ECEAE6; border-radius:20px; box-shadow:var(--ag-ombre); padding:8px 0}
+  .lp-chiffres > li{display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; padding:22px 26px}
+  .lp-chiffres > li + li{border-left:1px solid #ECEAE6}
+  .lp-chiffres b{font-family:Manrope,system-ui,sans-serif; font-weight:800; font-size:clamp(40px,4.4vw,52px); line-height:1;
+    letter-spacing:-.04em; color:var(--rouge-500); font-variant-numeric:tabular-nums}
+  .lp-chiffres b i{font-style:normal; font-weight:700; font-size:.62em; vertical-align:.32em; margin:0 .04em}
+  .lp-ch-t{display:flex; flex-direction:column; align-items:center; gap:6px}
+  .lp-ch-l{font-size:15px; line-height:1.35; font-weight:700; color:var(--texte); max-width:220px}
+  .lp-chiffres small{font-size:13px; line-height:1.4; font-weight:600; color:var(--texte-4); max-width:230px}
+  .lp-chez{display:inline-flex; align-items:center; gap:8px}
+  .lp-gota-logo{display:inline-grid; place-items:center; width:26px; height:26px; border-radius:7px; background:#000}
+  .lp-gota-logo img{width:17px; height:auto}
 
   /* sections */
   .lp-section{padding:clamp(56px,8vw,96px) 16px 0}
@@ -1411,11 +1412,13 @@
     .lp-suite{text-align:left}
   }
   @media (max-width:760px){
-    /* une ligne par preuve : le chiffre a gauche, sa phrase a droite */
-    .lp-chiffres{grid-template-columns:1fr; gap:10px}
-    .lp-chiffres > li{flex-direction:row; align-items:center; gap:16px; padding:14px 16px}
-    .lp-chiffres > li > b{flex:none; width:96px; text-align:center; white-space:nowrap; font-size:31px}
-    .lp-chiffres .lp-gota-logo{width:72px; height:72px; margin:0 12px}
+    /* une ligne par preuve : le chiffre a gauche, sa phrase a droite, un filet entre les lignes */
+    .lp-chiffres{grid-template-columns:1fr; padding:0 18px}
+    .lp-chiffres > li{display:grid; grid-template-columns:92px 1fr; align-items:center; text-align:left; column-gap:16px; padding:18px 0}
+    .lp-chiffres > li + li{border-left:0; border-top:1px solid #ECEAE6}
+    .lp-chiffres b{font-size:40px; text-align:center}
+    .lp-ch-t{align-items:flex-start; gap:3px}
+    .lp-ch-l, .lp-chiffres small{max-width:none}
   }
   @media (max-width:620px){
     .lp-marque-mot{width:132px}
@@ -1687,13 +1690,11 @@
   <!-- les preuves donnees par Amaury (04 et 07/10/2026), rien d'autre ; le 09/10 le
        retour sur investissement de 8 pour 1 remplace le taux de conversion de 20 % -->
   <section class="lp-preuves" aria-label="Nos résultats">
+    <!-- Amaury, 19/10/2026 : un seul bandeau, trois colonnes de meme forme (version A) -->
     <ul class="lp-chiffres">
-      <li><b>+ de 20</b><span>salles accompagnées</span></li>
-      <li><b>×8</b><span>de retour sur investissement moyen<small>Pour 1 € dépensé, nos clients gagnent 8 € en adhésions</small></span></li>
-      <li class="lp-gota">
-        <span class="lp-gota-logo"><img src="photos/gota-logo.webp" alt="Gota" width="227" height="240" loading="lazy"></span>
-        <span class="lp-gota-dit"><b>×2</b><span>Gota a vu son nombre d'adhérents doubler en un mois</span></span>
-      </li>
+      <li><b>20<i>+</i></b><span class="lp-ch-t"><span class="lp-ch-l">salles accompagnées</span></span></li>
+      <li><b><i>×</i>8</b><span class="lp-ch-t"><span class="lp-ch-l">de retour sur investissement moyen</span><small>Pour 1 € dépensé, nos clients gagnent 8 € en adhésions</small></span></li>
+      <li><b><i>×</i>2</b><span class="lp-ch-t"><span class="lp-ch-l">d'adhérents en un mois</span><small class="lp-chez"><span class="lp-gota-logo"><img src="photos/gota-logo.webp" alt="" width="227" height="240" loading="lazy"></span>chez Gota</small></span></li>
     </ul>
   </section>
 
