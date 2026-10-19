@@ -57,18 +57,25 @@
 
   /* ---------- la barre du bas ----------
      Elle apparait une fois le bouton du heros passe et disparait quand le
-     formulaire est a l'ecran : jamais deux boutons pareils l'un sur l'autre. */
+     formulaire, ou un autre bouton d'appel, est a l'ecran : jamais deux
+     boutons pareils l'un sur l'autre. */
   var barre = $('lp-barre'), agir = document.querySelector('.lp-agir'), appel = $('appel');
   if (barre && agir && appel && 'IntersectionObserver' in window) {
-    var passe = false, surAppel = false;
-    var maj = function (){ barre.classList.toggle('vue', passe && !surAppel); };
+    var passe = false, vus = new Map();
+    var maj = function (){
+      var surAppel = false;
+      vus.forEach(function (v){ surAppel = surAppel || v; });
+      barre.classList.toggle('vue', passe && !surAppel);
+    };
     new IntersectionObserver(function (es){
       var e = es[es.length - 1];
       passe = !e.isIntersecting && e.boundingClientRect.top < 0; maj();
     }).observe(agir);
-    new IntersectionObserver(function (es){
-      surAppel = es[es.length - 1].isIntersecting; maj();
-    }, { rootMargin: '0px 0px -30% 0px' }).observe(appel);
+    document.querySelectorAll('.lp-agir-section, #appel').forEach(function (el){
+      new IntersectionObserver(function (es){
+        vus.set(el, es[es.length - 1].isIntersecting); maj();
+      }, { rootMargin: '0px 0px -30% 0px' }).observe(el);
+    });
   }
 
   /* ---------- le formulaire ---------- */

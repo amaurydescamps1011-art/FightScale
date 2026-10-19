@@ -15,8 +15,9 @@ SORTIE = 'site'
 #   page construite -> (fichier servi, titre, description)
 DESCR = {
  'agence.html': ('index.html', "Mon Club Combat | L'agence qui remplit votre salle",
-   "Mon Club Combat remplit votre salle de sports de combat : chaque mois, vous savez "
-   "combien de personnes veulent venir essayer vos cours."),
+   "Mon Club Combat remplit votre salle de sports de combat : chaque mois, un nombre garanti "
+   "de personnes réservent une séance d'essai sur un cours de votre planning. Vous n'avez plus "
+   "qu'à les accueillir."),
  'confidentialite.html': ('confidentialite.html', "Politique de confidentialité | Mon Club Combat",
    "Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps."),
  'conditions.html': ('conditions.html', "Conditions d'utilisation | Mon Club Combat",

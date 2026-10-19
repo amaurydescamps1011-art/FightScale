@@ -18,7 +18,9 @@ def css():
     return R('_compte.css')
 
 def html():
-    return R('_compte.html').replace('%%CROIX%%', CROIX)
+    # les notes de travail (<!-- ... -->) restent dans la source, pas dans la page servie
+    import re
+    return re.sub(r'<!--.*?-->\n?', '', R('_compte.html'), flags=re.S).replace('%%CROIX%%', CROIX)
 
 def js():
     return R('_compte.js')

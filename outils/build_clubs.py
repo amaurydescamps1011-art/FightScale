@@ -164,20 +164,31 @@ if QUI == 'agence':
     trait = lambda d, w=16: ('<svg width="%d" height="%d" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
                              'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
                              % (w, w) + d + '</svg>')
-    # icones Lucide : megaphone, smartphone, calendar-check, bell-ring, shield-check
     LANDING = {
         'FLECHE': trait('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 18),
         'COCHE': trait('<path d="M20 6 9 17l-5-5"/>'),
-        'I_PUB': trait('<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 22),
-        'I_PAGE': trait('<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>', 22),
-        'I_RESA': trait('<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/>'
-                        '<path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>', 22),
-        'I_RAPPEL': trait('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
-                          '<path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/>', 22),
-        'I_BOUCLIER': trait('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1'
-                            'c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'
-                            '<path d="m9 12 2 2 4-4"/>', 26),
+        # icones Lucide des sections du 19/10/2026 : x, check, shield-check, user-check,
+        # phone-call, mouse-pointer-click, megaphone, bell-ring, chevron-down
+        'I_X': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 20),
+        'I_CHECK': trait('<path d="M20 6 9 17l-5-5"/>', 20),
+        'I_BOUCLIER20': trait('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1'
+                              'c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'
+                              '<path d="m9 12 2 2 4-4"/>', 20),
+        'I_ADHERENT': trait('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'
+                            '<path d="m16 11 2 2 4-4"/>', 20),
+        'I_APPEL': trait('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 '
+                         '19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 '
+                         '2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 '
+                         '2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14.05 2a9 9 0 0 1 8 7.94"/><path d="M14.05 6A5 5 0 0 1 18 10"/>', 20),
+        'I_CLIC': trait('<path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/>'
+                        '<path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/>', 20),
+        'I_PUB20': trait('<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 20),
+        'I_RAPPEL20': trait('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
+                            '<path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/>', 20),
+        'I_CHEVRON': trait('<path d="m6 9 6 6 6-6"/>', 18),
     }
+    # les notes de travail du corps (<!-- ... -->) restent dans la source, pas dans la page servie
+    body = re.sub(r'<!--.*?-->\n?', '', body, flags=re.S)
     for k, v in LANDING.items():
         body = body.replace('%%' + k + '%%', v)
     # Chaque nouvelle VSL garde le meme nom de fichier : l'adresse porte donc
