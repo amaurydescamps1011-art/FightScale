@@ -344,6 +344,13 @@ function echappeIcs(t: string): string {
   return t.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 }
 
+/** une valeur de parametre (CN=...) : RFC 5545 l'ecrit entre guillemets, sans
+    guillemet, saut de ligne ni `; : ,` dedans (l'echappement TEXT par barre
+    oblique inverse n'y vaut rien, Outlook refuse alors la piece jointe) */
+function parametreIcs(t: string): string {
+  return '"' + t.replace(/["\r\n;:,\\]+/g, ' ').replace(/\s+/g, ' ').trim() + '"';
+}
+
 const ENCODEUR = new TextEncoder();
 
 /** plie une ligne a 75 octets, suite sur une ligne commencant par une espace */
@@ -380,8 +387,8 @@ export function ics(rdv: Rdv, env: Env, maintenant: Date): string {
     'SUMMARY:' + echappeIcs(TEXTES.ics.resume),
     'LOCATION:' + echappeIcs(rdv.lien_meet || TEXTES.format.telephone),
     'DESCRIPTION:' + echappeIcs(gabarit(TEXTES.ics.description, { lien_annulation: lienAnnulation(rdv, env) })),
-    'ORGANIZER;CN=Mon Club Combat:mailto:rdv@monclubcombat.fr',
-    `ATTENDEE;CN=${echappeIcs(rdv.prenom + ' ' + rdv.nom)};ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${rdv.email}`,
+    'ORGANIZER;CN="Mon Club Combat":mailto:rdv@monclubcombat.fr',
+    `ATTENDEE;CN=${parametreIcs(rdv.prenom + ' ' + rdv.nom)};ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${rdv.email}`,
     'STATUS:CONFIRMED',
     'SEQUENCE:0',
     'TRANSP:OPAQUE',
@@ -438,6 +445,24 @@ function tableau(lignes: Array<[string, string]>): string {
   const tr = lignes.map(([k, v]) =>
     `<tr><td style="padding:5px 14px 5px 0;color:${GRIS};vertical-align:top;white-space:nowrap">${htmlSur(k)}</td><td style="padding:5px 0;color:${ENCRE}">${v}</td></tr>`).join('');
   return `<table style="border-collapse:collapse;font-size:16px;line-height:1.5;margin:0 0 20px">${tr}</table>`;
+}
+
+/* Les lignes « Libelle : {champ} » du plan de textes, remplies champ par champ.
+   On decoupe le GABARIT (de confiance), jamais le texte rendu : un saut de
+   ligne glisse dans un champ par un visiteur ne peut donc pas fabriquer une
+   ligne « E-mail : ... » de plus dans le mail d'Amaury. Seul `projet` garde
+   ses sauts de ligne (<br> en HTML, retrait en texte brut). */
+function lignesDe(corps: string, v: Record<string, string>): Array<[string, string]> {
+  return corps.split('\n').map((l) => {
+    const i = l.indexOf(' : ');
+    return i < 0 ? ['', gabarit(l, v)] : [l.slice(0, i), gabarit(l.slice(i + 3), v)];
+  });
+}
+function tableauHtml(lignes: Array<[string, string]>): string {
+  return tableau(lignes.map(([k, val]) => [k, htmlSur(val).replace(/\n/g, '<br>')]));
+}
+function tableauTexte(lignes: Array<[string, string]>): string {
+  return lignes.map(([k, val]) => (k ? k + ' : ' : '') + val.replace(/\n/g, '\n    ')).join('\n');
 }
 
 function cadre(titre: string, corps: string, env: Env): string {
@@ -515,14 +540,13 @@ export function mailNouvelleResa(rdv: Rdv, env: Env, meetAbsent: boolean): Courr
     projet: ou(rdv.projet, TEXTES.vide), email: rdv.email, telephone: ou(rdv.telephone, TEXTES.vide),
     source: sourceLisible(rdv.source),
   };
-  const lignes = gabarit(T.corps, v).split('\n').map((l) => {
-    const i = l.indexOf(' : ');
-    return [l.slice(0, i), htmlSur(l.slice(i + 3))] as [string, string];
-  });
+  const lignes = lignesDe(T.corps, v);
+  /* chaque valeur est echappee a part ; le lien Meet, lui, est un <a> cliquable */
+  const paires = lignes.map(([k, val]) => [k, htmlSur(val).replace(/\n/g, '<br>')] as [string, string]);
   const extra: string[] = [];
   const extraTexte: string[] = [];
   if (rdv.lien_meet) {
-    lignes.push(['Lien visio', lien(rdv.lien_meet, rdv.lien_meet)]);
+    paires.push(['Lien visio', lien(rdv.lien_meet, rdv.lien_meet)]);
     extraTexte.push(gabarit(TEXTES.lien_visio, { lien: rdv.lien_meet }));
   }
   if (meetAbsent) {
@@ -533,8 +557,8 @@ export function mailNouvelleResa(rdv: Rdv, env: Env, meetAbsent: boolean): Courr
   return {
     genre: 'nouvelle_resa', a: [notifie(env)], repondre: rdv.email,
     sujet: gabarit(T.sujet, v),
-    html: cadre(titre, tableau(lignes) + extra.join(''), env),
-    texte: texteBrut([titre, gabarit(T.corps, v), ...extraTexte]),
+    html: cadre(titre, tableau(paires) + extra.join(''), env),
+    texte: texteBrut([titre, tableauTexte(lignes), ...extraTexte]),
   };
 }
 
@@ -566,17 +590,14 @@ export function mailAnnulationAmaury(rdv: Rdv, env: Env): Courriel {
   const T = TEXTES.annulation_amaury;
   const v = { prenom: rdv.prenom, nom: rdv.nom, date: dateFr(new Date(rdv.debut)), club: rdv.club,
               ville: rdv.ville, email: rdv.email, telephone: ou(rdv.telephone, TEXTES.vide) };
-  const [premiere, ...reste] = gabarit(T.corps, v).split('\n');
-  const lignes = reste.map((l) => {
-    const i = l.indexOf(' : ');
-    return [l.slice(0, i), htmlSur(l.slice(i + 3))] as [string, string];
-  });
+  const [premiere, ...reste] = T.corps.split('\n');
+  const lignes = lignesDe(reste.join('\n'), v);
   const titre = gabarit(T.titre, v);
   return {
     genre: 'annulation_amaury', a: [notifie(env)], repondre: rdv.email,
     sujet: gabarit(T.sujet, v),
-    html: cadre(titre, para(htmlSur(premiere)) + tableau(lignes), env),
-    texte: texteBrut([titre, gabarit(T.corps, v)]),
+    html: cadre(titre, para(htmlSur(gabarit(premiere, v))) + tableauHtml(lignes), env),
+    texte: texteBrut([titre, gabarit(premiere, v) + '\n' + tableauTexte(lignes)]),
   };
 }
 
@@ -639,7 +660,8 @@ export function occupesDe(reponse: unknown): Array<{ debut: Date; fin: Date }> {
   return sortie;
 }
 
-/** la description de l'evenement dans l'agenda d'Amaury */
+/** la description de l'evenement dans l'agenda d'Amaury (les sauts de ligne
+    des precisions sont mis en retrait : ils ne font pas de fausses lignes) */
 export function descriptionAgenda(rdv: Rdv): string {
   const l = [
     `${rdv.prenom} ${rdv.nom}`,
@@ -647,7 +669,7 @@ export function descriptionAgenda(rdv: Rdv): string {
     `Discipline : ${ou(rdv.discipline, TEXTES.vide)}`,
     `Situation : ${ou(rdv.situation, TEXTES.vide)}`,
     `Objectif : ${ou(rdv.objectif, TEXTES.vide)}`,
-    `Précisions : ${ou(rdv.projet, TEXTES.vide)}`,
+    `Précisions : ${ou(rdv.projet, TEXTES.vide).replace(/\n/g, '\n    ')}`,
     `E-mail : ${rdv.email}`,
     `Téléphone : ${ou(rdv.telephone, TEXTES.vide)}`,
     `Format : ${libelleFormat(rdv)}`,
@@ -693,16 +715,37 @@ function messageDe(e: unknown): string {
   return m.slice(0, 300);
 }
 
-/** l'adresse du visiteur, telle que la passerelle la transmet */
+/** l'adresse du visiteur, telle que la passerelle la transmet.
+    `cf-connecting-ip` d'abord : Cloudflare le pose lui-meme, un client ne
+    peut pas le forger. Sinon la DERNIERE entree de `x-forwarded-for` : les
+    passerelles AJOUTENT l'adresse qu'elles voient a la fin de l'en-tete sans
+    toucher a ce que le client y a ecrit, donc la premiere entree est celle du
+    client lui-meme (forgeable a volonte, ce qui annulerait la limite par
+    adresse) et la derniere celle que la passerelle de confiance a vue. */
 export function ipDe(req: Request): string | null {
+  const cf = (req.headers.get('cf-connecting-ip') || '').trim();
+  if (cf) return cf;
   const xff = req.headers.get('x-forwarded-for');
-  if (xff) { const p = xff.split(',')[0].trim(); if (p) return p; }
-  return req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || null;
+  if (xff) {
+    const parts = xff.split(',').map((p) => p.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
+  }
+  return (req.headers.get('x-real-ip') || '').trim() || null;
 }
 
-/** SHA-256 du sel et de l'adresse : la base ne garde jamais l'adresse elle-meme */
-export async function hacheIp(ip: string, env: Env): Promise<string> {
-  const sel = env.RDV_SEL_IP || env.RDV_CRON_SECRET || '';
+/** le sel du hash d'adresse : RDV_SEL_IP, a defaut RDV_CRON_SECRET ; null sans l'un ni l'autre */
+export function selIp(env: Env): string | null {
+  return (env.RDV_SEL_IP || env.RDV_CRON_SECRET || '').trim() || null;
+}
+
+/** SHA-256 du sel et de l'adresse : la base ne garde jamais l'adresse elle-meme.
+    Sans sel, on ne hache pas (null) : un SHA-256 d'une IPv4 nue se retrouve
+    par force brute sur quatre milliards d'essais, ce ne serait pas une
+    pseudonymisation. La limite par adresse est alors inactive, et le journal
+    le dit. */
+export async function hacheIp(ip: string, env: Env): Promise<string | null> {
+  const sel = selIp(env);
+  if (!sel) return null;
   const octets = ENCODEUR.encode(sel + '|' + ip.trim().toLowerCase());
   const h = new Uint8Array(await crypto.subtle.digest('SHA-256', octets));
   return Array.from(h, (b) => b.toString(16).padStart(2, '0')).join('');
@@ -717,7 +760,12 @@ export function egalConstant(a: string, b: string): boolean {
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/* Une adresse qu'on peut ecrire telle quelle dans `mailto:` du .ics, dans
+   `to`/`reply_to` de Resend et dans `attendees` de Google : partie locale
+   faite des caracteres « atext » de la RFC 5322 (donc ni guillemet, ni
+   parenthese, ni `< > [ ] ; : , \`), un domaine en lettres, chiffres, tirets
+   et points, et au moins deux lettres apres le dernier point. */
+const EMAIL = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
 
 // ------------------------------------------------------------ la validation
 
@@ -736,8 +784,22 @@ export interface Demande {
 type Refus = { erreur: 'champ_manquant'; champ: string } | { erreur: 'champ_trop_long'; champ: string }
   | { erreur: 'email_invalide' } | { erreur: 'format_invalide' } | { erreur: 'format_indisponible' };
 
+/** un champ sur une ligne : les caracteres de controle (sauts de ligne,
+    tabulations, NUL...) deviennent une espace, puis on rogne. Un `\n` glisse
+    dans un prenom ne peut ainsi ni couper un sujet d'e-mail ni fabriquer une
+    ligne de plus dans le mail d'Amaury. */
 function texte(v: unknown): string {
-  return typeof v === 'string' ? v.trim() : '';
+  return typeof v === 'string' ? v.replace(/[\x00-\x1f\x7f]+/g, ' ').replace(/ {2,}/g, ' ').trim() : '';
+}
+
+/** le seul champ a plusieurs lignes (`projet`) : les fins de ligne sont
+    ramenees a `\n`, les autres caracteres de controle a une espace, et pas
+    plus d'une ligne vide d'affilee */
+function texteMultiligne(v: unknown): string {
+  if (typeof v !== 'string') return '';
+  return v.replace(/\r\n?/g, '\n').replace(/[\x00-\x09\x0b\x0c\x0e-\x1f\x7f]+/g, ' ')
+    .split('\n').map((l) => l.replace(/ {2,}/g, ' ').trim()).join('\n')
+    .replace(/\n{3,}/g, '\n\n').trim();
 }
 
 /** lit et verifie le corps de POST /reserver ; rend la demande, ou le refus */
@@ -763,7 +825,7 @@ export function valide(corps: Record<string, unknown>, meetDisponible: boolean):
   if (format === 'telephone' && !telephone) return { erreur: 'champ_manquant', champ: 'telephone' };
   if (telephone.length > BORNES.telephone) return { erreur: 'champ_trop_long', champ: 'telephone' };
 
-  const projet = texte(corps.projet);
+  const projet = texteMultiligne(corps.projet);
   if (projet.length > BORNES.projet) return { erreur: 'champ_trop_long', champ: 'projet' };
 
   let source: Record<string, string> | null = null;
@@ -827,6 +889,7 @@ async function reserver(req: Request, env: Env, deps: Deps, maintenant: Date, co
   /* les limites : 3 par e-mail, 10 par adresse (hachee), sur 24 h */
   const ip = ipDe(req);
   const ipHash = ip ? await hacheIp(ip, env) : null;
+  if (ip && !ipHash) deps.journal?.('alerte', 'sans RDV_SEL_IP ni RDV_CRON_SECRET : adresse non hachee, limite par adresse inactive');
   const depuis = new Date(maintenant.getTime() - FENETRE_LIMITE_H * 3600e3);
   const n = await deps.base.compteRecents(v.email, ipHash, depuis);
   if (n.parEmail >= LIMITE_PAR_EMAIL || (ipHash && n.parIp >= LIMITE_PAR_IP)) {
@@ -865,18 +928,28 @@ async function reserver(req: Request, env: Env, deps: Deps, maintenant: Date, co
      previent qu'il doit le faire a la main. */
   let meetAbsent = false;
   if (deps.google) {
+    let ev: { id: string; lien_meet: string | null } | null = null;
     try {
-      const ev = await deps.google.creeEvenement({
+      ev = await deps.google.creeEvenement({
         debut: v.debut, fin, resume: TEXTES.ics.resume,
         description: descriptionAgenda(rdv), invite: rdv.email, meet: v.format === 'meet',
       });
-      rdv = { ...rdv, evenement_google: ev.id, lien_meet: ev.lien_meet || null };
-      await deps.base.majGoogle(rdv.id, { evenement_google: rdv.evenement_google, lien_meet: rdv.lien_meet });
-      if (v.format === 'meet' && !rdv.lien_meet) meetAbsent = true;
     } catch (e) {
       deps.journal?.('erreur', 'google evenement en echec', { id: rdv.id, message: messageDe(e) });
-      if (v.format === 'meet') meetAbsent = true;
     }
+    if (ev) {
+      rdv = { ...rdv, evenement_google: ev.id, lien_meet: ev.lien_meet || null };
+      /* l'evenement existe et son lien Meet marche : les deux e-mails le
+         donnent, meme si la base refuse de le noter. On garde l'identifiant
+         au journal pour retrouver l'evenement a la main (il ne sera pas
+         supprime a l'annulation). */
+      try {
+        await deps.base.majGoogle(rdv.id, { evenement_google: rdv.evenement_google, lien_meet: rdv.lien_meet });
+      } catch (e) {
+        deps.journal?.('erreur', 'google maj en base en echec', { id: rdv.id, evenement: ev.id, message: messageDe(e) });
+      }
+    }
+    if (v.format === 'meet' && !rdv.lien_meet) meetAbsent = true;
   }
 
   await envoieSansCasser(deps, mailConfirmation(rdv, env, maintenant));

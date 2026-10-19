@@ -241,7 +241,7 @@
 
           <!-- ecran 0 : la discipline -->
           <section class="lp-rdv-ecran" id="rdv-e0" aria-label="Étape 1 sur 5">
-            <p class="lp-rdv-q">Quelle est la discipline principale de votre salle ?</p>
+            <p class="lp-rdv-q" tabindex="-1">Quelle est la discipline principale de votre salle ?</p>
             <div class="lp-rdv-cartes" data-cle="discipline" role="group" aria-label="Discipline principale">
               <button type="button" class="lp-rdv-carte" data-v="mma" aria-pressed="false">MMA<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
               <button type="button" class="lp-rdv-carte" data-v="boxe" aria-pressed="false">Boxe anglaise<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
@@ -260,7 +260,7 @@
 
           <!-- ecran 1 : la situation de la salle et l'objectif, deux taps -->
           <section class="lp-rdv-ecran" id="rdv-e1" aria-label="Étape 2 sur 5" hidden>
-            <p class="lp-rdv-q">Où en est votre salle ?</p>
+            <p class="lp-rdv-q" tabindex="-1">Où en est votre salle ?</p>
             <div class="lp-rdv-cartes" data-cle="situation" role="group" aria-label="Situation de la salle">
               <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours à remplir" aria-pressed="false">Ouverte, des cours à remplir<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
               <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours presque pleins" aria-pressed="false">Ouverte, des cours presque pleins<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
@@ -283,7 +283,7 @@
 
           <!-- ecran 2 : le jour, puis l'heure -->
           <section class="lp-rdv-ecran" id="rdv-e2" aria-label="Étape 3 sur 5" hidden>
-            <p class="lp-rdv-q">Choisissez un créneau</p>
+            <p class="lp-rdv-q" tabindex="-1">Choisissez un créneau</p>
             <p class="lp-rdv-erreur" id="rdv-pris" role="alert" hidden>Ce créneau vient d’être pris. Choisissez-en un autre.</p>
             <div class="lp-rdv-cal" id="rdv-cal">
               <div class="lp-rdv-attente" id="rdv-attente" role="status"><span class="lp-rdv-spin" aria-hidden="true"></span>Chargement des disponibilités...</div>
@@ -306,10 +306,14 @@
 
           <!-- ecran 3 : les coordonnees -->
           <section class="lp-rdv-ecran" id="rdv-e3" aria-label="Étape 4 sur 5" hidden>
-            <p class="lp-rdv-q">Vos coordonnées</p>
+            <p class="lp-rdv-q" tabindex="-1">Vos coordonnées</p>
             <p class="lp-rdv-recap"><span class="lp-rdv-recap-ico" aria-hidden="true">%%I_RDV_RECAP%%</span>
               <span>RDV choisi : <b id="rdv-recap-date"></b> (heure de Paris)</span></p>
             <form class="lp-rdv-form" id="rdv-form" novalidate>
+              <!-- le message d'erreur en tete du formulaire : au telephone, le
+                   clavier qui s'ouvre sur le champ en faute recouvrirait un
+                   message place sous les champs -->
+              <p class="lp-rdv-erreur" id="rdv-erreur" role="alert" hidden></p>
               <div class="lp-rdv-2 lp-rdv-2-garde">
                 <label class="champ"><span>Prénom</span>
                   <input id="rdv-prenom" name="prenom" autocomplete="given-name" required></label>
@@ -337,7 +341,6 @@
               <!-- le champ piege : un gerant ne le voit pas, un robot le remplit, le serveur jette -->
               <label class="lp-rdv-piege" aria-hidden="true"><span>Site web</span>
                 <input id="rdv-site" name="site_web" tabindex="-1" autocomplete="off"></label>
-              <p class="lp-rdv-erreur" id="rdv-erreur" role="alert" hidden></p>
               <div class="lp-rdv-pied lp-rdv-pied-plein">
                 <button type="button" class="lp-rdv-retour" data-retour>%%I_RDV_RETOUR%%Retour</button>
                 <button class="ag-btn ag-btn-rouge" type="submit" id="rdv-confirmer">Confirmer le RDV</button>
@@ -351,7 +354,7 @@
           <!-- ecran 4 : c'est confirme -->
           <section class="lp-rdv-ecran lp-rdv-succes" id="rdv-e4" aria-label="Étape 5 sur 5" role="status" hidden>
             <span class="lp-rdv-ok" aria-hidden="true">%%I_RDV_OK%%</span>
-            <p class="lp-rdv-succes-t">C’est confirmé !</p>
+            <p class="lp-rdv-succes-t" tabindex="-1">C’est confirmé !</p>
             <p class="lp-rdv-succes-date"><b id="rdv-succes-date"></b> (heure de Paris)</p>
             <p id="rdv-succes-meet" hidden>Lien visio : <a id="rdv-succes-lien" href="#" target="_blank" rel="noopener"></a></p>
             <p id="rdv-succes-sans" hidden>Nous vous envoyons le lien de visio avant l’appel.</p>

@@ -27,6 +27,13 @@ const env: Env = {
   RDV_CRON_SECRET: lit('RDV_CRON_SECRET'),
   RDV_SEL_IP: lit('RDV_SEL_IP'),
 };
+/* Sans sel, logique.ts ne hache pas les adresses (un SHA-256 d'IPv4 nue se
+   casse par force brute) et la limite de 10 reservations par adresse est
+   inactive. On ne refuse pas de demarrer, la prise de rendez-vous vaut mieux
+   que ca, mais on le dit des le premier appel, dans le journal. */
+if (!env.RDV_SEL_IP && !env.RDV_CRON_SECRET) {
+  console.error(JSON.stringify({ niveau: 'alerte', message: 'RDV_SEL_IP et RDV_CRON_SECRET absents : adresses non hachees, limite par adresse inactive, rappels impossibles' }));
+}
 
 // ------------------------------------------------------------ la base
 

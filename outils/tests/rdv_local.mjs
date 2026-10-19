@@ -18,7 +18,9 @@
    Routes de service, pour les scripts de capture seulement :
      GET  /_test/etat          -> les lignes de la base et les e-mails ecrits
      POST /_test/reinitialise  -> vide la base et le dossier des e-mails
-     POST /_test/rappels       -> declenche les rappels (comme pg_cron le ferait) */
+     POST /_test/rappels       -> declenche les rappels (comme pg_cron le ferait)
+     POST /_test/horloge       -> { "quand": ISO } fige l'horloge de la logique, {} la libere
+                                  (sert a produire le rappel : les creneaux commencent a +3 h) */
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -99,6 +101,14 @@ const serveur = http.createServer(async (req, res) => {
       const r = await traite(new Request(`http://localhost:${PORT}/functions/v1/rdv/rappels`, { method: 'POST', headers: { 'x-cron-secret': SECRET } }), env, deps);
       res.statusCode = r.status;
       res.end(await r.text());
+    } else if (url.pathname === '/_test/horloge') {
+      /* POST { "quand": "2026-10-20T07:00:00Z" } fige l'horloge de la logique
+         (pour produire un rappel : les creneaux commencent a +3 h) ; {} la libere */
+      let quand = null;
+      try { quand = JSON.parse(corps.toString('utf8') || '{}').quand || null; } catch (e) { quand = null; }
+      const d = quand ? new Date(quand) : null;
+      if (d && !isNaN(d.getTime())) deps.maintenant = () => d; else delete deps.maintenant;
+      res.end(JSON.stringify({ ok: true, maintenant: deps.maintenant ? deps.maintenant().toISOString() : null }));
     } else {
       res.statusCode = 404;
       res.end('{"erreur":"route_inconnue"}');
@@ -111,7 +121,12 @@ const serveur = http.createServer(async (req, res) => {
     if (v === undefined) continue;
     headers.set(k, Array.isArray(v) ? v.join(', ') : v);
   }
-  if (!headers.has('x-forwarded-for') && req.socket.remoteAddress) headers.set('x-forwarded-for', req.socket.remoteAddress);
+  /* comme une vraie passerelle : l'adresse vue est AJOUTEE a la fin de
+     x-forwarded-for, ce que le client y a ecrit reste devant */
+  if (req.socket.remoteAddress) {
+    const avant = headers.get('x-forwarded-for');
+    headers.set('x-forwarded-for', (avant ? avant + ', ' : '') + req.socket.remoteAddress);
+  }
   const init = { method: req.method, headers };
   if (req.method !== 'GET' && req.method !== 'HEAD' && corps.length) init.body = corps;
 

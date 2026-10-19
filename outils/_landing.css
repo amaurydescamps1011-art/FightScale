@@ -217,8 +217,14 @@
   .lp-rdv-libre{margin-top:10px}
   .lp-rdv-libre[hidden]{display:none}
   .lp-rdv .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
-  .lp-rdv .champ input{background:#fff}
+  /* 16 px et pas 15 : sous cette taille, Safari iPhone zoome la page au focus de chaque champ et la laisse zoomee */
+  .lp-rdv .champ input{background:#fff; font-size:16px}
   .lp-rdv .champ.manque input{border-color:rgba(236,22,46,.7)}
+  .lp-rdv-formats.manque .lp-rdv-carte{border-color:rgba(236,22,46,.7)}
+  /* la question prend le focus a chaque ecran (lecteurs d'ecran) : pas d'anneau autour d'un texte */
+  .lp-rdv-q:focus, .lp-rdv-succes-t:focus{outline:none}
+  /* une fois confirme, le titre d'invitation et son sous-titre s'effacent */
+  .lp-rdv.est-fini .lp-rdv-titre, .lp-rdv.est-fini .lp-rdv-sous{display:none}
   .lp-rdv-form{display:grid; gap:12px; margin-top:14px}
   .lp-rdv-2{display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
   .lp-rdv-piege{position:absolute; left:-9999px; top:0; width:1px; height:1px; overflow:hidden; opacity:0}
@@ -273,6 +279,7 @@
     color:var(--texte); font-family:inherit; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; cursor:pointer;
     transition:border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease}
   .lp-rdv-heure:hover{border-color:var(--rouge-500); color:var(--rouge-lien); background:rgba(236,22,46,.04); transform:translateY(-1px)}
+  .lp-rdv-heure[aria-pressed="true"], .lp-rdv-heure[aria-pressed="true"]:hover{border-color:var(--rouge-500); background:var(--rouge-500); color:#fff}
 
   /* c'est confirme */
   .lp-rdv-succes{display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; padding:10px 0 4px}

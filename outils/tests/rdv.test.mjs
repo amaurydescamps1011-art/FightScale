@@ -86,6 +86,27 @@ describe('creneaux', () => {
     assert.equal(L.decalageParis(new Date('2026-10-25T01:30:00Z')), 60);
   });
 
+  test('le passage a l\'heure d\'hiver (25 octobre 2026) : vendredi 23 en heure d\'ete, lundi 26 en heure d\'hiver, 15 creneaux chaque jour', () => {
+    /* jeudi 22 octobre 2026, 7:00 a Paris (heure d'ete, UTC+2) */
+    const c = L.creneauxTheoriques(new Date('2026-10-22T05:00:00Z')).map((d) => d.toISOString());
+    const vendredi = c.filter((x) => x.startsWith('2026-10-23'));
+    const lundi = c.filter((x) => x.startsWith('2026-10-26'));
+    assert.equal(vendredi[0], '2026-10-23T07:30:00.000Z', 'vendredi 23 : 9:30 = 07:30Z');
+    assert.equal(vendredi.at(-1), '2026-10-23T16:00:00.000Z', 'vendredi 23 : 18:00 = 16:00Z');
+    assert.equal(vendredi.length, 15);
+    assert.equal(lundi[0], '2026-10-26T08:30:00.000Z', 'lundi 26 : 9:30 = 08:30Z');
+    assert.equal(lundi.at(-1), '2026-10-26T17:00:00.000Z', 'lundi 26 : 18:00 = 17:00Z');
+    assert.equal(lundi.length, 15);
+    assert.ok(!c.some((x) => x.startsWith('2026-10-24') || x.startsWith('2026-10-25')), 'le week-end du changement d\'heure est vide');
+    /* en heure de Paris, chaque creneau tombe bien sur xx:00 ou xx:30 entre 9:30 et 18:00 */
+    for (const x of c) {
+      const p = L.partiesParis(new Date(x));
+      assert.ok(p.minute === 0 || p.minute === 30, x);
+      assert.ok(p.heure * 60 + p.minute >= 9 * 60 + 30 && p.heure * 60 + p.minute <= 18 * 60, x);
+      assert.ok(!(p.heure === 12 && p.minute === 30) && p.heure !== 13, 'pause de midi : ' + x);
+    }
+  });
+
   test('le week-end est exclu et l\'horizon est de 14 jours', () => {
     const c = L.creneauxTheoriques(HIVER);
     for (const d of c) {
@@ -286,9 +307,11 @@ describe('POST /reserver', () => {
     ({ r } = await reserve(m, { debut: debut(3), email: 'KARIM@Salle-Test.fr' }));
     assert.equal(r.status, 429);
 
-    /* la meme adresse IP, dix e-mails differents */
+    /* la meme adresse IP, dix e-mails differents. La passerelle AJOUTE
+       l'adresse vue a la fin de x-forwarded-for : c'est la derniere entree
+       qui compte, pas ce que le client a mis devant. */
     const m2 = monde();
-    const ip = { 'x-forwarded-for': '203.0.113.9, 10.0.0.1' };
+    const ip = { 'x-forwarded-for': '10.0.0.1, 203.0.113.9' };
     for (let i = 0; i < 10; i++) {
       const { r } = await reserve(m2, { debut: debut(i), email: `g${i}@salle.fr` }, ip);
       assert.equal(r.status, 201, 'ip ' + (i + 1));
@@ -311,6 +334,120 @@ describe('POST /reserver', () => {
     m.deps.maintenant = () => demain;
     ({ r } = await reserve(m, { debut: '2026-01-14T08:30:00.000Z' }));
     assert.equal(r.status, 201);
+  });
+
+  test('un x-forwarded-for forge ne contourne pas la limite par adresse', async () => {
+    const heures = ['08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30'];
+    const debut = (i) => `2026-01-13T${heures[i]}:00.000Z`;
+    const req = new Request(API + '/reserver', { headers: { 'x-forwarded-for': 'forge, 203.0.113.9' } });
+    assert.equal(L.ipDe(req), '203.0.113.9', 'la DERNIERE entree, celle que la passerelle a ajoutee');
+    assert.equal(L.ipDe(new Request(API, { headers: { 'cf-connecting-ip': '203.0.113.9', 'x-forwarded-for': 'forge, 198.51.100.7' } })), '203.0.113.9', 'cf-connecting-ip gagne');
+    assert.equal(L.ipDe(new Request(API, { headers: { 'x-real-ip': '203.0.113.9' } })), '203.0.113.9');
+    assert.equal(L.ipDe(new Request(API)), null);
+
+    /* douze reservations depuis la meme adresse reelle, chacune avec un XFF
+       forge different en tete (et douze e-mails jetables) : la 11e est refusee */
+    const m = monde();
+    let refus = 0;
+    for (let i = 0; i < 12; i++) {
+      const { r } = await reserve(m, { debut: debut(i), email: `jetable${i}@spam.example` },
+        { 'x-forwarded-for': `10.${i}.${i}.${i}, 203.0.113.9` });
+      if (i < 10) assert.equal(r.status, 201, 'reservation ' + (i + 1));
+      else { assert.equal(r.status, 429, 'reservation ' + (i + 1)); refus++; }
+    }
+    assert.equal(refus, 2);
+    assert.equal(m.base.lignes.length, 10);
+    /* la meme chose derriere Cloudflare : cf-connecting-ip tranche */
+    const m2 = monde();
+    for (let i = 0; i < 11; i++) {
+      const { r } = await reserve(m2, { debut: debut(i), email: `j${i}@spam.example` },
+        { 'cf-connecting-ip': '203.0.113.9', 'x-forwarded-for': `10.${i}.0.1` });
+      assert.equal(r.status, i < 10 ? 201 : 429, 'cf ' + (i + 1));
+    }
+  });
+
+  test('sans sel (ni RDV_SEL_IP ni RDV_CRON_SECRET) : l\'adresse n\'est pas hachee, ip_hash reste nul, le journal le dit', async () => {
+    assert.equal(await L.hacheIp('203.0.113.9', {}), null);
+    assert.equal(await L.hacheIp('203.0.113.9', { RDV_SEL_IP: '  ' }), null);
+    assert.match(await L.hacheIp('203.0.113.9', { RDV_SEL_IP: 'sel' }), /^[0-9a-f]{64}$/);
+    assert.notEqual(await L.hacheIp('203.0.113.9', { RDV_SEL_IP: 'sel' }), await L.hacheIp('203.0.113.9', { RDV_CRON_SECRET: 'sel2' }));
+    const m = monde({ env: { SITE_URL: 'https://monclubcombat.fr' } });
+    const { r } = await reserve(m, {}, { 'x-forwarded-for': '203.0.113.9' });
+    assert.equal(r.status, 201);
+    assert.equal(m.base.lignes[0].ip_hash, null);
+    assert.ok(m.journal.entrees.some((e) => e.niveau === 'alerte' && /sel/i.test(e.message)));
+    assert.ok(!JSON.stringify(m.journal.entrees).includes('203.0.113.9'));
+  });
+
+  test('400 : les adresses e-mail que Resend, Google ou le .ics refuseraient sont refusees ici', async () => {
+    const m = monde();
+    for (const email of ['a;b@x.fr', 'a,b@x.fr', '"a"@x.fr', 'a<b>@x.fr', 'a(b)@x.fr', 'a@x.f', 'a@x', 'a b@x.fr', 'a@-x.fr', 'a@x..fr', 'a@x.fr\nbcc: y@z.fr', 'a\\b@x.fr', 'a:b@x.fr', 'a[b]@x.fr']) {
+      const { r, j } = await reserve(m, { email });
+      assert.equal(r.status, 400, email);
+      assert.deepEqual(j, { erreur: 'email_invalide' }, email);
+    }
+    assert.equal(m.base.lignes.length, 0);
+    /* les adresses ordinaires passent, y compris avec + . - _ et une apostrophe */
+    const ok = ['karim.benali+resa@salle-test.fr', "o'brien@exemple.co.uk", 'K_B@SALLE.FR', 'a@xn--bcher-kva.example'];
+    const heures = ['08:30', '09:00', '09:30', '10:00'];
+    for (const [i, email] of ok.entries()) {
+      const { r } = await reserve(m, { email, debut: `2026-01-13T${heures[i]}:00.000Z` });
+      assert.equal(r.status, 201, email);
+    }
+    assert.equal(m.base.lignes[2].email, 'k_b@salle.fr');
+  });
+
+  test('un saut de ligne dans un champ ne fabrique ni sujet casse ni fausse ligne dans le mail d\'Amaury', async () => {
+    const m = monde();
+    const { r } = await reserve(m, {
+      prenom: 'Karim\nE-mail : faux@evil.example', nom: 'Ben\tali\r\n\u0000x', club: 'Team\rOuragan',
+      projet: 'ok\nTéléphone : 01 00 00 00 00\r\nE-mail : pirate@evil.example\n\n\n\nfin',
+    });
+    assert.equal(r.status, 201);
+    const l = m.base.lignes[0];
+    assert.equal(l.prenom, 'Karim E-mail : faux@evil.example');
+    assert.equal(l.nom, 'Ben ali x');
+    assert.equal(l.club, 'Team Ouragan');
+    assert.equal(l.projet, 'ok\nTéléphone : 01 00 00 00 00\nE-mail : pirate@evil.example\n\nfin', 'projet garde ses lignes, sans \\r ni rafale de lignes vides');
+    const [conf, resa] = m.mail.envoyes;
+    for (const c of [conf, resa]) assert.ok(!/[\r\n]/.test(c.sujet), 'saut de ligne dans le sujet : ' + JSON.stringify(c.sujet));
+    assert.equal(resa.sujet, '📅 Nouvelle résa · Karim E-mail : faux@evil.example Ben ali x · mardi 13 janvier à 09:30');
+    /* le tableau HTML : une seule ligne « E-mail », la vraie, et une seule « Téléphone » */
+    const cellules = [...resa.html.matchAll(/<td[^>]*white-space:nowrap">([^<]*)<\/td><td[^>]*>([\s\S]*?)<\/td>/g)].map((x) => [x[1], x[2]]);
+    assert.equal(cellules.filter(([k]) => k === 'E-mail').length, 1);
+    assert.equal(cellules.find(([k]) => k === 'E-mail')[1], 'karim@salle-test.fr');
+    assert.equal(cellules.filter(([k]) => k === 'Téléphone').length, 1);
+    assert.equal(cellules.find(([k]) => k === 'Téléphone')[1], '06 12 34 56 78');
+    assert.equal(cellules.find(([k]) => k === 'Précisions')[1], 'ok<br>Téléphone : 01 00 00 00 00<br>E-mail : pirate@evil.example<br><br>fin');
+    assert.equal(cellules.length, 12, 'les douze lignes du plan de textes, pas une de plus');
+    /* la version texte : les lignes du projet sont en retrait, elles ne commencent pas la ligne */
+    assert.match(resa.texte, /\nPrécisions : ok\n    Téléphone : 01 00 00 00 00\n    E-mail : pirate@evil\.example\n    \n    fin\n/);
+    assert.equal((resa.texte.match(/^E-mail : /gm) || []).length, 1);
+    assert.equal((resa.texte.match(/^Téléphone : /gm) || []).length, 1);
+    /* l'annulation aussi */
+    await m.appelle('/annuler', { method: 'POST', body: JSON.stringify({ token: l.token_annulation }) });
+    const ama = m.mail.envoyes.at(-1);
+    assert.equal(ama.genre, 'annulation_amaury');
+    assert.ok(!/[\r\n]/.test(ama.sujet));
+    assert.equal((ama.texte.match(/^E-mail : /gm) || []).length, 1);
+    /* et l'agenda : la description met les lignes du projet en retrait */
+    assert.match(L.descriptionAgenda(l), /\nPrécisions : ok\n    Téléphone : 01 00 00 00 00\n/);
+  });
+
+  test('Google en panne apres l\'evenement (ecriture en base refusee) : le lien Meet reste coherent partout', async () => {
+    const g = googleSimule();
+    const m = monde({ google: g });
+    m.base.majGoogle = async () => { throw new Error('base 57P01'); };
+    const { r, j } = await reserve(m, { format: 'meet', telephone: undefined });
+    assert.equal(r.status, 201);
+    assert.equal(g.crees.length, 1);
+    assert.equal(j.lien_meet, g.crees[0].lien_meet, 'l\'evenement existe, son lien marche : on le donne');
+    const [conf, resa] = m.mail.envoyes;
+    assert.match(conf.html, /Rejoindre l’appel/);
+    assert.ok(resa.texte.includes('Lien visio : ' + j.lien_meet));
+    assert.ok(!resa.html.includes('Lien Meet non créé'), 'pas de « non cree » quand le lien est bien la');
+    assert.ok(m.journal.entrees.some((e) => e.niveau === 'erreur' && e.message === 'google maj en base en echec' && e.detail.evenement === g.crees[0].id));
+    assert.equal(m.base.lignes[0].evenement_google, null);
   });
 
   test('avec Google : evenement cree, lien Meet rendu et en base, invite = prospect', async () => {
@@ -388,10 +525,22 @@ describe('iCalendar', () => {
     assert.match(deplie, /\r\nSUMMARY:Appel Mon Club Combat\r\n/);
     assert.match(deplie, /\r\nLOCATION:Téléphone\r\n/);
     assert.match(deplie, /\r\nDESCRIPTION:Appel de 15 min avec Mon Club Combat : votre salle\\, votre planning\\, votre secteur\. Un imprévu \? Annulez ici : https:\/\/monclubcombat\.fr\/annuler\?token=[0-9a-f-]{36}\r\n/);
-    assert.match(deplie, /\r\nORGANIZER;CN=Mon Club Combat:mailto:rdv@monclubcombat\.fr\r\n/);
-    assert.match(deplie, /\r\nATTENDEE;CN=Karim Benali-Dupont de la Villardière;[^\r]*:mailto:karim@salle-test\.fr\r\n/);
+    assert.match(deplie, /\r\nORGANIZER;CN="Mon Club Combat":mailto:rdv@monclubcombat\.fr\r\n/);
+    assert.match(deplie, /\r\nATTENDEE;CN="Karim Benali-Dupont de la Villardière";ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:karim@salle-test\.fr\r\n/);
     assert.match(deplie, /\r\nBEGIN:VEVENT\r\n[\s\S]*\r\nEND:VEVENT\r\n/);
     assert.equal((deplie.match(/BEGIN:VEVENT/g) || []).length, 1);
+  });
+
+  test('un nom avec , ; " ou : donne un parametre CN entre guillemets, sans ces caracteres', async () => {
+    const m = monde();
+    await reserve(m, { prenom: 'Jean "JJ"', nom: 'Dupont, de la Tour; fils: Jr' });
+    const ics = m.mail.envoyes[0].pieces[0].contenu.replace(/\r\n[ \t]/g, '');
+    const attendee = ics.split('\r\n').find((l) => l.startsWith('ATTENDEE'));
+    assert.equal(attendee, 'ATTENDEE;CN="Jean JJ Dupont de la Tour fils Jr";ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:karim@salle-test.fr');
+    /* la valeur du parametre : un seul couple de guillemets, puis les autres parametres */
+    const cn = attendee.match(/;CN=("[^"]*")(;|:)/);
+    assert.ok(cn, 'CN entre guillemets');
+    assert.ok(!/[;:,\\]/.test(cn[1].slice(1, -1)));
   });
 
   test('pliage : une longue ligne se replie sans perdre de caractere', () => {

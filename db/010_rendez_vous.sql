@@ -38,7 +38,10 @@ create table if not exists rendez_vous (
   nom              text,
   email            text,
   telephone        text,
-  format           text check (format in ('meet', 'telephone')),
+  -- les regles sur `format` et `statut` sont posees plus bas, par nom
+  -- (rendez_vous_format_connu, rendez_vous_statut_connu), pour exister une
+  -- seule fois, table neuve ou table deja la
+  format           text,
 
   -- sa salle, et ce qu'il a repondu dans le tunnel
   club             text,
@@ -51,8 +54,7 @@ create table if not exists rendez_vous (
   source           jsonb,
 
   -- `honore` et `absent` sont poses a la main par l'equipe, apres l'appel
-  statut           text not null default 'confirme'
-                   check (statut in ('confirme', 'annule', 'honore', 'absent')),
+  statut           text not null default 'confirme',
   -- le lien d'annulation des e-mails : /annuler?token=...
   token_annulation uuid not null default gen_random_uuid(),
 
@@ -88,6 +90,10 @@ alter table rendez_vous add column if not exists rappel_envoye_le timestamptz;
 alter table rendez_vous add column if not exists annule_le        timestamptz;
 alter table rendez_vous add column if not exists ip_hash          text;
 
+-- une table creee par une version anterieure de ce fichier portait ces deux
+-- regles une seconde fois, sous les noms que Postgres invente : on les retire
+alter table rendez_vous drop constraint if exists rendez_vous_format_check;
+alter table rendez_vous drop constraint if exists rendez_vous_statut_check;
 do $$ begin
   alter table rendez_vous add constraint rendez_vous_format_connu
     check (format in ('meet', 'telephone'));
@@ -114,8 +120,12 @@ create unique index if not exists rendez_vous_token_idx
 create index if not exists rendez_vous_rappel_idx
   on rendez_vous (debut) where statut = 'confirme' and rappel_envoye_le is null;
 
--- les limites par e-mail et par adresse sur 24 h
-create index if not exists rendez_vous_email_idx   on rendez_vous (lower(email), cree_le desc);
+-- les limites par e-mail et par adresse sur 24 h. La fonction range l'e-mail
+-- en minuscules avant de l'ecrire et le cherche avec `email = $1` : c'est la
+-- colonne nue qu'il faut indexer, pas lower(email) (un index d'expression ne
+-- servirait pas a cette requete). L'ancien index sur lower(email) est retire.
+drop index if exists rendez_vous_email_idx;
+create index if not exists rendez_vous_email_recents_idx on rendez_vous (email, cree_le desc);
 create index if not exists rendez_vous_ip_idx      on rendez_vous (ip_hash, cree_le desc);
 create index if not exists rendez_vous_cree_le_idx on rendez_vous (cree_le desc);
 

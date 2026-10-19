@@ -86,12 +86,25 @@
       email: 'Adresse e-mail invalide.',
       format: 'Choisissez le format : Google Meet ou téléphone.',
       numero: 'Merci d’indiquer le numéro où nous vous appelons.',
+      numero_court: 'Ce numéro semble incomplet : vérifiez-le.',
       club: 'Merci d’indiquer le nom de votre club et sa ville.',
       reseau: 'Problème de connexion. Vérifiez votre réseau et réessayez.',
+      limite: 'Nous avons déjà reçu plusieurs demandes avec cette adresse aujourd’hui. Réessayez demain, ou écrivez-nous à contact@monclubcombat.fr.',
       serveur: 'Erreur de notre côté. Réessayez dans un instant, ou écrivez-nous à contact@monclubcombat.fr.'
     }
   };
   var etat = { ecran: 0, d: {}, creneaux: [], jour: null, meet: true, resultat: null, envoye: {}, envoi: false };
+  /* un appel qui ne repond jamais (reseau mobile qui flotte) : on n'attend pas
+     sans fin, au bout de quinze secondes c'est une panne ou un probleme reseau */
+  var DELAI_MS = 15000;
+  function appelle(url, init){
+    var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var minuteur = ctrl ? setTimeout(function (){ ctrl.abort(); }, DELAI_MS) : null;
+    var options = Object.assign({}, init || {});
+    if (ctrl) options.signal = ctrl.signal;
+    return fetch(url, options).then(function (r){ clearTimeout(minuteur); return r; },
+      function (e){ clearTimeout(minuteur); throw e; });
+  }
 
   /* les dates s'ecrivent en heure de Paris, quel que soit le telephone */
   var fmtJourCle = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -113,18 +126,43 @@
     etat.ecran = Math.max(0, Math.min(TOTAL - 1, n));
     for (var i = 0; i < TOTAL; i++) $('rdv-e' + i).hidden = (i !== etat.ecran);
     $('rdv-prog').style.width = Math.round(etat.ecran / (TOTAL - 1) * 100) + '%';
+    /* une fois confirme, le titre « Reservez votre appel » et son sous-titre
+       n'ont plus rien a dire au-dessus de « C'est confirme ! » */
+    rdv.classList.toggle('est-fini', etat.ecran === 4);
     (EVENEMENTS[etat.ecran] || []).forEach(function (ev, i){ uneFois('e' + etat.ecran + i, ev, true); });
     if (etat.ecran === 2) chargeCreneaux();
     if (etat.ecran === 3) prepareCoordonnees();
     if (etat.ecran === 4) montreSucces();
   }
-  /* comme GenIA, le widget revient en vue a chaque ecran : au telephone, le
-     nouvel ecran commence sous le pouce ; sur un grand ecran ou il est deja
-     entier, rien ne bouge */
+
+  /* Le widget est le dernier bloc de la page. Quand un ecran haut laisse la
+     place a un ecran court, la page retrecit et le navigateur rabat le
+     defilement d'un coup : tout saute vers le bas. On fige donc la hauteur
+     du widget le temps du changement et du defilement, puis on la relache,
+     mais seulement de ce que la page peut perdre sans bouger ; le reste tient
+     lieu de marge jusqu'au prochain ecran. */
+  var relache = null;
+  function fige(){
+    rdv.style.minHeight = rdv.offsetHeight + 'px';
+    clearTimeout(relache);
+    relache = setTimeout(ajuste, 700);
+  }
+  function ajuste(){
+    var ecran = $('rdv-e' + etat.ecran), boite = rdv.getBoundingClientRect();
+    var naturel = ecran.getBoundingClientRect().bottom - boite.top + parseFloat(getComputedStyle(rdv).paddingBottom || '0');
+    var marge = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+    var min = Math.max(naturel, boite.height - Math.max(0, marge));
+    rdv.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
+  }
+  /* comme GenIA, le widget revient en vue a chaque ecran, et la question du
+     nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
+     repart de la, et le defilement n'en depend pas (preventScroll) */
   function va(n){
+    fige();
     montre(n);
-    var r = rdv.getBoundingClientRect();
-    if (r.top < 60 || r.bottom > window.innerHeight) rdv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var q = $('rdv-e' + etat.ecran).querySelector('.lp-rdv-q, .lp-rdv-succes-t');
+    if (q) { try { q.focus({ preventScroll: true }); } catch (e) { q.focus(); } }
+    rdv.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   rdv.querySelectorAll('[data-retour]').forEach(function (b){
     b.addEventListener('click', function (){ va(etat.ecran - 1); });
@@ -163,6 +201,7 @@
   surCartes(discCartes, function (v){
     uneFois('debut', 'BookingStarted', true);
     var autre = v === 'autre';
+    if (!autre && !discLibre.hidden) fige(); /* le champ se ferme : la page ne doit pas sauter */
     discLibre.hidden = !autre; e0suite.hidden = !autre;
     if (autre) { e0maj(); setTimeout(function (){ discPrec.focus(); }, 40); }
     else setTimeout(function (){ va(1); }, 160);
@@ -182,6 +221,7 @@
   surCartes(sitCartes, function (){ e1maj(); e1avance(); });
   surCartes(objCartes, function (v){
     var autre = v === 'Autre';
+    if (!autre && !objLibre.hidden) fige();
     objLibre.hidden = !autre;
     e1maj();
     if (autre) setTimeout(function (){ objPrec.focus(); }, 40); else e1avance();
@@ -194,28 +234,39 @@
      range par jour de Paris, un bandeau de jours qui defile, la grille des
      heures du jour choisi. S'il ne repond pas, on le dit et on laisse
      reessayer, au lieu d'afficher « aucun creneau » (faux et decourageant). */
-  var attente = $('rdv-attente'), panne = $('rdv-panne'), vide = $('rdv-vide');
+  var attente = $('rdv-attente'), panne = $('rdv-panne'), vide = $('rdv-vide'), reessayer = $('rdv-reessayer');
   var jours = $('rdv-jours'), heures = $('rdv-heures'), pris = $('rdv-pris');
   function calMontre(quoi){
     attente.hidden = quoi !== 'attente'; panne.hidden = quoi !== 'panne'; vide.hidden = quoi !== 'vide';
     jours.hidden = heures.hidden = quoi !== 'cal';
   }
+  var chargement = false;
   function chargeCreneaux(){
     uneFois('ic', 'InitiateCheckout', false);
     if (etat.creneaux.length) return dessineCal();
+    if (chargement) return;
+    chargement = true;
+    reessayer.disabled = true;
     calMontre('attente');
-    fetch(API + '/disponibilites', { headers: ENTETES })
+    var depuis = Date.now();
+    appelle(API + '/disponibilites', { headers: ENTETES })
       .then(function (r){ if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
       .then(function (j){
+        chargement = false; reessayer.disabled = false;
         etat.meet = !!j.meet;
         etat.creneaux = (j.creneaux || []).map(function (iso){ return new Date(iso); })
           .filter(function (d){ return !isNaN(d) && d.getTime() > Date.now(); })
           .sort(function (a, b){ return a - b; });
         dessineCal();
       })
-      .catch(function (){ etat.creneaux = []; calMontre('panne'); });
+      .catch(function (){
+        /* une connexion refusee revient en quelques millisecondes : sans ce
+           temps mort, « Reessayer » semblerait ne rien faire */
+        var reste = Math.max(0, 450 - (Date.now() - depuis));
+        setTimeout(function (){ chargement = false; reessayer.disabled = false; etat.creneaux = []; calMontre('panne'); }, reste);
+      });
   }
-  $('rdv-reessayer').addEventListener('click', function (){ etat.creneaux = []; chargeCreneaux(); });
+  reessayer.addEventListener('click', function (){ etat.creneaux = []; chargeCreneaux(); });
 
   function dessineCal(){
     if (!etat.creneaux.length) return calMontre('vide');
@@ -239,6 +290,7 @@
         jours.querySelectorAll('.lp-rdv-jour').forEach(function (x){
           x.setAttribute('aria-pressed', x.getAttribute('data-j') === k ? 'true' : 'false');
         });
+        fige(); /* un jour avec moins d'heures : la grille retrecit, pas la page */
         dessineHeures(parJour[k]);
         jours.scrollTo({ left: b.offsetLeft - (jours.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
       });
@@ -249,13 +301,17 @@
     var sel = jours.querySelector('[aria-pressed="true"]');
     if (sel) jours.scrollLeft = Math.max(0, sel.offsetLeft - 8);
   }
+  /* l'heure deja choisie reste marquee : celui qui revient des coordonnees
+     pour en changer voit laquelle il avait prise */
   function dessineHeures(liste){
     heures.textContent = '';
     liste.forEach(function (d){
+      var iso = d.toISOString();
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'lp-rdv-heure'; b.textContent = fmtHeure.format(d);
-      b.setAttribute('data-iso', d.toISOString());
-      b.addEventListener('click', function (){ etat.d.debut = d.toISOString(); pris.hidden = true; va(3); });
+      b.setAttribute('data-iso', iso);
+      b.setAttribute('aria-pressed', etat.d.debut === iso ? 'true' : 'false');
+      b.addEventListener('click', function (){ etat.d.debut = iso; pris.hidden = true; va(3); });
       heures.appendChild(b);
     });
   }
@@ -277,25 +333,40 @@
     telChamp.hidden = etat.d.format !== 'telephone';
   }
   surCartes(formats, function (v){
+    if (v !== 'telephone' && !telChamp.hidden) fige();
     telChamp.hidden = v !== 'telephone';
+    formats.classList.remove('manque');
     dit('');
     if (v === 'telephone') setTimeout(function (){ $('rdv-tel').focus(); }, 40);
   });
 
-  /* un champ signale en rouge redevient normal des qu'on y ecrit */
+  /* un champ signale en rouge redevient normal des qu'on y ecrit, et le
+     message qui le visait s'efface avec lui : une carte rouge qui dit encore
+     « invalide » au-dessus d'un champ corrige, c'est faux */
   form.querySelectorAll('input').forEach(function (c){
-    c.addEventListener('input', function (){ var ch = c.closest('.champ'); if (ch) ch.classList.remove('manque'); });
-  });
-  function manque(ids){
-    var premier = null;
-    ids.forEach(function (id){
-      var c = $(id), v = c.value.trim();
-      var vide = !v || (c.type === 'email' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v))
-                   || (c.type === 'tel' && v.replace(/\D/g, '').length < 9);
-      c.closest('.champ').classList.toggle('manque', vide);
-      if (vide && !premier) premier = c;
+    c.addEventListener('input', function (){
+      var ch = c.closest('.champ'); if (ch) ch.classList.remove('manque');
+      dit('');
     });
-    return premier;
+  });
+  var EMAIL = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
+  /* le premier probleme du formulaire, comme GenIA : son message, les champs
+     a cerner (ceux-la seulement, pour que le rouge dise la meme chose que le
+     message) et ou mettre le focus */
+  function probleme(){
+    var d = etat.d, vides = function (ids){ return ids.filter(function (id){ return !$(id).value.trim(); }); };
+    var v = vides(['rdv-prenom', 'rdv-nom']);
+    if (v.length) return { message: T.erreurs.identite, champs: v };
+    if (!EMAIL.test(d.email)) return { message: T.erreurs.email, champs: ['rdv-email'] };
+    if (!d.format) return { message: T.erreurs.format, champs: [], formats: true, focus: fmtMeet.hidden ? fmtTel : fmtMeet };
+    if (d.format === 'telephone') {
+      var chiffres = d.telephone.replace(/\D/g, '').length;
+      if (!chiffres) return { message: T.erreurs.numero, champs: ['rdv-tel'] };
+      if (chiffres < 9) return { message: T.erreurs.numero_court, champs: ['rdv-tel'] };
+    }
+    v = vides(['rdv-club', 'rdv-ville']);
+    if (v.length) return { message: T.erreurs.club, champs: v };
+    return null;
   }
   form.addEventListener('submit', function (e){
     e.preventDefault();
@@ -304,17 +375,14 @@
     d.prenom = $('rdv-prenom').value.trim(); d.nom = $('rdv-nom').value.trim();
     d.email = $('rdv-email').value.trim(); d.telephone = $('rdv-tel').value.trim();
     d.club = $('rdv-club').value.trim(); d.ville = $('rdv-ville').value.trim();
-    var tel = d.format === 'telephone';
-    var m1 = manque(['rdv-prenom', 'rdv-nom']);
-    var m2 = manque(['rdv-email']);
-    var m3 = tel ? manque(['rdv-tel']) : null;
-    if (!tel) telChamp.classList.remove('manque');
-    var m4 = manque(['rdv-club', 'rdv-ville']);
-    var message = m1 ? T.erreurs.identite : m2 ? T.erreurs.email : !d.format ? T.erreurs.format
-                : m3 ? T.erreurs.numero : m4 ? T.erreurs.club : '';
-    if (message) {
-      dit(message);
-      var f = m1 || m2 || (!d.format ? (fmtMeet.hidden ? fmtTel : fmtMeet) : null) || m3 || m4;
+    form.querySelectorAll('.champ.manque').forEach(function (c){ c.classList.remove('manque'); });
+    formats.classList.remove('manque');
+    var p = probleme();
+    if (p) {
+      dit(p.message);
+      p.champs.forEach(function (id){ $(id).closest('.champ').classList.add('manque'); });
+      if (p.formats) formats.classList.add('manque');
+      var f = p.focus || (p.champs.length ? $(p.champs[0]) : null);
       if (f) f.focus();
       return;
     }
@@ -322,18 +390,37 @@
     envoie();
   });
 
+  /* le message que le serveur renvoie, dit avec nos mots */
+  function messageDe(statut, j){
+    var code = (j && j.erreur) || '', champ = (j && j.champ) || '';
+    if (statut === 429) return T.erreurs.limite;
+    if (code === 'email_invalide') return T.erreurs.email;
+    if (code === 'format_invalide' || code === 'format_indisponible') return T.erreurs.format;
+    if (code === 'champ_manquant' || code === 'champ_trop_long') {
+      if (champ === 'telephone') return T.erreurs.numero;
+      if (champ === 'prenom' || champ === 'nom') return T.erreurs.identite;
+      if (champ === 'club' || champ === 'ville') return T.erreurs.club;
+      if (champ === 'email') return T.erreurs.email;
+    }
+    return T.erreurs.serveur;
+  }
+
   function envoie(){
     var d = etat.d;
+    /* les cartes gardent leur libelle ; ce que le gerant a tape dans
+       « Precisez » part dans `projet`, la ligne « Precisions » du mail d'Amaury */
+    var precisions = [];
+    if (d.discipline === 'autre' && discPrec.value.trim()) precisions.push('Discipline : ' + discPrec.value.trim());
+    if (d.objectif === 'Autre' && objPrec.value.trim()) precisions.push('Objectif : ' + objPrec.value.trim());
     var corps = {
       debut: d.debut, prenom: d.prenom, nom: d.nom, email: d.email, format: d.format,
       club: d.club, ville: d.ville,
-      discipline: d.discipline === 'autre' && discPrec.value.trim()
-        ? 'Autre : ' + discPrec.value.trim() : libelle(discCartes),
-      situation: d.situation,
-      objectif: d.objectif === 'Autre' && objPrec.value.trim()
-        ? 'Autre : ' + objPrec.value.trim() : libelle(objCartes)
+      discipline: libelle(discCartes), situation: d.situation, objectif: libelle(objCartes)
     };
-    if (d.telephone) corps.telephone = d.telephone;
+    if (precisions.length) corps.projet = precisions.join('\n');
+    /* le numero ne part que s'il sert : celui tape puis cache en revenant a
+       Google Meet n'est pas envoye */
+    if (d.format === 'telephone' && d.telephone) corps.telephone = d.telephone;
     /* d'ou vient le gerant : les utm de l'adresse, pour les campagnes */
     var q = new URLSearchParams(location.search), source = {};
     ['utm_source', 'utm_campaign', 'utm_content'].forEach(function (k){
@@ -346,7 +433,7 @@
     etat.envoi = true;
     confirmer.disabled = true; confirmer.textContent = T.enCours;
     var rendu = function (){ etat.envoi = false; confirmer.disabled = false; confirmer.textContent = T.bouton; };
-    fetch(API + '/reserver', { method: 'POST', headers: ENTETES, body: JSON.stringify(corps) })
+    appelle(API + '/reserver', { method: 'POST', headers: ENTETES, body: JSON.stringify(corps) })
       .then(function (r){
         return r.json().catch(function (){ return {}; }).then(function (j){ return { statut: r.status, ok: r.ok, j: j }; });
       })
@@ -354,7 +441,7 @@
         rendu();
         /* le creneau vient d'etre pris : retour aux creneaux, rafraichis, avec le mot */
         if (x.statut === 409) { etat.creneaux = []; pris.hidden = false; va(2); return; }
-        if (!x.ok) { dit(x.j && x.j.erreur === 'email_invalide' ? T.erreurs.email : T.erreurs.serveur); return; }
+        if (!x.ok) { dit(messageDe(x.statut, x.j)); return; }
         pixel('Lead'); pixel('Schedule');
         etat.resultat = x.j || {};
         va(4);

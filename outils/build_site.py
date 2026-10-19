@@ -14,7 +14,7 @@ SORTIE = 'site'
 # sauvegarde-site-complet-2026-10-18.
 #   page construite -> (fichier servi, titre, description)
 DESCR = {
- 'agence.html': ('index.html', "Mon Club Combat | L'agence qui remplit votre salle",
+ 'agence.html': ('index.html', "Mon Club Combat | L’agence qui remplit votre salle",
    "Mon Club Combat remplit votre salle de sports de combat : chaque mois, un nombre garanti "
    "de personnes réservent une séance d'essai sur un cours de votre planning. Vous n'avez plus "
    "qu'à les accueillir."),

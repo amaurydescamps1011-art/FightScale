@@ -1209,12 +1209,11 @@
     border-radius:9px; background:transparent; color:var(--texte-3); cursor:pointer}
   @keyframes ag-descend{from{opacity:0; transform:translate(-50%,-10px)} to{opacity:1; transform:translateX(-50%)}}
 
-  /* Calendly a cote du formulaire, quand l'agenda existe */
   /* le panneau « En discuter », sur le cote */
   .ag-voile{position:fixed; inset:0; z-index:70; background:rgba(22,22,15,.38); opacity:0;
     transition:opacity .25s ease}
   .ag-voile.ouvert{opacity:1}
-  .ag-voile[hidden], .ag-panneau[hidden], .ag-calendly[hidden]{display:none}
+  .ag-voile[hidden], .ag-panneau[hidden]{display:none}
   .ag-panneau{position:fixed; top:0; right:0; bottom:0; z-index:71; width:min(440px, 100%);
     display:flex; flex-direction:column; gap:16px; overflow-y:auto; overscroll-behavior:contain;
     padding:22px clamp(18px,3vw,28px) 28px; background:#FBFAF8; box-shadow:-18px 0 48px rgba(22,22,15,.18);
@@ -1227,9 +1226,6 @@
     background:#fff; color:var(--texte-2); cursor:pointer}
   .ag-pan-mot{margin-top:-6px; font-size:14.5px; line-height:1.55; color:var(--texte-3)}
   .ag-panneau .ag-form{padding:clamp(18px,2.4vw,22px)}
-  .ag-calendly{border-radius:16px; background:#fff; border:1px solid #E6E3DD; overflow:hidden}
-  .ag-calendly-cadre{min-height:680px}
-  .ag-calendly-cadre .ag-btn{margin:20px}
   html.ag-fige{overflow:hidden}
   @media (prefers-reduced-motion: reduce){ .ag-panneau, .ag-voile{transition:none} }
 
@@ -1486,8 +1482,14 @@
   .lp-rdv-libre{margin-top:10px}
   .lp-rdv-libre[hidden]{display:none}
   .lp-rdv .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
-  .lp-rdv .champ input{background:#fff}
+  /* 16 px et pas 15 : sous cette taille, Safari iPhone zoome la page au focus de chaque champ et la laisse zoomee */
+  .lp-rdv .champ input{background:#fff; font-size:16px}
   .lp-rdv .champ.manque input{border-color:rgba(236,22,46,.7)}
+  .lp-rdv-formats.manque .lp-rdv-carte{border-color:rgba(236,22,46,.7)}
+  /* la question prend le focus a chaque ecran (lecteurs d'ecran) : pas d'anneau autour d'un texte */
+  .lp-rdv-q:focus, .lp-rdv-succes-t:focus{outline:none}
+  /* une fois confirme, le titre d'invitation et son sous-titre s'effacent */
+  .lp-rdv.est-fini .lp-rdv-titre, .lp-rdv.est-fini .lp-rdv-sous{display:none}
   .lp-rdv-form{display:grid; gap:12px; margin-top:14px}
   .lp-rdv-2{display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
   .lp-rdv-piege{position:absolute; left:-9999px; top:0; width:1px; height:1px; overflow:hidden; opacity:0}
@@ -1542,6 +1544,7 @@
     color:var(--texte); font-family:inherit; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; cursor:pointer;
     transition:border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease}
   .lp-rdv-heure:hover{border-color:var(--rouge-500); color:var(--rouge-lien); background:rgba(236,22,46,.04); transform:translateY(-1px)}
+  .lp-rdv-heure[aria-pressed="true"], .lp-rdv-heure[aria-pressed="true"]:hover{border-color:var(--rouge-500); background:var(--rouge-500); color:#fff}
 
   /* c'est confirme */
   .lp-rdv-succes{display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; padding:10px 0 4px}
