@@ -22,6 +22,9 @@ DESCR = {
    "Ce que Mon Club Combat enregistre, pourquoi, qui y a accès et combien de temps."),
  'conditions.html': ('conditions.html', "Conditions d'utilisation | Mon Club Combat",
    "Les règles d'utilisation de Mon Club Combat."),
+ # le lien d'annulation des e-mails de rendez-vous (monclubcombat.fr/annuler?token=...)
+ 'annuler.html': ('annuler.html', "Annuler mon rendez-vous | Mon Club Combat",
+   "Annulez votre appel avec Mon Club Combat, ou réservez un nouveau créneau."),
 }
 
 # Les adresses de l'ancien site renvoient sur la page agence plutot que sur une

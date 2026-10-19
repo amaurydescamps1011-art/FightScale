@@ -13,6 +13,11 @@
 window.MCC = (function (){
   var URL_BASE = 'https://qhbutuhdmyajlgorbhxf.supabase.co';
   var CLE = 'sb_publishable_ic423KpP-683uMEhyzVSxQ_ow2i6hN2';
+  /* L'API de prise de rendez-vous : la fonction Edge `rdv` du meme projet
+     (supabase/functions/rdv), appelee en simple fetch par la page agence. Les
+     tests posent window.MCC_RDV_API avant ce script pour viser un serveur
+     local (outils/tests/rdv_local.mjs). */
+  var RDV_API = window.MCC_RDV_API || (URL_BASE + '/functions/v1/rdv');
 
   var client = null;
   if (window.supabase && window.supabase.createClient) {
@@ -493,6 +498,7 @@ window.MCC = (function (){
     monProfil: monProfil, poseProfil: poseProfil, estAdmin: estAdmin,
     deconnexion: deconnexion,
     dire: dire, exigeCompte: exigeCompte, URL_BASE: URL_BASE,
+    RDV_API: RDV_API, CLE_PUBLIQUE: CLE,
     enSalle: enSalle, clubsPublies: clubsPublies, chargeSalles: chargeSalles,
     deposeDemande: deposeDemande, lienPhoto: lienPhoto,
     compteVue: compteVue, vuesDuClub: vuesDuClub,

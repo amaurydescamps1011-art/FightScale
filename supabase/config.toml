@@ -20,3 +20,10 @@ verify_jwt = false
 # la page, et tout ce qu'elle rend est une page de paiement Stripe. La commande
 # ne passe payee que par le webhook signe.
 verify_jwt = false
+
+[functions.rdv]
+# la prise de rendez-vous de la page d'accueil : appelee par un visiteur sans
+# compte, avec la cle publiable dans `apikey` -- qui n'est pas un JWT. Ce false
+# ne donne rien : la fonction verifie elle-meme chaque champ, limite les envois
+# par e-mail et par adresse, et le cron presente son propre secret.
+verify_jwt = false

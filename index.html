@@ -1430,8 +1430,8 @@
   /* l'appel */
   .lp-appel{padding-bottom:clamp(56px,8vw,96px); scroll-margin-top:61px}
   @media (min-width:901px){ .lp-appel{scroll-margin-top:0} }
-  .lp-appel-in{max-width:880px; margin:0 auto; display:grid; gap:clamp(24px,4vw,48px); align-items:start;
-    grid-template-columns:minmax(0,1fr) minmax(0,400px)}
+  .lp-appel-in{max-width:920px; margin:0 auto; display:grid; gap:clamp(24px,4vw,48px); align-items:start;
+    grid-template-columns:minmax(0,1fr) minmax(0,440px)}
   .lp-appel-dit{padding-top:clamp(20px,3vw,32px)}
   .lp-suite{margin:24px 0 0; padding:0; list-style:none; display:grid}
   .lp-suite li{position:relative; padding:0 0 18px 24px; font-size:15px; line-height:1.5; color:var(--texte-3); font-weight:500}
@@ -1441,17 +1441,132 @@
   .lp-suite li:last-child{padding-bottom:0}
   .lp-suite li:last-child::after{display:none}
   .lp-suite li > b{display:block; font-size:13px; font-weight:800; color:var(--rouge-lien); margin-bottom:2px}
-  .lp-form-t{font-size:17px; font-weight:800; letter-spacing:-.01em; color:var(--texte)}
-  .lp-form .champ input{min-height:48px}
-  .lp-aide{font-size:13px; font-weight:500; color:var(--texte-3); margin-top:-2px}
-  .lp-form .acq-legal{color:var(--texte-3)}
   .lp-rassure{margin-top:4px; font-size:13px; line-height:1.5; color:var(--texte-3); text-align:center; font-weight:600}
-  .lp-merci{display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center;
-    padding:36px 26px; border-radius:20px; background:#fff; border:1px solid #E6E3DD; box-shadow:var(--ag-ombre)}
-  .lp-merci[hidden]{display:none}
-  .lp-merci-ico{display:grid; place-items:center; width:54px; height:54px; border-radius:50%; background:#E4F6E6; color:#1E8A3A}
-  .lp-merci p{font-size:16px; line-height:1.55; color:var(--texte-2)}
-  .lp-merci b{display:block; font-size:20px; color:var(--texte); margin-bottom:4px}
+
+  /* ---------- le rendez-vous ----------
+     La carte blanche de #appel porte le tunnel de GenIA (cinq ecrans, barre de
+     progression, cartes a coche, bandeau de jours, grille d'heures) avec les
+     formes de la page : coins 16 px, ombre douce, boutons rouges, Manrope. */
+  .lp-carte{min-width:0}
+  .lp-rdv{min-width:0; padding:clamp(20px,3vw,26px) clamp(18px,3vw,26px) clamp(18px,2.6vw,24px); border-radius:16px;
+    background:#fff; border:1px solid #E6E3DD; box-shadow:var(--ag-ombre); scroll-margin-top:74px}
+  .lp-rdv-etiq{display:inline-flex; align-items:center; gap:7px; min-height:28px; padding:0 11px 0 9px;
+    border-radius:999px; background:rgba(236,22,46,.08); color:var(--rouge-lien); font-size:12.5px; font-weight:800}
+  .lp-rdv-titre{margin-top:12px; font-size:24px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
+  .lp-rdv-sous{margin-top:6px; font-size:14.5px; line-height:1.5; color:var(--texte-3); font-weight:500; text-wrap:pretty}
+  .lp-rdv-prog{height:4px; margin:18px 0 20px; border-radius:2px; background:#F0EEEA; overflow:hidden}
+  .lp-rdv-prog > i{display:block; height:100%; width:0; border-radius:2px; background:var(--rouge-500);
+    transition:width .45s cubic-bezier(.2,.8,.2,1)}
+  .lp-rdv-ecran[hidden]{display:none}
+  .lp-rdv-q{font-size:18px; font-weight:800; letter-spacing:-.015em; line-height:1.3; color:var(--texte); text-wrap:balance}
+  .lp-rdv-q2{margin-top:24px}
+
+  /* les cartes a coche : une par reponse, la coche rouge quand elle est choisie */
+  .lp-rdv-cartes{margin-top:14px; display:grid; gap:8px}
+  .lp-rdv-carte{display:flex; align-items:center; gap:10px; width:100%; min-height:50px; padding:11px 14px; text-align:left;
+    border:1px solid var(--bord-2); border-radius:12px; background:#fff; color:var(--texte);
+    font-family:inherit; font-size:15px; font-weight:700; line-height:1.3; cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease, box-shadow .15s ease}
+  .lp-rdv-carte:hover{border-color:var(--bord-3); background:#FCFBFA}
+  .lp-rdv-carte[aria-pressed="true"]{border-color:var(--rouge-500); background:rgba(236,22,46,.04);
+    box-shadow:0 0 0 1px var(--rouge-500)}
+  .lp-rdv-coche{margin-left:auto; display:grid; place-items:center; flex:none; width:22px; height:22px; border-radius:50%;
+    background:var(--rouge-500); color:#fff; opacity:0; transform:scale(.6); transition:opacity .15s ease, transform .15s ease}
+  .lp-rdv-coche svg{stroke-width:3}
+  .lp-rdv-carte[aria-pressed="true"] .lp-rdv-coche{opacity:1; transform:none}
+  /* le format de l'appel : deux cartes cote a cote, l'icone sert de coche */
+  .lp-rdv-formats{margin-top:0; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lp-rdv-formats.est-seul{grid-template-columns:1fr}
+  .lp-rdv-formats .lp-rdv-carte{padding:9px 12px; min-height:48px}
+  .lp-rdv-carte-ico{display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:8px;
+    background:#F0EEEA; color:var(--texte-2); transition:background-color .15s ease, color .15s ease}
+  .lp-rdv-carte[aria-pressed="true"] .lp-rdv-carte-ico{background:var(--rouge-500); color:#fff}
+
+  /* les champs : ceux du site, sur fond blanc */
+  .lp-rdv-libre{margin-top:10px}
+  .lp-rdv-libre[hidden]{display:none}
+  .lp-rdv .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .lp-rdv .champ input{background:#fff}
+  .lp-rdv .champ.manque input{border-color:rgba(236,22,46,.7)}
+  .lp-rdv-form{display:grid; gap:12px; margin-top:14px}
+  .lp-rdv-2{display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lp-rdv-piege{position:absolute; left:-9999px; top:0; width:1px; height:1px; overflow:hidden; opacity:0}
+  .lp-rdv-recap{margin-top:12px; display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px;
+    background:var(--fond); border:1px solid var(--bord); font-size:14px; line-height:1.4; color:var(--texte-3); font-weight:600}
+  .lp-rdv-recap b{color:var(--texte); font-weight:800}
+  .lp-rdv-recap-ico{flex:none; display:grid; place-items:center; width:30px; height:30px; border-radius:8px;
+    background:#fff; border:1px solid var(--bord); color:var(--rouge-500)}
+  .lp-rdv-erreur{margin-top:12px; padding:11px 13px; border-radius:var(--r-m); background:rgba(236,22,46,.07);
+    border:1px solid rgba(236,22,46,.28); font-size:13.5px; line-height:1.5; font-weight:600; color:var(--rouge-700)}
+  .lp-rdv-erreur[hidden]{display:none}
+  .lp-rdv-form .lp-rdv-erreur{margin-top:0}
+
+  /* le pied de chaque ecran : « Retour » a gauche, le bouton rouge a droite */
+  .lp-rdv-pied{margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .lp-rdv-form .lp-rdv-pied{margin-top:4px}
+  .lp-rdv-pied .ag-btn{margin-left:auto; min-height:48px}
+  .lp-rdv-pied .ag-btn[hidden]{display:none}
+  .lp-rdv-pied .ag-btn[disabled]{opacity:.45; cursor:default; box-shadow:none}
+  .lp-rdv-pied .ag-btn[disabled]:hover{background:var(--rouge-500)}
+  .lp-rdv-pied .ag-btn[disabled] svg{transform:none}
+  .lp-rdv-pied-plein .ag-btn{flex:1; min-height:52px}
+  .lp-rdv-retour{display:inline-flex; align-items:center; gap:2px; min-height:44px; margin-left:-8px; padding:0 12px 0 6px;
+    border:0; border-radius:8px; background:transparent; color:var(--texte-3); font-family:inherit; font-size:14px;
+    font-weight:700; cursor:pointer; white-space:nowrap; transition:color .15s ease, background-color .15s ease}
+  .lp-rdv-retour:hover{color:var(--texte); background:#F4F3F0}
+  .lp-rdv-legal{color:var(--texte-3)}
+
+  /* le calendrier : le bandeau des jours qui defile, la grille des heures */
+  .lp-rdv-cal{margin-top:14px}
+  .lp-rdv-attente, .lp-rdv-vide{display:flex; flex-direction:column; align-items:center; gap:12px; padding:34px 14px 30px;
+    text-align:center; font-size:14.5px; line-height:1.5; color:var(--texte-3); font-weight:600}
+  .lp-rdv-attente[hidden], .lp-rdv-vide[hidden], .lp-rdv-jours[hidden], .lp-rdv-heures[hidden]{display:none}
+  .lp-rdv-spin{width:26px; height:26px; border-radius:50%; border:2.5px solid #EDEBE6; border-top-color:var(--rouge-500);
+    animation:lp-rdv-tourne .8s linear infinite}
+  @keyframes lp-rdv-tourne{to{transform:rotate(360deg)}}
+  .lp-rdv-vide-ico{display:grid; place-items:center; width:48px; height:48px; border-radius:50%; background:#F0EEEA; color:var(--texte-3)}
+  .lp-rdv-vide p{max-width:320px; text-wrap:pretty}
+  .lp-rdv-vide .ag-btn{margin-top:2px; min-height:46px}
+  .lp-rdv-jours{position:relative; display:flex; gap:8px; overflow-x:auto; padding:2px 2px 10px; margin:0 -2px 6px;
+    scroll-snap-type:x proximity; scrollbar-width:thin; -webkit-overflow-scrolling:touch}
+  .lp-rdv-jour{flex:0 0 auto; scroll-snap-align:start; min-width:74px; padding:8px 8px 7px; border:1px solid var(--bord-2);
+    border-radius:12px; background:#fff; color:var(--texte-3); font-family:inherit; font-size:12px; font-weight:700;
+    text-transform:capitalize; text-align:center; line-height:1.2; cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease, color .15s ease}
+  .lp-rdv-jour b{display:block; margin-top:3px; font-size:15px; font-weight:800; color:var(--texte); white-space:nowrap}
+  .lp-rdv-jour:hover{border-color:var(--bord-3)}
+  .lp-rdv-jour[aria-pressed="true"]{border-color:var(--rouge-500); background:var(--rouge-500); color:rgba(255,255,255,.82)}
+  .lp-rdv-jour[aria-pressed="true"] b{color:#fff}
+  .lp-rdv-heures{display:grid; gap:8px; grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lp-rdv-heure{min-height:46px; padding:0 4px; border:1px solid var(--bord-2); border-radius:10px; background:#fff;
+    color:var(--texte); font-family:inherit; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease}
+  .lp-rdv-heure:hover{border-color:var(--rouge-500); color:var(--rouge-lien); background:rgba(236,22,46,.04); transform:translateY(-1px)}
+
+  /* c'est confirme */
+  .lp-rdv-succes{display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; padding:10px 0 4px}
+  .lp-rdv-ok{display:grid; place-items:center; width:60px; height:60px; border-radius:50%; background:#E4F6E6; color:#1E8A3A; margin-bottom:8px}
+  .lp-rdv-succes-t{font-size:25px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
+  .lp-rdv-succes p{font-size:15.5px; line-height:1.5; color:var(--texte-2); text-wrap:pretty}
+  .lp-rdv-succes p[hidden]{display:none}
+  .lp-rdv-succes b{color:var(--texte); font-weight:800}
+  .lp-rdv-succes a{color:var(--rouge-lien); font-weight:700; word-break:break-all}
+  .lp-rdv-succes-mail{margin-top:10px; display:flex; gap:10px; align-items:flex-start; text-align:left; padding:12px 14px;
+    border-radius:12px; background:var(--fond); border:1px solid var(--bord); font-size:14px; color:var(--texte-3)}
+  .lp-rdv-succes .lp-rdv-succes-mail{font-size:14px; line-height:1.45; color:var(--texte-3)}
+  .lp-rdv-succes-mail svg{flex:none; margin-top:2px; color:var(--rouge-500)}
+
+  /* la page d'annulation (annuler.html) : une carte seule, au milieu */
+  .lp-annuler{padding:clamp(40px,7vw,80px) 16px clamp(56px,8vw,96px); min-height:48vh}
+  .lp-annuler-carte{max-width:480px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:10px;
+    text-align:center; padding:36px clamp(20px,4vw,32px) 32px}
+  .lp-annuler-carte .lp-rdv-ok[hidden]{display:none}
+  .lp-annuler-carte[data-etat="attente"] .lp-rdv-ok{background:#F0EEEA}
+  .lp-annuler-carte[data-etat="erreur"] .lp-rdv-ok{background:rgba(236,22,46,.1); color:var(--rouge-500)}
+  .lp-annuler-carte h1{margin:0}
+  .lp-annuler-texte{font-size:16px; line-height:1.55; color:var(--texte-2); max-width:380px; text-wrap:pretty}
+  .lp-annuler-btn{margin-top:14px; min-height:50px; padding:0 22px}
+  .lp-annuler-btn[hidden]{display:none}
 
   /* la barre du bas, au telephone */
   .lp-barre{display:none}
@@ -1472,7 +1587,8 @@
     .lp-faq-col{box-shadow:none}
     .lp-faq-col:first-child{border-radius:16px 16px 0 0}
     .lp-faq-col:last-child{border-radius:0 0 16px 16px; border-top:0}
-    .lp-appel-in{grid-template-columns:1fr; max-width:560px}
+    /* minmax(0,1fr), pas 1fr : sinon la carte prend la largeur du bandeau de jours au lieu de le faire defiler */
+    .lp-appel-in{grid-template-columns:minmax(0,1fr); max-width:560px}
     .lp-appel-dit{text-align:center; padding-top:0}
     .lp-suite{text-align:left; max-width:460px; margin-inline:auto}
   }
@@ -1523,7 +1639,6 @@
     .lp-paves li > p{grid-column:1 / -1; font-size:13.5px; line-height:1.4; margin-top:6px}
     .lp-pave-limite{margin-top:0; padding-top:14px}
     .lp-paves .lp-pave-limite > p{grid-column:1 / -1; margin-top:6px}
-    .lp-form{padding:18px 16px 16px}
     /* la frise, en une colonne */
     .lp-roles .lp-texte{display:none}
     .lp-frise{grid-template-columns:1fr; gap:8px; margin-top:18px; padding-left:0}
@@ -1545,10 +1660,22 @@
     /* l'appel */
     .lp-appel-in{gap:18px}
     .lp-suite{display:none}
-    .lp-aide{display:none}
-    .lp-form{gap:8px}
-    .lp-form .champ input{min-height:44px}
-    .lp-form .champ{gap:5px}
+    /* le rendez-vous : trois heures par ligne, les champs plus serres */
+    .lp-rdv{padding:18px 16px 16px; scroll-margin-top:66px}
+    .lp-rdv-titre{font-size:22px}
+    .lp-rdv-prog{margin:16px 0 18px}
+    .lp-rdv-q{font-size:17px}
+    .lp-rdv-q2{margin-top:20px}
+    .lp-rdv-carte{min-height:48px; padding:10px 12px; font-size:14.5px}
+    .lp-rdv-form{gap:10px}
+    .lp-rdv-2{gap:10px}
+    .lp-rdv-2:not(.lp-rdv-2-garde){grid-template-columns:1fr}
+    .lp-rdv .champ{gap:5px}
+    .lp-rdv .champ input{min-height:44px}
+    .lp-rdv-heures{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .lp-rdv-heure{min-height:48px; font-size:15.5px}
+    .lp-rdv-jour{min-width:72px}
+    .lp-rdv-succes-t{font-size:23px}
     .lp-appel{padding-bottom:32px}
     .lp-pied{padding:18px 16px 22px}
     .lp-barre{display:block; position:fixed; left:0; right:0; bottom:0; z-index:45;
@@ -1945,33 +2072,127 @@
       </div>
 
       <div class="lp-carte">
-                <div class="ag-calendly" id="ag-calendly" data-url="" hidden>
-          <div class="ag-calendly-cadre" id="ag-calendly-cadre"></div>
-        </div>
+                <div class="lp-rdv" id="rdv">
+          <div class="lp-rdv-tete">
+            <p class="lp-rdv-etiq"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Appel de 15 min · offert</p>
+            <p class="lp-rdv-titre">Réservez votre appel.</p>
+            <p class="lp-rdv-sous">Trois questions sur votre salle, puis le jour et l’heure qui vous arrangent.</p>
+          </div>
+          <div class="lp-rdv-prog" aria-hidden="true"><i id="rdv-prog"></i></div>
 
-        <form class="ag-form lp-form" id="lp-form" novalidate>
-          <p class="lp-form-t">Où vous rappeler&nbsp;?</p>
-          <label class="champ"><span>Nom du club</span>
-            <input id="l-club" name="club" required autocomplete="organization"></label>
-          <label class="champ"><span>Ville</span>
-            <input id="l-ville" name="ville" required autocomplete="address-level2">
-            <small class="lp-aide">pour préparer l’appel</small></label>
-          <label class="champ"><span>Votre nom</span>
-            <input id="l-nom" name="nom" required autocomplete="name"></label>
-          <label class="champ"><span>Téléphone</span>
-            <input id="l-tel" name="tel" type="tel" required autocomplete="tel" inputmode="tel"></label>
-          <label class="champ"><span>E-mail</span>
-            <input id="l-mail" name="mail" type="email" required autocomplete="email"></label>
-          <p class="form-erreur" id="l-erreur" hidden role="alert"></p>
-          <button class="ag-btn ag-btn-rouge ag-btn-plein" type="submit" id="l-envoi">Réserver mon appel</button>
-          <p class="lp-rassure">Rien à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après.</p>
-          <p class="acq-legal">Vos coordonnées ne servent qu’à vous recontacter.
-            <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>
-        </form>
-        <div class="lp-merci" id="lp-merci" hidden role="status">
-          <span class="lp-merci-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <p><b>C’est noté.</b> Nous vous rappelons au numéro indiqué. Vous repartirez avec une réponse nette&nbsp;:
-            oui, ou non.</p>
+                    <section class="lp-rdv-ecran" id="rdv-e0" aria-label="Étape 1 sur 5">
+            <p class="lp-rdv-q">Quelle est la discipline principale de votre salle ?</p>
+            <div class="lp-rdv-cartes" data-cle="discipline" role="group" aria-label="Discipline principale">
+              <button type="button" class="lp-rdv-carte" data-v="mma" aria-pressed="false">MMA<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="boxe" aria-pressed="false">Boxe anglaise<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="pieds_poings" aria-pressed="false">Kickboxing, Muay Thaï<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="sol" aria-pressed="false">JJB, grappling, lutte<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="arts_martiaux" aria-pressed="false">Judo, karaté, self-défense<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="autre" aria-pressed="false">Autre<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+            </div>
+            <label class="champ lp-rdv-libre" id="rdv-disc-autre" hidden><span>Précisez</span>
+              <input id="rdv-disc-prec" placeholder="ex. savate, taekwondo, sambo" autocomplete="off"></label>
+            <div class="lp-rdv-pied">
+              <span></span>
+              <button type="button" class="ag-btn ag-btn-rouge" id="rdv-e0-suite" hidden disabled>Continuer <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+            </div>
+          </section>
+
+                    <section class="lp-rdv-ecran" id="rdv-e1" aria-label="Étape 2 sur 5" hidden>
+            <p class="lp-rdv-q">Où en est votre salle ?</p>
+            <div class="lp-rdv-cartes" data-cle="situation" role="group" aria-label="Situation de la salle">
+              <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours à remplir" aria-pressed="false">Ouverte, des cours à remplir<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours presque pleins" aria-pressed="false">Ouverte, des cours presque pleins<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Pas encore ouverte" aria-pressed="false">Pas encore ouverte<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+            </div>
+            <p class="lp-rdv-q lp-rdv-q2">Quel est votre objectif principal ?</p>
+            <div class="lp-rdv-cartes" data-cle="objectif" role="group" aria-label="Objectif principal">
+              <button type="button" class="lp-rdv-carte" data-v="Remplir mes cours" aria-pressed="false">Remplir mes cours<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Ne plus dépendre de la rentrée" aria-pressed="false">Ne plus dépendre de la rentrée<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Me faire connaître dans mon secteur" aria-pressed="false">Me faire connaître dans mon secteur<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Autre" aria-pressed="false">Autre<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+            </div>
+            <label class="champ lp-rdv-libre" id="rdv-obj-autre" hidden><span>Précisez</span>
+              <input id="rdv-obj-prec" placeholder="ex. lancer un cours enfants" autocomplete="off"></label>
+            <div class="lp-rdv-pied">
+              <button type="button" class="lp-rdv-retour" data-retour><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Retour</button>
+              <button type="button" class="ag-btn ag-btn-rouge" id="rdv-e1-suite" disabled>Continuer <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+            </div>
+          </section>
+
+                    <section class="lp-rdv-ecran" id="rdv-e2" aria-label="Étape 3 sur 5" hidden>
+            <p class="lp-rdv-q">Choisissez un créneau</p>
+            <p class="lp-rdv-erreur" id="rdv-pris" role="alert" hidden>Ce créneau vient d’être pris. Choisissez-en un autre.</p>
+            <div class="lp-rdv-cal" id="rdv-cal">
+              <div class="lp-rdv-attente" id="rdv-attente" role="status"><span class="lp-rdv-spin" aria-hidden="true"></span>Chargement des disponibilités...</div>
+              <div class="lp-rdv-vide" id="rdv-panne" role="alert" hidden>
+                <span class="lp-rdv-vide-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193"/><path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07"/></svg></span>
+                <p>Les disponibilités n’ont pas pu se charger. Cela vient de notre côté, pas du vôtre.</p>
+                <button type="button" class="ag-btn ag-btn-rouge" id="rdv-reessayer">Réessayer</button>
+              </div>
+              <div class="lp-rdv-vide" id="rdv-vide" role="status" hidden>
+                <span class="lp-rdv-vide-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m14 14-4 4"/><path d="m10 14 4 4"/></svg></span>
+                <p>Aucun créneau disponible pour le moment. Réessayez plus tard ou écrivez-nous à contact@monclubcombat.fr.</p>
+              </div>
+              <div class="lp-rdv-jours" id="rdv-jours" role="group" aria-label="Le jour" hidden></div>
+              <div class="lp-rdv-heures" id="rdv-heures" role="group" aria-label="L’heure, heure de Paris" hidden></div>
+            </div>
+            <div class="lp-rdv-pied">
+              <button type="button" class="lp-rdv-retour" data-retour><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Retour</button>
+            </div>
+          </section>
+
+                    <section class="lp-rdv-ecran" id="rdv-e3" aria-label="Étape 4 sur 5" hidden>
+            <p class="lp-rdv-q">Vos coordonnées</p>
+            <p class="lp-rdv-recap"><span class="lp-rdv-recap-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+              <span>RDV choisi : <b id="rdv-recap-date"></b> (heure de Paris)</span></p>
+            <form class="lp-rdv-form" id="rdv-form" novalidate>
+              <div class="lp-rdv-2 lp-rdv-2-garde">
+                <label class="champ"><span>Prénom</span>
+                  <input id="rdv-prenom" name="prenom" autocomplete="given-name" required></label>
+                <label class="champ"><span>Nom</span>
+                  <input id="rdv-nom" name="nom" autocomplete="family-name" required></label>
+              </div>
+              <label class="champ"><span>E-mail</span>
+                <input id="rdv-email" name="email" type="email" autocomplete="email" inputmode="email"
+                       placeholder="vous@votresalle.fr" required></label>
+              <div class="champ">
+                <span id="rdv-format-l">Format de l’appel</span>
+                <div class="lp-rdv-cartes lp-rdv-formats" data-cle="format" role="group" aria-labelledby="rdv-format-l">
+                  <button type="button" class="lp-rdv-carte" data-v="meet" id="rdv-fmt-meet" aria-pressed="false"><span class="lp-rdv-carte-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>Google Meet</button>
+                  <button type="button" class="lp-rdv-carte" data-v="telephone" id="rdv-fmt-tel" aria-pressed="false"><span class="lp-rdv-carte-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>Téléphone</button>
+                </div>
+              </div>
+              <label class="champ" id="rdv-tel-champ" hidden><span>Numéro de téléphone</span>
+                <input id="rdv-tel" name="telephone" type="tel" autocomplete="tel" inputmode="tel" placeholder="06 12 34 56 78"></label>
+              <div class="lp-rdv-2">
+                <label class="champ"><span>Nom du club</span>
+                  <input id="rdv-club" name="club" autocomplete="organization" placeholder="Le nom de votre salle" required></label>
+                <label class="champ"><span>Ville</span>
+                  <input id="rdv-ville" name="ville" autocomplete="address-level2" placeholder="ex. Lyon" required></label>
+              </div>
+                            <label class="lp-rdv-piege" aria-hidden="true"><span>Site web</span>
+                <input id="rdv-site" name="site_web" tabindex="-1" autocomplete="off"></label>
+              <p class="lp-rdv-erreur" id="rdv-erreur" role="alert" hidden></p>
+              <div class="lp-rdv-pied lp-rdv-pied-plein">
+                <button type="button" class="lp-rdv-retour" data-retour><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Retour</button>
+                <button class="ag-btn ag-btn-rouge" type="submit" id="rdv-confirmer">Confirmer le RDV</button>
+              </div>
+              <p class="lp-rassure">Rien à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après.</p>
+              <p class="acq-legal lp-rdv-legal">Vos coordonnées ne servent qu’à organiser cet appel.
+                <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>
+            </form>
+          </section>
+
+                    <section class="lp-rdv-ecran lp-rdv-succes" id="rdv-e4" aria-label="Étape 5 sur 5" role="status" hidden>
+            <span class="lp-rdv-ok" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <p class="lp-rdv-succes-t">C’est confirmé !</p>
+            <p class="lp-rdv-succes-date"><b id="rdv-succes-date"></b> (heure de Paris)</p>
+            <p id="rdv-succes-meet" hidden>Lien visio : <a id="rdv-succes-lien" href="#" target="_blank" rel="noopener"></a></p>
+            <p id="rdv-succes-sans" hidden>Nous vous envoyons le lien de visio avant l’appel.</p>
+            <p id="rdv-succes-tel" hidden>Nous vous appelons au <b id="rdv-succes-num"></b>.</p>
+            <p class="lp-rdv-succes-mail"><span aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>Un e-mail de confirmation vient de vous être envoyé, avec l’invitation pour votre agenda. À très vite.</p>
+          </section>
         </div>
       </div>
     </div>
@@ -2445,10 +2666,11 @@
 
 <script>
 /* ---- la page de conversion de l'agence ----
-   La video se lance au clic (elle pese 8 Mo : rien n'est charge avant), la
-   barre du bas suit la lecture au telephone et s'efface sur le formulaire, et
-   le formulaire ecrit dans contact_acquisition, comme le panneau de la page
-   acquisition : la base previent l'equipe par e-mail (previent_l_equipe()). */
+   La video part seule en muet (elle pese 8 Mo : rien n'est charge avant), la
+   barre du bas suit la lecture au telephone et s'efface sur la carte de
+   rendez-vous, et la carte porte le tunnel de prise de rendez-vous, meme
+   mecanique que la page « reserver » de GenIA (Amaury, 19/10/2026), qui parle
+   a la fonction Supabase `rdv` en simple fetch. */
 (function (){
   var SB = window.MCC || null;
   var $ = function (id){ return document.getElementById(id); };
@@ -2483,28 +2705,10 @@
     });
   }
 
-  /* ---------- l'agenda, s'il existe ---------- */
-  var bloc = $('ag-calendly');
-  var agenda = bloc && bloc.getAttribute('data-url');
-  var form = $('lp-form');
-  if (agenda && form) {
-    bloc.hidden = false; form.hidden = true;
-    var sc = document.createElement('script');
-    sc.src = 'https://assets.calendly.com/assets/external/widget.js';
-    sc.async = true;
-    sc.onload = function (){
-      if (window.Calendly) Calendly.initInlineWidget({
-        url: agenda + (agenda.indexOf('?') < 0 ? '?' : '&') + 'hide_gdpr_banner=1&primary_color=ec162e',
-        parentElement: $('ag-calendly-cadre')
-      });
-    };
-    document.head.appendChild(sc);
-  }
-
   /* ---------- la barre du bas ----------
-     Elle apparait une fois le bouton du heros passe et disparait quand le
-     formulaire, ou un autre bouton d'appel, est a l'ecran : jamais deux
-     boutons pareils l'un sur l'autre. */
+     Elle apparait une fois le bouton du heros passe et disparait quand la
+     carte de rendez-vous, ou un autre bouton d'appel, est a l'ecran : jamais
+     deux boutons pareils l'un sur l'autre. */
   var barre = $('lp-barre'), agir = document.querySelector('.lp-agir'), appel = $('appel');
   if (barre && agir && appel && 'IntersectionObserver' in window) {
     var passe = false, vus = new Map();
@@ -2524,58 +2728,321 @@
     });
   }
 
-  /* ---------- le formulaire ---------- */
-  if (!form) return;
-  var erreur = $('l-erreur'), envoi = $('l-envoi');
-  function dit(t){ erreur.textContent = t; erreur.hidden = !t; }
-  function verifie(ids){
-    var manque = null;
+  /* ---------- la prise de rendez-vous ----------
+     Amaury, 19/10/2026 : « exactement comme sur GenIA ». Cinq ecrans (0 a 4) :
+     la discipline, la situation et l'objectif, le creneau, les coordonnees, la
+     confirmation. Les ecrans sont ecrits dans le HTML ; ici on les enchaine,
+     on dessine les jours et les heures, on envoie la reservation. Le serveur
+     est la fonction Supabase `rdv` (supabase/functions/rdv, contrat dans son
+     LISEZ-MOI), appelee en simple fetch : la page n'a pas besoin du client
+     Supabase. Les tests posent window.MCC_RDV_API avant les scripts pour
+     viser un serveur local. */
+  var rdv = $('rdv');
+  if (!rdv) return;
+  var API = window.MCC_RDV_API || (SB && SB.RDV_API)
+    || 'https://qhbutuhdmyajlgorbhxf.supabase.co/functions/v1/rdv';
+  var ENTETES = { 'content-type': 'application/json' };
+  if (SB && SB.CLE_PUBLIQUE) ENTETES.apikey = SB.CLE_PUBLIQUE;
+  var TOTAL = 5;
+  /* les textes qui changent en cours de route (plan de textes rdv-textes.json) */
+  var T = {
+    bouton: 'Confirmer le RDV',
+    enCours: 'Confirmation...',
+    erreurs: {
+      identite: 'Merci d’indiquer votre prénom et votre nom.',
+      email: 'Adresse e-mail invalide.',
+      format: 'Choisissez le format : Google Meet ou téléphone.',
+      numero: 'Merci d’indiquer le numéro où nous vous appelons.',
+      club: 'Merci d’indiquer le nom de votre club et sa ville.',
+      reseau: 'Problème de connexion. Vérifiez votre réseau et réessayez.',
+      serveur: 'Erreur de notre côté. Réessayez dans un instant, ou écrivez-nous à contact@monclubcombat.fr.'
+    }
+  };
+  var etat = { ecran: 0, d: {}, creneaux: [], jour: null, meet: true, resultat: null, envoye: {}, envoi: false };
+
+  /* les dates s'ecrivent en heure de Paris, quel que soit le telephone */
+  var fmtJourCle = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' });
+  var fmtJourHaut = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', weekday: 'short' });
+  var fmtJourNum = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', day: 'numeric', month: 'short' });
+  var fmtHeure = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' });
+  var fmtLong = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', weekday: 'long', day: 'numeric', month: 'long',
+    hour: '2-digit', minute: '2-digit' });
+
+  /* Le pixel Meta : memes evenements que GenIA, chacun une seule fois, et
+     seulement si le pixel est la. 0 BookingStarted · 1 Etape1_Objectif +
+     Etape2_Activite · 2 InitiateCheckout · 3 Etape3_Entreprise +
+     Etape4_Coordonnees · 4 Lead + Schedule. */
+  function pixel(ev, perso){ if (typeof window.fbq === 'function') window.fbq(perso ? 'trackCustom' : 'track', ev); }
+  function uneFois(cle, ev, perso){ if (!etat.envoye[cle]) { etat.envoye[cle] = 1; pixel(ev, perso); } }
+  var EVENEMENTS = { 1: ['Etape1_Objectif', 'Etape2_Activite'], 3: ['Etape3_Entreprise', 'Etape4_Coordonnees'] };
+
+  function montre(n){
+    etat.ecran = Math.max(0, Math.min(TOTAL - 1, n));
+    for (var i = 0; i < TOTAL; i++) $('rdv-e' + i).hidden = (i !== etat.ecran);
+    $('rdv-prog').style.width = Math.round(etat.ecran / (TOTAL - 1) * 100) + '%';
+    (EVENEMENTS[etat.ecran] || []).forEach(function (ev, i){ uneFois('e' + etat.ecran + i, ev, true); });
+    if (etat.ecran === 2) chargeCreneaux();
+    if (etat.ecran === 3) prepareCoordonnees();
+    if (etat.ecran === 4) montreSucces();
+  }
+  /* comme GenIA, le widget revient en vue a chaque ecran : au telephone, le
+     nouvel ecran commence sous le pouce ; sur un grand ecran ou il est deja
+     entier, rien ne bouge */
+  function va(n){
+    montre(n);
+    var r = rdv.getBoundingClientRect();
+    if (r.top < 60 || r.bottom > window.innerHeight) rdv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  rdv.querySelectorAll('[data-retour]').forEach(function (b){
+    b.addEventListener('click', function (){ va(etat.ecran - 1); });
+  });
+
+  /* les cartes a coche : un groupe par question, la valeur dans data-v */
+  function choisit(groupe, v){
+    groupe.querySelectorAll('.lp-rdv-carte').forEach(function (c){
+      c.setAttribute('aria-pressed', c.getAttribute('data-v') === v ? 'true' : 'false');
+    });
+  }
+  function surCartes(groupe, fn){
+    groupe.querySelectorAll('.lp-rdv-carte').forEach(function (c){
+      c.addEventListener('click', function (){
+        var v = c.getAttribute('data-v');
+        etat.d[groupe.getAttribute('data-cle')] = v;
+        choisit(groupe, v);
+        fn(v);
+      });
+    });
+  }
+  function libelle(groupe){
+    var c = groupe.querySelector('.lp-rdv-carte[aria-pressed="true"]');
+    return c ? c.textContent.trim() : '';
+  }
+  function surEntree(input, fn){
+    input.addEventListener('keydown', function (e){ if (e.key === 'Enter') { e.preventDefault(); fn(); } });
+  }
+
+  /* ecran 0 : la discipline. « Autre » ouvre un champ et un bouton ; les
+     autres reponses passent tout de suite a l'ecran suivant. */
+  var discCartes = rdv.querySelector('#rdv-e0 .lp-rdv-cartes');
+  var discLibre = $('rdv-disc-autre'), discPrec = $('rdv-disc-prec'), e0suite = $('rdv-e0-suite');
+  function e0complet(){ return !!etat.d.discipline && (etat.d.discipline !== 'autre' || discPrec.value.trim().length > 1); }
+  function e0maj(){ e0suite.disabled = !e0complet(); }
+  surCartes(discCartes, function (v){
+    uneFois('debut', 'BookingStarted', true);
+    var autre = v === 'autre';
+    discLibre.hidden = !autre; e0suite.hidden = !autre;
+    if (autre) { e0maj(); setTimeout(function (){ discPrec.focus(); }, 40); }
+    else setTimeout(function (){ va(1); }, 160);
+  });
+  discPrec.addEventListener('input', e0maj);
+  surEntree(discPrec, function (){ if (e0complet()) va(1); });
+  e0suite.addEventListener('click', function (){ if (e0complet()) va(1); });
+
+  /* ecran 1 : la situation puis l'objectif ; des que les deux sont la, on avance */
+  var sitCartes = rdv.querySelector('#rdv-e1 [data-cle="situation"]'), objCartes = rdv.querySelector('#rdv-e1 [data-cle="objectif"]');
+  var objLibre = $('rdv-obj-autre'), objPrec = $('rdv-obj-prec'), e1suite = $('rdv-e1-suite');
+  function e1complet(){
+    return !!etat.d.situation && !!etat.d.objectif && (etat.d.objectif !== 'Autre' || objPrec.value.trim().length > 1);
+  }
+  function e1maj(){ e1suite.disabled = !e1complet(); }
+  function e1avance(){ if (e1complet()) setTimeout(function (){ va(2); }, 180); }
+  surCartes(sitCartes, function (){ e1maj(); e1avance(); });
+  surCartes(objCartes, function (v){
+    var autre = v === 'Autre';
+    objLibre.hidden = !autre;
+    e1maj();
+    if (autre) setTimeout(function (){ objPrec.focus(); }, 40); else e1avance();
+  });
+  objPrec.addEventListener('input', e1maj);
+  surEntree(objPrec, function (){ if (e1complet()) va(2); });
+  e1suite.addEventListener('click', function (){ if (e1complet()) va(2); });
+
+  /* ecran 2 : les creneaux. Le serveur les donne en UTC, deja tries ; on les
+     range par jour de Paris, un bandeau de jours qui defile, la grille des
+     heures du jour choisi. S'il ne repond pas, on le dit et on laisse
+     reessayer, au lieu d'afficher « aucun creneau » (faux et decourageant). */
+  var attente = $('rdv-attente'), panne = $('rdv-panne'), vide = $('rdv-vide');
+  var jours = $('rdv-jours'), heures = $('rdv-heures'), pris = $('rdv-pris');
+  function calMontre(quoi){
+    attente.hidden = quoi !== 'attente'; panne.hidden = quoi !== 'panne'; vide.hidden = quoi !== 'vide';
+    jours.hidden = heures.hidden = quoi !== 'cal';
+  }
+  function chargeCreneaux(){
+    uneFois('ic', 'InitiateCheckout', false);
+    if (etat.creneaux.length) return dessineCal();
+    calMontre('attente');
+    fetch(API + '/disponibilites', { headers: ENTETES })
+      .then(function (r){ if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(function (j){
+        etat.meet = !!j.meet;
+        etat.creneaux = (j.creneaux || []).map(function (iso){ return new Date(iso); })
+          .filter(function (d){ return !isNaN(d) && d.getTime() > Date.now(); })
+          .sort(function (a, b){ return a - b; });
+        dessineCal();
+      })
+      .catch(function (){ etat.creneaux = []; calMontre('panne'); });
+  }
+  $('rdv-reessayer').addEventListener('click', function (){ etat.creneaux = []; chargeCreneaux(); });
+
+  function dessineCal(){
+    if (!etat.creneaux.length) return calMontre('vide');
+    var parJour = {}, ordre = [];
+    etat.creneaux.forEach(function (d){
+      var k = fmtJourCle.format(d);
+      if (!parJour[k]) { parJour[k] = []; ordre.push(k); }
+      parJour[k].push(d);
+    });
+    if (!etat.jour || !parJour[etat.jour]) etat.jour = ordre[0];
+    jours.textContent = '';
+    ordre.forEach(function (k){
+      var d = parJour[k][0];
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'lp-rdv-jour'; b.setAttribute('data-j', k);
+      b.setAttribute('aria-pressed', k === etat.jour ? 'true' : 'false');
+      b.appendChild(document.createTextNode(fmtJourHaut.format(d)));
+      var n = document.createElement('b'); n.textContent = fmtJourNum.format(d); b.appendChild(n);
+      b.addEventListener('click', function (){
+        etat.jour = k;
+        jours.querySelectorAll('.lp-rdv-jour').forEach(function (x){
+          x.setAttribute('aria-pressed', x.getAttribute('data-j') === k ? 'true' : 'false');
+        });
+        dessineHeures(parJour[k]);
+        jours.scrollTo({ left: b.offsetLeft - (jours.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
+      });
+      jours.appendChild(b);
+    });
+    dessineHeures(parJour[etat.jour]);
+    calMontre('cal');
+    var sel = jours.querySelector('[aria-pressed="true"]');
+    if (sel) jours.scrollLeft = Math.max(0, sel.offsetLeft - 8);
+  }
+  function dessineHeures(liste){
+    heures.textContent = '';
+    liste.forEach(function (d){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'lp-rdv-heure'; b.textContent = fmtHeure.format(d);
+      b.setAttribute('data-iso', d.toISOString());
+      b.addEventListener('click', function (){ etat.d.debut = d.toISOString(); pris.hidden = true; va(3); });
+      heures.appendChild(b);
+    });
+  }
+
+  /* ecran 3 : les coordonnees. Le numero n'est demande que si l'appel se fait
+     par telephone ; sans Google Agenda cote serveur (meet:false), il n'y a
+     que le telephone, deja choisi. */
+  var form = $('rdv-form'), erreur = $('rdv-erreur'), confirmer = $('rdv-confirmer');
+  var formats = rdv.querySelector('.lp-rdv-formats'), fmtMeet = $('rdv-fmt-meet'), fmtTel = $('rdv-fmt-tel');
+  var telChamp = $('rdv-tel-champ');
+  function dit(t){ erreur.textContent = t || ''; erreur.hidden = !t; }
+  function prepareCoordonnees(){
+    $('rdv-recap-date').textContent = fmtLong.format(new Date(etat.d.debut));
+    dit('');
+    fmtMeet.hidden = !etat.meet;
+    formats.classList.toggle('est-seul', !etat.meet);
+    if (!etat.meet) etat.d.format = 'telephone';
+    choisit(formats, etat.d.format || '');
+    telChamp.hidden = etat.d.format !== 'telephone';
+  }
+  surCartes(formats, function (v){
+    telChamp.hidden = v !== 'telephone';
+    dit('');
+    if (v === 'telephone') setTimeout(function (){ $('rdv-tel').focus(); }, 40);
+  });
+
+  /* un champ signale en rouge redevient normal des qu'on y ecrit */
+  form.querySelectorAll('input').forEach(function (c){
+    c.addEventListener('input', function (){ var ch = c.closest('.champ'); if (ch) ch.classList.remove('manque'); });
+  });
+  function manque(ids){
+    var premier = null;
     ids.forEach(function (id){
-      var c = $(id);
-      var v = c.value.trim();
+      var c = $(id), v = c.value.trim();
       var vide = !v || (c.type === 'email' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v))
                    || (c.type === 'tel' && v.replace(/\D/g, '').length < 9);
       c.closest('.champ').classList.toggle('manque', vide);
-      if (vide && !manque) manque = c;
+      if (vide && !premier) premier = c;
     });
-    return manque;
+    return premier;
   }
-
   form.addEventListener('submit', function (e){
     e.preventDefault();
-    dit('');
-    var manque = verifie(['l-club', 'l-ville', 'l-nom', 'l-tel', 'l-mail']);
-    if (manque) { manque.focus(); return; }
-    if (!(SB && SB.prete())) {
-      dit('L’envoi a besoin du serveur. Écrivez-nous à contact@monclubcombat.fr.');
+    if (etat.envoi) return;
+    var d = etat.d;
+    d.prenom = $('rdv-prenom').value.trim(); d.nom = $('rdv-nom').value.trim();
+    d.email = $('rdv-email').value.trim(); d.telephone = $('rdv-tel').value.trim();
+    d.club = $('rdv-club').value.trim(); d.ville = $('rdv-ville').value.trim();
+    var tel = d.format === 'telephone';
+    var m1 = manque(['rdv-prenom', 'rdv-nom']);
+    var m2 = manque(['rdv-email']);
+    var m3 = tel ? manque(['rdv-tel']) : null;
+    if (!tel) telChamp.classList.remove('manque');
+    var m4 = manque(['rdv-club', 'rdv-ville']);
+    var message = m1 ? T.erreurs.identite : m2 ? T.erreurs.email : !d.format ? T.erreurs.format
+                : m3 ? T.erreurs.numero : m4 ? T.erreurs.club : '';
+    if (message) {
+      dit(message);
+      var f = m1 || m2 || (!d.format ? (fmtMeet.hidden ? fmtTel : fmtMeet) : null) || m3 || m4;
+      if (f) f.focus();
       return;
     }
-    var q = new URLSearchParams(location.search);
-    var src = ['utm_source', 'utm_campaign', 'utm_content'].map(function (k){
-      return q.get(k) ? k.replace('utm_', '') + ' : ' + q.get(k) : '';
-    }).filter(Boolean).join(', ');
-    var ligne = {
-      club: $('l-club').value.trim(),
-      ville: $('l-ville').value.trim(),
-      nom: $('l-nom').value.trim(),
-      tel: $('l-tel').value.trim(),
-      mail: $('l-mail').value.trim(),
-      message: 'Demande d’appel depuis la page agence' + (src ? ' (' + src + ')' : '') + '.'
-    };
-    envoi.disabled = true;
-    envoi.textContent = 'Envoi…';
-    /* pas de returning : un visiteur n'a aucune lecture sur cette table */
-    SB.client.from('contact_acquisition').insert(ligne).then(function (r){
-      if (r.error) throw r.error;
-      form.hidden = true;
-      $('lp-merci').hidden = false;
-      if (window.fbq) fbq('track', 'Lead');
-    }).catch(function (err){
-      envoi.disabled = false;
-      envoi.textContent = 'Réserver mon appel';
-      dit(SB.dire ? SB.dire(err) : 'L’envoi n’a pas abouti. Réessayez dans un instant.');
-    });
+    dit('');
+    envoie();
   });
+
+  function envoie(){
+    var d = etat.d;
+    var corps = {
+      debut: d.debut, prenom: d.prenom, nom: d.nom, email: d.email, format: d.format,
+      club: d.club, ville: d.ville,
+      discipline: d.discipline === 'autre' && discPrec.value.trim()
+        ? 'Autre : ' + discPrec.value.trim() : libelle(discCartes),
+      situation: d.situation,
+      objectif: d.objectif === 'Autre' && objPrec.value.trim()
+        ? 'Autre : ' + objPrec.value.trim() : libelle(objCartes)
+    };
+    if (d.telephone) corps.telephone = d.telephone;
+    /* d'ou vient le gerant : les utm de l'adresse, pour les campagnes */
+    var q = new URLSearchParams(location.search), source = {};
+    ['utm_source', 'utm_campaign', 'utm_content'].forEach(function (k){
+      if (q.get(k)) source[k] = q.get(k).slice(0, 120);
+    });
+    if (Object.keys(source).length) corps.source = source;
+    var piege = $('rdv-site').value.trim();
+    if (piege) corps.site_web = piege;
+
+    etat.envoi = true;
+    confirmer.disabled = true; confirmer.textContent = T.enCours;
+    var rendu = function (){ etat.envoi = false; confirmer.disabled = false; confirmer.textContent = T.bouton; };
+    fetch(API + '/reserver', { method: 'POST', headers: ENTETES, body: JSON.stringify(corps) })
+      .then(function (r){
+        return r.json().catch(function (){ return {}; }).then(function (j){ return { statut: r.status, ok: r.ok, j: j }; });
+      })
+      .then(function (x){
+        rendu();
+        /* le creneau vient d'etre pris : retour aux creneaux, rafraichis, avec le mot */
+        if (x.statut === 409) { etat.creneaux = []; pris.hidden = false; va(2); return; }
+        if (!x.ok) { dit(x.j && x.j.erreur === 'email_invalide' ? T.erreurs.email : T.erreurs.serveur); return; }
+        pixel('Lead'); pixel('Schedule');
+        etat.resultat = x.j || {};
+        va(4);
+      })
+      .catch(function (){ rendu(); dit(T.erreurs.reseau); });
+  }
+
+  /* ecran 4 : c'est confirme */
+  function montreSucces(){
+    var r = etat.resultat || {}, d = etat.d;
+    var debut = new Date(r.debut || d.debut);
+    $('rdv-succes-date').textContent = fmtLong.format(isNaN(debut) ? new Date(d.debut) : debut);
+    var lien = typeof r.lien_meet === 'string' && /^https:\/\//.test(r.lien_meet) ? r.lien_meet : '';
+    $('rdv-succes-meet').hidden = !lien;
+    if (lien) { var a = $('rdv-succes-lien'); a.href = lien; a.textContent = lien; }
+    $('rdv-succes-sans').hidden = !!lien || d.format !== 'meet';
+    $('rdv-succes-tel').hidden = d.format !== 'telephone';
+    $('rdv-succes-num').textContent = d.telephone || '';
+  }
+
+  montre(0);
 })();
 </script>
 

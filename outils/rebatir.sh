@@ -9,5 +9,5 @@ cd "$(dirname "$0")"
 # et les deux pages legales. Le site complet d'avant (annuaire, fiches, espace
 # club, back-office) est garde sur la branche sauvegarde-site-complet-2026-10-18 ;
 # les scripts qui le fabriquaient sont restes dans ce dossier, sans etre lances.
-for p in confidentialite conditions agence; do python3 build_clubs.py --"$p"; done
+for p in confidentialite conditions annuler agence; do python3 build_clubs.py --"$p"; done
 python3 build_site.py

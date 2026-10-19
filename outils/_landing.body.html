@@ -225,35 +225,139 @@
       </div>
 
       <div class="lp-carte">
-        <!-- L'agenda Calendly prend la place du formulaire des que son adresse
-             est posee dans data-url (meme bloc que la page acquisition). -->
-        <div class="ag-calendly" id="ag-calendly" data-url="" hidden>
-          <div class="ag-calendly-cadre" id="ag-calendly-cadre"></div>
-        </div>
+        <!-- La prise de rendez-vous (Amaury, 19/10/2026 : « exactement comme sur
+             GenIA ») : cinq ecrans, une barre de progression, des cartes a coche,
+             le bandeau de jours et la grille d'heures, les coordonnees, le succes.
+             Les ecrans sont ecrits ici ; _landing.js les enchaine et parle a la
+             fonction Supabase `rdv` (supabase/functions/rdv) en simple fetch.
+             Les textes viennent du plan de textes final (rdv-textes.json). -->
+        <div class="lp-rdv" id="rdv">
+          <div class="lp-rdv-tete">
+            <p class="lp-rdv-etiq"><span aria-hidden="true">%%I_RDV_HORLOGE%%</span>Appel de 15 min · offert</p>
+            <p class="lp-rdv-titre">Réservez votre appel.</p>
+            <p class="lp-rdv-sous">Trois questions sur votre salle, puis le jour et l’heure qui vous arrangent.</p>
+          </div>
+          <div class="lp-rdv-prog" aria-hidden="true"><i id="rdv-prog"></i></div>
 
-        <form class="ag-form lp-form" id="lp-form" novalidate>
-          <p class="lp-form-t">Où vous rappeler&nbsp;?</p>
-          <label class="champ"><span>Nom du club</span>
-            <input id="l-club" name="club" required autocomplete="organization"></label>
-          <label class="champ"><span>Ville</span>
-            <input id="l-ville" name="ville" required autocomplete="address-level2">
-            <small class="lp-aide">pour préparer l’appel</small></label>
-          <label class="champ"><span>Votre nom</span>
-            <input id="l-nom" name="nom" required autocomplete="name"></label>
-          <label class="champ"><span>Téléphone</span>
-            <input id="l-tel" name="tel" type="tel" required autocomplete="tel" inputmode="tel"></label>
-          <label class="champ"><span>E-mail</span>
-            <input id="l-mail" name="mail" type="email" required autocomplete="email"></label>
-          <p class="form-erreur" id="l-erreur" hidden role="alert"></p>
-          <button class="ag-btn ag-btn-rouge ag-btn-plein" type="submit" id="l-envoi">Réserver mon appel</button>
-          <p class="lp-rassure">Rien à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après.</p>
-          <p class="acq-legal">Vos coordonnées ne servent qu’à vous recontacter.
-            <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>
-        </form>
-        <div class="lp-merci" id="lp-merci" hidden role="status">
-          <span class="lp-merci-ico" aria-hidden="true">%%COCHE%%</span>
-          <p><b>C’est noté.</b> Nous vous rappelons au numéro indiqué. Vous repartirez avec une réponse nette&nbsp;:
-            oui, ou non.</p>
+          <!-- ecran 0 : la discipline -->
+          <section class="lp-rdv-ecran" id="rdv-e0" aria-label="Étape 1 sur 5">
+            <p class="lp-rdv-q">Quelle est la discipline principale de votre salle ?</p>
+            <div class="lp-rdv-cartes" data-cle="discipline" role="group" aria-label="Discipline principale">
+              <button type="button" class="lp-rdv-carte" data-v="mma" aria-pressed="false">MMA<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="boxe" aria-pressed="false">Boxe anglaise<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="pieds_poings" aria-pressed="false">Kickboxing, Muay Thaï<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="sol" aria-pressed="false">JJB, grappling, lutte<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="arts_martiaux" aria-pressed="false">Judo, karaté, self-défense<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="autre" aria-pressed="false">Autre<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+            </div>
+            <label class="champ lp-rdv-libre" id="rdv-disc-autre" hidden><span>Précisez</span>
+              <input id="rdv-disc-prec" placeholder="ex. savate, taekwondo, sambo" autocomplete="off"></label>
+            <div class="lp-rdv-pied">
+              <span></span>
+              <button type="button" class="ag-btn ag-btn-rouge" id="rdv-e0-suite" hidden disabled>Continuer %%FLECHE%%</button>
+            </div>
+          </section>
+
+          <!-- ecran 1 : la situation de la salle et l'objectif, deux taps -->
+          <section class="lp-rdv-ecran" id="rdv-e1" aria-label="Étape 2 sur 5" hidden>
+            <p class="lp-rdv-q">Où en est votre salle ?</p>
+            <div class="lp-rdv-cartes" data-cle="situation" role="group" aria-label="Situation de la salle">
+              <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours à remplir" aria-pressed="false">Ouverte, des cours à remplir<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours presque pleins" aria-pressed="false">Ouverte, des cours presque pleins<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Pas encore ouverte" aria-pressed="false">Pas encore ouverte<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+            </div>
+            <p class="lp-rdv-q lp-rdv-q2">Quel est votre objectif principal ?</p>
+            <div class="lp-rdv-cartes" data-cle="objectif" role="group" aria-label="Objectif principal">
+              <button type="button" class="lp-rdv-carte" data-v="Remplir mes cours" aria-pressed="false">Remplir mes cours<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Ne plus dépendre de la rentrée" aria-pressed="false">Ne plus dépendre de la rentrée<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Me faire connaître dans mon secteur" aria-pressed="false">Me faire connaître dans mon secteur<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Autre" aria-pressed="false">Autre<span class="lp-rdv-coche" aria-hidden="true">%%I_RDV_COCHE%%</span></button>
+            </div>
+            <label class="champ lp-rdv-libre" id="rdv-obj-autre" hidden><span>Précisez</span>
+              <input id="rdv-obj-prec" placeholder="ex. lancer un cours enfants" autocomplete="off"></label>
+            <div class="lp-rdv-pied">
+              <button type="button" class="lp-rdv-retour" data-retour>%%I_RDV_RETOUR%%Retour</button>
+              <button type="button" class="ag-btn ag-btn-rouge" id="rdv-e1-suite" disabled>Continuer %%FLECHE%%</button>
+            </div>
+          </section>
+
+          <!-- ecran 2 : le jour, puis l'heure -->
+          <section class="lp-rdv-ecran" id="rdv-e2" aria-label="Étape 3 sur 5" hidden>
+            <p class="lp-rdv-q">Choisissez un créneau</p>
+            <p class="lp-rdv-erreur" id="rdv-pris" role="alert" hidden>Ce créneau vient d’être pris. Choisissez-en un autre.</p>
+            <div class="lp-rdv-cal" id="rdv-cal">
+              <div class="lp-rdv-attente" id="rdv-attente" role="status"><span class="lp-rdv-spin" aria-hidden="true"></span>Chargement des disponibilités...</div>
+              <div class="lp-rdv-vide" id="rdv-panne" role="alert" hidden>
+                <span class="lp-rdv-vide-ico" aria-hidden="true">%%I_RDV_PANNE%%</span>
+                <p>Les disponibilités n’ont pas pu se charger. Cela vient de notre côté, pas du vôtre.</p>
+                <button type="button" class="ag-btn ag-btn-rouge" id="rdv-reessayer">Réessayer</button>
+              </div>
+              <div class="lp-rdv-vide" id="rdv-vide" role="status" hidden>
+                <span class="lp-rdv-vide-ico" aria-hidden="true">%%I_RDV_AGENDA%%</span>
+                <p>Aucun créneau disponible pour le moment. Réessayez plus tard ou écrivez-nous à contact@monclubcombat.fr.</p>
+              </div>
+              <div class="lp-rdv-jours" id="rdv-jours" role="group" aria-label="Le jour" hidden></div>
+              <div class="lp-rdv-heures" id="rdv-heures" role="group" aria-label="L’heure, heure de Paris" hidden></div>
+            </div>
+            <div class="lp-rdv-pied">
+              <button type="button" class="lp-rdv-retour" data-retour>%%I_RDV_RETOUR%%Retour</button>
+            </div>
+          </section>
+
+          <!-- ecran 3 : les coordonnees -->
+          <section class="lp-rdv-ecran" id="rdv-e3" aria-label="Étape 4 sur 5" hidden>
+            <p class="lp-rdv-q">Vos coordonnées</p>
+            <p class="lp-rdv-recap"><span class="lp-rdv-recap-ico" aria-hidden="true">%%I_RDV_RECAP%%</span>
+              <span>RDV choisi : <b id="rdv-recap-date"></b> (heure de Paris)</span></p>
+            <form class="lp-rdv-form" id="rdv-form" novalidate>
+              <div class="lp-rdv-2 lp-rdv-2-garde">
+                <label class="champ"><span>Prénom</span>
+                  <input id="rdv-prenom" name="prenom" autocomplete="given-name" required></label>
+                <label class="champ"><span>Nom</span>
+                  <input id="rdv-nom" name="nom" autocomplete="family-name" required></label>
+              </div>
+              <label class="champ"><span>E-mail</span>
+                <input id="rdv-email" name="email" type="email" autocomplete="email" inputmode="email"
+                       placeholder="vous@votresalle.fr" required></label>
+              <div class="champ">
+                <span id="rdv-format-l">Format de l’appel</span>
+                <div class="lp-rdv-cartes lp-rdv-formats" data-cle="format" role="group" aria-labelledby="rdv-format-l">
+                  <button type="button" class="lp-rdv-carte" data-v="meet" id="rdv-fmt-meet" aria-pressed="false"><span class="lp-rdv-carte-ico" aria-hidden="true">%%I_RDV_VISIO%%</span>Google Meet</button>
+                  <button type="button" class="lp-rdv-carte" data-v="telephone" id="rdv-fmt-tel" aria-pressed="false"><span class="lp-rdv-carte-ico" aria-hidden="true">%%I_RDV_TEL%%</span>Téléphone</button>
+                </div>
+              </div>
+              <label class="champ" id="rdv-tel-champ" hidden><span>Numéro de téléphone</span>
+                <input id="rdv-tel" name="telephone" type="tel" autocomplete="tel" inputmode="tel" placeholder="06 12 34 56 78"></label>
+              <div class="lp-rdv-2">
+                <label class="champ"><span>Nom du club</span>
+                  <input id="rdv-club" name="club" autocomplete="organization" placeholder="Le nom de votre salle" required></label>
+                <label class="champ"><span>Ville</span>
+                  <input id="rdv-ville" name="ville" autocomplete="address-level2" placeholder="ex. Lyon" required></label>
+              </div>
+              <!-- le champ piege : un gerant ne le voit pas, un robot le remplit, le serveur jette -->
+              <label class="lp-rdv-piege" aria-hidden="true"><span>Site web</span>
+                <input id="rdv-site" name="site_web" tabindex="-1" autocomplete="off"></label>
+              <p class="lp-rdv-erreur" id="rdv-erreur" role="alert" hidden></p>
+              <div class="lp-rdv-pied lp-rdv-pied-plein">
+                <button type="button" class="lp-rdv-retour" data-retour>%%I_RDV_RETOUR%%Retour</button>
+                <button class="ag-btn ag-btn-rouge" type="submit" id="rdv-confirmer">Confirmer le RDV</button>
+              </div>
+              <p class="lp-rassure">Rien à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après.</p>
+              <p class="acq-legal lp-rdv-legal">Vos coordonnées ne servent qu’à organiser cet appel.
+                <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></p>
+            </form>
+          </section>
+
+          <!-- ecran 4 : c'est confirme -->
+          <section class="lp-rdv-ecran lp-rdv-succes" id="rdv-e4" aria-label="Étape 5 sur 5" role="status" hidden>
+            <span class="lp-rdv-ok" aria-hidden="true">%%I_RDV_OK%%</span>
+            <p class="lp-rdv-succes-t">C’est confirmé !</p>
+            <p class="lp-rdv-succes-date"><b id="rdv-succes-date"></b> (heure de Paris)</p>
+            <p id="rdv-succes-meet" hidden>Lien visio : <a id="rdv-succes-lien" href="#" target="_blank" rel="noopener"></a></p>
+            <p id="rdv-succes-sans" hidden>Nous vous envoyons le lien de visio avant l’appel.</p>
+            <p id="rdv-succes-tel" hidden>Nous vous appelons au <b id="rdv-succes-num"></b>.</p>
+            <p class="lp-rdv-succes-mail"><span aria-hidden="true">%%I_RDV_MAIL%%</span>Un e-mail de confirmation vient de vous être envoyé, avec l’invitation pour votre agenda. À très vite.</p>
+          </section>
         </div>
       </div>
     </div>

@@ -1,0 +1,71 @@
+%%HEADER%%
+
+<!-- La page d'annulation d'un rendez-vous : le lien « Annuler le rendez-vous »
+     des e-mails mene ici avec ?token=. La page appelle POST /annuler de la
+     fonction Supabase `rdv` (supabase/functions/rdv) et dit ce qui s'est passe :
+     annule, deja annule, ou introuvable. Vercel la sert sur /annuler
+     (cleanUrls). Les textes viennent du plan de textes final (rdv-textes.json). -->
+<main id="contenu" class="ag lp">
+  <section class="lp-section lp-annuler" aria-labelledby="annuler-titre">
+    <div class="lp-rdv lp-annuler-carte" id="annuler" data-etat="attente">
+      <span class="lp-rdv-ok" id="annuler-ico-attente" aria-hidden="true"><span class="lp-rdv-spin"></span></span>
+      <span class="lp-rdv-ok" id="annuler-ico-ok" aria-hidden="true" hidden>%%I_RDV_OK%%</span>
+      <span class="lp-rdv-ok" id="annuler-ico-x" aria-hidden="true" hidden>%%I_RDV_X%%</span>
+      <h1 class="lp-rdv-succes-t" id="annuler-titre">Annuler mon rendez-vous</h1>
+      <p class="lp-annuler-texte" id="annuler-texte" role="status">Annulation en cours...</p>
+      <a class="ag-btn ag-btn-rouge lp-annuler-btn" id="annuler-bouton" href="/#appel" hidden>Réserver un nouveau créneau %%FLECHE%%</a>
+    </div>
+  </section>
+</main>
+
+<script>
+/* L'annulation se joue des que la page est lue : sb.js, pose en fin de page,
+   donne l'adresse de l'API (MCC.RDV_API) ; les tests la surchargent par
+   window.MCC_RDV_API. */
+(function (){
+  var $ = function (id){ return document.getElementById(id); };
+  var fmtLong = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', weekday: 'long',
+    day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  var T = {
+    ok_titre: 'Rendez-vous annulé',
+    ok_texte: 'Votre rendez-vous du {date} est annulé.',
+    deja: 'Ce rendez-vous était déjà annulé.',
+    erreur_titre: 'Rendez-vous introuvable',
+    erreur_texte: 'Ce lien ne correspond à aucun rendez-vous, ou le serveur n’a pas répondu. Réessayez, ou écrivez-nous à contact@monclubcombat.fr.'
+  };
+  function montre(nom, titre, texte){
+    $('annuler').setAttribute('data-etat', nom);
+    $('annuler-ico-attente').hidden = nom !== 'attente';
+    $('annuler-ico-ok').hidden = !(nom === 'ok' || nom === 'deja');
+    $('annuler-ico-x').hidden = nom !== 'erreur';
+    $('annuler-titre').textContent = titre;
+    $('annuler-texte').textContent = texte;
+    $('annuler-bouton').hidden = nom === 'attente';
+  }
+  function lance(){
+    var token = new URLSearchParams(location.search).get('token');
+    if (!token) return montre('erreur', T.erreur_titre, T.erreur_texte);
+    var SB = window.MCC || null;
+    var API = window.MCC_RDV_API || (SB && SB.RDV_API)
+      || 'https://qhbutuhdmyajlgorbhxf.supabase.co/functions/v1/rdv';
+    var entetes = { 'content-type': 'application/json' };
+    if (SB && SB.CLE_PUBLIQUE) entetes.apikey = SB.CLE_PUBLIQUE;
+    fetch(API + '/annuler', { method: 'POST', headers: entetes, body: JSON.stringify({ token: token }) })
+      .then(function (r){
+        return r.json().catch(function (){ return {}; }).then(function (j){ return { ok: r.ok, j: j }; });
+      })
+      .then(function (x){
+        if (!x.ok || !x.j || !x.j.ok) throw new Error('inconnu');
+        if (x.j.deja) return montre('deja', T.ok_titre, T.deja);
+        var d = x.j.debut ? new Date(x.j.debut) : null;
+        var date = d && !isNaN(d) ? fmtLong.format(d) : '';
+        montre('ok', T.ok_titre, T.ok_texte.replace('{date}', date));
+      })
+      .catch(function (){ montre('erreur', T.erreur_titre, T.erreur_texte); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', lance);
+  else lance();
+})();
+</script>
+
+%%FOOTER%%

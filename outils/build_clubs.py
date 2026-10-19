@@ -27,7 +27,7 @@ import sys, compte
 # compte, et les deux pages legales (Google les exige pour la connexion). Elles partagent en-tete, pied de page et CSS, donc elles ne peuvent pas
 # diverger de l'accueil.
 PAGES = ['clubs', 'referencer', 'espace-club', 'admin', 'motdepasse', 'mon-compte',
-         'confidentialite', 'conditions', 'acquisition', 'agence']
+         'confidentialite', 'conditions', 'acquisition', 'agence', 'annuler']
 QUI = 'clubs'
 for _p in PAGES:
     if '--' + _p in sys.argv: QUI = _p
@@ -38,7 +38,8 @@ CORPS = {'clubs': '_clubs.body.html', 'referencer': '_referencer.body.html',
          'confidentialite': '_confidentialite.body.html',
          'conditions': '_conditions.body.html',
          'acquisition': '_acquisition.body.html',
-         'agence': '_landing.body.html'}
+         'agence': '_landing.body.html',
+         'annuler': '_annuler.body.html'}
 body   = R(CORPS[QUI])
 
 # depuis la page clubs, les liens du menu et du pied de page renvoient a l'accueil
@@ -155,38 +156,62 @@ if QUI == 'acquisition':
     for k, v in AGENCE.items():
         body = body.replace('%%' + k + '%%', v)
 
+# Les icones Lucide de la page agence (traits de 2, 24 x 24), partagees avec
+# la page d'annulation du rendez-vous, qui porte la meme coque.
+trait = lambda d, w=16: ('<svg width="%d" height="%d" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+                         'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                         % (w, w) + d + '</svg>')
+LANDING = {
+    'FLECHE': trait('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 18),
+    'COCHE': trait('<path d="M20 6 9 17l-5-5"/>'),
+    # icones Lucide des sections du 19/10/2026 : x, check, shield-check, user-check,
+    # phone-call, mouse-pointer-click, megaphone, bell-ring, chevron-down
+    'I_X': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 20),
+    'I_CHECK': trait('<path d="M20 6 9 17l-5-5"/>', 20),
+    'I_BOUCLIER20': trait('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1'
+                          'c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'
+                          '<path d="m9 12 2 2 4-4"/>', 20),
+    'I_ADHERENT': trait('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'
+                        '<path d="m16 11 2 2 4-4"/>', 20),
+    'I_APPEL': trait('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 '
+                     '19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 '
+                     '2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 '
+                     '2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14.05 2a9 9 0 0 1 8 7.94"/><path d="M14.05 6A5 5 0 0 1 18 10"/>', 20),
+    'I_CLIC': trait('<path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/>'
+                    '<path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/>', 20),
+    'I_PUB20': trait('<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 20),
+    'I_RAPPEL20': trait('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
+                        '<path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/>', 20),
+    'I_CHEVRON': trait('<path d="m6 9 6 6 6-6"/>', 18),
+    # la prise de rendez-vous (19/10/2026) : clock, check, chevron-left, video, phone,
+    # calendar-check, cloud-off, calendar-x, mail, calendar-x2 (page annuler)
+    'I_RDV_HORLOGE': trait('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', 14),
+    'I_RDV_COCHE': trait('<path d="M20 6 9 17l-5-5"/>', 13),
+    'I_RDV_RETOUR': trait('<path d="m15 18-6-6 6-6"/>', 18),
+    'I_RDV_VISIO': trait('<path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>'
+                         '<rect x="2" y="6" width="14" height="12" rx="2"/>', 16),
+    'I_RDV_TEL': trait('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 '
+                       '19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 '
+                       '2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 '
+                       '2.81.7A2 2 0 0 1 22 16.92z"/>', 16),
+    'I_RDV_RECAP': trait('<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/>'
+                         '<path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>', 16),
+    'I_RDV_PANNE': trait('<path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193"/>'
+                         '<path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07"/>', 22),
+    'I_RDV_AGENDA': trait('<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/>'
+                          '<path d="M3 10h18"/><path d="m14 14-4 4"/><path d="m10 14 4 4"/>', 22),
+    'I_RDV_MAIL': trait('<rect width="20" height="16" x="2" y="4" rx="2"/>'
+                        '<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>', 18),
+    'I_RDV_OK': trait('<path d="M20 6 9 17l-5-5"/>', 28),
+    'I_RDV_X': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 28),
+}
+
 # La page de conversion de l'agence (Amaury, 09/10/2026 : « une landing page
 # simple basee sur la conversion ») : son bandeau sans menu et son pied sont
 # dans son corps, un seul but, reserver un appel.
 if QUI == 'agence':
     header = footer = ''
     clubc = clubc + R('_agence.css') + R('_landing.css')
-    trait = lambda d, w=16: ('<svg width="%d" height="%d" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
-                             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-                             % (w, w) + d + '</svg>')
-    LANDING = {
-        'FLECHE': trait('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 18),
-        'COCHE': trait('<path d="M20 6 9 17l-5-5"/>'),
-        # icones Lucide des sections du 19/10/2026 : x, check, shield-check, user-check,
-        # phone-call, mouse-pointer-click, megaphone, bell-ring, chevron-down
-        'I_X': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 20),
-        'I_CHECK': trait('<path d="M20 6 9 17l-5-5"/>', 20),
-        'I_BOUCLIER20': trait('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1'
-                              'c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>'
-                              '<path d="m9 12 2 2 4-4"/>', 20),
-        'I_ADHERENT': trait('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'
-                            '<path d="m16 11 2 2 4-4"/>', 20),
-        'I_APPEL': trait('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 '
-                         '19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 '
-                         '2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 '
-                         '2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14.05 2a9 9 0 0 1 8 7.94"/><path d="M14.05 6A5 5 0 0 1 18 10"/>', 20),
-        'I_CLIC': trait('<path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/>'
-                        '<path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/>', 20),
-        'I_PUB20': trait('<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>', 20),
-        'I_RAPPEL20': trait('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
-                            '<path d="M4 2C2.8 3.7 2 5.7 2 8"/><path d="M22 8c0-2.3-.8-4.3-2-6"/>', 20),
-        'I_CHEVRON': trait('<path d="m6 9 6 6 6-6"/>', 18),
-    }
     # les notes de travail du corps (<!-- ... -->) restent dans la source, pas dans la page servie
     body = re.sub(r'<!--.*?-->\n?', '', body, flags=re.S)
     for k, v in LANDING.items():
@@ -205,7 +230,7 @@ if QUI == 'agence':
 # principal maintenant c'est vraiment l'agence (...) enleve les autres pages ») :
 # les pages legales prennent le bandeau et le pied de la page agence, pour ne
 # renvoyer nulle part ailleurs qu'a elle.
-if QUI in ('confidentialite', 'conditions'):
+if QUI in ('confidentialite', 'conditions', 'annuler'):
     LP = R('_landing.body.html')
     i = LP.index('<header class="lp-tete">'); j = LP.index('</header>', i) + len('</header>')
     header = (LP[i:j].replace('href="#contenu"', 'href="/"')
@@ -216,6 +241,13 @@ if QUI in ('confidentialite', 'conditions'):
     # de la marge prevue pour le bandeau flottant du site public
     clubc = (clubc + R('_agence.css') + R('_landing.css')
              + '  .sous-bandeau{padding-top:clamp(36px,5vw,56px)}\n')
+# La page d'annulation du rendez-vous (lien recu par e-mail) : meme coque que les
+# pages legales, et les icones du widget de reservation ; ses notes de travail
+# restent dans la source.
+if QUI == 'annuler':
+    body = re.sub(r'<!--.*?-->\n?', '', body, flags=re.S)
+    for k, v in LANDING.items():
+        body = body.replace('%%' + k + '%%', v)
 
 if QUI in PRO:
     coque = R('_pro.html')
@@ -239,7 +271,8 @@ TITRE = {'clubs': 'Référencer ma salle | Mon Club Combat',
          'confidentialite': 'Politique de confidentialité | Mon Club Combat',
          'conditions': "Conditions d'utilisation | Mon Club Combat",
          'acquisition': 'Acquisition de leads | Mon Club Combat',
-         'agence': 'Remplissez votre salle | Mon Club Combat'}[QUI]
+         'agence': 'Remplissez votre salle | Mon Club Combat',
+         'annuler': 'Annuler mon rendez-vous | Mon Club Combat'}[QUI]
 
 page = (
 '''<title>''' + TITRE + '''</title>

@@ -1430,8 +1430,8 @@
   /* l'appel */
   .lp-appel{padding-bottom:clamp(56px,8vw,96px); scroll-margin-top:61px}
   @media (min-width:901px){ .lp-appel{scroll-margin-top:0} }
-  .lp-appel-in{max-width:880px; margin:0 auto; display:grid; gap:clamp(24px,4vw,48px); align-items:start;
-    grid-template-columns:minmax(0,1fr) minmax(0,400px)}
+  .lp-appel-in{max-width:920px; margin:0 auto; display:grid; gap:clamp(24px,4vw,48px); align-items:start;
+    grid-template-columns:minmax(0,1fr) minmax(0,440px)}
   .lp-appel-dit{padding-top:clamp(20px,3vw,32px)}
   .lp-suite{margin:24px 0 0; padding:0; list-style:none; display:grid}
   .lp-suite li{position:relative; padding:0 0 18px 24px; font-size:15px; line-height:1.5; color:var(--texte-3); font-weight:500}
@@ -1441,17 +1441,132 @@
   .lp-suite li:last-child{padding-bottom:0}
   .lp-suite li:last-child::after{display:none}
   .lp-suite li > b{display:block; font-size:13px; font-weight:800; color:var(--rouge-lien); margin-bottom:2px}
-  .lp-form-t{font-size:17px; font-weight:800; letter-spacing:-.01em; color:var(--texte)}
-  .lp-form .champ input{min-height:48px}
-  .lp-aide{font-size:13px; font-weight:500; color:var(--texte-3); margin-top:-2px}
-  .lp-form .acq-legal{color:var(--texte-3)}
   .lp-rassure{margin-top:4px; font-size:13px; line-height:1.5; color:var(--texte-3); text-align:center; font-weight:600}
-  .lp-merci{display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center;
-    padding:36px 26px; border-radius:20px; background:#fff; border:1px solid #E6E3DD; box-shadow:var(--ag-ombre)}
-  .lp-merci[hidden]{display:none}
-  .lp-merci-ico{display:grid; place-items:center; width:54px; height:54px; border-radius:50%; background:#E4F6E6; color:#1E8A3A}
-  .lp-merci p{font-size:16px; line-height:1.55; color:var(--texte-2)}
-  .lp-merci b{display:block; font-size:20px; color:var(--texte); margin-bottom:4px}
+
+  /* ---------- le rendez-vous ----------
+     La carte blanche de #appel porte le tunnel de GenIA (cinq ecrans, barre de
+     progression, cartes a coche, bandeau de jours, grille d'heures) avec les
+     formes de la page : coins 16 px, ombre douce, boutons rouges, Manrope. */
+  .lp-carte{min-width:0}
+  .lp-rdv{min-width:0; padding:clamp(20px,3vw,26px) clamp(18px,3vw,26px) clamp(18px,2.6vw,24px); border-radius:16px;
+    background:#fff; border:1px solid #E6E3DD; box-shadow:var(--ag-ombre); scroll-margin-top:74px}
+  .lp-rdv-etiq{display:inline-flex; align-items:center; gap:7px; min-height:28px; padding:0 11px 0 9px;
+    border-radius:999px; background:rgba(236,22,46,.08); color:var(--rouge-lien); font-size:12.5px; font-weight:800}
+  .lp-rdv-titre{margin-top:12px; font-size:24px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
+  .lp-rdv-sous{margin-top:6px; font-size:14.5px; line-height:1.5; color:var(--texte-3); font-weight:500; text-wrap:pretty}
+  .lp-rdv-prog{height:4px; margin:18px 0 20px; border-radius:2px; background:#F0EEEA; overflow:hidden}
+  .lp-rdv-prog > i{display:block; height:100%; width:0; border-radius:2px; background:var(--rouge-500);
+    transition:width .45s cubic-bezier(.2,.8,.2,1)}
+  .lp-rdv-ecran[hidden]{display:none}
+  .lp-rdv-q{font-size:18px; font-weight:800; letter-spacing:-.015em; line-height:1.3; color:var(--texte); text-wrap:balance}
+  .lp-rdv-q2{margin-top:24px}
+
+  /* les cartes a coche : une par reponse, la coche rouge quand elle est choisie */
+  .lp-rdv-cartes{margin-top:14px; display:grid; gap:8px}
+  .lp-rdv-carte{display:flex; align-items:center; gap:10px; width:100%; min-height:50px; padding:11px 14px; text-align:left;
+    border:1px solid var(--bord-2); border-radius:12px; background:#fff; color:var(--texte);
+    font-family:inherit; font-size:15px; font-weight:700; line-height:1.3; cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease, box-shadow .15s ease}
+  .lp-rdv-carte:hover{border-color:var(--bord-3); background:#FCFBFA}
+  .lp-rdv-carte[aria-pressed="true"]{border-color:var(--rouge-500); background:rgba(236,22,46,.04);
+    box-shadow:0 0 0 1px var(--rouge-500)}
+  .lp-rdv-coche{margin-left:auto; display:grid; place-items:center; flex:none; width:22px; height:22px; border-radius:50%;
+    background:var(--rouge-500); color:#fff; opacity:0; transform:scale(.6); transition:opacity .15s ease, transform .15s ease}
+  .lp-rdv-coche svg{stroke-width:3}
+  .lp-rdv-carte[aria-pressed="true"] .lp-rdv-coche{opacity:1; transform:none}
+  /* le format de l'appel : deux cartes cote a cote, l'icone sert de coche */
+  .lp-rdv-formats{margin-top:0; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lp-rdv-formats.est-seul{grid-template-columns:1fr}
+  .lp-rdv-formats .lp-rdv-carte{padding:9px 12px; min-height:48px}
+  .lp-rdv-carte-ico{display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:8px;
+    background:#F0EEEA; color:var(--texte-2); transition:background-color .15s ease, color .15s ease}
+  .lp-rdv-carte[aria-pressed="true"] .lp-rdv-carte-ico{background:var(--rouge-500); color:#fff}
+
+  /* les champs : ceux du site, sur fond blanc */
+  .lp-rdv-libre{margin-top:10px}
+  .lp-rdv-libre[hidden]{display:none}
+  .lp-rdv .champ > span{font-size:13px; font-weight:700; color:var(--texte-2)}
+  .lp-rdv .champ input{background:#fff}
+  .lp-rdv .champ.manque input{border-color:rgba(236,22,46,.7)}
+  .lp-rdv-form{display:grid; gap:12px; margin-top:14px}
+  .lp-rdv-2{display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lp-rdv-piege{position:absolute; left:-9999px; top:0; width:1px; height:1px; overflow:hidden; opacity:0}
+  .lp-rdv-recap{margin-top:12px; display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px;
+    background:var(--fond); border:1px solid var(--bord); font-size:14px; line-height:1.4; color:var(--texte-3); font-weight:600}
+  .lp-rdv-recap b{color:var(--texte); font-weight:800}
+  .lp-rdv-recap-ico{flex:none; display:grid; place-items:center; width:30px; height:30px; border-radius:8px;
+    background:#fff; border:1px solid var(--bord); color:var(--rouge-500)}
+  .lp-rdv-erreur{margin-top:12px; padding:11px 13px; border-radius:var(--r-m); background:rgba(236,22,46,.07);
+    border:1px solid rgba(236,22,46,.28); font-size:13.5px; line-height:1.5; font-weight:600; color:var(--rouge-700)}
+  .lp-rdv-erreur[hidden]{display:none}
+  .lp-rdv-form .lp-rdv-erreur{margin-top:0}
+
+  /* le pied de chaque ecran : « Retour » a gauche, le bouton rouge a droite */
+  .lp-rdv-pied{margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .lp-rdv-form .lp-rdv-pied{margin-top:4px}
+  .lp-rdv-pied .ag-btn{margin-left:auto; min-height:48px}
+  .lp-rdv-pied .ag-btn[hidden]{display:none}
+  .lp-rdv-pied .ag-btn[disabled]{opacity:.45; cursor:default; box-shadow:none}
+  .lp-rdv-pied .ag-btn[disabled]:hover{background:var(--rouge-500)}
+  .lp-rdv-pied .ag-btn[disabled] svg{transform:none}
+  .lp-rdv-pied-plein .ag-btn{flex:1; min-height:52px}
+  .lp-rdv-retour{display:inline-flex; align-items:center; gap:2px; min-height:44px; margin-left:-8px; padding:0 12px 0 6px;
+    border:0; border-radius:8px; background:transparent; color:var(--texte-3); font-family:inherit; font-size:14px;
+    font-weight:700; cursor:pointer; white-space:nowrap; transition:color .15s ease, background-color .15s ease}
+  .lp-rdv-retour:hover{color:var(--texte); background:#F4F3F0}
+  .lp-rdv-legal{color:var(--texte-3)}
+
+  /* le calendrier : le bandeau des jours qui defile, la grille des heures */
+  .lp-rdv-cal{margin-top:14px}
+  .lp-rdv-attente, .lp-rdv-vide{display:flex; flex-direction:column; align-items:center; gap:12px; padding:34px 14px 30px;
+    text-align:center; font-size:14.5px; line-height:1.5; color:var(--texte-3); font-weight:600}
+  .lp-rdv-attente[hidden], .lp-rdv-vide[hidden], .lp-rdv-jours[hidden], .lp-rdv-heures[hidden]{display:none}
+  .lp-rdv-spin{width:26px; height:26px; border-radius:50%; border:2.5px solid #EDEBE6; border-top-color:var(--rouge-500);
+    animation:lp-rdv-tourne .8s linear infinite}
+  @keyframes lp-rdv-tourne{to{transform:rotate(360deg)}}
+  .lp-rdv-vide-ico{display:grid; place-items:center; width:48px; height:48px; border-radius:50%; background:#F0EEEA; color:var(--texte-3)}
+  .lp-rdv-vide p{max-width:320px; text-wrap:pretty}
+  .lp-rdv-vide .ag-btn{margin-top:2px; min-height:46px}
+  .lp-rdv-jours{position:relative; display:flex; gap:8px; overflow-x:auto; padding:2px 2px 10px; margin:0 -2px 6px;
+    scroll-snap-type:x proximity; scrollbar-width:thin; -webkit-overflow-scrolling:touch}
+  .lp-rdv-jour{flex:0 0 auto; scroll-snap-align:start; min-width:74px; padding:8px 8px 7px; border:1px solid var(--bord-2);
+    border-radius:12px; background:#fff; color:var(--texte-3); font-family:inherit; font-size:12px; font-weight:700;
+    text-transform:capitalize; text-align:center; line-height:1.2; cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease, color .15s ease}
+  .lp-rdv-jour b{display:block; margin-top:3px; font-size:15px; font-weight:800; color:var(--texte); white-space:nowrap}
+  .lp-rdv-jour:hover{border-color:var(--bord-3)}
+  .lp-rdv-jour[aria-pressed="true"]{border-color:var(--rouge-500); background:var(--rouge-500); color:rgba(255,255,255,.82)}
+  .lp-rdv-jour[aria-pressed="true"] b{color:#fff}
+  .lp-rdv-heures{display:grid; gap:8px; grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lp-rdv-heure{min-height:46px; padding:0 4px; border:1px solid var(--bord-2); border-radius:10px; background:#fff;
+    color:var(--texte); font-family:inherit; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease}
+  .lp-rdv-heure:hover{border-color:var(--rouge-500); color:var(--rouge-lien); background:rgba(236,22,46,.04); transform:translateY(-1px)}
+
+  /* c'est confirme */
+  .lp-rdv-succes{display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; padding:10px 0 4px}
+  .lp-rdv-ok{display:grid; place-items:center; width:60px; height:60px; border-radius:50%; background:#E4F6E6; color:#1E8A3A; margin-bottom:8px}
+  .lp-rdv-succes-t{font-size:25px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
+  .lp-rdv-succes p{font-size:15.5px; line-height:1.5; color:var(--texte-2); text-wrap:pretty}
+  .lp-rdv-succes p[hidden]{display:none}
+  .lp-rdv-succes b{color:var(--texte); font-weight:800}
+  .lp-rdv-succes a{color:var(--rouge-lien); font-weight:700; word-break:break-all}
+  .lp-rdv-succes-mail{margin-top:10px; display:flex; gap:10px; align-items:flex-start; text-align:left; padding:12px 14px;
+    border-radius:12px; background:var(--fond); border:1px solid var(--bord); font-size:14px; color:var(--texte-3)}
+  .lp-rdv-succes .lp-rdv-succes-mail{font-size:14px; line-height:1.45; color:var(--texte-3)}
+  .lp-rdv-succes-mail svg{flex:none; margin-top:2px; color:var(--rouge-500)}
+
+  /* la page d'annulation (annuler.html) : une carte seule, au milieu */
+  .lp-annuler{padding:clamp(40px,7vw,80px) 16px clamp(56px,8vw,96px); min-height:48vh}
+  .lp-annuler-carte{max-width:480px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:10px;
+    text-align:center; padding:36px clamp(20px,4vw,32px) 32px}
+  .lp-annuler-carte .lp-rdv-ok[hidden]{display:none}
+  .lp-annuler-carte[data-etat="attente"] .lp-rdv-ok{background:#F0EEEA}
+  .lp-annuler-carte[data-etat="erreur"] .lp-rdv-ok{background:rgba(236,22,46,.1); color:var(--rouge-500)}
+  .lp-annuler-carte h1{margin:0}
+  .lp-annuler-texte{font-size:16px; line-height:1.55; color:var(--texte-2); max-width:380px; text-wrap:pretty}
+  .lp-annuler-btn{margin-top:14px; min-height:50px; padding:0 22px}
+  .lp-annuler-btn[hidden]{display:none}
 
   /* la barre du bas, au telephone */
   .lp-barre{display:none}
@@ -1472,7 +1587,8 @@
     .lp-faq-col{box-shadow:none}
     .lp-faq-col:first-child{border-radius:16px 16px 0 0}
     .lp-faq-col:last-child{border-radius:0 0 16px 16px; border-top:0}
-    .lp-appel-in{grid-template-columns:1fr; max-width:560px}
+    /* minmax(0,1fr), pas 1fr : sinon la carte prend la largeur du bandeau de jours au lieu de le faire defiler */
+    .lp-appel-in{grid-template-columns:minmax(0,1fr); max-width:560px}
     .lp-appel-dit{text-align:center; padding-top:0}
     .lp-suite{text-align:left; max-width:460px; margin-inline:auto}
   }
@@ -1523,7 +1639,6 @@
     .lp-paves li > p{grid-column:1 / -1; font-size:13.5px; line-height:1.4; margin-top:6px}
     .lp-pave-limite{margin-top:0; padding-top:14px}
     .lp-paves .lp-pave-limite > p{grid-column:1 / -1; margin-top:6px}
-    .lp-form{padding:18px 16px 16px}
     /* la frise, en une colonne */
     .lp-roles .lp-texte{display:none}
     .lp-frise{grid-template-columns:1fr; gap:8px; margin-top:18px; padding-left:0}
@@ -1545,10 +1660,22 @@
     /* l'appel */
     .lp-appel-in{gap:18px}
     .lp-suite{display:none}
-    .lp-aide{display:none}
-    .lp-form{gap:8px}
-    .lp-form .champ input{min-height:44px}
-    .lp-form .champ{gap:5px}
+    /* le rendez-vous : trois heures par ligne, les champs plus serres */
+    .lp-rdv{padding:18px 16px 16px; scroll-margin-top:66px}
+    .lp-rdv-titre{font-size:22px}
+    .lp-rdv-prog{margin:16px 0 18px}
+    .lp-rdv-q{font-size:17px}
+    .lp-rdv-q2{margin-top:20px}
+    .lp-rdv-carte{min-height:48px; padding:10px 12px; font-size:14.5px}
+    .lp-rdv-form{gap:10px}
+    .lp-rdv-2{gap:10px}
+    .lp-rdv-2:not(.lp-rdv-2-garde){grid-template-columns:1fr}
+    .lp-rdv .champ{gap:5px}
+    .lp-rdv .champ input{min-height:44px}
+    .lp-rdv-heures{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .lp-rdv-heure{min-height:48px; font-size:15.5px}
+    .lp-rdv-jour{min-width:72px}
+    .lp-rdv-succes-t{font-size:23px}
     .lp-appel{padding-bottom:32px}
     .lp-pied{padding:18px 16px 22px}
     .lp-barre{display:block; position:fixed; left:0; right:0; bottom:0; z-index:45;
