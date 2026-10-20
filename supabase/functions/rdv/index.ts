@@ -27,19 +27,31 @@ const env: Env = {
   RDV_CRON_SECRET: lit('RDV_CRON_SECRET'),
   RDV_SEL_IP: lit('RDV_SEL_IP'),
 };
-/* Sans sel, logique.ts ne hache pas les adresses (un SHA-256 d'IPv4 nue se
-   casse par force brute) et la limite de 10 reservations par adresse est
-   inactive. On ne refuse pas de demarrer, la prise de rendez-vous vaut mieux
-   que ca, mais on le dit des le premier appel, dans le journal. */
-if (!env.RDV_SEL_IP && !env.RDV_CRON_SECRET) {
-  console.error(JSON.stringify({ niveau: 'alerte', message: 'RDV_SEL_IP et RDV_CRON_SECRET absents : adresses non hachees, limite par adresse inactive, rappels impossibles' }));
-}
-
 // ------------------------------------------------------------ la base
 
 const sb = createClient(exige('SUPABASE_URL'), exige('SUPABASE_SERVICE_ROLE_KEY'), {
   auth: { persistSession: false, autoRefreshToken: false },
 });
+
+/* Le secret du cron vit dans le coffre (Vault) de la base, ou il est tire au
+   hasard par db/011_rdv_secret_cron.sql : pg_cron l'y lit pour l'envoyer, la
+   fonction l'y lit ici pour le verifier, et personne n'a a le recopier. La
+   fonction SQL rdv_secret_cron() n'est ouverte qu'a la cle service. Un secret
+   RDV_CRON_SECRET pose a la main dans le tableau de bord reste prioritaire. */
+if (!env.RDV_CRON_SECRET) {
+  try {
+    const r = await sb.rpc('rdv_secret_cron');
+    if (!r.error && typeof r.data === 'string' && r.data.trim()) env.RDV_CRON_SECRET = r.data.trim();
+  } catch (_e) { /* le journal ci-dessous le dit */ }
+}
+
+/* Sans sel, logique.ts ne hache pas les adresses (un SHA-256 d'IPv4 nue se
+   casse par force brute) et la limite de 10 reservations par adresse est
+   inactive. On ne refuse pas de demarrer, la prise de rendez-vous vaut mieux
+   que ca, mais on le dit des le premier appel, dans le journal. */
+if (!env.RDV_SEL_IP && !env.RDV_CRON_SECRET) {
+  console.error(JSON.stringify({ niveau: 'alerte', message: 'RDV_SEL_IP et secret du cron absents : adresses non hachees, limite par adresse inactive, rappels impossibles' }));
+}
 const table = () => sb.from('rendez_vous');
 
 /* On ne remonte jamais le message de PostgREST : il peut citer la ligne, donc

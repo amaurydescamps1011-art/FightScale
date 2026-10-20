@@ -1977,22 +1977,22 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
      du widget le temps du changement et du defilement, puis on la relache,
      mais seulement de ce que la page peut perdre sans bouger ; le reste tient
      lieu de marge jusqu'au prochain ecran. */
-  /* La hauteur figee se pose sur le cadre (.lp-carte) qui entoure la carte
+  /* La hauteur figee se pose sur le conteneur (.lp-carte) qui entoure la carte
      blanche, pas sur la carte : la marge d'attente reste du vide sous la
      carte fermee, jamais du blanc a l'interieur (sur « C'est confirme ! »,
      il n'y a plus d'ecran suivant pour la reprendre). */
-  var cadre = rdv.parentElement, relache = null;
+  var cadreRdv = rdv.parentElement, relache = null;
   function fige(){
-    cadre.style.minHeight = cadre.offsetHeight + 'px';
+    cadreRdv.style.minHeight = cadreRdv.offsetHeight + 'px';
     clearTimeout(relache);
     relache = setTimeout(ajuste, 700);
   }
   function ajuste(){
-    var boite = cadre.getBoundingClientRect();
+    var boite = cadreRdv.getBoundingClientRect();
     var naturel = rdv.getBoundingClientRect().bottom - boite.top;
     var marge = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
     var min = Math.max(naturel, boite.height - Math.max(0, marge));
-    cadre.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
+    cadreRdv.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
   }
   /* comme GenIA, le widget revient en vue a chaque ecran, et la question du
      nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
@@ -2002,7 +2002,7 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
        reprendra la marge d'attente, on coupe donc net vers l'etat final (pas
        de hauteur figee, pas de blanc reserve, pas de defilement anime) */
     var fin = n >= TOTAL - 1;
-    if (fin) { clearTimeout(relache); cadre.style.minHeight = ''; } else fige();
+    if (fin) { clearTimeout(relache); cadreRdv.style.minHeight = ''; } else fige();
     montre(n);
     var q = $('rdv-e' + etat.ecran).querySelector('.lp-rdv-q, .lp-rdv-succes-t');
     if (q) { try { q.focus({ preventScroll: true }); } catch (e) { q.focus(); } }

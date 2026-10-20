@@ -82,7 +82,7 @@ Supabase → Edge Functions → Secrets
 | Nom | Obligatoire | Valeur |
 |---|---|---|
 | `RESEND_API_KEY` | oui | la clé Resend (`re_…`), celle du domaine monclubcombat.fr |
-| `RDV_CRON_SECRET` | oui | une longue chaîne au hasard (par exemple `openssl rand -hex 32`). **La même** va dans le coffre, étape 3. |
+| `RDV_CRON_SECRET` | non | inutile depuis le 20/10/2026 : le secret est tiré dans le coffre par `db/011_rdv_secret_cron.sql` et la fonction l'y lit. S'il est posé ici, il prime, et la même valeur doit alors aller dans le coffre. |
 | `RDV_SEL_IP` | conseillé | une autre chaîne au hasard : le sel du hash des adresses IP. À défaut, `RDV_CRON_SECRET` sert de sel. |
 | `RDV_NOTIFIE` | non | l'adresse qui reçoit les notifications ; défaut `contact@monclubcombat.fr` |
 | `SITE_URL` | non | défaut `https://monclubcombat.fr` (liens des e-mails) |
@@ -98,12 +98,10 @@ l'e-mail dit qu'Amaury appelle au numéro donné.
 
 ## 3. Le secret du cron dans le coffre, puis la tâche
 
-Toujours dans le SQL Editor, avec la **même** valeur que `RDV_CRON_SECRET` :
-
-```sql
-select vault.create_secret('<la même chaîne que RDV_CRON_SECRET>', 'rdv_cron_secret');
-select rdv_planifie_rappels();
-```
+Coller `db/011_rdv_secret_cron.sql` : il tire le secret au hasard dans le
+coffre (personne ne le voit), ouvre `rdv_secret_cron()` à la seule clé
+service pour que la fonction le relise, et lance `select rdv_planifie_rappels();`.
+Fait sur le projet le 20/10/2026.
 
 La seconde ligne crée la tâche `rdv-rappels` (toutes les 5 minutes, via
 `net.http_post`). La commande planifiée relit le coffre à chaque exécution : le
