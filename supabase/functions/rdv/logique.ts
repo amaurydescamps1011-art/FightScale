@@ -77,7 +77,7 @@ export const TEXTES = {
   nouvelle_resa: {
     sujet: '📅 Nouvelle résa · {prenom} {nom} · {date}',
     titre: '{prenom} {nom} vient de réserver un appel.',
-    corps: 'Qui : {prenom} {nom}\nQuand : {date} (heure de Paris)\nFormat : {format}\nClub : {club}\nVille : {ville}\nDiscipline : {discipline}\nSituation : {situation}\nObjectif : {objectif}\nPrécisions : {projet}\nE-mail : {email}\nTéléphone : {telephone}\nSource : {source}',
+    corps: 'Qui : {prenom} {nom}\nQuand : {date} (heure de Paris)\nFormat : {format}\nClub : {club}\nVille : {ville}\nGérant : {situation}\nAdhérents : {discipline}\nAbonnement : {objectif}\nPrécisions : {projet}\nE-mail : {email}\nTéléphone : {telephone}\nSource : {source}',
     meet_absent: 'Lien Meet non créé : Google Agenda n’a pas répondu. Envoyez vous-même le lien de visio au gérant avant l’appel.',
   },
   rappel: {
@@ -140,6 +140,9 @@ export interface Rdv {
   format: Format;
   club: string;
   ville: string;
+  /* depuis le 20/10/2026, les trois questions de la page changent (Amaury) ;
+     les colonnes gardent leur nom : discipline = nombre d'adherents,
+     situation = gerant ou non, objectif = prix de l'abonnement */
   discipline: string;
   situation: string;
   objectif: string;
@@ -666,9 +669,9 @@ export function descriptionAgenda(rdv: Rdv): string {
   const l = [
     `${rdv.prenom} ${rdv.nom}`,
     `Club : ${rdv.club} (${rdv.ville})`,
-    `Discipline : ${ou(rdv.discipline, TEXTES.vide)}`,
-    `Situation : ${ou(rdv.situation, TEXTES.vide)}`,
-    `Objectif : ${ou(rdv.objectif, TEXTES.vide)}`,
+    `Gérant : ${ou(rdv.situation, TEXTES.vide)}`,
+    `Adhérents : ${ou(rdv.discipline, TEXTES.vide)}`,
+    `Abonnement : ${ou(rdv.objectif, TEXTES.vide)}`,
     `Précisions : ${ou(rdv.projet, TEXTES.vide).replace(/\n/g, '\n    ')}`,
     `E-mail : ${rdv.email}`,
     `Téléphone : ${ou(rdv.telephone, TEXTES.vide)}`,

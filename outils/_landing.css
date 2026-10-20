@@ -365,13 +365,27 @@
   .lp-tableau-compare th:last-child{color:var(--sq-tint)}
   .lp-faq .lp-plus{margin-top:40px}
 
-  /* ---------- l'appel ---------- */
-  .lp-appel{padding:0 var(--sq-gut) 120px}
-  .lp-appel-in{max-width:1000px; margin:0 auto; display:grid; gap:clamp(28px,5vw,64px); align-items:start;
-    grid-template-columns:minmax(0,1fr) minmax(0,460px)}
-  .lp-appel-dit{padding-top:28px}
-  .lp-appel-dit .lp-h2{text-align:left; margin-bottom:18px}
-  .lp-appel-texte{margin:0; max-width:460px; font-size:16px; line-height:1.68; color:var(--sq-muted); text-wrap:pretty}
+  /* ---------- l'appel, en plein ecran ----------
+     Amaury, 20/10/2026 : chaque « Reserver un appel » ouvre la prise de
+     rendez-vous par-dessus toute la page, sans la faire defiler ; une croix la
+     ferme. La page dessous ne defile plus tant qu'elle est ouverte. */
+  html.modale-ouverte, html.modale-ouverte body{overflow:hidden}
+  .lp-modale{position:fixed; inset:0; z-index:60; background:#fff; overflow-y:auto; overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch; font-family:var(--sq-font)}
+  .lp-modale[hidden]{display:none}
+  .lp-modale-tete{position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    height:var(--sq-tete); padding:0 var(--sq-gut); background:rgba(255,255,255,.92);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-bottom:1px solid var(--sq-bord)}
+  .lp-modale-fermer{display:grid; place-items:center; flex:none; width:44px; height:44px; padding:0; border-radius:50%;
+    border:1px solid var(--sq-bord-hi); background:#fff; color:var(--texte); cursor:pointer;
+    transition:background-color .15s ease, border-color .15s ease}
+  .lp-modale-fermer:hover{background:#FFF8F8; border-color:rgba(200,30,50,.35)}
+  .lp-modale-fermer:focus-visible{outline:2px solid var(--rouge-500); outline-offset:2px}
+  .lp-modale-corps{max-width:560px; margin:0 auto; padding:clamp(24px,5vh,56px) var(--sq-gut) 56px}
+  @media (prefers-reduced-motion:no-preference){
+    .lp-modale:not([hidden]){animation:lp-modale-entre .22s cubic-bezier(.2,.8,.2,1)}
+    @keyframes lp-modale-entre{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+  }
 
   /* ---------- le rendez-vous ----------
      La carte blanche de #appel porte le tunnel de GenIA (cinq ecrans, barre de
@@ -388,16 +402,13 @@
   .lp-rdv{min-width:0; padding:clamp(20px,3vw,26px) clamp(18px,3vw,26px) clamp(18px,2.6vw,24px); border-radius:var(--sq-r-lg);
     background:#fff; border:1px solid var(--sq-bord); scroll-margin-top:calc(var(--sq-tete) + 6px);
     box-shadow:0 1px 2px rgba(120,20,30,.04), 0 24px 54px -30px rgba(170,20,40,.35)}
-  .lp-rdv-etiq{display:inline-flex; align-items:center; gap:7px; min-height:28px; padding:0 11px 0 9px;
-    border-radius:999px; background:rgba(236,22,46,.08); color:var(--rouge-lien); font-size:12.5px; font-weight:800}
-  .lp-rdv-titre{margin-top:12px; font-size:24px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
+  .lp-rdv-titre{ font-size:24px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
   .lp-rdv-sous{margin-top:6px; font-size:14.5px; line-height:1.5; color:var(--texte-3); font-weight:500; text-wrap:pretty}
   .lp-rdv-prog{height:4px; margin:18px 0 20px; border-radius:2px; background:rgba(236,22,46,.10); overflow:hidden}
   .lp-rdv-prog > i{display:block; height:100%; width:0; border-radius:2px; background:var(--rouge-500);
     transition:width .45s cubic-bezier(.2,.8,.2,1)}
   .lp-rdv-ecran[hidden]{display:none}
   .lp-rdv-q{font-size:18px; font-weight:800; letter-spacing:-.015em; line-height:1.3; color:var(--texte); text-wrap:balance}
-  .lp-rdv-q2{margin-top:24px}
 
   /* les cartes a coche : une par reponse, la coche rouge quand elle est choisie */
   .lp-rdv-cartes{margin-top:14px; display:grid; gap:8px}
@@ -575,11 +586,6 @@
     .lp-hub-nom{font-size:7px}
     .lp-schema-col{gap:44px}
     .lp-schema-cap{margin-bottom:-16px}
-    /* minmax(0,1fr), pas 1fr : sinon la carte prend la largeur du bandeau de jours au lieu de le faire defiler */
-    .lp-appel-in{grid-template-columns:minmax(0,1fr); max-width:560px}
-    .lp-appel-dit{text-align:center; padding-top:0}
-    .lp-appel-dit .lp-h2{text-align:center}
-    .lp-appel-texte{margin-inline:auto}
     .lp-pied-cols{grid-template-columns:1fr 1fr; gap:36px}
     .lp-pied-marque{grid-column:1 / -1}
   }
@@ -712,10 +718,9 @@
       padding:5px 0; border-top:1px solid rgba(120,20,30,.06); font-size:13px}
     .lp-tableau-pile td[data-th]::before{content:attr(data-th); font-size:10px; font-weight:700; letter-spacing:.08em;
       text-transform:uppercase; color:var(--sq-dim); line-height:1.35}
-    /* l'appel */
-    .lp-appel{padding-bottom:40px}
-    .lp-appel-in{gap:22px}
-    .lp-appel-texte{font-size:15px}
+    /* l'appel : au telephone, plus de carte dans la page plein ecran, le tunnel occupe l'ecran */
+    .lp-modale-corps{padding:20px var(--sq-gut) 40px}
+    .lp-modale .lp-rdv{padding:0; border:0; border-radius:0; box-shadow:none}
     /* la barre du bas */
     .lp-barre{display:block; position:fixed; left:0; right:0; bottom:0; z-index:45;
       padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)); background:rgba(255,255,255,.94);
@@ -735,7 +740,6 @@
     .lp-rdv-titre{font-size:22px}
     .lp-rdv-prog{margin:16px 0 18px}
     .lp-rdv-q{font-size:17px}
-    .lp-rdv-q2{margin-top:20px}
     .lp-rdv-carte{min-height:48px; padding:10px 12px; font-size:14.5px}
     .lp-rdv-formats .lp-rdv-carte{padding:9px 10px; gap:8px; font-size:13.5px; letter-spacing:-.01em}
     .lp-rdv-form{gap:10px}

@@ -232,6 +232,7 @@ LANDING = {
                         '<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>', 18),
     'I_RDV_OK': trait('<path d="M20 6 9 17l-5-5"/>', 28),
     'I_RDV_X': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 28),
+    'I_RDV_FERMER': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 22),
 }
 
 # La page de conversion de l'agence (Amaury, 09/10/2026 : « une landing page

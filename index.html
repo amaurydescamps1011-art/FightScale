@@ -810,13 +810,27 @@
   .lp-tableau-compare th:last-child{color:var(--sq-tint)}
   .lp-faq .lp-plus{margin-top:40px}
 
-  /* ---------- l'appel ---------- */
-  .lp-appel{padding:0 var(--sq-gut) 120px}
-  .lp-appel-in{max-width:1000px; margin:0 auto; display:grid; gap:clamp(28px,5vw,64px); align-items:start;
-    grid-template-columns:minmax(0,1fr) minmax(0,460px)}
-  .lp-appel-dit{padding-top:28px}
-  .lp-appel-dit .lp-h2{text-align:left; margin-bottom:18px}
-  .lp-appel-texte{margin:0; max-width:460px; font-size:16px; line-height:1.68; color:var(--sq-muted); text-wrap:pretty}
+  /* ---------- l'appel, en plein ecran ----------
+     Amaury, 20/10/2026 : chaque « Reserver un appel » ouvre la prise de
+     rendez-vous par-dessus toute la page, sans la faire defiler ; une croix la
+     ferme. La page dessous ne defile plus tant qu'elle est ouverte. */
+  html.modale-ouverte, html.modale-ouverte body{overflow:hidden}
+  .lp-modale{position:fixed; inset:0; z-index:60; background:#fff; overflow-y:auto; overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch; font-family:var(--sq-font)}
+  .lp-modale[hidden]{display:none}
+  .lp-modale-tete{position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    height:var(--sq-tete); padding:0 var(--sq-gut); background:rgba(255,255,255,.92);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-bottom:1px solid var(--sq-bord)}
+  .lp-modale-fermer{display:grid; place-items:center; flex:none; width:44px; height:44px; padding:0; border-radius:50%;
+    border:1px solid var(--sq-bord-hi); background:#fff; color:var(--texte); cursor:pointer;
+    transition:background-color .15s ease, border-color .15s ease}
+  .lp-modale-fermer:hover{background:#FFF8F8; border-color:rgba(200,30,50,.35)}
+  .lp-modale-fermer:focus-visible{outline:2px solid var(--rouge-500); outline-offset:2px}
+  .lp-modale-corps{max-width:560px; margin:0 auto; padding:clamp(24px,5vh,56px) var(--sq-gut) 56px}
+  @media (prefers-reduced-motion:no-preference){
+    .lp-modale:not([hidden]){animation:lp-modale-entre .22s cubic-bezier(.2,.8,.2,1)}
+    @keyframes lp-modale-entre{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+  }
 
   /* ---------- le rendez-vous ----------
      La carte blanche de #appel porte le tunnel de GenIA (cinq ecrans, barre de
@@ -833,16 +847,13 @@
   .lp-rdv{min-width:0; padding:clamp(20px,3vw,26px) clamp(18px,3vw,26px) clamp(18px,2.6vw,24px); border-radius:var(--sq-r-lg);
     background:#fff; border:1px solid var(--sq-bord); scroll-margin-top:calc(var(--sq-tete) + 6px);
     box-shadow:0 1px 2px rgba(120,20,30,.04), 0 24px 54px -30px rgba(170,20,40,.35)}
-  .lp-rdv-etiq{display:inline-flex; align-items:center; gap:7px; min-height:28px; padding:0 11px 0 9px;
-    border-radius:999px; background:rgba(236,22,46,.08); color:var(--rouge-lien); font-size:12.5px; font-weight:800}
-  .lp-rdv-titre{margin-top:12px; font-size:24px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
+  .lp-rdv-titre{ font-size:24px; font-weight:800; letter-spacing:-.025em; line-height:1.15; color:var(--texte)}
   .lp-rdv-sous{margin-top:6px; font-size:14.5px; line-height:1.5; color:var(--texte-3); font-weight:500; text-wrap:pretty}
   .lp-rdv-prog{height:4px; margin:18px 0 20px; border-radius:2px; background:rgba(236,22,46,.10); overflow:hidden}
   .lp-rdv-prog > i{display:block; height:100%; width:0; border-radius:2px; background:var(--rouge-500);
     transition:width .45s cubic-bezier(.2,.8,.2,1)}
   .lp-rdv-ecran[hidden]{display:none}
   .lp-rdv-q{font-size:18px; font-weight:800; letter-spacing:-.015em; line-height:1.3; color:var(--texte); text-wrap:balance}
-  .lp-rdv-q2{margin-top:24px}
 
   /* les cartes a coche : une par reponse, la coche rouge quand elle est choisie */
   .lp-rdv-cartes{margin-top:14px; display:grid; gap:8px}
@@ -1020,11 +1031,6 @@
     .lp-hub-nom{font-size:7px}
     .lp-schema-col{gap:44px}
     .lp-schema-cap{margin-bottom:-16px}
-    /* minmax(0,1fr), pas 1fr : sinon la carte prend la largeur du bandeau de jours au lieu de le faire defiler */
-    .lp-appel-in{grid-template-columns:minmax(0,1fr); max-width:560px}
-    .lp-appel-dit{text-align:center; padding-top:0}
-    .lp-appel-dit .lp-h2{text-align:center}
-    .lp-appel-texte{margin-inline:auto}
     .lp-pied-cols{grid-template-columns:1fr 1fr; gap:36px}
     .lp-pied-marque{grid-column:1 / -1}
   }
@@ -1157,10 +1163,9 @@
       padding:5px 0; border-top:1px solid rgba(120,20,30,.06); font-size:13px}
     .lp-tableau-pile td[data-th]::before{content:attr(data-th); font-size:10px; font-weight:700; letter-spacing:.08em;
       text-transform:uppercase; color:var(--sq-dim); line-height:1.35}
-    /* l'appel */
-    .lp-appel{padding-bottom:40px}
-    .lp-appel-in{gap:22px}
-    .lp-appel-texte{font-size:15px}
+    /* l'appel : au telephone, plus de carte dans la page plein ecran, le tunnel occupe l'ecran */
+    .lp-modale-corps{padding:20px var(--sq-gut) 40px}
+    .lp-modale .lp-rdv{padding:0; border:0; border-radius:0; box-shadow:none}
     /* la barre du bas */
     .lp-barre{display:block; position:fixed; left:0; right:0; bottom:0; z-index:45;
       padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px)); background:rgba(255,255,255,.94);
@@ -1180,7 +1185,6 @@
     .lp-rdv-titre{font-size:22px}
     .lp-rdv-prog{margin:16px 0 18px}
     .lp-rdv-q{font-size:17px}
-    .lp-rdv-q2{margin-top:20px}
     .lp-rdv-carte{min-height:48px; padding:10px 12px; font-size:14.5px}
     .lp-rdv-formats .lp-rdv-carte{padding:9px 10px; gap:8px; font-size:13.5px; letter-spacing:-.01em}
     .lp-rdv-form{gap:10px}
@@ -1225,7 +1229,7 @@
     <div class="lp-heros-fond" aria-hidden="true"><span class="lp-rai lp-rai-1"></span><span class="lp-rai lp-rai-2"></span><span class="lp-rai lp-rai-3"></span></div>
     <div class="lp-heros-in" id="lp-heros">
       <h1 class="lp-h1" id="lp-h1">Chaque mois,<br class="lp-br-large"> <span class="lp-hl">des séances d’essai réservées</span><br>dans votre salle, en&nbsp;nombre garanti</h1>
-      <p class="lp-chapo">Pub, page de réservation et relances entièrement gérées, le nombre écrit dans votre abonnement</p>
+      <p class="lp-chapo">Nous lançons la pub, vos futurs adhérents réservent un cours, nous les relançons jusqu’à 1&nbsp;h avant. Vous n’avez plus qu’à les accueillir.</p>
       <span class="lp-cta lp-agir"><a class="lp-btn lp-btn-lg" href="#appel" data-appel>Réserver un appel</a></span>
     </div>
     <hr class="lp-filet">
@@ -1254,8 +1258,7 @@
         </div>
         <div class="lp-clip-cap">
           <p class="lp-clip-etiq">La pub</p>
-          <p class="lp-clip-titre">Facebook et Instagram, autour de votre salle</p>
-          <p class="lp-clip-leg">Vue par les gens qui habitent près de votre salle, pas par toute la France.</p>
+          <p class="lp-clip-titre">Vue par les gens qui habitent autour de votre salle</p>
         </div>
       </div>
       <div class="lp-clip">
@@ -1281,9 +1284,8 @@
           </div>
         </div>
         <div class="lp-clip-cap">
-          <p class="lp-clip-etiq">La page à votre nom</p>
-          <p class="lp-clip-titre">La personne choisit un cours et réserve</p>
-          <p class="lp-clip-leg">Boxe anglaise, jeudi 19 h : un cours précis de votre planning, une date.</p>
+          <p class="lp-clip-etiq">La réservation</p>
+          <p class="lp-clip-titre">Ils choisissent un cours de votre planning et un jour</p>
         </div>
       </div>
       <div class="lp-clip">
@@ -1305,9 +1307,8 @@
           </div>
         </div>
         <div class="lp-clip-cap">
-          <p class="lp-clip-etiq">La relance</p>
-          <p class="lp-clip-titre">Un e-mail jusqu’à 1&nbsp;h avant la séance</p>
-          <p class="lp-clip-leg">Nos e-mails lui rappellent sa séance d’essai, le dernier une heure avant.</p>
+          <p class="lp-clip-etiq">Le rappel</p>
+          <p class="lp-clip-titre">Un e-mail jusqu’à 1&nbsp;h avant leur séance</p>
         </div>
       </div>
     </div>
@@ -1316,20 +1317,20 @@
     <section class="lp-chiffres-bande" aria-label="Nos chiffres">
     <div class="lp-wrap lp-chiffres">
       <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Salles</p><p class="lp-chiffre-val">+20</p><p class="lp-chiffre-leg">Salles de sports de combat accompagnées</p></article>
-      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Réservations</p><p class="lp-chiffre-val est-mot">Des milliers</p><p class="lp-chiffre-leg">Séances d’essai réservées chez nos clients</p></article>
-      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">ROI moyen</p><p class="lp-chiffre-val">×8</p><p class="lp-chiffre-leg">Pour 1&nbsp;€ dépensé, 8&nbsp;€ d’adhésions</p></article>
-      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Adhérents</p><p class="lp-chiffre-val">×2</p><p class="lp-chiffre-leg">Adhérents doublés en un mois chez Gota</p></article>
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Réservations</p><p class="lp-chiffre-val est-mot">Des milliers</p><p class="lp-chiffre-leg">Séances d’essai réservées</p></article>
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">ROI moyen</p><p class="lp-chiffre-val">×8</p><p class="lp-chiffre-leg">En moyenne&nbsp;: 1&nbsp;€ investi, 8&nbsp;€ d’adhésions</p></article>
+      <article class="lp-chiffre reveal"><p class="lp-chiffre-etiq">Adhérents</p><p class="lp-chiffre-val">×2</p><p class="lp-chiffre-leg">Adhérents en un mois chez Gota</p></article>
     </div>
   </section>
 
     <section class="lp-constat" aria-labelledby="lp-constat-t">
     <div class="lp-wrap">
-      <h2 class="lp-constat-t reveal" id="lp-constat-t">Tout le monde «&nbsp;va passer&nbsp;». Personne ne passe.<br><span class="lp-accent">Il ne vous manque pas des curieux. Il vous manque des réservations.</span></h2>
+      <h2 class="lp-constat-t reveal" id="lp-constat-t">Les «&nbsp;j’aime&nbsp;» <span class="lp-accent">ne remplissent pas vos cours.</span></h2>
       <div class="lp-args reveal">
         <article class="lp-arg reveal">
           <span class="lp-arg-num" aria-hidden="true">01</span>
           <span class="lp-arg-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg></span>
-          <h3>Une publication boostée rapporte des vues et des «&nbsp;j’aime&nbsp;», <em>pas un inscrit.</em></h3>
+          <h3>Une publication boostée rapporte des vues, <em>pas des inscrits.</em></h3>
         </article>
         <article class="lp-arg reveal">
           <span class="lp-arg-num" aria-hidden="true">02</span>
@@ -1341,7 +1342,7 @@
           <span class="lp-arg-num" aria-hidden="true">03</span>
           <span class="lp-arg-fleche" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
           <span class="lp-arg-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="m9 15 2 2 4-4"/></svg></span>
-          <h3>Un «&nbsp;ça m’intéresse&nbsp;» ne vaut rien. <em>Une réservation, si.</em></h3>
+          <h3>Ce qui remplit un cours, c’est une réservation&nbsp;: <em>un nom, un cours, un jour.</em></h3>
         </article>
       </div>
     </div>
@@ -1385,14 +1386,14 @@
 
     <section class="lp-toit" aria-labelledby="lp-toit-t">
     <div class="lp-wrap">
-      <h2 class="lp-h2 reveal" id="lp-toit-t">Nous faisons tout, <em>sauf le cours.</em></h2>
+      <h2 class="lp-h2 reveal" id="lp-toit-t">Vous donnez le cours. <em>Nous faisons le reste.</em></h2>
       <div class="lp-schema reveal" id="lp-schema">
         <svg class="lp-schema-traits" aria-hidden="true" focusable="false"></svg>
         <div class="lp-schema-col lp-schema-gauche">
-          <p class="lp-schema-cap">Notre part</p>
+          <p class="lp-schema-cap">Nous</p>
           <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg></span>La pub Facebook et Instagram</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg></span>La page au nom de votre salle</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg></span>Les relances jusqu’à 1&nbsp;h avant</span>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg></span>La page de réservation à votre nom</span>
+          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg></span>Les rappels jusqu’à 1&nbsp;h avant</span>
         </div>
         <div class="lp-schema-hub" aria-hidden="true">
           <span class="lp-hub-anneau"></span><span class="lp-hub-anneau lp-hub-anneau-2"></span><span class="lp-hub-pouls"></span>
@@ -1402,13 +1403,12 @@
           </span>
         </div>
         <div class="lp-schema-col lp-schema-droite">
-          <p class="lp-schema-cap">Votre part</p>
+          <p class="lp-schema-cap">Vous</p>
           <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2a9 9 0 0 1 9 9"/><path d="M13 6a5 5 0 0 1 5 5"/><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg></span>Un appel de 15&nbsp;min</span>
           <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></svg></span>Une commande en 3&nbsp;clics</span>
           <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg></span>Accueillir et faire signer</span>
         </div>
       </div>
-      <p class="lp-plus reveal"><a href="#faq-qui">Voir qui fait quoi, et quand&nbsp;→</a></p>
       <div class="lp-cta lp-agir-section reveal"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Réserver un appel</a></div>
     </div>
   </section>
@@ -1419,14 +1419,14 @@
       <h2 class="lp-h2 lp-h2-sm reveal" id="lp-resultats-t">Nos résultats</h2>
       <div class="lp-recits">
         <article class="lp-recit reveal">
-          <p class="lp-recit-corps">La pub a tourné autour de la salle, la page à son nom a pris les réservations, nos e-mails ont relancé chaque personne. La salle a accueilli et fait signer. En un mois, <b>le nombre d’adhérents a doublé</b>.</p>
+          <p class="lp-recit-corps">La pub a tourné autour de la salle. <b>Les gens ont réservé un cours.</b> Nous les avons relancés. La salle les a accueillis et leur a fait signer leur inscription.</p>
           <p class="lp-recit-nom">Gota</p>
-          <p class="lp-recit-etiq">Adhérents ×2 en 1 mois</p>
+          <p class="lp-recit-etiq">Adhérents ×2 en un mois</p>
         </article>
         <article class="lp-recit reveal">
-          <p class="lp-recit-corps">Pour <b>1 € dépensé</b>, <b>8 € d’adhésions</b> en moyenne chez nos clients. <b>Plus de 20 salles</b> accompagnées, des milliers de séances d’essai réservées. Nous garantissons les réservations, pas les adhésions : c’est votre cours qui les fait. Chez nos clients, il les fait bien.</p>
-          <p class="lp-recit-nom">Nos clients, en moyenne</p>
-          <p class="lp-recit-etiq">8 € pour 1 €, en moyenne</p>
+          <p class="lp-recit-corps">Pour <b>1&nbsp;€ investi</b>, <b>8&nbsp;€ d’adhésions</b>. Plus de 20 salles accompagnées, des milliers de séances d’essai réservées.</p>
+          <p class="lp-recit-nom">Nos clients</p>
+          <p class="lp-recit-etiq">×8 en moyenne</p>
         </article>
       </div>
       <div class="lp-recits-pied reveal">
@@ -1439,10 +1439,9 @@
     <div class="lp-garantie-fond" aria-hidden="true"><span class="lp-garantie-lueur"></span></div>
     <div class="lp-wrap lp-garantie-in">
       <p class="lp-garantie-grand">Garanti.</p>
-      <h2 class="lp-h2 lp-garantie-t" id="lp-garantie-t">Un nombre de réservations par mois,<br><em>écrit dans votre abonnement.</em></h2>
-      <p class="lp-garantie-texte">Chaque mois, un nombre de personnes qui ont réservé une séance d’essai sur un cours précis de votre planning. Ce nombre est écrit dans votre abonnement avant que vous ne commandiez, et c’est nous qui le tenons. Pas garanti&nbsp;: les adhésions, c’est votre cours qui les fait.</p>
+      <h2 class="lp-h2 lp-garantie-t" id="lp-garantie-t">Un nombre de séances d’essai réservées chaque mois,<br><em>écrit dans votre abonnement.</em></h2>
+      <p class="lp-garantie-texte">Nous le fixons ensemble pendant l’appel, et c’est à nous de le tenir.</p>
       <div class="lp-cta lp-agir-section"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Réserver un appel</a></div>
-      <p class="lp-plus"><a href="#faq-marche-pas">Ce qui est garanti, et ce qui ne l’est pas&nbsp;→</a></p>
     </div>
   </section>
 
@@ -1451,152 +1450,105 @@
       <h2 class="lp-h2 reveal" id="lp-faq-t">Mon Club Combat&nbsp;:<br><em>vos questions, nos réponses</em></h2>
       <div class="lp-accordeon">
         <details class="lp-q reveal" name="faq" id="faq-quoi">
-          <summary><span>Mon Club Combat, qu’est-ce que c’est, en deux mots&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Et si, pour une fois, c’étaient vos futurs adhérents qui réservaient avant de pousser votre porte&nbsp;? C’est exactement ce que fait Mon Club Combat.</p><p>Votre salle s’affiche sur Facebook et Instagram, auprès des gens qui habitent autour. Ceux qui ont envie d’essayer arrivent sur une page au nom de votre salle, choisissent un cours de votre planning et réservent une séance d’essai. Nous les relançons ensuite par e-mail, jusqu’à 1&nbsp;h avant la séance. Il ne vous reste plus qu’à les accueillir et à faire signer.</p><p>Chaque mois, un nombre de personnes qui ont réservé est garanti. Ce nombre est écrit dans votre abonnement, et c’est nous qui le tenons.</p><p>Nous ne travaillons qu’avec des salles de sports de combat&nbsp;: MMA, boxe anglaise, kickboxing, Muay Thaï, JJB, grappling, karaté, judo, lutte, self-défense.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Qui sommes-nous&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Une agence qui ne fait qu’une chose&nbsp;: remplir les cours des salles de sports de combat avec des séances d’essai réservées. Pas de site vitrine, pas de logo, pas de gestion de vos réseaux sociaux. Des réservations.</p><p>Plus de 20&nbsp;salles nous ont déjà confié leur planning, et des milliers de séances d’essai ont été réservées sur les pages que nous avons mises en ligne pour elles. Chez Gota, les adhérents ont doublé en un mois. En moyenne, chez nos clients, 1&nbsp;€ dépensé rapporte 8&nbsp;€ d’adhésions.</p><p>Nous ne vendons qu’aux salles où nous pouvons tenir notre engagement. C’est pour ça que tout commence par un appel de 15&nbsp;min, pas par un bon de commande.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq" id="faq-marche-pas">
-          <summary><span>Et si ça ne marche pas pour moi&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Le nombre de réservations par mois est écrit dans votre abonnement. S’il n’y est pas, c’est nous qui n’avons pas tenu notre engagement, pas vous. Ce qui se passe dans ce cas, nous vous le disons à l’appel, avant que vous ne commandiez.</p><p>C’est justement pour ne pas en arriver là que nous vérifions avant, salle par salle&nbsp;: votre planning, votre secteur, votre discipline. Si nous avons un doute, nous ne vous vendons rien. Nous préférons refuser une salle que lui écrire un chiffre que nous ne tiendrons pas. Et si vos cours sont déjà pleins, nous vous le dirons aussi&nbsp;: vous n’avez pas besoin de nous.</p><p>Soyons précis sur ce que nous garantissons. <b>Garanti&nbsp;: les réservations.</b> Des personnes qui ont choisi un cours de votre planning et une date, et que nous relançons jusqu’à 1&nbsp;h avant. <b>Pas garanti&nbsp;: les venues, ni les adhésions.</b> Une fois la personne dans votre salle, c’est votre cours qui fait le reste. Chez nos clients, il le fait bien&nbsp;: 1&nbsp;€ dépensé rapporte 8&nbsp;€ d’adhésions en moyenne, et chez Gota, les adhérents ont doublé en un mois.</p></div>
+          <summary><span>Mon Club Combat, c’est quoi&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Une agence qui remplit les cours des salles de sports de combat. Nous montrons votre salle aux gens qui habitent autour, ils réservent une séance d’essai sur un cours de votre planning, et nous les relançons jusqu’à 1&nbsp;h avant. Vous les accueillez et vous faites signer.</p></div>
         </details>
         <details class="lp-q reveal" name="faq" id="faq-marche">
-          <summary><span>Comment ça marche, concrètement&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Nous faisons voir votre salle uniquement aux gens qui habitent autour, et nous ne vous ramenons que des personnes qui ont réservé un cours. Cela se fait en quatre étapes. Vous n’intervenez qu’au début, l’appel et la commande, puis à la porte de votre salle.</p><ol><li><b>Un appel de 15&nbsp;min.</b> Votre salle, votre planning, votre secteur&nbsp;: nous vous disons si nous pouvons nous engager chez vous, et sur quel nombre de réservations par mois.</li><li><b>Si c’est oui, 3&nbsp;clics.</b> Vous validez votre abonnement et nous envoyez ce qu’il faut savoir sur votre salle&nbsp;: vos cours, vos horaires, votre adresse.</li><li><b>Dans les jours qui suivent, la pub tourne.</b> Sur Facebook et Instagram, ciblée autour de votre salle, vers une page à son nom où la personne choisit un cours de votre planning et réserve sa séance d’essai.</li><li><b>Avant chaque séance, nous relançons.</b> Chaque personne qui a réservé reçoit nos e-mails, jusqu’à 1&nbsp;h avant. Vous n’avez qu’à l’accueillir et à lui faire signer son inscription.</li></ol><p><b>Un exemple.</b> Karim, 29&nbsp;ans, habite à dix minutes de votre salle. Un soir, votre pub passe dans son fil Instagram. Il touche, arrive sur la page de votre salle, voit vos cours et réserve la boxe anglaise du jeudi à 19&nbsp;h. Il reçoit nos e-mails de rappel, le dernier une heure avant. Jeudi à 18&nbsp;h&nbsp;55, il pousse votre porte. Vous ne l’avez ni cherché, ni relancé&nbsp;: vous l’accueillez, il fait le cours, vous lui tendez la fiche d’inscription.</p></div>
+          <summary><span>Comment ça se passe, concrètement&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><ol><li>Un appel de 15&nbsp;min&nbsp;: nous regardons votre salle, votre planning et votre secteur.</li><li>Si on peut s’engager chez vous, vous commandez en 3&nbsp;clics.</li><li>Dans les jours qui suivent, la pub tourne et les réservations arrivent.</li><li>Chaque personne reçoit nos rappels jusqu’à 1&nbsp;h avant sa séance.</li></ol></div>
         </details>
         <details class="lp-q reveal" name="faq">
-          <summary><span>Qu’est-ce que vous comptez comme une réservation&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Une personne, un cours de votre planning, une date. Nous ne comptons une réservation que si ces quatre conditions sont remplies&nbsp;:</p><ul><li>la personne a laissé son nom et son e-mail sur la page de votre salle&nbsp;;</li><li>elle a choisi <b>un cours précis</b> de votre planning, pas «&nbsp;un jour dans la semaine&nbsp;»&nbsp;;</li><li>elle a choisi <b>une date et une heure</b>&nbsp;: vous savez quand elle vient&nbsp;;</li><li>elle reçoit nos relances par e-mail, jusqu’à 1&nbsp;h avant la séance.</li></ul><p><b>Ce que nous ne comptons pas&nbsp;:</b> un clic, un «&nbsp;j’aime&nbsp;», un message privé, un «&nbsp;ça m’intéresse&nbsp;», un «&nbsp;je passe mardi&nbsp;», une demande de prix sans suite. Rien de tout cela ne remplit un cours.</p><p>En clair, c’est comme si la personne avait déjà inscrit son nom sur la feuille de présence de votre cours.</p></div>
+          <summary><span>Qu’est-ce qui compte comme une réservation&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Une personne qui a laissé son nom et son e-mail, choisi un cours de votre planning et une date. Un «&nbsp;j’aime&nbsp;», un message ou un «&nbsp;ça m’intéresse&nbsp;» ne comptent pas.</p></div>
         </details>
         <details class="lp-q reveal" name="faq">
-          <summary><span>Quelle différence avec une publication boostée ou un site de leads&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>C’est le jour et la nuit. Une publication boostée vous vend des vues. Un site de leads vous vend un nom et un numéro. Mon Club Combat vous apporte une personne qui a choisi un cours de votre planning et qui a une date.</p><p>Avec une publication boostée, la seule chose qu’une personne peut faire, c’est aimer, commenter ou vous écrire «&nbsp;c’est combien&nbsp;?&nbsp;», puis plus rien. C’est vous qui triez les messages, et vous ne savez jamais qui va vraiment venir. Avec un site de leads, vous payez chaque fiche, que la personne vienne ou non, et c’est vous qui rappelez des inconnus qui ont souvent oublié avoir laissé leur numéro.</p><p>Chez nous, la pub n’est que le premier maillon&nbsp;: elle mène à une page à votre nom, où la personne choisit un cours et réserve, puis nous la relançons jusqu’à 1&nbsp;h avant. Point par point&nbsp;:</p><div class="lp-tableau lp-tableau-compare lp-tableau-pile"><table><thead><tr><th></th><th>Publication boostée</th><th>Site de leads</th><th>Mon Club Combat</th></tr></thead><tbody><tr><td>Ce que vous recevez</td><td data-th="Publication boostée">Des vues, des «&nbsp;j’aime&nbsp;», des messages</td><td data-th="Site de leads">Un nom et un numéro</td><td data-th="Mon Club Combat">Une personne, un cours, une date</td></tr><tr><td>La personne a choisi un cours de votre planning&nbsp;?</td><td data-th="Publication boostée">Non</td><td data-th="Site de leads">Non</td><td data-th="Mon Club Combat">Oui, sur la page à votre nom</td></tr><tr><td>Qui relance avant la séance&nbsp;?</td><td data-th="Publication boostée">Personne</td><td data-th="Site de leads">Vous</td><td data-th="Mon Club Combat">Nous, par e-mail jusqu’à 1&nbsp;h avant</td></tr><tr><td>Ce qu’il vous reste à faire</td><td data-th="Publication boostée">Trier, répondre, convaincre</td><td data-th="Site de leads">Appeler, rappeler, convaincre</td><td data-th="Mon Club Combat">Accueillir et faire signer</td></tr><tr><td>Fait pour les sports de combat&nbsp;?</td><td data-th="Publication boostée">Non</td><td data-th="Site de leads">Non</td><td data-th="Mon Club Combat">Oui, uniquement</td></tr><tr><td>Un nombre par mois, écrit&nbsp;?</td><td data-th="Publication boostée">Non</td><td data-th="Site de leads">Non</td><td data-th="Mon Club Combat">Oui, dans votre abonnement</td></tr><tr><td>Et si rien ne vient&nbsp;?</td><td data-th="Publication boostée">Le boost est payé</td><td data-th="Site de leads">Les fiches sont payées</td><td data-th="Mon Club Combat">C’est nous qui n’avons pas tenu notre engagement</td></tr></tbody></table></div><p>En clair, vous ne passez plus votre temps à répondre à des curieux. Vous accueillez des personnes qui vous attendent à un cours précis, et vous faites ce que vous faites de mieux&nbsp;: le cours, et l’inscription qui suit.</p></div>
+          <summary><span>Ils réservent, mais est-ce qu’ils viennent&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Comme pour tout rendez-vous, il y a des absents. C’est pour ça que chaque personne a un cours et une heure précis, et reçoit nos rappels jusqu’à 1&nbsp;h avant. Ceux qui viennent, votre cours les fait signer&nbsp;: chez nos clients, 1&nbsp;€ investi rapporte 8&nbsp;€ d’adhésions en moyenne.</p></div>
         </details>
         <details class="lp-q reveal" name="faq">
-          <summary><span>Ils réservent, d’accord. Mais est-ce qu’ils viennent&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Une partie, oui&nbsp;; une partie, non. Il y aura toujours des absents, comme pour n’importe quel rendez-vous, et nous ne promettons pas le contraire&nbsp;: <b>notre engagement porte sur les réservations, pas sur les venues</b>.</p><p>En revanche, nous faisons tout pour qu’une réservation ne reste pas un «&nbsp;peut-être&nbsp;»&nbsp;:</p><ul><li>elle porte sur un cours précis de votre planning, pas sur «&nbsp;un jour, je passerai&nbsp;»&nbsp;;</li><li>elle a une date et une heure&nbsp;;</li><li>la personne reçoit nos relances par e-mail jusqu’à 1&nbsp;h avant la séance.</li></ul><p>Une personne qui a choisi la boxe du jeudi à 19&nbsp;h et qui vient d’en être rappelée une heure avant, c’est tout autre chose qu’un «&nbsp;je passe mardi&nbsp;» envoyé en message privé, que personne ne relance et que tout le monde oublie.</p><p>Une fois la personne dans la salle, c’est votre cours qui fait le reste. Et il le fait bien&nbsp;: chez nos clients, <b>1&nbsp;€ dépensé rapporte en moyenne 8&nbsp;€ d’adhésions</b>. Chez Gota, le nombre d’adhérents a doublé en un mois.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Combien de réservations vais-je avoir par mois&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Cela dépend de votre salle&nbsp;: votre planning, le nombre de cours à remplir, votre secteur, c’est-à-dire le nombre de personnes qui habitent assez près pour venir s’entraîner chez vous. Il n’y a pas de chiffre valable pour toutes les salles, et nous ne vous en donnons pas un avant d’avoir regardé la vôtre.</p><p>C’est à ça que sert l’appel de 15&nbsp;min. À la fin, vous savez deux choses&nbsp;: si nous pouvons nous engager chez vous, et sur quel nombre. Ce chiffre n’est pas une estimation&nbsp;: <b>il est écrit dans votre abonnement, et nous le tenons chaque mois</b>.</p><p>Ce nombre compte des réservations, pas des adhésions. Pour un ordre de grandeur de ce que ça donne ensuite&nbsp;: chez nos clients, 1&nbsp;€ dépensé rapporte 8&nbsp;€ d’adhésions en moyenne, et chez Gota, les adhérents ont doublé en un mois.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Quels résultats obtiennent vos clients&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Ce que nous pouvons montrer aujourd’hui&nbsp;:</p><div class="lp-tableau"><table><thead><tr><th>Qui</th><th>Résultat</th></tr></thead><tbody><tr><td>Gota</td><td><b>Adhérents doublés</b> en un mois</td></tr><tr><td>Nos clients, en moyenne</td><td>Pour 1&nbsp;€ dépensé, <b>8&nbsp;€ d’adhésions</b></td></tr><tr><td>Toutes salles confondues</td><td><b>Plus de 20&nbsp;salles</b> accompagnées, <b>des milliers</b> de séances d’essai réservées</td></tr></tbody></table></div><p>Les réservations arrivent dans les jours et les semaines qui suivent la commande, et chaque mois le nombre écrit dans votre abonnement est tenu. Ce qui se passe après la séance, l’adhésion, c’est votre cours qui le fait&nbsp;: nous ne le garantissons pas, mais chez nos clients, il le fait bien.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq" id="faq-qui">
-          <summary><span>Qui fait quoi, et quand&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Nous faisons tout, sauf le cours. Voilà qui fait quoi, et quand.</p><div class="lp-tableau lp-tableau-pile"><table><thead><tr><th>Quand</th><th>Nous</th><th>Vous</th></tr></thead><tbody><tr><td>L’appel, 15&nbsp;min</td><td data-th="Nous">Nous regardons votre salle, votre planning, votre secteur, et nous vous disons si nous pouvons nous engager, et sur quel nombre</td><td data-th="Vous">Vous répondez à nos questions</td></tr><tr><td>Si c’est oui</td><td data-th="Nous">Nous écrivons le nombre dans votre abonnement, et nous préparons la page au nom de votre salle et la pub</td><td data-th="Vous">3&nbsp;clics, et vous nous envoyez ce qu’il faut savoir sur votre salle</td></tr><tr><td>Les jours qui suivent</td><td data-th="Nous">La pub tourne sur Facebook et Instagram, autour de votre salle&nbsp;; la page à votre nom prend les réservations</td><td data-th="Vous">Rien</td></tr><tr><td>Avant chaque séance</td><td data-th="Nous">Nous relançons la personne par e-mail, jusqu’à 1&nbsp;h avant</td><td data-th="Vous">Rien</td></tr><tr><td>Le jour de la séance</td><td data-th="Nous">Rien&nbsp;: c’est votre cours</td><td data-th="Vous">Vous accueillez, vous donnez le cours, vous faites signer</td></tr><tr><td>Chaque mois</td><td data-th="Nous">Nous tenons le nombre écrit dans votre abonnement</td><td data-th="Vous">Vous comptez vos nouveaux adhérents</td></tr></tbody></table></div></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Est-ce que ça va me prendre du temps&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Non. Votre part, c’est un appel de 15&nbsp;min, 3&nbsp;clics, et ce qu’il faut savoir sur votre salle. Ensuite, nous nous occupons de tout, et vous n’avez qu’à accueillir les personnes qui ont réservé.</p><p>Pas de logiciel à installer, pas de contenu à publier, pas de messages privés à trier, pas de relances à envoyer. Si vous savez accueillir quelqu’un à la porte de votre salle, vous savez utiliser Mon Club Combat.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>En combien de temps j’ai mes premières réservations&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Dans les jours et les semaines qui suivent votre commande. Voici comment ça se passe&nbsp;:</p><ol><li><b>L’appel de 15&nbsp;min.</b> Nous vérifions que nous pouvons nous engager chez vous.</li><li><b>La commande, en 3&nbsp;clics.</b> Vous nous envoyez ce qu’il faut savoir sur votre salle.</li><li><b>Dans les jours qui suivent.</b> La page à votre nom est en ligne et la pub tourne autour de votre salle.</li><li><b>Les premières réservations tombent.</b> Dans les jours et les semaines qui suivent, les premières personnes choisissent un cours. Vous savez qui vient, à quel cours, et quand.</li></ol><p>Il n’y a pas de rentrée à attendre&nbsp;: la pub tourne tous les mois, et le nombre écrit dans votre abonnement vaut chaque mois, pas seulement en septembre.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Comment je sais qui vient&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Chaque réservation est une personne qui a choisi un cours de votre planning sur la page à votre nom, et une date. Vous savez donc <b>qui vient, à quel cours et quel jour</b>, avant la séance. Pas de message privé à décortiquer, pas de «&nbsp;il m’a dit qu’il passerait peut-être jeudi&nbsp;».</p><p>De notre côté, chaque personne est relancée par e-mail jusqu’à 1&nbsp;h avant sa séance. De votre côté, il reste à l’accueillir et à lui faire signer son inscription à la fin du cours.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Pourquoi c’est moi qui accueille et qui fais signer&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Parce que c’est votre cours qui fait adhérer, et personne ne le fera mieux que vous.</p><p>La personne qui a réservé a déjà fait le plus dur&nbsp;: elle a choisi votre salle, un cours, une date, et elle a reçu nos relances jusqu’à 1&nbsp;h avant. Quand elle pousse la porte, elle vient voir si l’ambiance, le coach et le cours lui plaisent. C’est à ce moment-là que tout se joue, et c’est votre métier.</p><p>Nous nous arrêtons donc à la porte, volontairement. Nous ne garantissons pas les adhésions&nbsp;; nous garantissons que des gens réservent et sont relancés pour venir. Le reste, nos clients le font très bien&nbsp;: <b>1&nbsp;€ dépensé leur rapporte en moyenne 8&nbsp;€ d’adhésions</b>.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Ma discipline, ma ville&nbsp;: ça marche&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Nous ne travaillons qu’avec des salles de sports de combat&nbsp;: MMA, boxe anglaise, kickboxing, Muay Thaï, jiu-jitsu brésilien, grappling, karaté, judo, lutte, self-défense. Plus de 20&nbsp;salles nous font déjà confiance. La mécanique est la même quelle que soit la discipline&nbsp;: c’est votre planning qui est proposé, tel quel, et la personne choisit la boxe du mardi soir ou le JJB du samedi matin.</p><p>Pour la ville, la pub ne s’affiche qu’aux gens qui habitent autour de votre salle, pas à toute la France. Dans une petite ville, elle touche moins de monde, mais elle touche les bonnes personnes&nbsp;: celles qui habitent à côté et n’ont jamais poussé votre porte. C’est ce qui fait qu’elle ramène des gens qui peuvent vraiment venir le jeudi à 19&nbsp;h.</p><p>Votre secteur précis, c’est ce que nous regardons pendant l’appel. Si nous pensons que ça ne tiendra pas chez vous, nous vous le disons, et nous ne vous vendons rien.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Mes cours sont déjà presque pleins.</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Alors dites-le-nous à l’appel, et nous vous dirons sans doute que <b>vous n’avez pas besoin de nous</b>. Nous ne vendons pas de réservations à une salle qui ne peut pas les accueillir.</p><p>Si certains cours sont pleins et d’autres non, dites-le-nous aussi&nbsp;: c’est précisément ce que nous regardons à l’appel, planning en main, avant de nous engager sur un nombre.</p></div>
-        </details>
-        <details class="lp-q reveal" name="faq">
-          <summary><span>Vous travaillez avec la salle d’en face&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>La pub est ciblée autour de votre salle et mène à une page à votre nom, avec vos cours. Une réservation prise sur cette page est une réservation chez vous, pas «&nbsp;chez une salle du coin&nbsp;».</p><p>Pour ce qui est d’accompagner deux salles voisines, posez-nous la question à l’appel&nbsp;: nous vous répondons franchement, salle par salle, et nous ne nous engageons chez vous que si nous pouvons tenir le nombre écrit.</p></div>
+          <summary><span>Combien de réservations par mois&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Ça dépend de votre salle et de votre secteur. Nous vous donnons le chiffre à la fin de l’appel, et il est écrit dans votre abonnement.</p></div>
         </details>
         <details class="lp-q reveal" name="faq">
           <summary><span>Combien ça coûte&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Nous vous le disons à l’appel, une fois que nous avons regardé votre salle et que nous savons sur quel nombre de réservations nous pouvons nous engager. Nous ne donnons pas de tarif avant d’avoir regardé&nbsp;: ce serait vous vendre une promesse à l’aveugle.</p><p>Ce que nous pouvons vous dire tout de suite&nbsp;:</p><ul><li>c’est un abonnement mensuel, et le nombre de réservations par mois y est <b>écrit</b> avant que vous ne commandiez&nbsp;;</li><li>chez nos clients, <b>1&nbsp;€ dépensé rapporte en moyenne 8&nbsp;€ d’adhésions</b>&nbsp;;</li><li>si nous ne pouvons pas nous engager chez vous, nous ne vous vendons rien.</li></ul><p>Venez à l’appel avec votre planning&nbsp;: vous repartez avec le nombre, et le tarif qui va avec.</p></div>
+          <div class="lp-q-corps"><p>C’est un abonnement mensuel. Le prix dépend du nombre de réservations&nbsp;: nous vous le donnons pendant l’appel, une fois votre salle regardée.</p></div>
         </details>
         <details class="lp-q reveal" name="faq">
-          <summary><span>Ça m’engage à quoi&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p><b>L’appel, à rien.</b> Il dure 15&nbsp;min et sert à une chose&nbsp;: vérifier que nous pouvons tenir un nombre de réservations chez vous. Rien n’est à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après. Si vos cours sont déjà pleins, nous vous le dirons aussi&nbsp;: vous n’avez pas besoin de nous.</p><p>Si c’est oui et que vous décidez de commander, c’est un <b>abonnement mensuel</b>, avec le nombre de réservations par mois écrit dedans. Les personnes qui réservent, viennent et signent sont vos adhérents, pas les nôtres&nbsp;: elles restent chez vous.</p><p>Pour l’appel, rien à préparer&nbsp;: votre planning, les cours que vous voulez remplir et votre secteur, vous les avez déjà en tête.</p></div>
+          <summary><span>Ça va me prendre du temps&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Non. Un appel de 15&nbsp;min, 3&nbsp;clics, puis vous accueillez les gens qui ont réservé. Pas de logiciel, pas de contenu à publier, pas de messages à trier.</p></div>
         </details>
         <details class="lp-q reveal" name="faq">
-          <summary><span>Il y a d’autres effets&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Oui. La pub ne s’affiche qu’aux gens de votre secteur, ceux qui peuvent vraiment venir. Votre salle gagne donc en visibilité là où ça compte&nbsp;: à dix minutes de sa porte, auprès de personnes qui ne l’auraient peut-être jamais cherchée.</p><p>Et comme chaque réservation porte sur un cours précis, vous voyez vite quels cours attirent le plus de nouveaux&nbsp;: une information que vous n’aviez pas.</p></div>
+          <summary><span>Ça marche pour ma discipline et ma ville&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Nous travaillons uniquement avec des salles de sports de combat&nbsp;: MMA, boxe anglaise, kickboxing, Muay Thaï, JJB, grappling, karaté, judo, lutte, self-défense. La pub ne s’affiche qu’autour de votre salle. Si nous pensons que ça ne marchera pas chez vous, nous vous le disons pendant l’appel.</p></div>
         </details>
         <details class="lp-q reveal" name="faq">
-          <summary><span>Une question qui n’est pas ici&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Écrivez-nous à contact@monclubcombat.fr, nous vous répondrons rapidement.</p><p>Et bien sûr, pendant l’appel, nous répondons à toutes vos questions sur votre salle, votre planning et votre secteur. Vous saurez tout avant de décider.</p></div>
+          <summary><span>L’appel m’engage à quoi&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>À rien. 15&nbsp;min pour savoir si nous pouvons nous engager chez vous, et sur quel nombre. Vous décidez après.</p></div>
+        </details>
+        <details class="lp-q reveal" name="faq">
+          <summary><span>Une autre question&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Écrivez-nous à <a href="mailto:contact@monclubcombat.fr">contact@monclubcombat.fr</a>, ou posez-la pendant l’appel.</p></div>
         </details>
       </div>
       <p class="lp-plus reveal"><a href="#appel">Le reste de vos questions, posez-les-nous à l’appel&nbsp;→</a></p>
     </div>
   </section>
 
-  <section class="lp-appel" id="appel" aria-labelledby="lp-appel-t">
-    <div class="lp-appel-in">
-      <div class="lp-appel-dit">
-        <p class="lp-sur">Ce qui se passe ensuite</p>
-        <h2 class="lp-h2 lp-h2-sm" id="lp-appel-t">Un appel de 15 min, <em>puis c’est vous qui décidez</em></h2>
-        <p class="lp-appel-texte">Votre salle, votre planning, votre secteur&nbsp;: nous vous disons si nous pouvons nous engager chez vous, et sur quel nombre. Rien à commander pendant l’appel&nbsp;: nous vérifions, vous décidez après.</p>
-      </div>
-
-      <div class="lp-carte">
-                <div class="lp-rdv" id="rdv">
+    <div class="lp-modale" id="appel" role="dialog" aria-modal="true" aria-labelledby="lp-appel-t" hidden>
+    <div class="lp-modale-tete">
+      <span class="lp-marque" aria-hidden="true">
+        <svg viewBox="212 589 389 369" width="30" height="28">
+          <use href="#mcc-mono-m" fill="#16160F"/><use href="#mcc-mono-c" fill="var(--rouge-500)"/>
+        </svg>
+        <svg class="lp-marque-mot" viewBox="657 722 1883 107" width="168" height="10">
+          <use href="#mcc-mot-mon" fill="#16160F"/><use href="#mcc-mot-combat" fill="var(--rouge-500)"/>
+        </svg>
+      </span>
+      <button type="button" class="lp-modale-fermer" id="lp-fermer" aria-label="Fermer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="lp-modale-corps">
+        <div class="lp-rdv" id="rdv">
           <div class="lp-rdv-tete">
-            <p class="lp-rdv-etiq"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Appel de 15 min · offert</p>
-            <p class="lp-rdv-titre">Réservez votre appel.</p>
-            <p class="lp-rdv-sous">Trois questions sur votre salle, puis le jour et l’heure qui vous arrangent.</p>
+            <p class="lp-rdv-titre" id="lp-appel-t">Réservez votre appel de 15&nbsp;min</p>
+            <p class="lp-rdv-sous">Nous regardons votre salle et nous vous disons combien de séances d’essai nous pouvons vous garantir chaque mois. Vous décidez après.</p>
           </div>
           <div class="lp-rdv-prog" aria-hidden="true"><i id="rdv-prog"></i></div>
 
-                    <section class="lp-rdv-ecran" id="rdv-e0" aria-label="Étape 1 sur 5">
-            <p class="lp-rdv-q" tabindex="-1">Quelle est la discipline principale de votre salle ?</p>
-            <div class="lp-rdv-cartes" data-cle="discipline" role="group" aria-label="Discipline principale">
-              <button type="button" class="lp-rdv-carte" data-v="mma" aria-pressed="false">MMA<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="boxe" aria-pressed="false">Boxe anglaise<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="pieds_poings" aria-pressed="false">Kickboxing, Muay Thaï<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="sol" aria-pressed="false">JJB, grappling, lutte<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="arts_martiaux" aria-pressed="false">Judo, karaté, self-défense<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="autre" aria-pressed="false">Autre<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-            </div>
-            <label class="champ lp-rdv-libre" id="rdv-disc-autre" hidden><span>Précisez</span>
-              <input id="rdv-disc-prec" placeholder="ex. savate, taekwondo, sambo" autocomplete="off"></label>
-            <div class="lp-rdv-pied">
-              <span></span>
-              <button type="button" class="ag-btn ag-btn-rouge" id="rdv-e0-suite" hidden disabled>Continuer <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <section class="lp-rdv-ecran" id="rdv-e0" aria-label="Étape 1 sur 6">
+            <p class="lp-rdv-q" tabindex="-1">Vous êtes le gérant de la salle&nbsp;?</p>
+            <div class="lp-rdv-cartes" data-cle="situation" role="group" aria-label="Gérant de la salle">
+              <button type="button" class="lp-rdv-carte" data-v="Oui" aria-pressed="false">Oui<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Non, je travaille dans la salle" aria-pressed="false">Non, je travaille dans la salle<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
             </div>
           </section>
 
-                    <section class="lp-rdv-ecran" id="rdv-e1" aria-label="Étape 2 sur 5" hidden>
-            <p class="lp-rdv-q" tabindex="-1">Où en est votre salle ?</p>
-            <div class="lp-rdv-cartes" data-cle="situation" role="group" aria-label="Situation de la salle">
-              <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours à remplir" aria-pressed="false">Ouverte, des cours à remplir<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="Ouverte, des cours presque pleins" aria-pressed="false">Ouverte, des cours presque pleins<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="Pas encore ouverte" aria-pressed="false">Pas encore ouverte<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+          <section class="lp-rdv-ecran" id="rdv-e1" aria-label="Étape 2 sur 6" hidden>
+            <p class="lp-rdv-q" tabindex="-1">Combien d’adhérents avez-vous aujourd’hui&nbsp;?</p>
+            <div class="lp-rdv-cartes" data-cle="discipline" role="group" aria-label="Nombre d’adhérents">
+              <button type="button" class="lp-rdv-carte" data-v="Moins de 50" aria-pressed="false">Moins de 50<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="50 à 150" aria-pressed="false">50 à 150<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="150 à 300" aria-pressed="false">150 à 300<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Plus de 300" aria-pressed="false">Plus de 300<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
             </div>
-            <p class="lp-rdv-q lp-rdv-q2">Quel est votre objectif principal ?</p>
-            <div class="lp-rdv-cartes" data-cle="objectif" role="group" aria-label="Objectif principal">
-              <button type="button" class="lp-rdv-carte" data-v="Remplir mes cours" aria-pressed="false">Remplir mes cours<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="Ne plus dépendre de la rentrée" aria-pressed="false">Ne plus dépendre de la rentrée<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="Me faire connaître dans mon secteur" aria-pressed="false">Me faire connaître dans mon secteur<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-              <button type="button" class="lp-rdv-carte" data-v="Autre" aria-pressed="false">Autre<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
-            </div>
-            <label class="champ lp-rdv-libre" id="rdv-obj-autre" hidden><span>Précisez</span>
-              <input id="rdv-obj-prec" placeholder="ex. lancer un cours enfants" autocomplete="off"></label>
             <div class="lp-rdv-pied">
               <button type="button" class="lp-rdv-retour" data-retour><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Retour</button>
-              <button type="button" class="ag-btn ag-btn-rouge" id="rdv-e1-suite" disabled>Continuer <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
             </div>
           </section>
 
-                    <section class="lp-rdv-ecran" id="rdv-e2" aria-label="Étape 3 sur 5" hidden>
+          <section class="lp-rdv-ecran" id="rdv-e2" aria-label="Étape 3 sur 6" hidden>
+            <p class="lp-rdv-q" tabindex="-1">Combien coûte votre abonnement par mois&nbsp;?</p>
+            <div class="lp-rdv-cartes" data-cle="objectif" role="group" aria-label="Prix de l’abonnement">
+              <button type="button" class="lp-rdv-carte" data-v="Moins de 40&nbsp;€" aria-pressed="false">Moins de 40&nbsp;€<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="40 à 60&nbsp;€" aria-pressed="false">40 à 60&nbsp;€<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="60 à 80&nbsp;€" aria-pressed="false">60 à 80&nbsp;€<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+              <button type="button" class="lp-rdv-carte" data-v="Plus de 80&nbsp;€" aria-pressed="false">Plus de 80&nbsp;€<span class="lp-rdv-coche" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></button>
+            </div>
+            <div class="lp-rdv-pied">
+              <button type="button" class="lp-rdv-retour" data-retour><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Retour</button>
+            </div>
+          </section>
+
+                    <section class="lp-rdv-ecran" id="rdv-e3" aria-label="Étape 4 sur 6" hidden>
             <p class="lp-rdv-q" tabindex="-1">Choisissez un créneau</p>
             <p class="lp-rdv-erreur" id="rdv-pris" role="alert" hidden>Ce créneau vient d’être pris. Choisissez-en un autre.</p>
             <div class="lp-rdv-cal" id="rdv-cal">
@@ -1618,7 +1570,7 @@
             </div>
           </section>
 
-                    <section class="lp-rdv-ecran" id="rdv-e3" aria-label="Étape 4 sur 5" hidden>
+                    <section class="lp-rdv-ecran" id="rdv-e4" aria-label="Étape 5 sur 6" hidden>
             <p class="lp-rdv-q" tabindex="-1">Vos coordonnées</p>
             <p class="lp-rdv-recap"><span class="lp-rdv-recap-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
               <span>RDV choisi : <b id="rdv-recap-date"></b> (heure de Paris)</span></p>
@@ -1659,7 +1611,7 @@
             </form>
           </section>
 
-                    <section class="lp-rdv-ecran lp-rdv-succes" id="rdv-e4" aria-label="Étape 5 sur 5" role="status" hidden>
+                    <section class="lp-rdv-ecran lp-rdv-succes" id="rdv-e5" aria-label="Étape 6 sur 6" role="status" hidden>
             <span class="lp-rdv-ok" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
             <p class="lp-rdv-succes-t" tabindex="-1">C’est confirmé !</p>
             <p class="lp-rdv-succes-date"><b id="rdv-succes-date"></b> (heure de Paris)</p>
@@ -1669,9 +1621,8 @@
             <p class="lp-rdv-succes-mail"><span aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>Un e-mail de confirmation vient de vous être envoyé, avec l’invitation pour votre agenda. À très vite.</p>
           </section>
         </div>
-      </div>
     </div>
-  </section>
+  </div>
 
   <div class="lp-barre" id="lp-barre" aria-hidden="true">
     <a class="ag-btn ag-btn-rouge ag-btn-plein" href="#appel" data-appel tabindex="-1">Réserver un appel <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
@@ -1724,7 +1675,8 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
    barre du bas suit la lecture au telephone et s'efface sur la carte de
    rendez-vous, et la carte porte le tunnel de prise de rendez-vous, meme
    mecanique que la page « reserver » de GenIA (Amaury, 19/10/2026), qui parle
-   a la fonction Supabase `rdv` en simple fetch. Depuis la refonte sur le
+   a la fonction Supabase `rdv` en simple fetch ; depuis le 20/10/2026, elle
+   s'ouvre en plein ecran par-dessus la page. Depuis la refonte sur le
    modele Squale (19/10/2026), la page porte aussi un peu de mouvement : les
    apparitions au defilement, les liens vers une question de la FAQ et les
    traits du schema « qui fait quoi ». */
@@ -1875,11 +1827,11 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
   }
 
   /* ---------- la barre du bas ----------
-     Elle apparait une fois le bouton du heros passe et disparait quand la
-     carte de rendez-vous, ou un autre bouton d'appel, est a l'ecran : jamais
-     deux boutons pareils l'un sur l'autre. */
-  var barre = $('lp-barre'), agir = document.querySelector('.lp-agir'), appel = $('appel');
-  if (barre && agir && appel && 'IntersectionObserver' in window) {
+     Elle apparait une fois le bouton du heros passe et disparait quand un
+     autre bouton d'appel est a l'ecran : jamais deux boutons pareils l'un sur
+     l'autre. */
+  var barre = $('lp-barre'), agir = document.querySelector('.lp-agir');
+  if (barre && agir && 'IntersectionObserver' in window) {
     var passe = false, vus = new Map();
     var maj = function (){
       var surAppel = false;
@@ -1890,7 +1842,7 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
       var e = es[es.length - 1];
       passe = !e.isIntersecting && e.boundingClientRect.top < 0; maj();
     }).observe(agir);
-    document.querySelectorAll('.lp-agir-section, #appel').forEach(function (el){
+    document.querySelectorAll('.lp-agir-section').forEach(function (el){
       new IntersectionObserver(function (es){
         vus.set(el, es[es.length - 1].isIntersecting); maj();
       }, { rootMargin: '0px 0px -30% 0px' }).observe(el);
@@ -1898,9 +1850,10 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
   }
 
   /* ---------- la prise de rendez-vous ----------
-     Amaury, 19/10/2026 : « exactement comme sur GenIA ». Cinq ecrans (0 a 4) :
-     la discipline, la situation et l'objectif, le creneau, les coordonnees, la
-     confirmation. Les ecrans sont ecrits dans le HTML ; ici on les enchaine,
+     Amaury, 19/10/2026 : « exactement comme sur GenIA » ; 20/10/2026 : en
+     plein ecran, et seulement les questions qui disent si la salle vaut un
+     appel. Six ecrans (0 a 5) : gerant ou non, nombre d'adherents, prix de
+     l'abonnement, le creneau, les coordonnees, la confirmation. Les ecrans sont ecrits dans le HTML ; ici on les enchaine,
      on dessine les jours et les heures, on envoie la reservation. Le serveur
      est la fonction Supabase `rdv` (supabase/functions/rdv, contrat dans son
      LISEZ-MOI), appelee en simple fetch : la page n'a pas besoin du client
@@ -1912,7 +1865,7 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
     || 'https://qhbutuhdmyajlgorbhxf.supabase.co/functions/v1/rdv';
   var ENTETES = { 'content-type': 'application/json' };
   if (SB && SB.CLE_PUBLIQUE) ENTETES.apikey = SB.CLE_PUBLIQUE;
-  var TOTAL = 5;
+  var TOTAL = 6;
   /* les textes qui changent en cours de route (plan de textes rdv-textes.json) */
   var T = {
     bouton: 'Confirmer le RDV',
@@ -1951,12 +1904,12 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
     hour: '2-digit', minute: '2-digit' });
 
   /* Le pixel Meta : memes evenements que GenIA, chacun une seule fois, et
-     seulement si le pixel est la. 0 BookingStarted · 1 Etape1_Objectif +
-     Etape2_Activite · 2 InitiateCheckout · 3 Etape3_Entreprise +
-     Etape4_Coordonnees · 4 Lead + Schedule. */
+     seulement si le pixel est la. 0 BookingStarted · 1 Etape1_Objectif ·
+     2 Etape2_Activite · 3 InitiateCheckout · 4 Etape3_Entreprise +
+     Etape4_Coordonnees · 5 Lead + Schedule. */
   function pixel(ev, perso){ if (typeof window.fbq === 'function') window.fbq(perso ? 'trackCustom' : 'track', ev); }
   function uneFois(cle, ev, perso){ if (!etat.envoye[cle]) { etat.envoye[cle] = 1; pixel(ev, perso); } }
-  var EVENEMENTS = { 1: ['Etape1_Objectif', 'Etape2_Activite'], 3: ['Etape3_Entreprise', 'Etape4_Coordonnees'] };
+  var EVENEMENTS = { 1: ['Etape1_Objectif'], 2: ['Etape2_Activite'], 4: ['Etape3_Entreprise', 'Etape4_Coordonnees'] };
 
   function montre(n){
     etat.ecran = Math.max(0, Math.min(TOTAL - 1, n));
@@ -1964,49 +1917,65 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
     $('rdv-prog').style.width = Math.round(etat.ecran / (TOTAL - 1) * 100) + '%';
     /* une fois confirme, le titre « Reservez votre appel » et son sous-titre
        n'ont plus rien a dire au-dessus de « C'est confirme ! » */
-    rdv.classList.toggle('est-fini', etat.ecran === 4);
+    rdv.classList.toggle('est-fini', etat.ecran === 5);
     (EVENEMENTS[etat.ecran] || []).forEach(function (ev, i){ uneFois('e' + etat.ecran + i, ev, true); });
-    if (etat.ecran === 2) chargeCreneaux();
-    if (etat.ecran === 3) prepareCoordonnees();
-    if (etat.ecran === 4) montreSucces();
+    if (etat.ecran === 3) chargeCreneaux();
+    if (etat.ecran === 4) prepareCoordonnees();
+    if (etat.ecran === 5) montreSucces();
   }
 
-  /* Le widget est le dernier bloc de la page. Quand un ecran haut laisse la
-     place a un ecran court, la page retrecit et le navigateur rabat le
-     defilement d'un coup : tout saute vers le bas. On fige donc la hauteur
-     du widget le temps du changement et du defilement, puis on la relache,
-     mais seulement de ce que la page peut perdre sans bouger ; le reste tient
-     lieu de marge jusqu'au prochain ecran. */
-  /* La hauteur figee se pose sur le conteneur (.lp-carte) qui entoure la carte
-     blanche, pas sur la carte : la marge d'attente reste du vide sous la
-     carte fermee, jamais du blanc a l'interieur (sur « C'est confirme ! »,
-     il n'y a plus d'ecran suivant pour la reprendre). */
-  var cadreRdv = rdv.parentElement, relache = null;
-  function fige(){
-    cadreRdv.style.minHeight = cadreRdv.offsetHeight + 'px';
-    clearTimeout(relache);
-    relache = setTimeout(ajuste, 700);
-  }
-  function ajuste(){
-    var boite = cadreRdv.getBoundingClientRect();
-    var naturel = rdv.getBoundingClientRect().bottom - boite.top;
-    var marge = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-    var min = Math.max(naturel, boite.height - Math.max(0, marge));
-    cadreRdv.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
-  }
-  /* comme GenIA, le widget revient en vue a chaque ecran, et la question du
-     nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
-     repart de la, et le defilement n'en depend pas (preventScroll) */
-  function va(n){
-    /* « C'est confirme ! » est le dernier ecran : aucun ecran suivant ne
-       reprendra la marge d'attente, on coupe donc net vers l'etat final (pas
-       de hauteur figee, pas de blanc reserve, pas de defilement anime) */
-    var fin = n >= TOTAL - 1;
-    if (fin) { clearTimeout(relache); cadreRdv.style.minHeight = ''; } else fige();
-    montre(n);
+  /* le plein ecran : chaque lien #appel l'ouvre au lieu de faire defiler la
+     page, la croix ou Echap le ferme et rend le focus au bouton d'origine.
+     Tant qu'il est ouvert, la page dessous ne defile plus (CSS) et Tab tourne
+     dans le plein ecran. Une adresse qui finit par #appel l'ouvre aussi. */
+  var modale = $('appel'), fermer = $('lp-fermer'), avant = null;
+  function focusQuestion(){
     var q = $('rdv-e' + etat.ecran).querySelector('.lp-rdv-q, .lp-rdv-succes-t');
     if (q) { try { q.focus({ preventScroll: true }); } catch (e) { q.focus(); } }
-    rdv.scrollIntoView({ behavior: fin ? 'auto' : 'smooth', block: 'start' });
+  }
+  function ouvre(){
+    if (!modale.hidden) return;
+    avant = document.activeElement;
+    modale.hidden = false;
+    document.documentElement.classList.add('modale-ouverte');
+    modale.scrollTop = 0;
+    focusQuestion();
+  }
+  function ferme(){
+    if (modale.hidden) return;
+    modale.hidden = true;
+    document.documentElement.classList.remove('modale-ouverte');
+    if (location.hash === '#appel' && history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+    if (avant && avant.focus) { try { avant.focus({ preventScroll: true }); } catch (e) {} }
+  }
+  document.addEventListener('click', function (e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href="#appel"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    ouvre();
+  });
+  fermer.addEventListener('click', ferme);
+  document.addEventListener('keydown', function (e){
+    if (modale.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); ferme(); return; }
+    if (e.key !== 'Tab') return;
+    var f = Array.prototype.filter.call(modale.querySelectorAll('button, a[href], input'), function (el){
+      return !el.disabled && el.tabIndex >= 0 && el.offsetParent !== null;
+    });
+    if (!f.length) return;
+    var premier = f[0], dernier = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === premier || !modale.contains(document.activeElement))) { e.preventDefault(); dernier.focus(); }
+    else if (!e.shiftKey && document.activeElement === dernier) { e.preventDefault(); premier.focus(); }
+  });
+  if (location.hash === '#appel') ouvre();
+
+  /* a chaque ecran, on remonte en haut du plein ecran et la question du
+     nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
+     repart de la */
+  function va(n){
+    montre(n);
+    modale.scrollTop = 0;
+    focusQuestion();
   }
   rdv.querySelectorAll('[data-retour]').forEach(function (b){
     b.addEventListener('click', function (){ va(etat.ecran - 1); });
@@ -2036,45 +2005,17 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
     input.addEventListener('keydown', function (e){ if (e.key === 'Enter') { e.preventDefault(); fn(); } });
   }
 
-  /* ecran 0 : la discipline. « Autre » ouvre un champ et un bouton ; les
-     autres reponses passent tout de suite a l'ecran suivant. */
-  var discCartes = rdv.querySelector('#rdv-e0 .lp-rdv-cartes');
-  var discLibre = $('rdv-disc-autre'), discPrec = $('rdv-disc-prec'), e0suite = $('rdv-e0-suite');
-  function e0complet(){ return !!etat.d.discipline && (etat.d.discipline !== 'autre' || discPrec.value.trim().length > 1); }
-  function e0maj(){ e0suite.disabled = !e0complet(); }
-  surCartes(discCartes, function (v){
-    uneFois('debut', 'BookingStarted', true);
-    var autre = v === 'autre';
-    if (!autre && !discLibre.hidden) fige(); /* le champ se ferme : la page ne doit pas sauter */
-    discLibre.hidden = !autre; e0suite.hidden = !autre;
-    if (autre) { e0maj(); setTimeout(function (){ discPrec.focus(); }, 40); }
-    else setTimeout(function (){ va(1); }, 160);
+  /* ecrans 0 a 2 : une question par ecran, un tap choisit et passe au suivant */
+  var questions = ['situation', 'discipline', 'objectif'].map(function (cle, i){
+    var groupe = rdv.querySelector('#rdv-e' + i + ' [data-cle="' + cle + '"]');
+    surCartes(groupe, function (){
+      if (i === 0) uneFois('debut', 'BookingStarted', true);
+      setTimeout(function (){ va(i + 1); }, 160);
+    });
+    return groupe;
   });
-  discPrec.addEventListener('input', e0maj);
-  surEntree(discPrec, function (){ if (e0complet()) va(1); });
-  e0suite.addEventListener('click', function (){ if (e0complet()) va(1); });
 
-  /* ecran 1 : la situation puis l'objectif ; des que les deux sont la, on avance */
-  var sitCartes = rdv.querySelector('#rdv-e1 [data-cle="situation"]'), objCartes = rdv.querySelector('#rdv-e1 [data-cle="objectif"]');
-  var objLibre = $('rdv-obj-autre'), objPrec = $('rdv-obj-prec'), e1suite = $('rdv-e1-suite');
-  function e1complet(){
-    return !!etat.d.situation && !!etat.d.objectif && (etat.d.objectif !== 'Autre' || objPrec.value.trim().length > 1);
-  }
-  function e1maj(){ e1suite.disabled = !e1complet(); }
-  function e1avance(){ if (e1complet()) setTimeout(function (){ va(2); }, 180); }
-  surCartes(sitCartes, function (){ e1maj(); e1avance(); });
-  surCartes(objCartes, function (v){
-    var autre = v === 'Autre';
-    if (!autre && !objLibre.hidden) fige();
-    objLibre.hidden = !autre;
-    e1maj();
-    if (autre) setTimeout(function (){ objPrec.focus(); }, 40); else e1avance();
-  });
-  objPrec.addEventListener('input', e1maj);
-  surEntree(objPrec, function (){ if (e1complet()) va(2); });
-  e1suite.addEventListener('click', function (){ if (e1complet()) va(2); });
-
-  /* ecran 2 : les creneaux. Le serveur les donne en UTC, deja tries ; on les
+  /* ecran 3 : les creneaux. Le serveur les donne en UTC, deja tries ; on les
      range par jour de Paris, un bandeau de jours qui defile, la grille des
      heures du jour choisi. S'il ne repond pas, on le dit et on laisse
      reessayer, au lieu d'afficher « aucun creneau » (faux et decourageant). */
@@ -2134,7 +2075,6 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
         jours.querySelectorAll('.lp-rdv-jour').forEach(function (x){
           x.setAttribute('aria-pressed', x.getAttribute('data-j') === k ? 'true' : 'false');
         });
-        fige(); /* un jour avec moins d'heures : la grille retrecit, pas la page */
         dessineHeures(parJour[k]);
         jours.scrollTo({ left: b.offsetLeft - (jours.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
       });
@@ -2155,12 +2095,12 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
       b.type = 'button'; b.className = 'lp-rdv-heure'; b.textContent = fmtHeure.format(d);
       b.setAttribute('data-iso', iso);
       b.setAttribute('aria-pressed', etat.d.debut === iso ? 'true' : 'false');
-      b.addEventListener('click', function (){ etat.d.debut = iso; pris.hidden = true; va(3); });
+      b.addEventListener('click', function (){ etat.d.debut = iso; pris.hidden = true; va(4); });
       heures.appendChild(b);
     });
   }
 
-  /* ecran 3 : les coordonnees. Le numero n'est demande que si l'appel se fait
+  /* ecran 4 : les coordonnees. Le numero n'est demande que si l'appel se fait
      par telephone ; sans Google Agenda cote serveur (meet:false), il n'y a
      que le telephone, deja choisi. */
   var form = $('rdv-form'), erreur = $('rdv-erreur'), confirmer = $('rdv-confirmer');
@@ -2177,7 +2117,6 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
     telChamp.hidden = etat.d.format !== 'telephone';
   }
   surCartes(formats, function (v){
-    if (v !== 'telephone' && !telChamp.hidden) fige();
     telChamp.hidden = v !== 'telephone';
     formats.classList.remove('manque');
     dit('');
@@ -2255,17 +2194,14 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
 
   function envoie(){
     var d = etat.d;
-    /* les cartes gardent leur libelle ; ce que le gerant a tape dans
-       « Precisez » part dans `projet`, la ligne « Precisions » du mail d'Amaury */
-    var precisions = [];
-    if (d.discipline === 'autre' && discPrec.value.trim()) precisions.push('Discipline : ' + discPrec.value.trim());
-    if (d.objectif === 'Autre' && objPrec.value.trim()) precisions.push('Objectif : ' + objPrec.value.trim());
+    /* les trois reponses partent avec leur libelle dans les champs que le
+       serveur connait deja : situation = gerant, discipline = adherents,
+       objectif = abonnement (le mail d'Amaury les nomme ainsi) */
     var corps = {
       debut: d.debut, prenom: d.prenom, nom: d.nom, email: d.email, format: d.format,
       club: d.club, ville: d.ville,
-      discipline: libelle(discCartes), situation: d.situation, objectif: libelle(objCartes)
+      situation: libelle(questions[0]), discipline: libelle(questions[1]), objectif: libelle(questions[2])
     };
-    if (precisions.length) corps.projet = precisions.join('\n');
     /* le numero ne part que s'il sert : celui tape puis cache en revenant a
        Google Meet n'est pas envoye */
     if (d.format === 'telephone' && d.telephone) corps.telephone = d.telephone;
@@ -2288,16 +2224,16 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
       .then(function (x){
         rendu();
         /* le creneau vient d'etre pris : retour aux creneaux, rafraichis, avec le mot */
-        if (x.statut === 409) { etat.creneaux = []; pris.hidden = false; va(2); return; }
+        if (x.statut === 409) { etat.creneaux = []; pris.hidden = false; va(3); return; }
         if (!x.ok) { dit(messageDe(x.statut, x.j)); return; }
         pixel('Lead'); pixel('Schedule');
         etat.resultat = x.j || {};
-        va(4);
+        va(5);
       })
       .catch(function (){ rendu(); dit(T.erreurs.reseau); });
   }
 
-  /* ecran 4 : c'est confirme */
+  /* ecran 5 : c'est confirme */
   function montreSucces(){
     var r = etat.resultat || {}, d = etat.d;
     var debut = new Date(r.debut || d.debut);

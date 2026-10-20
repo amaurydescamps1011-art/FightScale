@@ -3,7 +3,8 @@
    barre du bas suit la lecture au telephone et s'efface sur la carte de
    rendez-vous, et la carte porte le tunnel de prise de rendez-vous, meme
    mecanique que la page « reserver » de GenIA (Amaury, 19/10/2026), qui parle
-   a la fonction Supabase `rdv` en simple fetch. Depuis la refonte sur le
+   a la fonction Supabase `rdv` en simple fetch ; depuis le 20/10/2026, elle
+   s'ouvre en plein ecran par-dessus la page. Depuis la refonte sur le
    modele Squale (19/10/2026), la page porte aussi un peu de mouvement : les
    apparitions au defilement, les liens vers une question de la FAQ et les
    traits du schema « qui fait quoi ». */
@@ -154,11 +155,11 @@
   }
 
   /* ---------- la barre du bas ----------
-     Elle apparait une fois le bouton du heros passe et disparait quand la
-     carte de rendez-vous, ou un autre bouton d'appel, est a l'ecran : jamais
-     deux boutons pareils l'un sur l'autre. */
-  var barre = $('lp-barre'), agir = document.querySelector('.lp-agir'), appel = $('appel');
-  if (barre && agir && appel && 'IntersectionObserver' in window) {
+     Elle apparait une fois le bouton du heros passe et disparait quand un
+     autre bouton d'appel est a l'ecran : jamais deux boutons pareils l'un sur
+     l'autre. */
+  var barre = $('lp-barre'), agir = document.querySelector('.lp-agir');
+  if (barre && agir && 'IntersectionObserver' in window) {
     var passe = false, vus = new Map();
     var maj = function (){
       var surAppel = false;
@@ -169,7 +170,7 @@
       var e = es[es.length - 1];
       passe = !e.isIntersecting && e.boundingClientRect.top < 0; maj();
     }).observe(agir);
-    document.querySelectorAll('.lp-agir-section, #appel').forEach(function (el){
+    document.querySelectorAll('.lp-agir-section').forEach(function (el){
       new IntersectionObserver(function (es){
         vus.set(el, es[es.length - 1].isIntersecting); maj();
       }, { rootMargin: '0px 0px -30% 0px' }).observe(el);
@@ -177,9 +178,10 @@
   }
 
   /* ---------- la prise de rendez-vous ----------
-     Amaury, 19/10/2026 : « exactement comme sur GenIA ». Cinq ecrans (0 a 4) :
-     la discipline, la situation et l'objectif, le creneau, les coordonnees, la
-     confirmation. Les ecrans sont ecrits dans le HTML ; ici on les enchaine,
+     Amaury, 19/10/2026 : « exactement comme sur GenIA » ; 20/10/2026 : en
+     plein ecran, et seulement les questions qui disent si la salle vaut un
+     appel. Six ecrans (0 a 5) : gerant ou non, nombre d'adherents, prix de
+     l'abonnement, le creneau, les coordonnees, la confirmation. Les ecrans sont ecrits dans le HTML ; ici on les enchaine,
      on dessine les jours et les heures, on envoie la reservation. Le serveur
      est la fonction Supabase `rdv` (supabase/functions/rdv, contrat dans son
      LISEZ-MOI), appelee en simple fetch : la page n'a pas besoin du client
@@ -191,7 +193,7 @@
     || 'https://qhbutuhdmyajlgorbhxf.supabase.co/functions/v1/rdv';
   var ENTETES = { 'content-type': 'application/json' };
   if (SB && SB.CLE_PUBLIQUE) ENTETES.apikey = SB.CLE_PUBLIQUE;
-  var TOTAL = 5;
+  var TOTAL = 6;
   /* les textes qui changent en cours de route (plan de textes rdv-textes.json) */
   var T = {
     bouton: 'Confirmer le RDV',
@@ -230,12 +232,12 @@
     hour: '2-digit', minute: '2-digit' });
 
   /* Le pixel Meta : memes evenements que GenIA, chacun une seule fois, et
-     seulement si le pixel est la. 0 BookingStarted · 1 Etape1_Objectif +
-     Etape2_Activite · 2 InitiateCheckout · 3 Etape3_Entreprise +
-     Etape4_Coordonnees · 4 Lead + Schedule. */
+     seulement si le pixel est la. 0 BookingStarted · 1 Etape1_Objectif ·
+     2 Etape2_Activite · 3 InitiateCheckout · 4 Etape3_Entreprise +
+     Etape4_Coordonnees · 5 Lead + Schedule. */
   function pixel(ev, perso){ if (typeof window.fbq === 'function') window.fbq(perso ? 'trackCustom' : 'track', ev); }
   function uneFois(cle, ev, perso){ if (!etat.envoye[cle]) { etat.envoye[cle] = 1; pixel(ev, perso); } }
-  var EVENEMENTS = { 1: ['Etape1_Objectif', 'Etape2_Activite'], 3: ['Etape3_Entreprise', 'Etape4_Coordonnees'] };
+  var EVENEMENTS = { 1: ['Etape1_Objectif'], 2: ['Etape2_Activite'], 4: ['Etape3_Entreprise', 'Etape4_Coordonnees'] };
 
   function montre(n){
     etat.ecran = Math.max(0, Math.min(TOTAL - 1, n));
@@ -243,49 +245,65 @@
     $('rdv-prog').style.width = Math.round(etat.ecran / (TOTAL - 1) * 100) + '%';
     /* une fois confirme, le titre « Reservez votre appel » et son sous-titre
        n'ont plus rien a dire au-dessus de « C'est confirme ! » */
-    rdv.classList.toggle('est-fini', etat.ecran === 4);
+    rdv.classList.toggle('est-fini', etat.ecran === 5);
     (EVENEMENTS[etat.ecran] || []).forEach(function (ev, i){ uneFois('e' + etat.ecran + i, ev, true); });
-    if (etat.ecran === 2) chargeCreneaux();
-    if (etat.ecran === 3) prepareCoordonnees();
-    if (etat.ecran === 4) montreSucces();
+    if (etat.ecran === 3) chargeCreneaux();
+    if (etat.ecran === 4) prepareCoordonnees();
+    if (etat.ecran === 5) montreSucces();
   }
 
-  /* Le widget est le dernier bloc de la page. Quand un ecran haut laisse la
-     place a un ecran court, la page retrecit et le navigateur rabat le
-     defilement d'un coup : tout saute vers le bas. On fige donc la hauteur
-     du widget le temps du changement et du defilement, puis on la relache,
-     mais seulement de ce que la page peut perdre sans bouger ; le reste tient
-     lieu de marge jusqu'au prochain ecran. */
-  /* La hauteur figee se pose sur le conteneur (.lp-carte) qui entoure la carte
-     blanche, pas sur la carte : la marge d'attente reste du vide sous la
-     carte fermee, jamais du blanc a l'interieur (sur « C'est confirme ! »,
-     il n'y a plus d'ecran suivant pour la reprendre). */
-  var cadreRdv = rdv.parentElement, relache = null;
-  function fige(){
-    cadreRdv.style.minHeight = cadreRdv.offsetHeight + 'px';
-    clearTimeout(relache);
-    relache = setTimeout(ajuste, 700);
-  }
-  function ajuste(){
-    var boite = cadreRdv.getBoundingClientRect();
-    var naturel = rdv.getBoundingClientRect().bottom - boite.top;
-    var marge = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
-    var min = Math.max(naturel, boite.height - Math.max(0, marge));
-    cadreRdv.style.minHeight = min > naturel + 1 ? Math.ceil(min) + 'px' : '';
-  }
-  /* comme GenIA, le widget revient en vue a chaque ecran, et la question du
-     nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
-     repart de la, et le defilement n'en depend pas (preventScroll) */
-  function va(n){
-    /* « C'est confirme ! » est le dernier ecran : aucun ecran suivant ne
-       reprendra la marge d'attente, on coupe donc net vers l'etat final (pas
-       de hauteur figee, pas de blanc reserve, pas de defilement anime) */
-    var fin = n >= TOTAL - 1;
-    if (fin) { clearTimeout(relache); cadreRdv.style.minHeight = ''; } else fige();
-    montre(n);
+  /* le plein ecran : chaque lien #appel l'ouvre au lieu de faire defiler la
+     page, la croix ou Echap le ferme et rend le focus au bouton d'origine.
+     Tant qu'il est ouvert, la page dessous ne defile plus (CSS) et Tab tourne
+     dans le plein ecran. Une adresse qui finit par #appel l'ouvre aussi. */
+  var modale = $('appel'), fermer = $('lp-fermer'), avant = null;
+  function focusQuestion(){
     var q = $('rdv-e' + etat.ecran).querySelector('.lp-rdv-q, .lp-rdv-succes-t');
     if (q) { try { q.focus({ preventScroll: true }); } catch (e) { q.focus(); } }
-    rdv.scrollIntoView({ behavior: fin ? 'auto' : 'smooth', block: 'start' });
+  }
+  function ouvre(){
+    if (!modale.hidden) return;
+    avant = document.activeElement;
+    modale.hidden = false;
+    document.documentElement.classList.add('modale-ouverte');
+    modale.scrollTop = 0;
+    focusQuestion();
+  }
+  function ferme(){
+    if (modale.hidden) return;
+    modale.hidden = true;
+    document.documentElement.classList.remove('modale-ouverte');
+    if (location.hash === '#appel' && history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+    if (avant && avant.focus) { try { avant.focus({ preventScroll: true }); } catch (e) {} }
+  }
+  document.addEventListener('click', function (e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href="#appel"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    ouvre();
+  });
+  fermer.addEventListener('click', ferme);
+  document.addEventListener('keydown', function (e){
+    if (modale.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); ferme(); return; }
+    if (e.key !== 'Tab') return;
+    var f = Array.prototype.filter.call(modale.querySelectorAll('button, a[href], input'), function (el){
+      return !el.disabled && el.tabIndex >= 0 && el.offsetParent !== null;
+    });
+    if (!f.length) return;
+    var premier = f[0], dernier = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === premier || !modale.contains(document.activeElement))) { e.preventDefault(); dernier.focus(); }
+    else if (!e.shiftKey && document.activeElement === dernier) { e.preventDefault(); premier.focus(); }
+  });
+  if (location.hash === '#appel') ouvre();
+
+  /* a chaque ecran, on remonte en haut du plein ecran et la question du
+     nouvel ecran prend le focus : le lecteur d'ecran l'annonce, le clavier
+     repart de la */
+  function va(n){
+    montre(n);
+    modale.scrollTop = 0;
+    focusQuestion();
   }
   rdv.querySelectorAll('[data-retour]').forEach(function (b){
     b.addEventListener('click', function (){ va(etat.ecran - 1); });
@@ -315,45 +333,17 @@
     input.addEventListener('keydown', function (e){ if (e.key === 'Enter') { e.preventDefault(); fn(); } });
   }
 
-  /* ecran 0 : la discipline. « Autre » ouvre un champ et un bouton ; les
-     autres reponses passent tout de suite a l'ecran suivant. */
-  var discCartes = rdv.querySelector('#rdv-e0 .lp-rdv-cartes');
-  var discLibre = $('rdv-disc-autre'), discPrec = $('rdv-disc-prec'), e0suite = $('rdv-e0-suite');
-  function e0complet(){ return !!etat.d.discipline && (etat.d.discipline !== 'autre' || discPrec.value.trim().length > 1); }
-  function e0maj(){ e0suite.disabled = !e0complet(); }
-  surCartes(discCartes, function (v){
-    uneFois('debut', 'BookingStarted', true);
-    var autre = v === 'autre';
-    if (!autre && !discLibre.hidden) fige(); /* le champ se ferme : la page ne doit pas sauter */
-    discLibre.hidden = !autre; e0suite.hidden = !autre;
-    if (autre) { e0maj(); setTimeout(function (){ discPrec.focus(); }, 40); }
-    else setTimeout(function (){ va(1); }, 160);
+  /* ecrans 0 a 2 : une question par ecran, un tap choisit et passe au suivant */
+  var questions = ['situation', 'discipline', 'objectif'].map(function (cle, i){
+    var groupe = rdv.querySelector('#rdv-e' + i + ' [data-cle="' + cle + '"]');
+    surCartes(groupe, function (){
+      if (i === 0) uneFois('debut', 'BookingStarted', true);
+      setTimeout(function (){ va(i + 1); }, 160);
+    });
+    return groupe;
   });
-  discPrec.addEventListener('input', e0maj);
-  surEntree(discPrec, function (){ if (e0complet()) va(1); });
-  e0suite.addEventListener('click', function (){ if (e0complet()) va(1); });
 
-  /* ecran 1 : la situation puis l'objectif ; des que les deux sont la, on avance */
-  var sitCartes = rdv.querySelector('#rdv-e1 [data-cle="situation"]'), objCartes = rdv.querySelector('#rdv-e1 [data-cle="objectif"]');
-  var objLibre = $('rdv-obj-autre'), objPrec = $('rdv-obj-prec'), e1suite = $('rdv-e1-suite');
-  function e1complet(){
-    return !!etat.d.situation && !!etat.d.objectif && (etat.d.objectif !== 'Autre' || objPrec.value.trim().length > 1);
-  }
-  function e1maj(){ e1suite.disabled = !e1complet(); }
-  function e1avance(){ if (e1complet()) setTimeout(function (){ va(2); }, 180); }
-  surCartes(sitCartes, function (){ e1maj(); e1avance(); });
-  surCartes(objCartes, function (v){
-    var autre = v === 'Autre';
-    if (!autre && !objLibre.hidden) fige();
-    objLibre.hidden = !autre;
-    e1maj();
-    if (autre) setTimeout(function (){ objPrec.focus(); }, 40); else e1avance();
-  });
-  objPrec.addEventListener('input', e1maj);
-  surEntree(objPrec, function (){ if (e1complet()) va(2); });
-  e1suite.addEventListener('click', function (){ if (e1complet()) va(2); });
-
-  /* ecran 2 : les creneaux. Le serveur les donne en UTC, deja tries ; on les
+  /* ecran 3 : les creneaux. Le serveur les donne en UTC, deja tries ; on les
      range par jour de Paris, un bandeau de jours qui defile, la grille des
      heures du jour choisi. S'il ne repond pas, on le dit et on laisse
      reessayer, au lieu d'afficher « aucun creneau » (faux et decourageant). */
@@ -413,7 +403,6 @@
         jours.querySelectorAll('.lp-rdv-jour').forEach(function (x){
           x.setAttribute('aria-pressed', x.getAttribute('data-j') === k ? 'true' : 'false');
         });
-        fige(); /* un jour avec moins d'heures : la grille retrecit, pas la page */
         dessineHeures(parJour[k]);
         jours.scrollTo({ left: b.offsetLeft - (jours.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
       });
@@ -434,12 +423,12 @@
       b.type = 'button'; b.className = 'lp-rdv-heure'; b.textContent = fmtHeure.format(d);
       b.setAttribute('data-iso', iso);
       b.setAttribute('aria-pressed', etat.d.debut === iso ? 'true' : 'false');
-      b.addEventListener('click', function (){ etat.d.debut = iso; pris.hidden = true; va(3); });
+      b.addEventListener('click', function (){ etat.d.debut = iso; pris.hidden = true; va(4); });
       heures.appendChild(b);
     });
   }
 
-  /* ecran 3 : les coordonnees. Le numero n'est demande que si l'appel se fait
+  /* ecran 4 : les coordonnees. Le numero n'est demande que si l'appel se fait
      par telephone ; sans Google Agenda cote serveur (meet:false), il n'y a
      que le telephone, deja choisi. */
   var form = $('rdv-form'), erreur = $('rdv-erreur'), confirmer = $('rdv-confirmer');
@@ -456,7 +445,6 @@
     telChamp.hidden = etat.d.format !== 'telephone';
   }
   surCartes(formats, function (v){
-    if (v !== 'telephone' && !telChamp.hidden) fige();
     telChamp.hidden = v !== 'telephone';
     formats.classList.remove('manque');
     dit('');
@@ -534,17 +522,14 @@
 
   function envoie(){
     var d = etat.d;
-    /* les cartes gardent leur libelle ; ce que le gerant a tape dans
-       « Precisez » part dans `projet`, la ligne « Precisions » du mail d'Amaury */
-    var precisions = [];
-    if (d.discipline === 'autre' && discPrec.value.trim()) precisions.push('Discipline : ' + discPrec.value.trim());
-    if (d.objectif === 'Autre' && objPrec.value.trim()) precisions.push('Objectif : ' + objPrec.value.trim());
+    /* les trois reponses partent avec leur libelle dans les champs que le
+       serveur connait deja : situation = gerant, discipline = adherents,
+       objectif = abonnement (le mail d'Amaury les nomme ainsi) */
     var corps = {
       debut: d.debut, prenom: d.prenom, nom: d.nom, email: d.email, format: d.format,
       club: d.club, ville: d.ville,
-      discipline: libelle(discCartes), situation: d.situation, objectif: libelle(objCartes)
+      situation: libelle(questions[0]), discipline: libelle(questions[1]), objectif: libelle(questions[2])
     };
-    if (precisions.length) corps.projet = precisions.join('\n');
     /* le numero ne part que s'il sert : celui tape puis cache en revenant a
        Google Meet n'est pas envoye */
     if (d.format === 'telephone' && d.telephone) corps.telephone = d.telephone;
@@ -567,16 +552,16 @@
       .then(function (x){
         rendu();
         /* le creneau vient d'etre pris : retour aux creneaux, rafraichis, avec le mot */
-        if (x.statut === 409) { etat.creneaux = []; pris.hidden = false; va(2); return; }
+        if (x.statut === 409) { etat.creneaux = []; pris.hidden = false; va(3); return; }
         if (!x.ok) { dit(messageDe(x.statut, x.j)); return; }
         pixel('Lead'); pixel('Schedule');
         etat.resultat = x.j || {};
-        va(4);
+        va(5);
       })
       .catch(function (){ rendu(); dit(T.erreurs.reseau); });
   }
 
-  /* ecran 4 : c'est confirme */
+  /* ecran 5 : c'est confirme */
   function montreSucces(){
     var r = etat.resultat || {}, d = etat.d;
     var debut = new Date(r.debut || d.debut);
