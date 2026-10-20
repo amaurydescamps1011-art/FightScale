@@ -4,31 +4,15 @@
    rendez-vous, et la carte porte le tunnel de prise de rendez-vous, meme
    mecanique que la page « reserver » de GenIA (Amaury, 19/10/2026), qui parle
    a la fonction Supabase `rdv` en simple fetch. Depuis la refonte sur le
-   modele Squale (19/10/2026), la page porte aussi un peu de mouvement : la
-   variante du heros, les apparitions au defilement, les liens vers une
-   question de la FAQ et les traits du schema « qui fait quoi ». */
+   modele Squale (19/10/2026), la page porte aussi un peu de mouvement : les
+   apparitions au defilement, les liens vers une question de la FAQ et les
+   traits du schema « qui fait quoi ». */
 (function (){
   var SB = window.MCC || null;
   var $ = function (id){ return document.getElementById(id); };
   var calme = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   /* la CSS ne cache les blocs a faire apparaitre que si le script tourne */
   document.documentElement.classList.add('js');
-
-  /* ---------- la variante du heros ----------
-     Deux titres (brief du 19/10/2026) : A avec un chiffre d'exemple a
-     confirmer, B sans chiffre. La page sert A ; ?heros=B remplace le titre et
-     le sous-titre par ceux du gabarit <template>. */
-  var heros = $('lp-heros'), gabaritB = $('lp-heros-B');
-  if (heros && gabaritB && gabaritB.content) {
-    var variante = (new URLSearchParams(location.search).get('heros') || 'A').toUpperCase();
-    if (variante === 'B') {
-      var h1 = heros.querySelector('.lp-h1'), chapo = heros.querySelector('.lp-chapo');
-      var h1B = gabaritB.content.querySelector('.lp-h1'), chapoB = gabaritB.content.querySelector('.lp-chapo');
-      if (h1 && h1B) h1.innerHTML = h1B.innerHTML;
-      if (chapo && chapoB) chapo.textContent = chapoB.textContent;
-      heros.setAttribute('data-variante', 'B');
-    }
-  }
 
   /* ---------- les apparitions au defilement ----------
      Comme chez Squale : un bloc .reveal glisse en place quand il arrive a
