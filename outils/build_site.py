@@ -103,8 +103,10 @@ for nom, (servi, titre, descr) in DESCR.items():
 DEPOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
 # Le logo de Gota (Amaury, 08/10/2026), la photo des telephones dessines du heros
-# (19/10/2026) et la VSL de la page agence.
-AGENCE = ['photos/gota-logo.webp', 'photos/agence-heros.webp', 'video/vsl-agence.mp4', 'video/vsl-agence-affiche.webp']
+# (19/10/2026), la VSL de la page agence et les bulles de gerants a cote de
+# « +25 salles » (portraits Soul 2.0 voulus par Amaury, 20/10/2026).
+AGENCE = ['photos/gerant-%s.webp' % n for n in ('boxe', 'mma', 'muaythai', 'jjb', 'kick')]
+AGENCE += ['photos/gota-logo.webp', 'photos/agence-heros.webp', 'video/vsl-agence.mp4', 'video/vsl-agence-affiche.webp']
 for rel in AGENCE:
     dest = os.path.join(SORTIE, rel)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
