@@ -169,7 +169,6 @@
         </div>
         <span class="lp-pastille-sep" aria-hidden="true"></span>
         <div class="lp-pastille-item">
-          <span class="lp-pastille-poing" aria-hidden="true">%%I_POING%%</span>
           <p class="lp-pastille-ligne"><strong class="lp-pastille-gros">+25</strong>salles accompagnées</p>
         </div>
       </div>
@@ -196,44 +195,36 @@
     </div>
   </section>
 
-  <!-- le tunnel de vente : cinq etages qui se resserrent, de la pub jusqu'a la
-       porte de la salle, puis ce qui est compris (Amaury, 20/10/2026 : « comme un
-       schema de tunnel de vente », pas le schema de Squale) -->
+  <!-- le tunnel de vente : un entonnoir centre de cinq boudins, le texte dedans,
+       des points (les prospects) qui le traversent et s'eclaircissent a chaque
+       etage, dessines par _landing.js sur le canevas (Amaury, 20/10/2026) -->
   <section class="lp-toit" aria-labelledby="lp-toit-t">
     <div class="lp-wrap">
       <h2 class="lp-h2 reveal" id="lp-toit-t">Nous nous occupons de tout, <em>de la pub jusqu’à votre porte.</em></h2>
-      <div class="lp-tunnel-zone reveal">
-        <ol class="lp-tunnel">
-          <li class="lp-etage" style="--i:0">
-            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico">%%I_MEGAPHONE%%</span></span>
-            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 1</p><h3>Campagne publicitaire</h3><p>Des pubs Facebook et Instagram, avec plusieurs créations testées, montrées aux gens qui habitent autour de votre salle.</p></div>
+      <div class="lp-entonnoir reveal" id="lp-entonnoir">
+        <canvas class="lp-entonnoir-flux" aria-hidden="true"></canvas>
+        <ol class="lp-boudins">
+          <li class="lp-boudin" style="--i:0">
+            <span class="lp-boudin-ico" aria-hidden="true">%%I_MEGAPHONE%%</span>
+            <span class="lp-boudin-txt"><b>Campagne publicitaire</b><span>Des pubs pleines de créas, autour de votre salle</span></span>
           </li>
-          <li class="lp-etage" style="--i:1">
-            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico">%%I_PAGE%%</span></span>
-            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 2</p><h3>Page dédiée</h3><p>Une page à votre nom, avec vos cours et vos horaires, pensée pour donner envie de réserver.</p></div>
+          <li class="lp-boudin" style="--i:1">
+            <span class="lp-boudin-ico" aria-hidden="true">%%I_PAGE%%</span>
+            <span class="lp-boudin-txt"><b>Page dédiée</b><span>À votre nom, pensée pour réserver</span></span>
           </li>
-          <li class="lp-etage" style="--i:2">
-            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico">%%I_FORMULAIRE%%</span></span>
-            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 3</p><h3>Formulaire de réservation</h3><p>La personne choisit un cours précis, un jour et une heure, et laisse son nom et son e-mail.</p></div>
+          <li class="lp-boudin" style="--i:2">
+            <span class="lp-boudin-ico" aria-hidden="true">%%I_FORMULAIRE%%</span>
+            <span class="lp-boudin-txt"><b>Formulaire</b><span>Un cours précis, un jour, une heure</span></span>
           </li>
-          <li class="lp-etage" style="--i:3">
-            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico">%%I_MAILCHECK%%</span></span>
-            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 4</p><h3>E-mails de rappel</h3><p>Elle reçoit nos rappels jusqu’à 1&nbsp;h avant sa séance.</p></div>
+          <li class="lp-boudin" style="--i:3">
+            <span class="lp-boudin-ico" aria-hidden="true">%%I_MAILCHECK%%</span>
+            <span class="lp-boudin-txt"><b>E-mails de rappel</b><span>Jusqu’à 1&nbsp;h avant la séance</span></span>
           </li>
-          <li class="lp-etage" style="--i:4">
-            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico">%%I_PORTE%%</span></span>
-            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 5</p><h3>Dans votre salle</h3><p>Elle pousse la porte de votre salle. À vous de la faire signer.</p></div>
+          <li class="lp-boudin" style="--i:4">
+            <span class="lp-boudin-ico" aria-hidden="true">%%I_PORTE%%</span>
+            <span class="lp-boudin-txt"><b>Votre salle</b><span>Ils poussent votre porte</span></span>
           </li>
         </ol>
-        <div class="lp-inclus">
-          <p class="lp-schema-cap">Inclus</p>
-          <ul class="lp-inclus-liste">
-          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_CIBLE%%</span>La gestion des campagnes publicitaires</li>
-          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_IMAGE%%</span>Les créations publicitaires</li>
-          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_PAGE%%</span>La page de réservation</li>
-          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true">%%I_MAILS%%</span>Les séquences e-mail</li>
-          </ul>
-        </div>
       </div>
       <div class="lp-cta lp-agir-section reveal"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Commencer</a></div>
     </div>
@@ -253,6 +244,13 @@
             <div><p class="lp-recit-nom">Gota</p><p class="lp-recit-etiq">Adhérents ×2 en 1 mois</p></div>
           </div>
           <p class="lp-recit-corps">La pub a tourné autour de la salle. Les gens ont réservé leur séance d’essai, nos rappels les ont fait venir, le coach les a fait signer. <b>En un mois, la salle a doublé son nombre d’adhérents.</b></p>
+        </article>
+        <article class="lp-recit reveal">
+          <div class="lp-recit-tete">
+            <span class="lp-recit-logo lp-recit-chiffre" aria-hidden="true">×8</span>
+            <div><p class="lp-recit-nom">Nos clients</p><p class="lp-recit-etiq">ROI moyen 8 pour 1</p></div>
+          </div>
+          <p class="lp-recit-corps">Plus de 25 salles accompagnées, plus de 15&nbsp;000 réservations. <b>Pour 1&nbsp;€ dépensé, nos salles récupèrent en moyenne 8&nbsp;€ d’adhésions.</b></p>
         </article>
       </div>
       <div class="lp-recits-pied reveal">
