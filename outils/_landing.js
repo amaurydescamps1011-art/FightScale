@@ -119,8 +119,8 @@
      Elle part seule, en muet et en boucle (Amaury, 09/10/2026), mais pas
      avant d'etre a l'ecran : elle pese 8 Mo et le HTML ne precharge que ses
      metadonnees, c'est l'approche (40 % visible) qui la lance, et elle se met
-     en pause hors ecran. Le bouton « Activer le son » la remet a zero, coupe
-     la boucle et rend les commandes. Si le navigateur refuse la lecture
+     en pause hors ecran. Le bouton « Touchez pour le son » la remet a zero
+     avec le son, sans commandes : elle continue de tourner. Si le navigateur refuse la lecture
      automatique (economie de donnees, reduction des animations), le bouton
      devient « Regarder la video » et fait la meme chose. */
   var cadreVideo = $('lp-video'), video = $('lp-vsl'), lecture = $('lp-lecture');
@@ -137,16 +137,16 @@
     else if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es){
         var e = es[es.length - 1];
-        if (cadreVideo.classList.contains('joue')) { if (!e.isIntersecting) video.pause(); return; }
+        if (cadreVideo.classList.contains('joue')) { if (e.isIntersecting) lance(); else video.pause(); return; }
         if (cadreVideo.classList.contains('bloque')) return;
         if (e.isIntersecting) lance(); else video.pause();
       }, { threshold: 0.4 }).observe(cadreVideo);
     } else lance();
+    /* comme chez Squale (Amaury, 20/10/2026) : on touche pour le son, la
+       video repart du debut et tourne, sans commandes ni pause */
     lecture.addEventListener('click', function (){
       cadreVideo.classList.add('joue');
-      video.loop = false;
       video.muted = false;
-      video.controls = true;
       try { video.currentTime = 0; } catch (e) {}
       var p = video.play();
       if (p && p.catch) p.catch(function (){});
