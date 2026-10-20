@@ -6,13 +6,14 @@ l'enveloppe html/head/body et les balises de referencement, qui n'ont pas de
 sens dans une maquette. Le reste est repris tel quel, pour que ce qu'Amaury
 regarde soit exactement ce que Vercel sert.
 """
-import os, re, shutil
+import os, re, shutil, sys
 
 # Le dossier bati, a cote de ce script. Il etait ecrit en dur vers l'ancien
 # repertoire de travail : apres le deplacement du depot, la maquette a
 # continue de se republier depuis une copie figee, sans rien signaler.
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')
-DST = '/tmp/claude-0/-home-claude-fightscale/fe1486f2-8126-5a24-9c89-ca3cc04a2b8e/scratchpad/artifact'
+# Dossier de sortie : MCC_APERCU, sinon le scratchpad de la session.
+DST = os.environ.get('MCC_APERCU') or sys.argv[1]
 SAUF = {'robots.txt', 'vercel.json', 'README.md'}
 
 def fragment(page, nom):
@@ -21,7 +22,7 @@ def fragment(page, nom):
     # UTF-8 casse les accents, et avec eux la regex de normalisation des slugs
     page = '<meta charset="utf-8">\n' + page[i:]
     if nom == 'index.html':          # le nom de la page publiee, court
-        page = re.sub(r'<title>[^<]*</title>', '<title>Accueil Mon Club Combat</title>',
+        page = re.sub(r'<title>[^<]*</title>', '<title>Aperçu Mon Club Combat</title>',
                       page, count=1)
     page = page.replace('</head>\n<body>\n', '', 1).replace('</head>\n<body>', '', 1)
     page = page.replace('</head>', '', 1)
@@ -46,8 +47,10 @@ for nom in sorted(os.listdir(SRC)):
         shutil.copy2(s, os.path.join(DST, nom))
     n += 1
 print(n, 'fichiers')
-for nom in ('index.html', 'espace-club.html', 'admin.html'):
+for nom in ('index.html', 'conditions.html', 'confidentialite.html'):
     p = os.path.join(DST, nom)
+    if not os.path.exists(p):
+        continue
     t = open(p, encoding='utf-8').read()
     assert '<!doctype' not in t and '</html>' not in t, nom
     print(' ', nom, len(t), '|', t.split('\n')[0][:60])
