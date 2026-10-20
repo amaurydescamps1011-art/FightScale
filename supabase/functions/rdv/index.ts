@@ -114,11 +114,25 @@ const base: Base = {
 
 // ------------------------------------------------------------ Resend
 
+/* La cle Resend vient du secret RESEND_API_KEY s'il est pose, sinon du coffre
+   (Vault, nom rdv_resend_cle) par rdv_resend_cle(), ouverte a la seule cle
+   service (db/012_rdv_resend_cle.sql). Lue au premier envoi, pas au demarrage :
+   une cle rangee apres coup sert sans redeployer. */
+let cleResend = lit('RESEND_API_KEY');
+async function cleDeResend(): Promise<string> {
+  if (!cleResend) {
+    const r = await sb.rpc('rdv_resend_cle');
+    if (!r.error && typeof r.data === 'string' && r.data.trim()) cleResend = r.data.trim();
+  }
+  if (!cleResend) throw new Error('cle Resend absente (RESEND_API_KEY ou coffre rdv_resend_cle)');
+  return cleResend;
+}
+
 const mail: Courrier = {
   async envoie(c: Courriel) {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + exige('RESEND_API_KEY'), 'Content-Type': 'application/json' },
+      headers: { 'Authorization': 'Bearer ' + await cleDeResend(), 'Content-Type': 'application/json' },
       body: JSON.stringify(corpsResend(c)),
     });
     if (!r.ok) throw new Error('resend ' + r.status);
