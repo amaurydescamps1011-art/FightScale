@@ -719,45 +719,47 @@
       70%,100%{box-shadow:0 0 0 16px rgba(236,22,46,0), 0 14px 32px -6px rgba(236,22,46,.5)}}
   }
 
-  /* ---------- qui fait quoi : le schema ---------- */
+  /* ---------- le tunnel de vente ----------
+     Cinq etages en trapeze, chacun aussi large en haut que le bas du
+     precedent, pour dessiner un entonnoir ; le dernier, la salle, en encre. */
   .lp-toit{padding:0 0 140px}
-  .lp-schema{position:relative; max-width:1100px; margin:0 auto; padding:40px 0 14px; display:grid; grid-template-columns:1fr auto 1fr;
-    gap:0 60px; align-items:center}
-  .lp-schema-traits{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible}
-  .lp-trait-base{fill:none; stroke:rgba(236,22,46,.35); stroke-width:1.6}
-  .lp-trait-flux{fill:none; stroke:#EF3340; stroke-width:2; stroke-linecap:round; stroke-dasharray:3 10; opacity:.9; animation:lp-flux 1.1s linear infinite}
-  @keyframes lp-flux{to{stroke-dashoffset:-13}}
-  .lp-trait-point{fill:var(--sq-core); filter:drop-shadow(0 0 4px rgba(236,22,46,.7))}
-  .lp-schema-col{position:relative; z-index:1; display:flex; flex-direction:column; gap:40px}
-  .lp-schema-gauche{align-items:flex-start} .lp-schema-droite{align-items:flex-end}
-  .lp-schema-cap{align-self:center; margin:0 0 -26px; font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase}
+  .lp-tunnel-zone{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:56px; align-items:center; max-width:1040px; margin:48px auto 0}
+  .lp-tunnel{--larg:260px; --pas:22px; --haut:92px; list-style:none; margin:0; padding:0; display:grid; gap:6px 34px;
+    grid-template-columns:var(--larg) minmax(0,1fr)}
+  .lp-etage{display:contents}
+  .lp-etage-forme{justify-self:center; align-self:stretch; display:grid; place-items:center; min-height:var(--haut);
+    width:calc(var(--larg) - var(--i) * 2 * var(--pas));
+    clip-path:polygon(0 0, 100% 0, calc(100% - var(--pas)) 100%, var(--pas) 100%);
+    background:linear-gradient(180deg, #FF5A69, var(--sq-core) 70%, var(--sq-700)); color:#fff;
+    filter:drop-shadow(0 14px 18px rgba(236,22,46,.22))}
+  .lp-etage:last-child .lp-etage-forme{background:linear-gradient(180deg, #34322A, var(--sq-ink))}
+  .lp-etage-ico{display:grid; place-items:center}
+  .lp-etage-ico svg{width:24px; height:24px; stroke-width:1.9}
+  .lp-etage-txt{align-self:center; min-width:0; padding-block:10px}
+  .lp-etage-num{margin:0 0 4px; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--sq-core)}
+  .lp-etage-txt h3{margin:0 0 4px; font-size:19px; font-weight:800; letter-spacing:-.01em; line-height:1.2}
+  .lp-etage-txt p:last-child{margin:0; font-size:14.5px; line-height:1.55; color:var(--sq-muted); text-wrap:pretty}
+  .lp-inclus{padding:30px 26px 28px; border-radius:var(--sq-r-lg); background:var(--sq-carte-2); border:1px solid var(--sq-bord);
+    box-shadow:var(--sq-ombre-recit)}
+  .lp-inclus .lp-schema-cap{margin:0 0 18px; font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; text-align:center}
+  .lp-inclus-liste{list-style:none; margin:0; padding:0; display:grid; gap:12px}
+  .lp-inclus .lp-pilule{display:flex}
   .lp-pilule{display:inline-flex; align-items:center; gap:12px; padding:7px 26px 7px 7px; border-radius:999px; background:#fff;
     font-size:12.5px; font-weight:700; letter-spacing:.075em; line-height:1.25; text-transform:uppercase; color:var(--sq-ink);
     box-shadow:var(--sq-ombre-pilule); transition:transform .3s var(--sq-ease)}
   .lp-pilule:hover{transform:translateY(-2px)}
-  .lp-schema-droite .lp-pilule{flex-direction:row-reverse; padding:7px 7px 7px 26px; text-align:right}
   .lp-pilule-ico{display:grid; place-items:center; flex:none; width:38px; height:38px; border-radius:50%; color:#fff; background:var(--sq-grad-icon);
     box-shadow:0 8px 18px -8px rgba(236,22,46,.9), inset 0 1px 0 rgba(255,255,255,.42)}
   .lp-pilule-ico svg{width:19px; height:19px; stroke-width:1.9}
-  .lp-schema-hub{position:relative; z-index:1; width:224px; height:224px; display:grid; place-items:center}
-  .lp-schema-hub::before{content:""; position:absolute; inset:-30%; border-radius:50%; pointer-events:none;
-    background:radial-gradient(circle, rgba(236,22,46,.18), transparent 62%); animation:lp-respire 5s ease-in-out infinite alternate}
-  @keyframes lp-respire{from{opacity:.55; transform:scale(.94)} to{opacity:1; transform:scale(1.06)}}
-  .lp-hub-anneau{position:absolute; inset:0; border-radius:50%; border:1.5px dashed rgba(200,30,50,.22); animation:lp-tourne 60s linear infinite}
-  .lp-hub-anneau-2{inset:28px; border-color:rgba(236,22,46,.40); animation-duration:44s; animation-direction:reverse}
-  .lp-hub-pouls{position:absolute; inset:28%; border-radius:50%; border:1.5px solid rgba(236,22,46,.55); animation:lp-pouls-hub 3.8s ease-out infinite}
-  @keyframes lp-pouls-hub{from{transform:scale(1); opacity:.7} to{transform:scale(2.3); opacity:0}}
-  .lp-hub-badge{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; width:118px; height:118px;
-    border-radius:28px; background:radial-gradient(circle at 32% 22%, var(--sq-light), var(--sq-core) 72%);
-    box-shadow:0 24px 54px -18px rgba(236,22,46,.8), inset 0 1px 0 rgba(255,255,255,.4)}
-  .lp-hub-badge svg{width:44px; height:42px; display:block}
-  .lp-hub-nom{font-size:8px; font-weight:800; letter-spacing:.11em; text-indent:.11em; text-transform:uppercase; color:#fff; white-space:nowrap}
   .lp-toit .lp-plus{margin-top:22px}
   .lp-toit .lp-cta{display:block; width:max-content; margin:30px auto 0}
 
   /* ---------- nos resultats ---------- */
   .lp-resultats{padding:0 0 140px}
-  .lp-recits{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; max-width:860px; margin:0 auto}
+  .lp-recits{display:grid; grid-template-columns:minmax(0,1fr); gap:18px; max-width:640px; margin:0 auto}
+  .lp-recit-tete{display:flex; align-items:center; gap:16px; margin:0 0 20px}
+  .lp-recit-logo{width:64px; height:64px; object-fit:contain; flex:none; padding:9px; border-radius:16px; background:var(--sq-ink); box-sizing:border-box}
+  .lp-recit-tete .lp-recit-nom{margin:0; font-size:17px}
   .lp-recit{display:flex; flex-direction:column; padding:34px 30px 30px; background:var(--sq-carte-2); border:1px solid var(--sq-bord);
     border-radius:var(--sq-r-lg); box-shadow:var(--sq-ombre-recit); transition:border-color .3s var(--sq-ease), transform .3s var(--sq-ease)}
   .lp-recit:hover{border-color:rgba(236,22,46,.45); transform:translateY(-4px)}
@@ -998,8 +1000,8 @@
   /* ---------- mouvement ---------- */
   @media (prefers-reduced-motion:reduce){
     .js .reveal{opacity:1; transform:none; transition:none}
-    .lp-rai, .lp-clips-grid::before, .lp-tel, .lp-tel-anneau::before, .lp-schema-hub::before, .lp-hub-anneau, .lp-hub-pouls,
-    .lp-trait-flux{animation:none}
+    .lp-rai, .lp-clips-grid::before, .lp-tel, .lp-tel-anneau::before,
+    .lp-pilule{transition:none}
   }
 
   /* ---------- ecrans moyens ---------- */
@@ -1009,9 +1011,9 @@
     .lp-arg{padding:30px 22px 28px}
     .lp-arg-num{font-size:52px; top:18px; right:20px}
     .lp-arg h3{font-size:22px}
-    .lp-schema{gap:0 30px}
     .lp-pilule{font-size:11px; padding:6px 18px 6px 6px}
-    .lp-schema-droite .lp-pilule{padding:6px 6px 6px 18px}
+    .lp-tunnel-zone{grid-template-columns:1fr; max-width:640px; gap:40px}
+    .lp-tunnel{--larg:200px; --pas:17px; --haut:82px}
   }
   @media (max-width:900px){
     .lp-args{grid-template-columns:1fr; border-radius:22px}
@@ -1024,13 +1026,6 @@
     .lp-arg-ico{flex:none; width:54px; height:54px; border-radius:16px}
     .lp-arg-ico svg{width:25px; height:25px}
     .lp-arg h3{margin:0; font-size:21px}
-    .lp-schema-hub{width:176px; height:176px}
-    .lp-hub-anneau-2{inset:22px}
-    .lp-hub-badge{width:92px; height:92px; border-radius:24px; gap:5px}
-    .lp-hub-badge svg{width:34px; height:32px}
-    .lp-hub-nom{font-size:7px}
-    .lp-schema-col{gap:30px}
-    .lp-schema-cap{margin-bottom:-16px}
     .lp-pied-cols{grid-template-columns:1fr 1fr; gap:36px}
     .lp-pied-marque{grid-column:1 / -1}
   }
@@ -1102,21 +1097,17 @@
     .lp-lecture-rond svg{width:20px; height:20px}
     .lp-lecture-mot{font-size:15px}
     .lp-video:not(.bloque) .lp-lecture{padding:10px}
-    /* le schema : trois colonnes serrees, les pilules a la verticale */
+    /* le tunnel : la forme se resserre a 112 px de large, le texte a cote */
     .lp-toit{padding-bottom:64px}
-    .lp-schema{gap:0 8px; padding:34px 0 8px; align-items:start}
-    .lp-schema-hub{align-self:center}
-    .lp-schema-col{gap:30px}
-    .lp-schema-cap{position:static; margin:0 0 -14px; font-size:8.5px; letter-spacing:.12em; text-align:center}
-    .lp-pilule, .lp-schema-droite .lp-pilule{flex-direction:column; width:100%; padding:10px 5px 9px; border-radius:16px; gap:7px;
-      font-size:9.5px; letter-spacing:.05em; text-align:center; line-height:1.25; min-height:96px; justify-content:flex-start}
+    .lp-tunnel-zone{margin-top:30px; gap:30px}
+    .lp-tunnel{--larg:108px; --pas:9px; --haut:74px; gap:6px 14px}
+    .lp-etage-ico svg{width:19px; height:19px}
+    .lp-etage-txt h3{font-size:16.5px}
+    .lp-etage-txt p:last-child{font-size:13.5px; line-height:1.5}
+    .lp-inclus{padding:22px 18px 20px}
+    .lp-pilule{font-size:10.5px; letter-spacing:.06em; padding:6px 14px 6px 6px; gap:10px}
     .lp-pilule-ico{width:32px; height:32px}
     .lp-pilule-ico svg{width:16px; height:16px}
-    .lp-schema-hub{width:118px; height:118px}
-    .lp-hub-anneau-2{inset:16px}
-    .lp-hub-badge{width:64px; height:64px; border-radius:18px; gap:0}
-    .lp-hub-badge svg{width:30px; height:28px}
-    .lp-hub-nom{display:none}
     .lp-toit .lp-plus{margin-top:14px}
     .lp-toit .lp-cta{margin-top:22px}
     /* les resultats */
@@ -1372,29 +1363,38 @@
 
     <section class="lp-toit" aria-labelledby="lp-toit-t">
     <div class="lp-wrap">
-      <h2 class="lp-h2 reveal" id="lp-toit-t">Nous nous occupons de tout, <em>de la pub à la séance d’essai.</em></h2>
-      <div class="lp-schema reveal" id="lp-schema">
-        <svg class="lp-schema-traits" aria-hidden="true" focusable="false"></svg>
-        <div class="lp-schema-col lp-schema-gauche">
-          <p class="lp-schema-cap">Les 4 étapes</p>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg></span>Une pub ciblée autour de votre salle</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg></span>Une page pensée pour réserver</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="m9 15 2 2 4-4"/></svg></span>Une séance d’essai réservée</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg></span>Des rappels jusqu’à 1&nbsp;h avant</span>
-        </div>
-        <div class="lp-schema-hub" aria-hidden="true">
-          <span class="lp-hub-anneau"></span><span class="lp-hub-anneau lp-hub-anneau-2"></span><span class="lp-hub-pouls"></span>
-          <span class="lp-hub-badge">
-            <svg viewBox="212 589 389 369" width="46" height="44"><use href="#mcc-mono-m" fill="#fff"/><use href="#mcc-mono-c" fill="#fff"/></svg>
-            <span class="lp-hub-nom">Mon Club Combat</span>
-          </span>
-        </div>
-        <div class="lp-schema-col lp-schema-droite">
+      <h2 class="lp-h2 reveal" id="lp-toit-t">Nous nous occupons de tout, <em>de la pub jusqu’à votre porte.</em></h2>
+      <div class="lp-tunnel-zone reveal">
+        <ol class="lp-tunnel">
+          <li class="lp-etage" style="--i:0">
+            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg></span></span>
+            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 1</p><h3>Campagne publicitaire</h3><p>Des pubs Facebook et Instagram, avec plusieurs créations testées, montrées aux gens qui habitent autour de votre salle.</p></div>
+          </li>
+          <li class="lp-etage" style="--i:1">
+            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg></span></span>
+            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 2</p><h3>Page dédiée</h3><p>Une page à votre nom, avec vos cours et vos horaires, pensée pour donner envie de réserver.</p></div>
+          </li>
+          <li class="lp-etage" style="--i:2">
+            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span></span>
+            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 3</p><h3>Formulaire de réservation</h3><p>La personne choisit un cours précis, un jour et une heure, et laisse son nom et son e-mail.</p></div>
+          </li>
+          <li class="lp-etage" style="--i:3">
+            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg></span></span>
+            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 4</p><h3>E-mails de rappel</h3><p>Elle reçoit nos rappels jusqu’à 1&nbsp;h avant sa séance.</p></div>
+          </li>
+          <li class="lp-etage" style="--i:4">
+            <span class="lp-etage-forme" aria-hidden="true"><span class="lp-etage-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/></svg></span></span>
+            <div class="lp-etage-txt"><p class="lp-etage-num">Étape 5</p><h3>Dans votre salle</h3><p>Elle pousse la porte de votre salle. À vous de la faire signer.</p></div>
+          </li>
+        </ol>
+        <div class="lp-inclus">
           <p class="lp-schema-cap">Inclus</p>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg></span>La page de réservation</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Les campagnes publicitaires</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span>Les créations publicitaires</span>
-          <span class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2"/><rect width="16" height="12" x="6" y="3" rx="2"/><path d="m22 5-7.17 4.3a2 2 0 0 1-1.66 0L6 5"/></svg></span>Les séquences e-mail</span>
+          <ul class="lp-inclus-liste">
+          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>La gestion des campagnes publicitaires</li>
+          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span>Les créations publicitaires</li>
+          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg></span>La page de réservation</li>
+          <li class="lp-pilule"><span class="lp-pilule-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2"/><rect width="16" height="12" x="6" y="3" rx="2"/><path d="m22 5-7.17 4.3a2 2 0 0 1-1.66 0L6 5"/></svg></span>Les séquences e-mail</li>
+          </ul>
         </div>
       </div>
       <div class="lp-cta lp-agir-section reveal"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Commencer</a></div>
@@ -1407,9 +1407,11 @@
       <h2 class="lp-h2 lp-h2-sm reveal" id="lp-resultats-t">Nos résultats</h2>
       <div class="lp-recits">
         <article class="lp-recit reveal">
+          <div class="lp-recit-tete">
+            <img class="lp-recit-logo" src="photos/gota-logo.webp" width="227" height="240" alt="Logo de Gota">
+            <div><p class="lp-recit-nom">Gota</p><p class="lp-recit-etiq">Adhérents ×2 en 1 mois</p></div>
+          </div>
           <p class="lp-recit-corps">La pub a tourné autour de la salle. Les gens ont réservé leur séance d’essai, nos rappels les ont fait venir, le coach les a fait signer. <b>En un mois, la salle a doublé son nombre d’adhérents.</b></p>
-          <p class="lp-recit-nom">Gota</p>
-          <p class="lp-recit-etiq">Adhérents ×2 en 1 mois</p>
         </article>
       </div>
       <div class="lp-recits-pied reveal">
@@ -1421,9 +1423,9 @@
     <section class="lp-garantie" id="garantie" aria-labelledby="lp-garantie-t">
     <div class="lp-garantie-fond" aria-hidden="true"><span class="lp-garantie-lueur"></span></div>
     <div class="lp-wrap lp-garantie-in">
-      <p class="lp-garantie-grand">90&nbsp;jours</p>
-      <h2 class="lp-h2 lp-garantie-t" id="lp-garantie-t"><em>Garantis.</em></h2>
-      <p class="lp-garantie-texte">Personne ne s’est présenté dans votre salle pendant les 90 premiers jours&nbsp;? Vous êtes intégralement remboursé.</p>
+      <p class="lp-garantie-grand">Garanti.</p>
+      <h2 class="lp-h2 lp-garantie-t" id="lp-garantie-t">Un nombre de réservations, <em>chaque mois.</em></h2>
+      <p class="lp-garantie-texte">Des personnes de votre zone de chalandise, qui ont réservé une séance sur un cours précis, à un horaire précis, et qui se sont engagées à venir. Ce nombre est fixé pendant l’appel et écrit dans votre contrat.</p>
       <div class="lp-cta lp-agir-section"><span class="lp-lueur" aria-hidden="true"></span><a class="lp-btn" href="#appel" data-appel>Commencer</a></div>
       <p class="lp-plus"><a href="#faq-garantie">Comment fonctionne la garantie&nbsp;→</a></p>
     </div>
@@ -1439,11 +1441,11 @@
         </details>
         <details class="lp-q reveal" name="faq" id="faq-marche">
           <summary><span>Comment ça marche, concrètement&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Nous nous occupons de tout, en quatre étapes&nbsp;:</p><ol><li><b>Une pub ciblée.</b> Sur Facebook et Instagram, uniquement auprès des gens qui habitent autour de votre salle.</li><li><b>Une page pensée pour réserver.</b> À votre nom, avec vos cours et vos horaires.</li><li><b>Une séance d’essai réservée.</b> La personne choisit un cours précis, un jour et une heure.</li><li><b>Des rappels jusqu’à 1&nbsp;h avant.</b> Par e-mail, pour qu’elle n’oublie pas sa séance.</li></ol><p>Sont compris&nbsp;: la page de réservation, les campagnes publicitaires, les créations publicitaires et les séquences e-mail. Votre part&nbsp;: un appel de 15&nbsp;min, puis accueillir les gens et les faire signer.</p></div>
+          <div class="lp-q-corps"><p>Nous mettons en place un tunnel de vente complet, en cinq étapes&nbsp;:</p><ol><li><b>Une campagne publicitaire.</b> Sur Facebook et Instagram, avec plusieurs créations, uniquement auprès des gens qui habitent autour de votre salle.</li><li><b>Une page dédiée.</b> À votre nom, avec vos cours et vos horaires.</li><li><b>Un formulaire de réservation.</b> La personne choisit un cours précis, un jour et une heure.</li><li><b>Des e-mails de rappel.</b> Jusqu’à 1&nbsp;h avant sa séance, pour qu’elle n’oublie pas.</li><li><b>Dans votre salle.</b> Elle arrive à son cours, vous la faites signer.</li></ol><p>Sont compris&nbsp;: la gestion des campagnes publicitaires, les créations publicitaires, la page de réservation et les séquences e-mail. Votre part&nbsp;: un appel de 15&nbsp;min, puis accueillir les gens et les faire signer.</p></div>
         </details>
         <details class="lp-q reveal" name="faq" id="faq-garantie">
-          <summary><span>Et si ça ne marche pas pour moi&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
-          <div class="lp-q-corps"><p>Il n’y a que deux issues possibles&nbsp;: soit des gens réservent et viennent découvrir votre salle, soit Mon Club Combat ne vous a rien coûté.</p><p>Personne ne s’est présenté dans votre salle pendant les 90 premiers jours&nbsp;? Vous êtes intégralement remboursé. Nous prenons le risque à votre place.</p></div>
+          <summary><span>Qu’est-ce qui est garanti, exactement&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
+          <div class="lp-q-corps"><p>Un nombre de réservations, chaque mois.</p><p>Chaque réservation, c’est une personne de votre zone de chalandise qui a choisi un cours précis de votre planning, un jour et une heure, et qui s’est engagée à venir. Ce nombre est fixé ensemble pendant l’appel et écrit dans votre contrat.</p></div>
         </details>
         <details class="lp-q reveal" name="faq">
           <summary><span>Qu’est-ce qui compte comme une réservation&nbsp;?</span><span class="lp-q-plus" aria-hidden="true"></span></summary>
@@ -1666,8 +1668,8 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
    a la fonction Supabase `rdv` en simple fetch ; depuis le 20/10/2026, elle
    s'ouvre en plein ecran par-dessus la page. Depuis la refonte sur le
    modele Squale (19/10/2026), la page porte aussi un peu de mouvement : les
-   apparitions au defilement, les liens vers une question de la FAQ et les
-   traits du schema « qui fait quoi ». */
+   modele Squale (19/10/2026), la page porte aussi un peu de mouvement :
+   apparitions au defilement et les liens vers une question de la FAQ. */
 (function (){
   var SB = window.MCC || null;
   var $ = function (id){ return document.getElementById(id); };
@@ -1730,50 +1732,6 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
   });
   window.addEventListener('hashchange', function (){ ouvreQuestion(location.hash, true); });
   if (location.hash) ouvreQuestion(location.hash, true);
-
-  /* ---------- les traits du schema « qui fait quoi » ----------
-     Une courbe du bord de chaque pilule vers le centre de la marque, un trait
-     fin plus un pointille qui coule vers le milieu ; redessines a chaque
-     changement de largeur et une fois les polices chargees. */
-  var schema = $('lp-schema');
-  if (schema) {
-    var NS = 'http://www.w3.org/2000/svg';
-    var traits = schema.querySelector('.lp-schema-traits');
-    var trace = function (){
-      var boite = schema.getBoundingClientRect();
-      var badge = schema.querySelector('.lp-hub-badge');
-      if (!boite.width || !badge) return;
-      var h = badge.getBoundingClientRect();
-      var cx = h.left + h.width / 2 - boite.left, cy = h.top + h.height / 2 - boite.top;
-      var d = '', points = [];
-      schema.querySelectorAll('.lp-pilule').forEach(function (p){
-        var r = p.getBoundingClientRect();
-        var aGauche = r.left + r.width / 2 < boite.left + boite.width / 2;
-        var x = (aGauche ? r.right : r.left) - boite.left, y = r.top + r.height / 2 - boite.top;
-        var dx = (cx - x) * 0.5;
-        d += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' C' + (x + dx).toFixed(1) + ' ' + y.toFixed(1) + ' '
-          + (cx - dx).toFixed(1) + ' ' + cy.toFixed(1) + ' ' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ';
-        points.push([x, y]);
-      });
-      traits.setAttribute('viewBox', '0 0 ' + boite.width.toFixed(1) + ' ' + boite.height.toFixed(1));
-      while (traits.firstChild) traits.removeChild(traits.firstChild);
-      [['lp-trait-base'], ['lp-trait-flux']].forEach(function (c){
-        var el = document.createElementNS(NS, 'path');
-        el.setAttribute('class', c[0]); el.setAttribute('d', d);
-        traits.appendChild(el);
-      });
-      points.forEach(function (pt){
-        var c = document.createElementNS(NS, 'circle');
-        c.setAttribute('class', 'lp-trait-point'); c.setAttribute('r', '3.6');
-        c.setAttribute('cx', pt[0].toFixed(1)); c.setAttribute('cy', pt[1].toFixed(1));
-        traits.appendChild(c);
-      });
-    };
-    trace();
-    window.addEventListener('resize', trace);
-    window.addEventListener('load', trace);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(trace);
-  }
 
   /* ---------- la video ----------
      Elle part seule, en muet et en boucle (Amaury, 09/10/2026), mais pas

@@ -241,6 +241,10 @@ LANDING = {
                      '<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>', 24),
     'I_MAILS': trait('<path d="M17 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2"/><rect width="16" height="12" x="6" y="3" rx="2"/>'
                      '<path d="m22 5-7.17 4.3a2 2 0 0 1-1.66 0L6 5"/>', 24),
+    'I_FORMULAIRE': trait('<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>'
+                          '<path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>', 24),
+    'I_PORTE': trait('<path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/>'
+                     '<path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/>', 24),
     'I_RDV_FERMER': trait('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', 22),
 }
 

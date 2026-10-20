@@ -6,8 +6,8 @@
    a la fonction Supabase `rdv` en simple fetch ; depuis le 20/10/2026, elle
    s'ouvre en plein ecran par-dessus la page. Depuis la refonte sur le
    modele Squale (19/10/2026), la page porte aussi un peu de mouvement : les
-   apparitions au defilement, les liens vers une question de la FAQ et les
-   traits du schema « qui fait quoi ». */
+   modele Squale (19/10/2026), la page porte aussi un peu de mouvement :
+   apparitions au defilement et les liens vers une question de la FAQ. */
 (function (){
   var SB = window.MCC || null;
   var $ = function (id){ return document.getElementById(id); };
@@ -70,50 +70,6 @@
   });
   window.addEventListener('hashchange', function (){ ouvreQuestion(location.hash, true); });
   if (location.hash) ouvreQuestion(location.hash, true);
-
-  /* ---------- les traits du schema « qui fait quoi » ----------
-     Une courbe du bord de chaque pilule vers le centre de la marque, un trait
-     fin plus un pointille qui coule vers le milieu ; redessines a chaque
-     changement de largeur et une fois les polices chargees. */
-  var schema = $('lp-schema');
-  if (schema) {
-    var NS = 'http://www.w3.org/2000/svg';
-    var traits = schema.querySelector('.lp-schema-traits');
-    var trace = function (){
-      var boite = schema.getBoundingClientRect();
-      var badge = schema.querySelector('.lp-hub-badge');
-      if (!boite.width || !badge) return;
-      var h = badge.getBoundingClientRect();
-      var cx = h.left + h.width / 2 - boite.left, cy = h.top + h.height / 2 - boite.top;
-      var d = '', points = [];
-      schema.querySelectorAll('.lp-pilule').forEach(function (p){
-        var r = p.getBoundingClientRect();
-        var aGauche = r.left + r.width / 2 < boite.left + boite.width / 2;
-        var x = (aGauche ? r.right : r.left) - boite.left, y = r.top + r.height / 2 - boite.top;
-        var dx = (cx - x) * 0.5;
-        d += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' C' + (x + dx).toFixed(1) + ' ' + y.toFixed(1) + ' '
-          + (cx - dx).toFixed(1) + ' ' + cy.toFixed(1) + ' ' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ';
-        points.push([x, y]);
-      });
-      traits.setAttribute('viewBox', '0 0 ' + boite.width.toFixed(1) + ' ' + boite.height.toFixed(1));
-      while (traits.firstChild) traits.removeChild(traits.firstChild);
-      [['lp-trait-base'], ['lp-trait-flux']].forEach(function (c){
-        var el = document.createElementNS(NS, 'path');
-        el.setAttribute('class', c[0]); el.setAttribute('d', d);
-        traits.appendChild(el);
-      });
-      points.forEach(function (pt){
-        var c = document.createElementNS(NS, 'circle');
-        c.setAttribute('class', 'lp-trait-point'); c.setAttribute('r', '3.6');
-        c.setAttribute('cx', pt[0].toFixed(1)); c.setAttribute('cy', pt[1].toFixed(1));
-        traits.appendChild(c);
-      });
-    };
-    trace();
-    window.addEventListener('resize', trace);
-    window.addEventListener('load', trace);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(trace);
-  }
 
   /* ---------- la video ----------
      Elle part seule, en muet et en boucle (Amaury, 09/10/2026), mais pas
