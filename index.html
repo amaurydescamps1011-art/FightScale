@@ -718,14 +718,18 @@
   }
 
   /* ---------- le tunnel de vente ----------
-     Cinq boudins centres qui se resserrent, le texte dedans ; un reflet
-     passe de l'un a l'autre, et _landing.js fait couler des points (les
-     prospects) sur le canevas : un sur quatre environ arrive dans la salle. */
+     Cinq boudins centres qui se resserrent, le texte dedans, chacun un peu
+     penche (--r) et qui tangue doucement a son propre rythme ; un reflet
+     passe de l'un a l'autre. */
   .lp-toit{padding:0 0 140px}
   .lp-entonnoir{position:relative; max-width:820px; margin:52px auto 0; padding:6px 0 10px}
-  .lp-entonnoir-flux{position:absolute; inset:0 -40px; width:calc(100% + 80px); height:100%; z-index:0; pointer-events:none}
   .lp-boudins{position:relative; z-index:1; list-style:none; margin:0; padding:0; display:flex; flex-direction:column; align-items:center; gap:12px}
-  .lp-boudin{position:relative; overflow:hidden; isolation:isolate; width:calc(100% - var(--i) * 14%); min-height:92px; box-sizing:border-box;
+  .lp-boudin:nth-child(1){--r:-1.4deg; --r2:.4deg; --d:6.2s}
+  .lp-boudin:nth-child(2){--r:1.1deg; --r2:-.5deg; --d:5.4s}
+  .lp-boudin:nth-child(3){--r:-.8deg; --r2:.9deg; --d:6.8s}
+  .lp-boudin:nth-child(4){--r:1.3deg; --r2:-.2deg; --d:5.8s}
+  .lp-boudin:nth-child(5){--r:-.6deg; --r2:.8deg; --d:6.4s}
+  .lp-boudin{position:relative; overflow:hidden; isolation:isolate; transform:rotate(var(--r)); width:calc(100% - var(--i) * 14%); min-height:92px; box-sizing:border-box;
     display:flex; align-items:center; justify-content:center; gap:16px; padding:14px 30px; border-radius:999px; color:#fff;
     background:linear-gradient(180deg, #FF6F7C 0%, var(--sq-core) 50%, var(--sq-700) 100%);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.5), inset 0 -12px 20px rgba(110,0,14,.32), 0 20px 36px -18px rgba(190,20,40,.7)}
@@ -743,12 +747,11 @@
   .lp-boudin-txt{display:flex; flex-direction:column; gap:2px; min-width:0}
   .lp-boudin-txt b{font-size:19px; font-weight:800; letter-spacing:-.01em; line-height:1.2}
   .lp-boudin-txt span{font-size:14px; font-weight:500; line-height:1.35; opacity:.9}
-  .lp-boudin.arrive{animation:lp-arrive .7s ease-out}
-  @keyframes lp-arrive{0%{box-shadow:inset 0 2px 0 rgba(255,255,255,.22), 0 0 0 0 rgba(236,22,46,.55), 0 22px 40px -16px rgba(20,18,12,.6)}
-    100%{box-shadow:inset 0 2px 0 rgba(255,255,255,.22), 0 0 0 16px rgba(236,22,46,0), 0 22px 40px -16px rgba(20,18,12,.6)}}
-  .lp-entonnoir.in .lp-boudin{animation:lp-boudin-entre .8s cubic-bezier(.2,.9,.3,1.25) both; animation-delay:calc(.1s + var(--i) * .13s)}
-  .lp-entonnoir.in .lp-boudin.arrive{animation:lp-arrive .7s ease-out}
-  @keyframes lp-boudin-entre{from{opacity:0; transform:scale(.6, .8)} to{opacity:1; transform:none}}
+  /* l'entree, puis le tangage (le second prend la main une fois l'entree finie) */
+  .lp-entonnoir.in .lp-boudin{animation:lp-boudin-entre .8s cubic-bezier(.2,.9,.3,1.25) both, lp-tangue var(--d) ease-in-out infinite alternate;
+    animation-delay:calc(.1s + var(--i) * .13s), calc(.9s + var(--i) * .13s)}
+  @keyframes lp-boudin-entre{from{opacity:0; transform:scale(.6, .8) rotate(0)} to{opacity:1; transform:rotate(var(--r))}}
+  @keyframes lp-tangue{from{transform:rotate(var(--r)) translateY(0)} to{transform:rotate(var(--r2)) translateY(-4px)}}
   .lp-toit .lp-plus{margin-top:22px}
   .lp-toit .lp-cta{display:block; width:max-content; margin:30px auto 0}
 
@@ -1359,7 +1362,6 @@
     <div class="lp-wrap">
       <h2 class="lp-h2 reveal" id="lp-toit-t">Nous nous occupons de tout, <em>de la pub jusqu’à votre porte.</em></h2>
       <div class="lp-entonnoir reveal" id="lp-entonnoir">
-        <canvas class="lp-entonnoir-flux" aria-hidden="true"></canvas>
         <ol class="lp-boudins">
           <li class="lp-boudin" style="--i:0">
             <span class="lp-boudin-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg></span>
@@ -1725,93 +1727,6 @@ window.MCC = { RDV_API: window.MCC_RDV_API || 'https://qhbutuhdmyajlgorbhxf.supa
   });
   window.addEventListener('hashchange', function (){ ouvreQuestion(location.hash, true); });
   if (location.hash) ouvreQuestion(location.hash, true);
-
-  /* ---------- le tunnel de vente ----------
-     Des points rouges (les prospects) coulent le long des deux parois de
-     l'entonnoir, derriere les boudins pour ne pas passer sur le texte, et a
-     chaque etage une partie s'echappe vers l'exterieur en s'effacant. Ceux qui arrivent en bas
-     font battre le boudin « Votre salle ». Le canevas ne tourne que lorsque
-     le tunnel est a l'ecran, et pas du tout si le visiteur prefere moins de
-     mouvement. */
-  var entonnoir = $('lp-entonnoir');
-  if (entonnoir && !calme && 'IntersectionObserver' in window) {
-    var toile = entonnoir.querySelector('canvas'), ctx = toile.getContext('2d');
-    var boudins = [].slice.call(entonnoir.querySelectorAll('.lp-boudin'));
-    var salle = boudins[boudins.length - 1];
-    var etages = [], larg = 0, haut = 0, ratio = 1, points = [], tourne = false, dernier = 0, prochain = 0, battu = 0;
-    var mesure = function (){
-      var b = toile.getBoundingClientRect();
-      ratio = Math.min(window.devicePixelRatio || 1, 2);
-      larg = b.width; haut = b.height;
-      toile.width = Math.round(larg * ratio); toile.height = Math.round(haut * ratio);
-      etages = boudins.map(function (el){
-        var r = el.getBoundingClientRect();
-        return { haut: r.top - b.top, bas: r.bottom - b.top, demi: r.width / 2 + 12 };
-      });
-    };
-    // demi-largeur utile a la hauteur y : celle de l'etage, ou un fondu entre deux
-    var demi = function (y){
-      for (var i = 0; i < etages.length; i++) {
-        var e = etages[i];
-        if (y <= e.bas) {
-          if (y >= e.haut || i === 0) return e.demi;
-          var p = etages[i - 1], k = (y - p.bas) / (e.haut - p.bas);
-          return p.demi + (e.demi - p.demi) * k;
-        }
-      }
-      return etages[etages.length - 1].demi;
-    };
-    var nait = function (){
-      var sort = -1;
-      // a chaque passage d'etage, environ un point sur quatre s'en va
-      for (var i = 1; i < etages.length; i++) if (Math.random() < 0.27) { sort = i; break; }
-      points.push({ x: Math.random() * 2 - 1, y: etages[0].haut + 4, v: 70 + Math.random() * 40,
-        r: 2.2 + Math.random() * 1.6, sort: sort, cote: Math.random() < 0.5 ? -1 : 1, fuite: 0 });
-    };
-    var image = function (t){
-      if (!tourne) return;
-      var dt = dernier && t > dernier ? Math.min((t - dernier) / 1000, 0.05) : 0; dernier = t;
-      prochain -= dt;
-      if (prochain <= 0) { nait(); prochain = 0.07 + Math.random() * 0.06; }
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      ctx.clearRect(0, 0, larg, haut);
-      var cx = larg / 2, bas = etages[etages.length - 1];
-      // les deux parois, en pointille leger, d'un bout de boudin a l'autre
-      ctx.setLineDash([2, 7]); ctx.lineWidth = 1.4; ctx.strokeStyle = 'rgba(236,22,46,.28)';
-      [-1, 1].forEach(function (c){
-        ctx.beginPath();
-        etages.forEach(function (e, j){ var y = (e.haut + e.bas) / 2, xx = cx + c * e.demi; j ? ctx.lineTo(xx, y) : ctx.moveTo(xx, y); });
-        ctx.stroke();
-      });
-      ctx.setLineDash([]);
-      for (var i = points.length - 1; i >= 0; i--) {
-        var p = points[i];
-        p.y += p.v * dt;
-        if (p.sort > 0 && p.y > etages[p.sort].haut - 4) p.fuite += dt * 1.6;
-        var x = cx + p.cote * (demi(p.y) + p.x * 5 + p.fuite * p.fuite * 120);
-        var a = Math.max(0, 1 - p.fuite);
-        if (p.y > (bas.haut + bas.bas) / 2) {
-          // arrive dans la salle : le boudin bat (pas plus de deux fois par seconde)
-          if (t - battu > 520) { battu = t; salle.classList.remove('arrive'); void salle.offsetWidth; salle.classList.add('arrive'); }
-          points.splice(i, 1); continue;
-        }
-        if (a <= 0) { points.splice(i, 1); continue; }
-        ctx.globalAlpha = a * 0.95;
-        ctx.beginPath(); ctx.arc(x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = '#EC162E'; ctx.shadowColor = 'rgba(236,22,46,.7)'; ctx.shadowBlur = 8; ctx.fill();
-      }
-      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-      requestAnimationFrame(image);
-    };
-    mesure();
-    window.addEventListener('resize', mesure);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(mesure);
-    new IntersectionObserver(function (es){
-      var vu = es[0].isIntersecting;
-      if (vu && !tourne) { tourne = true; dernier = 0; mesure(); setTimeout(mesure, 1500); requestAnimationFrame(image); }
-      else if (!vu) tourne = false;
-    }, { threshold: 0.15 }).observe(entonnoir);
-  }
 
   /* ---------- la video ----------
      Elle part seule, en muet et en boucle (Amaury, 09/10/2026), mais pas
